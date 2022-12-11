@@ -1,0 +1,8 @@
+.*/
+bin/
+obj/
+_dist/
+node_modules/
+*.user
+*.suo
+~$*.*

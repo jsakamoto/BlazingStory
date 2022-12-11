@@ -1,0 +1,11 @@
+﻿@attribute [Description("This is basic button component.")]
+
+<button class="@(this.Color.ToString().ToLower())">@this.Text</button>
+
+@code {
+    [Parameter]
+    public string? Text { get; set; }
+
+    [Parameter]
+    public ButtonColor Color { get; set; } = ButtonColor.Default;
+}

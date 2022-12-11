@@ -1,0 +1,26 @@
+@using System.Reflection;
+
+<StoriesDetector Assemblies="this.Assemblies" StoriesStore="this._StoriesStore" />
+
+<CascadingValue Value="this._StoriesStore">
+    <Router AppAssembly="@typeof(BlazingStoryApp).Assembly">
+        <Found Context="routeData">
+            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p role="alert">Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingValue>
+
+@code
+{
+    [Parameter, EditorRequired]
+    public IEnumerable<Assembly>? Assemblies { get; set; }
+
+    private StoriesStore _StoriesStore = new();
+}

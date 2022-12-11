@@ -1,0 +1,21 @@
+button {
+    font-size: 14px;
+    padding: 10px;
+    border: 0;
+    border-radius: 1em;
+    cursor: pointer;
+    display: inline-block;
+    color: #fff;
+}
+
+.default {
+    background-color: #6c757d;
+}
+
+.primary {
+    background-color: #007bff;
+}
+
+.danger {
+    background-color: #dc3545;
+}

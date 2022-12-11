@@ -1,0 +1,30 @@
+﻿@using System.Diagnostics.CodeAnalysis;
+@typeparam TComponent where TComponent: notnull
+@attribute [CascadingTypeParameter(nameof(TComponent))]
+
+<div class="display:none;">
+    @Arguments
+</div>
+
+@code 
+{
+    [CascadingParameter]
+    internal StoryContainer? StoryContainer { get; set; }
+
+    [Parameter, EditorRequired]
+    public string Name { get; set; } = "";
+
+    [Parameter]
+    public RenderFragment? Arguments { get; set; }
+
+    [Parameter, EditorRequired]
+    public RenderFragment<StoryContext>? Template { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (this.StoryContainer == null) throw new InvalidOperationException($"The StoryContainer cascading parameter is required.");
+        if (this.Template == null) throw new InvalidOperationException($"The Template parameter is required.");
+
+        this.StoryContainer.RegisterStory(this.Name, this.Template);
+    }
+}
