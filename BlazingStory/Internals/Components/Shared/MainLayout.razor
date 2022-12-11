@@ -1,2 +1,18 @@
 ﻿@inherits LayoutComponentBase
-@Body
+
+<HeadContent>
+    <link rel="stylesheet" href="_content/BlazingStory/css/variables.css" />
+    <link rel="stylesheet" href="_content/BlazingStory/css/styles.css" />
+</HeadContent>
+
+<SvgIcons />
+
+<div class="main-layout stack horizontal">
+    <div class="sidebar-container">
+        <SideBar />
+    </div>
+
+    <div class="fill body-container stack">
+        @Body
+    </div>
+</div>

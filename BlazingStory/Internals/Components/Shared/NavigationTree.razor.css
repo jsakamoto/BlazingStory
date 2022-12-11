@@ -1,0 +1,106 @@
+﻿.caption {
+    font-size: 13px;
+    font-stretch: 100%;
+    color: #333333;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    cursor: pointer;
+}
+
+.caption > button {
+    appearance: none;
+    border: none;
+    background-color: transparent;
+    outline: 0;
+    height: 24px;
+    padding: 3px 10px 3px 1px;
+    cursor: pointer;
+}
+
+    .caption > button:focus {
+        color: var(--bs-focused-color);
+    }
+
+.navigation-tree-item:not(.sub-heading) > .caption:hover {
+    background-color: rgba(30, 167, 253, 0.07);
+}
+
+/* ---- Chevron ---- */
+.chevron {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    /*margin-top: 6px;*/
+    margin-left: 4px;
+    margin-right: 5px;
+    color: rgba(153,153,153,0.6);
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    border-left: 3px solid;
+    -webkit-transform: rotateZ(90deg);
+    -moz-transform: rotateZ(90deg);
+    -ms-transform: rotateZ(90deg);
+    transform: rotateZ(0deg);
+    -webkit-transition: -webkit-transform .1s ease-out;
+    transition: transform .1s ease-out;
+}
+
+.expanded > .caption .chevron {
+    transform: rotateZ(90deg);
+}
+
+.type-story > .caption .chevron {
+    visibility: hidden;
+}
+
+/* ---- Sub Items ---- */
+.sub-items {
+    /*padding-left: 10px;*/
+    display: none;
+}
+
+.expanded > .sub-items {
+    display: block;
+}
+
+/* ---- Sub Heading ---- */
+
+.sub-heading > .caption > button {
+    font-size: 11px;
+    color: #999999;
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: 3.85px;
+}
+
+    .sub-heading > .caption > button:focus-visible {
+        outline: 1px solid var(--bs-focused-color);
+        border-radius: 28px;
+    }
+
+.sub-heading > .caption:focus {
+    color: var(--bs-focused-color);
+}
+
+.sub-heading > .caption .icon {
+    display: none;
+}
+
+.sub-heading > .sub-items {
+    padding-left: 0;
+}
+
+
+/* ---- Icons ---- */
+.type-container > .caption ::deep svg {
+    fill: var(--bs-icon-folder-color);
+}
+
+.type-story-collection > .caption ::deep svg {
+    fill: var(--bs-icon-story-container-color);
+}
+
+.type-story > .caption ::deep svg {
+    fill: var(--bs-icon-story-color);
+}

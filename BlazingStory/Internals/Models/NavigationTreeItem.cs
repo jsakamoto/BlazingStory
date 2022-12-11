@@ -1,16 +1,16 @@
 namespace BlazingStory.Internals.Models;
 
-internal class NavigationTreeItem
+public class NavigationTreeItem
 {
-    public NavigationTreeItemType Type { get; set; }
+    internal NavigationTreeItemType Type { get; set; }
 
-    public string Caption { get; set; } = "";
+    internal string Caption { get; set; } = "";
 
-    public bool Expanded { get; set; }
+    internal bool Expanded { get; set; } = true;
 
-    public List<NavigationTreeItem> SubItems { get; } = new();
+    internal List<NavigationTreeItem> SubItems { get; } = new();
 
-    public NavigationTreeItem()
-	{
-	}
+    internal NavigationTreeItem()
+    {
+    }
 }

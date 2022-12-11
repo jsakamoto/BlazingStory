@@ -1,0 +1,29 @@
+﻿<nav class="stack vertical gap">
+
+    <div class="sidebar-header">Blazing Story</div>
+
+    <div class="search-field">
+        <input type="text" placeholder="Find components" />
+    </div>
+
+    <div class="explorer-menu">
+        <NavigationTree Item="_NavigationRoot" SubHeading="true"/>
+    </div>
+
+</nav>
+
+@code {
+    [CascadingParameter]
+    public StoriesStore? StoriesStore { get; set; }
+
+    private readonly NavigationTreeBuilder _NavigationTreeBuilder = new();
+
+    private NavigationTreeItem _NavigationRoot = new();
+
+    protected override void OnInitialized()
+    {
+        if (this.StoriesStore == null) throw new InvalidOperationException("The StoriesStore cascading parameter was null.");
+
+        _NavigationRoot = _NavigationTreeBuilder.Build(this.StoriesStore.StoryContainers);
+    }
+}

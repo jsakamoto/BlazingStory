@@ -14,10 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
+    <PackageReference Include="Toolbelt.Web.CssClassInlineBuilder" Version="2.0.0" />
   </ItemGroup>
 
 </Project>

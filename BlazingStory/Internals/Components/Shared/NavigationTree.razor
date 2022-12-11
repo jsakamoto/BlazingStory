@@ -1,0 +1,46 @@
+﻿@if (this.Item != null)
+{
+    @foreach (var item in this.Item.SubItems)
+    {
+        <div @key="item.Caption" class="navigation-tree-item @CssClass(new {item.Expanded, this.SubHeading, Type = item.Type.ToString() })">
+            <div class="caption" @onclick="(() => ToggleItemExpansion(item))" style="padding-left: @(this.IndentLevel * 14)px;">
+                <button>
+                    <span class="chevron"></span>
+                    <span class="icon">
+                        <SvgIcon Type="GetIconType(item)" />
+                    </span>
+                    @item.Caption
+                </button>
+            </div>
+            <div class="sub-items">
+                <NavigationTree Item="item" IndentLevel="@(this.SubHeading ? this.IndentLevel : this.IndentLevel + 1)" />
+            </div>
+        </div>
+    }
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public NavigationTreeItem? Item { get; set; }
+
+    [Parameter]
+    public bool SubHeading { get; set; }
+
+    [Parameter]
+    public int IndentLevel { get; set; }
+
+    private void ToggleItemExpansion(NavigationTreeItem item)
+    {
+        item.Expanded = !item.Expanded;
+    }
+
+    private SvgIconType GetIconType(NavigationTreeItem item)
+    {
+        return item.Type switch
+        {
+            NavigationTreeItemType.StoryCollection => SvgIconType.Component,
+            NavigationTreeItemType.Story => SvgIconType.BookmarkHollow,
+            _ => SvgIconType.Folder
+        };
+    }
+}
