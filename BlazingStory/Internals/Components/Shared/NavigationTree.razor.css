@@ -111,17 +111,22 @@ button.action:focus {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    visibility: hidden;
 }
 
-    .sub-heading-action ::deep svg {
-        fill: var(--bs-sidebar-nav-subheading-color);
-        margin: 0;
-    }
+.expanded > .caption .sub-heading-action {
+    visibility: visible;
+}
 
-    .sub-heading-action:hover ::deep svg,
-    .sub-heading-action:focus-visible ::deep svg {
-        fill: var(--bs-focused-color);
-    }
+.sub-heading-action ::deep svg {
+    fill: var(--bs-sidebar-nav-subheading-color);
+    margin: 0;
+}
+
+.sub-heading-action:hover ::deep svg,
+.sub-heading-action:focus ::deep svg {
+    fill: var(--bs-focused-color);
+}
 
 .sub-heading > .caption .sub-items {
     padding-left: 0;

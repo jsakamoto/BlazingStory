@@ -20,8 +20,8 @@
 
                     @if (this.SubHeading)
                     {
-                        <button class="sub-heading-action">
-                            <SvgIcon Type="SvgIconType.ExpandAll" />
+                        <button class="sub-heading-action" @onclick="() => item.ToggleSubItemsExpansion()">
+                            <SvgIcon Type="GetSubHeadingActionIconType(item)" />
                         </button>
                     }
                 }
@@ -40,7 +40,7 @@
             </div>
 
             <div class="sub-items">
-                <NavigationTree Item="item" IndentLevel="@(this.SubHeading ? this.IndentLevel : this.IndentLevel + 1)" />
+                <NavigationTree Item="item" IndentLevel="@(this.SubHeading ? this.IndentLevel : this.IndentLevel + 1)" ExpansionChanged="(() => this.ExpansionChanged.InvokeAsync())" />
             </div>
         </div>
     }
@@ -56,9 +56,16 @@
     [Parameter]
     public int IndentLevel { get; set; }
 
-    private void ToggleItemExpansion(NavigationTreeItem item)
+    [Parameter]
+    public EventCallback ExpansionChanged { get; set; }
+
+    private async Task ToggleItemExpansion(NavigationTreeItem item)
     {
         item.Expanded = !item.Expanded;
+        await ExpansionChanged.InvokeAsync();
+
+        if (Item != null && Item.SubItems.FirstOrDefault() != null)
+            Console.WriteLine($"IsExpandedAll: {Item.SubItems.First().IsExpandedAll}");
     }
 
     private SvgIconType GetIconType(NavigationTreeItem item)
@@ -69,5 +76,10 @@
             NavigationTreeItemType.Story => SvgIconType.BookmarkHollow,
             _ => SvgIconType.Folder
         };
+    }
+
+    private SvgIconType GetSubHeadingActionIconType(NavigationTreeItem item)
+    {
+        return item.IsExpandedAll ? SvgIconType.CollapseAll : SvgIconType.ExpandAll;
     }
 }

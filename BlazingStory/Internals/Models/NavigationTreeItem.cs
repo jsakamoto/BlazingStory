@@ -13,4 +13,18 @@ public class NavigationTreeItem
     internal NavigationTreeItem()
     {
     }
+
+    internal bool IsExpandedAll => !this.SubItems.Any() || (this.Expanded && this.SubItems.All(subItem => subItem.IsExpandedAll));
+
+    internal void ToggleSubItemsExpansion()
+    {
+        var expanded = !this.IsExpandedAll;
+        this.SubItems.ForEach(item => item.ApplyExpansionRecursively(expanded));
+    }
+
+    private void ApplyExpansionRecursively(bool expanded)
+    {
+        this.Expanded = expanded;
+        this.SubItems.ForEach(item => item.ApplyExpansionRecursively(expanded));
+    }
 }
