@@ -5,5 +5,7 @@ public enum SvgIconType
     Folder,
     Component,
     Document,
-    BookmarkHollow
+    BookmarkHollow,
+    ExpandAll,
+    CollapseAll
 }

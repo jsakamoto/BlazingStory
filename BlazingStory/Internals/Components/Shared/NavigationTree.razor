@@ -2,16 +2,43 @@
 {
     @foreach (var item in this.Item.SubItems)
     {
+        var style = $"padding-left: {this.IndentLevel * 14}px;";
+        var tabIndex = this.SubHeading ? "unset" : "-1";
+
         <div @key="item.Caption" class="navigation-tree-item @CssClass(new {item.Expanded, this.SubHeading, Type = item.Type.ToString() })">
-            <div class="caption" @onclick="(() => ToggleItemExpansion(item))" style="padding-left: @(this.IndentLevel * 14)px;">
-                <button>
-                    <span class="chevron"></span>
-                    <span class="icon">
-                        <SvgIcon Type="GetIconType(item)" />
-                    </span>
-                    @item.Caption
-                </button>
+
+            <div class="caption">
+                @if (item.Type != NavigationTreeItemType.Story)
+                {
+                    <button class="action" tabindex="@tabIndex" @onclick="(() => ToggleItemExpansion(item))" style="@style">
+                        <span class="chevron"></span>
+                        <span class="icon">
+                            <SvgIcon Type="GetIconType(item)" />
+                        </span>
+                        @item.Caption
+                    </button>
+
+                    @if (this.SubHeading)
+                    {
+                        <button class="sub-heading-action">
+                            <SvgIcon Type="SvgIconType.ExpandAll" />
+                        </button>
+                    }
+                }
+                else
+                {
+                    <a href="./?path=/story/foo--bar" class="action" tabindex="@tabIndex" @onclick="(() => ToggleItemExpansion(item))" style="@style">
+
+                        <span class="chevron"></span>
+                        <span class="icon">
+                            <SvgIcon Type="GetIconType(item)" />
+                        </span>
+                        @item.Caption
+
+                    </a>
+                }
             </div>
+
             <div class="sub-items">
                 <NavigationTree Item="item" IndentLevel="@(this.SubHeading ? this.IndentLevel : this.IndentLevel + 1)" />
             </div>
