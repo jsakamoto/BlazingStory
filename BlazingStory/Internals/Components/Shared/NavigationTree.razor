@@ -1,41 +1,34 @@
-﻿@if (this.Item != null)
+﻿@inject NavigationManager NavigationManager
+
+@if (this.Item != null)
 {
     @foreach (var item in this.Item.SubItems)
     {
         var style = $"padding-left: {this.IndentLevel * 14}px;";
         var tabIndex = this.SubHeading ? "unset" : "-1";
+        var active = (item.Type == NavigationTreeItemType.Story) && (this.RouteData?.RouteToStoryOrDocs == true) && (this.RouteData?.Parameter == item.NavigationPath);
 
-        <div @key="item.Caption" class="navigation-tree-item @CssClass(new {item.Expanded, this.SubHeading, Type = item.Type.ToString() })">
+        <div @key="item.Caption" class="navigation-tree-item @CssClass(new {item.Expanded, this.SubHeading, Type = item.Type.ToString(), active })">
 
             <div class="caption">
                 @if (item.Type != NavigationTreeItemType.Story)
                 {
                     <button class="action" tabindex="@tabIndex" @onclick="(() => ToggleItemExpansion(item))" style="@style">
-                        <span class="chevron"></span>
-                        <span class="icon">
-                            <SvgIcon Type="GetIconType(item)" />
-                        </span>
-                        @item.Caption
+                        @NavigationTreeItemContent(item)
                     </button>
-
-                    @if (this.SubHeading)
-                    {
-                        <button class="sub-heading-action" @onclick="() => item.ToggleSubItemsExpansion()">
-                            <SvgIcon Type="GetSubHeadingActionIconType(item)" />
-                        </button>
-                    }
                 }
                 else
                 {
-                    <a href="./?path=/story/foo--bar" class="action" tabindex="@tabIndex" @onclick="(() => ToggleItemExpansion(item))" style="@style">
-
-                        <span class="chevron"></span>
-                        <span class="icon">
-                            <SvgIcon Type="GetIconType(item)" />
-                        </span>
-                        @item.Caption
-
+                    <a href="@GetNavigationUrl(item)" class="action" tabindex="@tabIndex" @onclick="(() => ToggleItemExpansion(item))" style="@style">
+                        @NavigationTreeItemContent(item)
                     </a>
+                }
+                @if (this.SubHeading)
+                {
+                    var subHeadingActionIcon = item.IsExpandedAll ? SvgIconType.CollapseAll : SvgIconType.ExpandAll;
+                    <button class="sub-heading-action" @onclick="() => item.ToggleSubItemsExpansion()">
+                        <SvgIcon Type="subHeadingActionIcon" />
+                    </button>
                 }
             </div>
 
@@ -47,6 +40,19 @@
 }
 
 @code {
+    private RenderFragment<NavigationTreeItem> NavigationTreeItemContent => (NavigationTreeItem item) =>
+    @<text>
+        <span class="chevron"></span>
+        <span class="icon">
+            <SvgIcon Type="GetIconType(item)" />
+        </span>
+        @item.Caption
+        </text>
+    ;
+
+    [CascadingParameter]
+    public PathQueryRoutData? RouteData { get; set; }
+
     [Parameter, EditorRequired]
     public NavigationTreeItem? Item { get; set; }
 
@@ -64,8 +70,11 @@
         item.Expanded = !item.Expanded;
         await ExpansionChanged.InvokeAsync();
 
-        if (Item != null && Item.SubItems.FirstOrDefault() != null)
-            Console.WriteLine($"IsExpandedAll: {Item.SubItems.First().IsExpandedAll}");
+        if (item.Type == NavigationTreeItemType.StoryCollection && item.Expanded && item.SubItems.Any())
+        {
+            var storyItemOf1st = item.SubItems.First();
+            this.NavigationManager.NavigateTo(GetNavigationUrl(storyItemOf1st));
+        }
     }
 
     private SvgIconType GetIconType(NavigationTreeItem item)
@@ -78,8 +87,8 @@
         };
     }
 
-    private SvgIconType GetSubHeadingActionIconType(NavigationTreeItem item)
+    private string GetNavigationUrl(NavigationTreeItem item)
     {
-        return item.IsExpandedAll ? SvgIconType.CollapseAll : SvgIconType.ExpandAll;
+        return "./?path=/story/" + item.NavigationPath;
     }
 }

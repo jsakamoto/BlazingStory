@@ -16,6 +16,9 @@
     [CascadingParameter]
     public StoriesStore? StoriesStore { get; set; }
 
+    [CascadingParameter]
+    public PathQueryRoutData? RouteData { get; set; }
+
     private readonly NavigationTreeBuilder _NavigationTreeBuilder = new();
 
     private NavigationTreeItem _NavigationRoot = new();
@@ -23,7 +26,9 @@
     protected override void OnInitialized()
     {
         if (this.StoriesStore == null) throw new InvalidOperationException("The StoriesStore cascading parameter was null.");
+        if (this.RouteData == null) throw new InvalidOperationException("The RouteData cascading parameter was null.");
 
-        _NavigationRoot = _NavigationTreeBuilder.Build(this.StoriesStore.StoryContainers);
+        var expandedNavigationPath = this.RouteData.RouteToStoryOrDocs ? this.RouteData.Parameter : null;
+        _NavigationRoot = _NavigationTreeBuilder.Build(this.StoriesStore.StoryContainers, expandedNavigationPath);
     }
 }

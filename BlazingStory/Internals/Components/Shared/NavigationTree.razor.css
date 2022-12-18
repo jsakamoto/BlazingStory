@@ -7,8 +7,8 @@
     .caption button, .caption a {
         outline: 0;
         border: none;
-        background-color: transparent;
         color: var(--bs-sidebar-nav-color);
+        background-color: transparent;
         cursor: pointer;
     }
 
@@ -31,6 +31,16 @@
 
 button.action:focus {
     background-color: #d5edfc;
+}
+
+.type-story.active > .caption a {
+    color: var(--bs-sidebar-nav-active-color);
+    background-color: var(--bs-sidebar-nav-active-back-color);
+    font-weight: bold;
+}
+
+.type-story.active > .caption .action ::deep svg {
+    fill: #fff;
 }
 
 /* ---- Chevron ---- */

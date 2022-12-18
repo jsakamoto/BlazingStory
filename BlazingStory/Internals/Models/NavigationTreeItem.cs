@@ -6,7 +6,9 @@ public class NavigationTreeItem
 
     internal string Caption { get; set; } = "";
 
-    internal bool Expanded { get; set; } = true;
+    internal string NavigationPath { get; set; } = "";
+
+    internal bool Expanded { get; set; } = false;
 
     internal List<NavigationTreeItem> SubItems { get; } = new();
 

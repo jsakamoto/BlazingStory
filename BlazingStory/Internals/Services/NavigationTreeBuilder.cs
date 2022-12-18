@@ -4,7 +4,7 @@ namespace BlazingStory.Internals.Services;
 
 internal class NavigationTreeBuilder
 {
-    public NavigationTreeItem Build(IEnumerable<StoryContainer> storyContainers)
+    public NavigationTreeItem Build(IEnumerable<StoryContainer> storyContainers, string? expandedNavigationPath)
     {
         var root = new NavigationTreeItem { Type = NavigationTreeItemType.Container };
         foreach (var storyContainer in storyContainers)
@@ -16,10 +16,22 @@ internal class NavigationTreeBuilder
                 .Select(story => new NavigationTreeItem
                 {
                     Type = NavigationTreeItemType.Story,
-                    Caption = story.Name
+                    Caption = story.Name,
+                    NavigationPath = story.NavigationPath,
                 });
             item.SubItems.AddRange(subItems);
         }
+
+        if (!string.IsNullOrEmpty(expandedNavigationPath))
+        {
+            var expansionPath = new Stack<NavigationTreeItem>();
+            if (FindExpansionPathTo(expansionPath, root, expandedNavigationPath))
+            {
+                foreach (var expansion in expansionPath) { expansion.Expanded = true; }
+            }
+        }
+
+        root.SubItems.ForEach(story => story.Expanded = true);
 
         return root;
     }
@@ -43,5 +55,17 @@ internal class NavigationTreeBuilder
         if (!tails.Any()) return subItem;
 
         return this.CreateOrGetNavigationTreeItem(subItem, tails);
+    }
+
+    private static bool FindExpansionPathTo(Stack<NavigationTreeItem> expansionPath, NavigationTreeItem item, string expandedNavigationPath)
+    {
+        expansionPath.Push(item);
+        if (item.NavigationPath == expandedNavigationPath) return true;
+        foreach (var subItem in item.SubItems)
+        {
+            if (FindExpansionPathTo(expansionPath, subItem, expandedNavigationPath)) return true;
+        }
+        expansionPath.Pop();
+        return false;
     }
 }

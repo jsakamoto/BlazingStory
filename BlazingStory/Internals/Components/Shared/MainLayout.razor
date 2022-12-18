@@ -7,12 +7,14 @@
 
 <SvgIcons />
 
-<div class="main-layout stack horizontal">
-    <div class="sidebar-container">
-        <SideBar />
-    </div>
+<PathQueryRouter>
+    <div class="main-layout stack horizontal">
+        <div class="sidebar-container">
+            <SideBar />
+        </div>
 
-    <div class="fill body-container stack">
-        @Body
+        <div class="fill body-container stack">
+            @Body
+        </div>
     </div>
-</div>
+</PathQueryRouter>

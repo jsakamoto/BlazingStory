@@ -4,10 +4,6 @@ namespace BlazingStory.Internals.Services;
 
 public class StoriesStore
 {
-    internal event EventHandler<IEnumerable<Story>>? StoryDataSetChanged;
-
-    internal IEnumerable<Story> StoryDataSet { get; private set; } = Enumerable.Empty<Story>();
-
     private readonly List<StoryContainer> _StoryContainers = new();
 
     internal IEnumerable<StoryContainer> StoryContainers => this._StoryContainers;
@@ -30,11 +26,5 @@ public class StoriesStore
         {
             this._StoryContainers.Add(storyContainer);
         }
-    }
-
-    internal void SetStoryDataSet(IEnumerable<Story> storyDataSet)
-    {
-        this.StoryDataSet = storyDataSet;
-        this.StoryDataSetChanged?.Invoke(this, this.StoryDataSet);
     }
 }

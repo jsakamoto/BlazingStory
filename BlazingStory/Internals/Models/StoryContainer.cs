@@ -20,7 +20,7 @@ internal class StoryContainer
 
     public void RegisterStory(string name, RenderFragment<StoryContext> renderFragment)
     {
-        var newStory = new Story(name, new(), renderFragment);
+        var newStory = new Story(this.Title, name, new(), renderFragment);
         var index = this.Stories.FindIndex(story => story.Name == name);
         if (index == -1)
         {
