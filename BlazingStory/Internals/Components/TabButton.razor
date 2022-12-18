@@ -1,0 +1,14 @@
+<button class="@CssClass(new { this.Active })" @onclick="(args => OnClick.InvokeAsync(args))">
+    @ChildContent
+</button>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public bool Active { get; set; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+}

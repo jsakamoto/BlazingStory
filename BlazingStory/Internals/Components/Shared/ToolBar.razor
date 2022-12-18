@@ -1,0 +1,10 @@
+<div class="toolbar-viewport">
+    <div class="toolbar-content">
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

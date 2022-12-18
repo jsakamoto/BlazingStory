@@ -1,6 +1,20 @@
 ﻿@page "/"
 <div class="fill body">
 
+    <ToolBar>
+        <div style="display:inline-flex;">
+            <TabButton Active="true">
+                Canvas
+            </TabButton>
+            <TabButton>
+                Docs
+            </TabButton>
+        </div>
+        <Separator />
+        <IconButton Icon="SvgIconType.ZoomIn" />
+        <IconButton Icon="SvgIconType.ZoomOut" />
+    </ToolBar>
+
     <h3>Index</h3>
 
     <p>this.StoriesStore?.StoryContainers.Count(): @this.StoriesStore?.StoryContainers.Count()</p>

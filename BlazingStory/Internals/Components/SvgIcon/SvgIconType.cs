@@ -7,5 +7,7 @@ public enum SvgIconType
     Document,
     BookmarkHollow,
     ExpandAll,
-    CollapseAll
+    CollapseAll,
+    ZoomIn,
+    ZoomOut
 }

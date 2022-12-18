@@ -1,0 +1,11 @@
+<button @onclick="(args => OnClick.InvokeAsync(args))">
+    <SvgIcon Type="Icon" />
+</button>
+
+@code {
+    [Parameter]
+    public SvgIconType Icon { get; set; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+}

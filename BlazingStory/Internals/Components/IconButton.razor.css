@@ -1,0 +1,19 @@
+﻿button {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+}
+
+    button ::deep svg {
+        width: 16px;
+        height: 16px;
+        fill: var(--bs-sidebar-nav-subheading-color);
+    }
+
+    button:hover {
+        background-color: var(--bs-hover-back-color);
+    }
+
+        button:hover ::deep svg {
+            fill: var(--bs-focused-color);
+        }
