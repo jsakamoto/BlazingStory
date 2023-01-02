@@ -1,0 +1,15 @@
+@if (this.RouteData?.View == this.View)
+{
+    @ChildContent
+}
+
+@code {
+    [CascadingParameter]
+    public PathQueryRoutData? RouteData { get; set; }
+
+    [Parameter, EditorRequired]
+    public string? View { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

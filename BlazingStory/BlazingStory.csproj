@@ -13,6 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Internals\Pages\Canvas\AddOnPanel.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
     <PackageReference Include="Toolbelt.Web.CssClassInlineBuilder" Version="2.0.0" />
   </ItemGroup>

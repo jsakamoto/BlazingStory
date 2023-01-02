@@ -1,0 +1,33 @@
+<PageTitle>@_PageTitle</PageTitle>
+
+<div>
+    <h3>Canvas</h3>
+</div>
+
+<AddOnPanel></AddOnPanel>
+@*<p>this.StoriesStore?.StoryContainers.Count(): @this.StoriesStore?.StoryContainers.Count()</p>
+<p>this.RouteData?.Path: @(this.RouteData?.Path ?? "(null)")</p>
+<p>this.RouteData?.View: @(this.RouteData?.View ?? "(null)")</p>
+<p>this.RouteData?.Parameter: @(this.RouteData?.Parameter ?? "(null)")</p>
+*@
+@code {
+    [CascadingParameter]
+    public required StoriesStore StoriesStore { get; set; }
+
+    [CascadingParameter]
+    public required PathQueryRoutData RouteData { get; set; }
+
+    private string _PageTitle = "";
+
+    private string _LastTitledParameter = "";
+
+    protected override void OnParametersSet()
+    {
+        if (_LastTitledParameter == this.RouteData.Parameter) return;
+        if (this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story))
+        {
+            _PageTitle = string.Join(" / ", story.Title.Split('/')) + " - " + story.Name;
+        }
+        _LastTitledParameter = this.RouteData.Parameter;
+    }
+}
