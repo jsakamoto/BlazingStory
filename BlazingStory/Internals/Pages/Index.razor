@@ -1,24 +1,24 @@
 ﻿@page "/"
-<div class="fill body">
+<div class="fill body stack vertical">
 
     <ToolBar>
-        <div style="display:inline-flex;">
+        <TabButtonGroup>
             <TabButton Active="true">
                 Canvas
             </TabButton>
             <TabButton>
                 Docs
             </TabButton>
-        </div>
+        </TabButtonGroup>
         <Separator />
         <IconButton Icon="SvgIconType.ZoomIn" />
         <IconButton Icon="SvgIconType.ZoomOut" />
     </ToolBar>
 
-    <PathQueryRouteView View="story" >
+    <PathQueryRouteView View="story">
         <CanvasPage />
     </PathQueryRouteView>
-@*
+    @*
     <h3>Index</h3>
 
     <p>this.StoriesStore?.StoryContainers.Count(): @this.StoriesStore?.StoryContainers.Count()</p>

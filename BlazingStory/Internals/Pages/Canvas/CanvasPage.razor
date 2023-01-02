@@ -1,15 +1,13 @@
 <PageTitle>@_PageTitle</PageTitle>
 
-<div>
+<div class="canvas-container">
     <h3>Canvas</h3>
 </div>
 
-<AddOnPanel></AddOnPanel>
-@*<p>this.StoriesStore?.StoryContainers.Count(): @this.StoriesStore?.StoryContainers.Count()</p>
-<p>this.RouteData?.Path: @(this.RouteData?.Path ?? "(null)")</p>
-<p>this.RouteData?.View: @(this.RouteData?.View ?? "(null)")</p>
-<p>this.RouteData?.Parameter: @(this.RouteData?.Parameter ?? "(null)")</p>
-*@
+<div class="add-on-container">
+    <AddOnPanel></AddOnPanel>
+</div>
+
 @code {
     [CascadingParameter]
     public required StoriesStore StoriesStore { get; set; }

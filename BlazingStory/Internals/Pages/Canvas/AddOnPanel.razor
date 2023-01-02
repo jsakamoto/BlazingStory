@@ -1,1 +1,28 @@
-<h5>Add-on</h5>
+<div class="stack vertical">
+
+    <ToolBar>
+        <TabButtonGroup>
+            <TabButton Active="true">
+                Controls (0)
+            </TabButton>
+            <TabButton>
+                Actions
+            </TabButton>
+            <TabButton>
+                Interactions
+            </TabButton>
+        </TabButtonGroup>
+    </ToolBar>
+
+    <div class="fill">
+        <p>this.RouteData?.Path: @(this.RouteData?.Path ?? "(null)")</p>
+        <p>this.RouteData?.View: @(this.RouteData?.View ?? "(null)")</p>
+        <p>this.RouteData?.Parameter: @(this.RouteData?.Parameter ?? "(null)")</p>
+    </div>
+
+</div>
+
+@code {
+    [CascadingParameter]
+    public required PathQueryRoutData RouteData { get; set; }
+}

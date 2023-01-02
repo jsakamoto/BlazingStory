@@ -5,7 +5,7 @@
 }
 
 .toolbar-content {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 4px;
 }
