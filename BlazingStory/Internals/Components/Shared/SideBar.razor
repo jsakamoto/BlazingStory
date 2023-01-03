@@ -17,7 +17,7 @@
     public StoriesStore? StoriesStore { get; set; }
 
     [CascadingParameter]
-    public PathQueryRoutData? RouteData { get; set; }
+    public QueryRouteData? RouteData { get; set; }
 
     private readonly NavigationTreeBuilder _NavigationTreeBuilder = new();
 

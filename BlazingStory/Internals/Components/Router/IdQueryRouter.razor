@@ -9,7 +9,7 @@
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
-    private PathQueryRoutData _RouteData = new(path: "");
+    private QueryRouteData _RouteData = new(path: "");
 
     protected override void OnInitialized()
     {
@@ -21,10 +21,12 @@
     {
         var uri = new Uri(args.Location);
         var queryStrings = HttpUtility.ParseQueryString(uri.Query);
-        var path = queryStrings["path"] ?? "";
-        if (this._RouteData.Path != path)
+        var viewMode = queryStrings["viewMode"] ?? "";
+        var id = queryStrings["id"] ?? "";
+        var newRouteData = new QueryRouteData(viewMode, id);
+        if (this._RouteData != newRouteData)
         {
-            this._RouteData = new(path);
+            this._RouteData = newRouteData;
             this.StateHasChanged();
         }
     }

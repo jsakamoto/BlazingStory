@@ -10,7 +10,7 @@ public partial class Index
     public StoriesStore? StoriesStore { get; set; }
 
     [CascadingParameter]
-    public PathQueryRoutData? RouteData { get; set; }
+    public QueryRouteData? RouteData { get; set; }
 
     protected override void OnInitialized()
     {

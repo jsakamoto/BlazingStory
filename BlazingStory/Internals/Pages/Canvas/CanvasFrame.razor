@@ -1,0 +1,22 @@
+@if (this._Story != null)
+{
+    @this._Story.RenderFragment(this._Story.Context)
+}
+
+@code {
+    [CascadingParameter]
+    public required StoriesStore StoriesStore { get; set; }
+
+    [CascadingParameter]
+    public required QueryRouteData RouteData { get; set; }
+
+    private Story? _Story;
+
+    protected override void OnParametersSet()
+    {
+        if (!this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story)) return;
+        if (Object.ReferenceEquals(this._Story, story)) return;
+        this._Story = story;
+        this.StateHasChanged();
+    }
+}

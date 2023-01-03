@@ -1,7 +1,12 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
 <PageTitle>@_PageTitle</PageTitle>
 
-<div class="canvas-container">
-    <h3>Canvas</h3>
+
+<div class="canvas-container stack">
+    <iframe @ref="_Iframe" src="@_InitialCanvasFrameUrl" class="canvas-frame fill"></iframe>
 </div>
 
 <div class="add-on-container">
@@ -13,19 +18,72 @@
     public required StoriesStore StoriesStore { get; set; }
 
     [CascadingParameter]
-    public required PathQueryRoutData RouteData { get; set; }
+    public required QueryRouteData RouteData { get; set; }
 
     private string _PageTitle = "";
 
     private string _LastTitledParameter = "";
 
-    protected override void OnParametersSet()
+    private string _InitialCanvasFrameUrl = "";
+
+    private string _CurrentCanvasFrameUrl = "";
+
+    private IJSObjectReference? _JSModule;
+
+    private ElementReference _Iframe;
+
+    protected override void OnInitialized()
     {
-        if (_LastTitledParameter == this.RouteData.Parameter) return;
+        _InitialCanvasFrameUrl = _CurrentCanvasFrameUrl = this.GetCanvasFrameUrl();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        this.UpdatePageTitle();
+        await this.UpdateCanvasFrameUrlAsync();
+    }
+
+    private void UpdatePageTitle()
+    {
+        if (this._LastTitledParameter == this.RouteData.Parameter) return;
         if (this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story))
         {
-            _PageTitle = string.Join(" / ", story.Title.Split('/')) + " - " + story.Name;
+            this._PageTitle = string.Join(" / ", story.Title.Split('/')) + " - " + story.Name + " - " + BlazingStoryApp.Title;
         }
-        _LastTitledParameter = this.RouteData.Parameter;
+        this._LastTitledParameter = this.RouteData.Parameter;
+    }
+
+    private async ValueTask UpdateCanvasFrameUrlAsync()
+    {
+        var nextCanvasFrameUrl = this.GetCanvasFrameUrl();
+        if (this._CurrentCanvasFrameUrl == nextCanvasFrameUrl) return;
+        this._CurrentCanvasFrameUrl = nextCanvasFrameUrl;
+        var jsModule = await this.GetJSModuleAsync();
+        await jsModule.InvokeVoidAsync("navigateCanvasFrameTo", this._Iframe, nextCanvasFrameUrl);
+    }
+
+    private string GetCanvasFrameUrl()
+    {
+        return this.NavigationManager.GetUriWithQueryParameters(
+            uri: "./iframe.html",
+            parameters: new Dictionary<string, object?>
+                {
+                    ["viewMode"] = this.RouteData.View,
+                    ["id"] = this.RouteData.Parameter,
+                });
+    }
+
+    private async ValueTask<IJSObjectReference> GetJSModuleAsync()
+    {
+        if (this._JSModule == null)
+        {
+            this._JSModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazingStory/Internals/Pages/Canvas/CanvasPage.razor.js");
+        }
+        return this._JSModule;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (this._JSModule != null) try { await this._JSModule.DisposeAsync(); } catch (JSDisconnectedException) { }
     }
 }
