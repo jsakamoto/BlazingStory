@@ -1,4 +1,4 @@
-<button class="@CssClass(new { this.Active })" @onclick="(args => OnClick.InvokeAsync(args))">
+<button class="@CssClass("tab-button", new { this.Active })" @onclick="(args => OnClick.InvokeAsync(args))">
     @ChildContent
 </button>
 

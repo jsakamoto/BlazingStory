@@ -1,4 +1,4 @@
-﻿button {
+﻿button.tab-button {
     font-size: 13px;
     font-weight: bold;
     height: 40px;
@@ -7,9 +7,9 @@
     color: var(--bs-sidebar-nav-subheading-color);
     border-top: solid 2px transparent;
     border-bottom: solid 3px transparent;
-}
 
-    button.active {
+    &.active {
         color: var(--bs-focused-color);
         border-bottom: solid 3px var(--bs-focused-color);
     }
+}

@@ -1,0 +1,14 @@
+﻿@import "variables.scss";
+@import "basic-styles.scss";
+@import "../../Internals/Components/Layouts/MainLayout.razor.scss";
+@import "../../Internals/Components/SideBar/SideBar.razor.scss";
+@import "../../Internals/Components/SideBar/NavigationTree.razor.scss";
+@import "../../Internals/Components/ToolBar/ToolBar.razor.scss";
+@import "../../Internals/Components/ToolBar/TabButtonGroup.razor.scss";
+@import "../../Internals/Components/ToolBar/TabButton.razor.scss";
+@import "../../Internals/Components/ToolBar/IconButton.razor.scss";
+@import "../../Internals/Components/ToolBar/Separator.razor.scss";
+@import "../../Internals/Components/SvgIcon/SvgIcon.razor.scss";
+@import "../../Internals/Pages/Index.razor.scss";
+@import "../../Internals/Pages/Canvas/CanvasPage.razor.scss";
+

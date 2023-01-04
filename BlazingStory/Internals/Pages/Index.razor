@@ -1,4 +1,5 @@
 ﻿@page "/"
+
 <div class="fill body stack vertical">
 
     <ToolBar>
@@ -18,12 +19,14 @@
     <QueryRouteView View="story">
         <CanvasPage />
     </QueryRouteView>
-    @*
-    <h3>Index</h3>
-
-    <p>this.StoriesStore?.StoryContainers.Count(): @this.StoriesStore?.StoryContainers.Count()</p>
-    <p>this.RouteData?.Path: @(this.RouteData?.Path ?? "(null)")</p>
-    <p>this.RouteData?.View: @(this.RouteData?.View ?? "(null)")</p>
-    <p>this.RouteData?.Parameter: @(this.RouteData?.Parameter ?? "(null)")</p>*@
 
 </div>
+
+@code
+{
+    [CascadingParameter]
+    public StoriesStore? StoriesStore { get; set; }
+
+    [CascadingParameter]
+    public QueryRouteData? RouteData { get; set; }
+}
