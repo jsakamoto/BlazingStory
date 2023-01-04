@@ -12,8 +12,8 @@
     [CascadingParameter]
     internal StoryContext StoryContext { get; set; } = default!;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        this.StoryContext.Args.Add(ParameterExtractor.GetParameterName(this.For), this.Value);
+        await this.StoryContext.AddOrUpdateArgumentAsync(ParameterExtractor.GetParameterName(this.For), this.Value);
     }
 }

@@ -5,7 +5,8 @@
         <tbody>
             @foreach (var parameter in this.GetParameters())
             {
-                <tr>
+                var argumentValue = GetArgumentValue(parameter.Name);
+                <tr @key="this.GetKey(parameter)">
                     <td>
                         <span>@parameter.Name</span>
                         @if (parameter.Required)
@@ -13,7 +14,16 @@
                             <span class="required" title="Required">*</span>
                         }
                     </td>
-                    <td>-</td>
+                    <td>
+                        @if (parameter.Type == typeof(String))
+                        {
+                            <textarea rows="1" @oninput="@((args) => OnInputAsync(args, parameter))">@(argumentValue ?? "")</textarea>
+                        }
+                        else
+                        {
+                            <span>@(argumentValue?.ToString() ?? "-")</span>
+                        }
+                    </td>
                 </tr>
             }
         </tbody>
@@ -28,5 +38,21 @@
     private IEnumerable<ComponentParameter> GetParameters()
     {
         return this.Story?.Context.Parameters ?? Enumerable.Empty<ComponentParameter>();
+    }
+
+    private string GetKey(ComponentParameter parameter)
+    {
+        return (this.Story?.NavigationPath ?? "") + ":" + parameter.Name;
+    }
+
+    private object? GetArgumentValue(string parameterName)
+    {
+        return this.Story?.Context.Args.TryGetValue(parameterName, out var value) == true ? value : null;
+    }
+
+    private async Task OnInputAsync(ChangeEventArgs args, ComponentParameter parameter)
+    {
+        if (this.Story == null) return;
+        await this.Story.Context.AddOrUpdateArgumentAsync(parameter.Name, args.Value);
     }
 }

@@ -42,9 +42,9 @@
 
     protected override async Task OnParametersSetAsync()
     {
+        this.UpdateCurrentStory();
         this.UpdatePageTitle();
         await this.UpdateCanvasFrameUrlAsync();
-        this.UpdateCurrentStory();
     }
 
     private void UpdatePageTitle()
@@ -68,13 +68,16 @@
 
     private void UpdateCurrentStory()
     {
-        var path = this.RouteData.Parameter;
+        if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
 
+        var path = this.RouteData.Parameter;
         if (this.StoriesStore.TryGetStoryByPath(path, out var story))
         {
             this._CurrentStory = story;
         }
         else this._CurrentStory = null;
+
+        if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged += Context_ArgumentChanged;
     }
 
     private string GetCanvasFrameUrl()
@@ -85,7 +88,19 @@
                 {
                     ["viewMode"] = this.RouteData.View,
                     ["id"] = this.RouteData.Parameter,
+                    ["args"] = this.GetArgumentsUrlText()
                 });
+    }
+
+    private string GetArgumentsUrlText()
+    {
+        if (this._CurrentStory == null) return "";
+        return string.Join(':', this._CurrentStory.Context.Args.Select(arg => $"{arg.Key}:{arg.Value}"));
+    }
+
+    private async ValueTask Context_ArgumentChanged()
+    {
+        await this.UpdateCanvasFrameUrlAsync();
     }
 
     private async ValueTask<IJSObjectReference> GetJSModuleAsync()
@@ -99,6 +114,7 @@
 
     public async ValueTask DisposeAsync()
     {
+        if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
         if (this._JSModule != null) try { await this._JSModule.DisposeAsync(); } catch (JSDisconnectedException) { }
     }
 }
