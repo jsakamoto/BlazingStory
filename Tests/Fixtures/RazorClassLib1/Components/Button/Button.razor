@@ -1,11 +1,25 @@
 ﻿@attribute [Description("This is basic button component.")]
 
-<button class="@(this.Color.ToString().ToLower())">@this.Text</button>
+<button class="@(this.Color.ToString().ToLower())" @onclick="@((e) => OnClick.InvokeAsync(e))">
+    @this.Text
+</button>
 
 @code {
-    [Parameter]
+    /// <summary>
+    /// Set a text that is button caption.
+    /// </summary>
+    [Parameter, EditorRequired]
     public string? Text { get; set; }
 
+    /// <summary>
+    /// Set a color of the button.
+    /// </summary>
     [Parameter]
     public ButtonColor Color { get; set; } = ButtonColor.Default;
+
+    /// <summary>
+    /// Set a callback method that will be invoked when users click the button.
+    /// </summary>
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
 }

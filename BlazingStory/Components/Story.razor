@@ -3,10 +3,12 @@
 @attribute [CascadingTypeParameter(nameof(TComponent))]
 
 <div class="display:none;">
-    @Arguments
+    <CascadingValue Value="this._StoryContext">
+        @Arguments
+    </CascadingValue>
 </div>
 
-@code 
+@code
 {
     [CascadingParameter]
     internal StoryContainer? StoryContainer { get; set; }
@@ -20,11 +22,13 @@
     [Parameter, EditorRequired]
     public RenderFragment<StoryContext>? Template { get; set; }
 
+    private StoryContext _StoryContext = new(ParameterExtractor.GetParametersFromComponentType(typeof(TComponent)));
+
     protected override void OnInitialized()
     {
         if (this.StoryContainer == null) throw new InvalidOperationException($"The StoryContainer cascading parameter is required.");
         if (this.Template == null) throw new InvalidOperationException($"The Template parameter is required.");
 
-        this.StoryContainer.RegisterStory(this.Name, this.Template);
+        this.StoryContainer.RegisterStory(this.Name, this._StoryContext, this.Template);
     }
 }

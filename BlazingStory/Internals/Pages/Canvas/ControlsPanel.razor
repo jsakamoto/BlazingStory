@@ -1,0 +1,32 @@
+<div class="controls-panel">
+    <table>
+        <thead><tr><th>Name</th><th>Control</th></tr></thead>
+
+        <tbody>
+            @foreach (var parameter in this.GetParameters())
+            {
+                <tr>
+                    <td>
+                        <span>@parameter.Name</span>
+                        @if (parameter.Required)
+                        {
+                            <span class="required" title="Required">*</span>
+                        }
+                    </td>
+                    <td>-</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code
+{
+    [Parameter, EditorRequired]
+    public Story? Story { get; set; }
+
+    private IEnumerable<ComponentParameter> GetParameters()
+    {
+        return this.Story?.Context.Parameters ?? Enumerable.Empty<ComponentParameter>();
+    }
+}

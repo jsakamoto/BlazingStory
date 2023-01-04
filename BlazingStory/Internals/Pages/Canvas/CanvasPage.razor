@@ -10,7 +10,7 @@
 </div>
 
 <div class="add-on-container">
-    <AddOnPanel></AddOnPanel>
+    <AddOnPanel Story="this._CurrentStory"></AddOnPanel>
 </div>
 
 @code {
@@ -28,6 +28,8 @@
 
     private string _CurrentCanvasFrameUrl = "";
 
+    private Story? _CurrentStory = null;
+
     private IJSObjectReference? _JSModule;
 
     private ElementReference _Iframe;
@@ -41,6 +43,7 @@
     {
         this.UpdatePageTitle();
         await this.UpdateCanvasFrameUrlAsync();
+        this.UpdateCurrentStory();
     }
 
     private void UpdatePageTitle()
@@ -60,6 +63,17 @@
         this._CurrentCanvasFrameUrl = nextCanvasFrameUrl;
         var jsModule = await this.GetJSModuleAsync();
         await jsModule.InvokeVoidAsync("navigateCanvasFrameTo", this._Iframe, nextCanvasFrameUrl);
+    }
+
+    private void UpdateCurrentStory()
+    {
+        var path = this.RouteData.Parameter;
+
+        if (this.StoriesStore.TryGetStoryByPath(path, out var story))
+        {
+            this._CurrentStory = story;
+        }
+        else this._CurrentStory = null;
     }
 
     private string GetCanvasFrameUrl()

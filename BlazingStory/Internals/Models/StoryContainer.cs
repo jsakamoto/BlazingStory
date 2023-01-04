@@ -18,9 +18,9 @@ internal class StoryContainer
         this.Title = title;
     }
 
-    public void RegisterStory(string name, RenderFragment<StoryContext> renderFragment)
+    public void RegisterStory(string name, StoryContext storyContext, RenderFragment<StoryContext> renderFragment)
     {
-        var newStory = new Story(this.Title, name, new(), renderFragment);
+        var newStory = new Story(this.Title, name, storyContext, renderFragment);
         var index = this.Stories.FindIndex(story => story.Name == name);
         if (index == -1)
         {

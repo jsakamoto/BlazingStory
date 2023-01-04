@@ -1,0 +1,53 @@
+.controls-panel {
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+        color: #333333;
+        font-size: 13px;
+        line-height: 20px;
+        text-align: left;
+        width: 100%;
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-left: 0;
+        margin-right: 0;
+
+        tbody {
+
+            tr {
+                border-top-width: 1px;
+                border-top-style: solid;
+                border-top-color: #e6e6e6;
+            }
+        }
+
+        th {
+            color: rgba(51,51,51,0.75);
+
+            &:first-of-type {
+                padding: 10px 15px 10px 20px;
+                width: 25%;
+            }
+        }
+
+        td {
+            &:first-of-type {
+                padding: 10px 0 10px 20px;
+                font-weight: bold;
+            }
+
+            .required {
+                color: #FF4400;
+                font-weight: normal;
+                font-family: ui-monospace,Menlo,Monaco,"Roboto Mono","Oxygen Mono","Ubuntu Monospace","Source Code Pro","Droid Sans Mono","Courier New",monospace;
+                cursor: help;
+            }
+        }
+
+        th, td {
+            &:last-of-type {
+                padding: 10px 20px 10px 15px;
+            }
+        }
+    }
+}

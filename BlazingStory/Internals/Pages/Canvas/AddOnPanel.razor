@@ -3,7 +3,7 @@
     <ToolBar>
         <TabButtonGroup>
             <TabButton Active="true">
-                Controls (0)
+                Controls (@(this.GetParametersCount()))
             </TabButton>
             <TabButton>
                 Actions
@@ -15,13 +15,20 @@
     </ToolBar>
 
     <div class="fill">
-        <p>this.RouteData?.View: @(this.RouteData?.View ?? "(null)")</p>
-        <p>this.RouteData?.Parameter: @(this.RouteData?.Parameter ?? "(null)")</p>
+        <ControlsPanel Story="this.Story" />
     </div>
 
 </div>
 
-@code {
-    [CascadingParameter]
-    public required QueryRouteData RouteData { get; set; }
+@code
+{
+    [Parameter, EditorRequired]
+    public Story? Story { get; set; }
+
+    private int GetParametersCount()
+    {
+        return this.Story?.Context.Parameters
+            .Where(p => p.Name != "EventCallback" && !p.Name.StartsWith("EventCallback`"))
+            .Count() ?? 0;
+    }
 }

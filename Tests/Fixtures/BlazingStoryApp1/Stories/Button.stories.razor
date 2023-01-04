@@ -11,3 +11,17 @@
         <Button Text="Primary" Color="ButtonColor.Primary" @attributes="context.Args" />
     </Template>
 </Story>
+
+<Story TComponent="Button" Name="Danger">
+
+    <Arguments>
+        <Arg For="_ => _!.Text" Value='"Danger!"' />
+        <Arg For="_ => _!.Color" Value="ButtonColor.Danger" />
+    </Arguments>
+
+    <Template>
+        <h1>This is Button</h1>
+        <Button @attributes="context.Args" />
+    </Template>
+
+</Story>

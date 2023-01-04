@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Internals.Models;
 
-internal class Story
+public class Story
 {
     internal readonly string Title;
 
@@ -15,7 +15,7 @@ internal class Story
 
     internal readonly RenderFragment<StoryContext> RenderFragment;
 
-    public Story(string title, string name, StoryContext context, RenderFragment<StoryContext> renderFragment)
+    internal Story(string title, string name, StoryContext context, RenderFragment<StoryContext> renderFragment)
     {
         this.Title = title;
         this.Name = name;

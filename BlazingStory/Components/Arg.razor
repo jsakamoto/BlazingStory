@@ -1,0 +1,19 @@
+﻿@using System.Linq.Expressions;
+@typeparam TComponent where TComponent : notnull
+@typeparam TParameter
+
+@code {
+    [Parameter]
+    public Expression<Func<TComponent, TParameter>>? For { get; set; }
+
+    [Parameter]
+    public TParameter? Value { get; set; }
+
+    [CascadingParameter]
+    internal StoryContext StoryContext { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+        this.StoryContext.Args.Add(ParameterExtractor.GetParameterName(this.For), this.Value);
+    }
+}
