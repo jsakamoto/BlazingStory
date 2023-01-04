@@ -9,11 +9,12 @@
     <iframe @ref="_Iframe" src="@_InitialCanvasFrameUrl" class="canvas-frame fill"></iframe>
 </div>
 
-<div class="add-on-container">
+<div class="add-on-container stack vertical">
     <AddOnPanel Story="this._CurrentStory"></AddOnPanel>
 </div>
 
-@code {
+@code
+{
     [CascadingParameter]
     public required StoriesStore StoriesStore { get; set; }
 

@@ -305,7 +305,6 @@ svg.svg-icon {
 }
 
 .canvas-container {
-  /*border: dashed 4px red;*/
   flex: 1;
 }
 
@@ -314,8 +313,16 @@ svg.svg-icon {
 }
 
 .add-on-container {
-  min-height: 200px;
+  height: 220px;
   box-shadow: rgba(0, 0, 0, 0.1) 0 1px 0 0 inset;
+}
+
+.add-on-panel {
+  overflow: auto;
+}
+
+.add-on-panel-content {
+  overflow: auto;
 }
 
 .controls-panel table {
