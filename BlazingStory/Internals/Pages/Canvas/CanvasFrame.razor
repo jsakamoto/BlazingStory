@@ -1,3 +1,8 @@
+@using System.Web
+@implements IDisposable
+@inject NavigationManager NavigationManager
+@inject ILogger<CanvasFrame> Logger
+
 @if (this._Story != null)
 {
     @this._Story.RenderFragment(this._Story.Context)
@@ -13,11 +18,84 @@
 
     private Story? _Story;
 
-    protected override void OnParametersSet()
+    protected override async Task OnInitializedAsync()
+    {
+        this.NavigationManager.LocationChanged += NavigationManager_LocationChanged;
+        await this.UpdateComponentArgsFromUrlAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
     {
         if (!this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story)) return;
         if (Object.ReferenceEquals(this._Story, story)) return;
         this._Story = story;
+        await this.ApplyComponentArgsFromUrlAsync();
         this.StateHasChanged();
+    }
+
+    private string _ComponentArgsString = "";
+
+    private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs args)
+    {
+        this.UpdateComponentArgsFromUrlAsync().AndLogException(this.Logger);
+    }
+
+    private async ValueTask UpdateComponentArgsFromUrlAsync()
+    {
+        var uri = new Uri(this.NavigationManager.Uri);
+        var queryStrings = HttpUtility.ParseQueryString(uri.Query);
+        var componentArgsString = queryStrings["args"] ?? "";
+        if (this._ComponentArgsString == componentArgsString) return;
+
+        this._ComponentArgsString = componentArgsString;
+        await this.ApplyComponentArgsFromUrlAsync();
+        this.StateHasChanged();
+    }
+
+    private async ValueTask ApplyComponentArgsFromUrlAsync()
+    {
+        var componentArgsPairs = this._ComponentArgsString.Split(':').Chunk(2).ToArray();
+
+        if (this._Story != null)
+        {
+            var parameters = this._Story.Context.Parameters;
+            foreach (var argsPair in componentArgsPairs)
+            {
+                var name = argsPair.First();
+                var valueString = argsPair.Last();
+                var parameter = parameters.FirstOrDefault(p => p.Name == name);
+                if (parameter == null) continue;
+                if (!this.TryConvertType(parameter.Type, valueString, out var value)) continue;
+
+                await this._Story.Context.AddOrUpdateArgumentAsync(name, value);
+            }
+        }
+    }
+
+    private bool TryConvertType(Type targetType, string valueString, [NotNullWhen(true)] out object? value)
+    {
+        if (targetType == typeof(String))
+        {
+            value = valueString;
+            return true;
+        }
+
+        if (targetType.IsEnum)
+        {
+            if (Enum.TryParse(targetType, valueString, out var enumValue))
+            {
+                value = enumValue;
+                return true;
+            }
+        }
+
+        value = null;
+        return false;
+    }
+
+
+    public void Dispose()
+    {
+        this.NavigationManager.LocationChanged -= NavigationManager_LocationChanged;
     }
 }
