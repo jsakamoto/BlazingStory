@@ -6,7 +6,8 @@
             @foreach (var parameter in this.GetParameters())
             {
                 var argumentValue = GetArgumentValue(parameter.Name);
-                <tr @key="this.GetKey(parameter)">
+                var key = this.GetKey(parameter);
+                <tr @key="key">
                     <td>
                         <span>@parameter.Name</span>
                         @if (parameter.Required)
@@ -15,13 +16,32 @@
                         }
                     </td>
                     <td>
+
                         @if (parameter.Type == typeof(String))
                         {
-                            <textarea rows="1" @oninput="@((args) => OnInputAsync(args, parameter))">@(argumentValue ?? "")</textarea>
+                            <textarea rows="1" @oninput="@((args) => OnInputAsync(args.Value, parameter))">@(argumentValue ?? "")</textarea>
                         }
+
+                        else if (parameter.Type.IsEnum)
+                        {
+                            var enumValues = Enum.GetValues(parameter.Type);
+                            foreach (var enumValue in enumValues)
+                            {
+                                var isChecked = argumentValue?.Equals(enumValue) == true;
+                                <div>
+                                    <label>
+                                        <input type="radio" name="@key" value="@enumValue" checked="@isChecked" @onchange="@(() => OnInputAsync(enumValue, parameter))">
+                                        <span>@enumValue</span>
+                                    </label>
+                                </div>
+                            }
+                        }
+
                         else
                         {
-                            <span>@(argumentValue?.ToString() ?? "-")</span>
+                            <span>
+                                @(argumentValue?.ToString() ?? "-")
+                            </span>
                         }
                     </td>
                 </tr>
@@ -50,9 +70,9 @@
         return this.Story?.Context.Args.TryGetValue(parameterName, out var value) == true ? value : null;
     }
 
-    private async Task OnInputAsync(ChangeEventArgs args, ComponentParameter parameter)
+    private async Task OnInputAsync(object? value, ComponentParameter parameter)
     {
         if (this.Story == null) return;
-        await this.Story.Context.AddOrUpdateArgumentAsync(parameter.Name, args.Value);
+        await this.Story.Context.AddOrUpdateArgumentAsync(parameter.Name, value);
     }
 }

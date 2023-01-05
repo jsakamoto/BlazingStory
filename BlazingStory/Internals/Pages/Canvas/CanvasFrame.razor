@@ -29,7 +29,7 @@
         if (!this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story)) return;
         if (Object.ReferenceEquals(this._Story, story)) return;
         this._Story = story;
-        await this.ApplyComponentArgsFromUrlAsync();
+        //await this.ApplyComponentArgsFromUrlAsync();
         this.StateHasChanged();
     }
 
