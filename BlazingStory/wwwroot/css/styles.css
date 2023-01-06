@@ -313,7 +313,7 @@ svg.svg-icon {
 }
 
 .add-on-container {
-  height: 220px;
+  height: 300px;
   box-shadow: rgba(0, 0, 0, 0.1) 0 1px 0 0 inset;
 }
 
@@ -346,11 +346,32 @@ svg.svg-icon {
 .controls-panel table th {
   color: rgba(51, 51, 51, 0.75);
 }
-.controls-panel table th:first-of-type {
+.controls-panel table th.name {
   padding: 10px 15px 10px 20px;
   width: 25%;
 }
-.controls-panel table td:first-of-type {
+.controls-panel table th.control {
+  display: flex;
+}
+.controls-panel table th.control span {
+  flex: 1;
+}
+.controls-panel table th.control .reset-button {
+  width: 30px;
+  height: 20px;
+  padding: 3px 8px;
+  background-color: var(--bs-hover-back-color);
+  box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 1px inset;
+  border-radius: 3em;
+}
+.controls-panel table th.control .reset-button svg {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  padding: 0;
+  fill: var(--bs-focused-color);
+}
+.controls-panel table td.name {
   padding: 10px 0 10px 20px;
   font-weight: bold;
 }
@@ -360,6 +381,6 @@ svg.svg-icon {
   font-family: ui-monospace, Menlo, Monaco, "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Droid Sans Mono", "Courier New", monospace;
   cursor: help;
 }
-.controls-panel table th:last-of-type, .controls-panel table td:last-of-type {
+.controls-panel table th.control, .controls-panel table td.control {
   padding: 10px 20px 10px 15px;
 }

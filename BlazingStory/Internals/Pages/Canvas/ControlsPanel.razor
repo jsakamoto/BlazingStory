@@ -1,6 +1,14 @@
 <div class="controls-panel">
     <table>
-        <thead><tr><th>Name</th><th>Control</th></tr></thead>
+        <thead>
+            <tr>
+                <th class="name">Name</th>
+                <th class="control">
+                    <span>Control</span>
+                    <IconButton Icon="SvgIconType.Reset" Class="reset-button" Title="Reset controls" OnClick="ResetControls"/>
+                </th>
+            </tr>
+        </thead>
 
         <tbody>
             @foreach (var parameter in this.GetParameters())
@@ -8,18 +16,18 @@
                 var argumentValue = GetArgumentValue(parameter.Name);
                 var key = this.GetKey(parameter);
                 <tr @key="key">
-                    <td>
+                    <td class="name">
                         <span>@parameter.Name</span>
                         @if (parameter.Required)
                         {
                             <span class="required" title="Required">*</span>
                         }
                     </td>
-                    <td>
+                    <td class="control">
 
                         @if (parameter.Type == typeof(String))
                         {
-                            <textarea rows="1" @oninput="@((args) => OnInputAsync(args.Value, parameter))">@(argumentValue ?? "")</textarea>
+                            <textarea rows="1" @oninput="@((args) => OnInputAsync(args.Value, parameter))" value="@(argumentValue ?? "")"></textarea>
                         }
 
                         else if (parameter.Type.IsEnum)
@@ -68,6 +76,12 @@
     private object? GetArgumentValue(string parameterName)
     {
         return this.Story?.Context.Args.TryGetValue(parameterName, out var value) == true ? value : null;
+    }
+
+    private async Task ResetControls()
+    {
+        if (this.Story == null) return;
+        await this.Story.Context.ResetArgumentsAsync();
     }
 
     private async Task OnInputAsync(object? value, ComponentParameter parameter)

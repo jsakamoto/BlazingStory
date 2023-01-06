@@ -24,14 +24,39 @@
         th {
             color: rgba(51,51,51,0.75);
 
-            &:first-of-type {
+            &.name {
                 padding: 10px 15px 10px 20px;
                 width: 25%;
+            }
+
+            &.control {
+                display: flex;
+
+                span {
+                    flex: 1;
+                }
+
+                .reset-button {
+                    width: 30px;
+                    height: 20px;
+                    padding: 3px 8px;
+                    background-color: var(--bs-hover-back-color);
+                    box-shadow: rgb(0 0 0 / 10%) 0 0 0 1px inset;
+                    border-radius: 3em;
+
+                    svg {
+                        width: 14px;
+                        height: 14px;
+                        margin: 0;
+                        padding: 0;
+                        fill: var(--bs-focused-color);
+                    }
+                }
             }
         }
 
         td {
-            &:first-of-type {
+            &.name {
                 padding: 10px 0 10px 20px;
                 font-weight: bold;
             }
@@ -45,7 +70,7 @@
         }
 
         th, td {
-            &:last-of-type {
+            &.control {
                 padding: 10px 20px 10px 15px;
             }
         }

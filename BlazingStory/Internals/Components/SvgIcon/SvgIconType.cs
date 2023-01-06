@@ -9,5 +9,6 @@ public enum SvgIconType
     ExpandAll,
     CollapseAll,
     ZoomIn,
-    ZoomOut
+    ZoomOut,
+    Reset
 }

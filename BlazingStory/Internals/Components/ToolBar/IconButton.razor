@@ -1,4 +1,4 @@
-<button class="icon-button" @onclick="(args => OnClick.InvokeAsync(args))">
+<button class="icon-button @Class" title="@Title" @onclick="(args => OnClick.InvokeAsync(args))">
     <SvgIcon Type="Icon" />
 </button>
 
@@ -8,4 +8,10 @@
 
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    [Parameter]
+    public string? Class { get; set; }
 }

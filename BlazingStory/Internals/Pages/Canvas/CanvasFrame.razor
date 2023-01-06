@@ -24,12 +24,11 @@
         await this.UpdateComponentArgsFromUrlAsync();
     }
 
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
         if (!this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story)) return;
         if (Object.ReferenceEquals(this._Story, story)) return;
         this._Story = story;
-        //await this.ApplyComponentArgsFromUrlAsync();
         this.StateHasChanged();
     }
 
@@ -54,21 +53,20 @@
 
     private async ValueTask ApplyComponentArgsFromUrlAsync()
     {
+        if (this._Story == null) return;
+        await this._Story.Context.ResetArgumentsAsync();
+
         var componentArgsPairs = this._ComponentArgsString.Split(':').Chunk(2).ToArray();
-
-        if (this._Story != null)
+        var parameters = this._Story.Context.Parameters;
+        foreach (var argsPair in componentArgsPairs)
         {
-            var parameters = this._Story.Context.Parameters;
-            foreach (var argsPair in componentArgsPairs)
-            {
-                var name = argsPair.First();
-                var valueString = argsPair.Last();
-                var parameter = parameters.FirstOrDefault(p => p.Name == name);
-                if (parameter == null) continue;
-                if (!this.TryConvertType(parameter.Type, valueString, out var value)) continue;
+            var name = argsPair.First();
+            var valueString = argsPair.Last();
+            var parameter = parameters.FirstOrDefault(p => p.Name == name);
+            if (parameter == null) continue;
+            if (!this.TryConvertType(parameter.Type, valueString, out var value)) continue;
 
-                await this._Story.Context.AddOrUpdateArgumentAsync(name, value);
-            }
+            await this._Story.Context.AddOrUpdateArgumentAsync(name, value);
         }
     }
 
