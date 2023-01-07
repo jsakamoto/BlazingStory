@@ -398,6 +398,43 @@ button.icon-button.reset-button svg {
   padding: 7px 15px;
 }
 
+.text-area-container {
+  position: relative;
+}
+.text-area-container textarea, .text-area-container .text-area-shadow {
+  appearance: none;
+  border: none;
+  display: block;
+  outline: none;
+  margin: 0;
+  padding: 6px 10px;
+  font-size: var(--bs-text-size);
+  background: #FFFFFF;
+  color: var(--bs-text-color);
+  box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 1px inset;
+  border-radius: 4px;
+  line-height: 20px;
+  text-align: left;
+  overflow: visible;
+  max-height: 400px;
+  transition: box-shadow 200ms ease-out, opacity 200ms ease-out;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.text-area-container textarea:focus, .text-area-container textarea:focus-visible, .text-area-container .text-area-shadow:focus, .text-area-container .text-area-shadow:focus-visible {
+  box-shadow: var(--bs-focused-color) 0 0 0 1px inset;
+}
+.text-area-container textarea {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+.text-area-container .text-area-shadow {
+  visibility: hidden;
+}
+
 .body {
   margin: 10px 10px 10px 0;
   background-color: #fff;
@@ -461,6 +498,7 @@ button.icon-button.reset-button svg {
 .controls-panel table td.name {
   padding: 10px 0 10px 20px;
   font-weight: bold;
+  vertical-align: top;
 }
 .controls-panel table td .required {
   color: #FF4400;

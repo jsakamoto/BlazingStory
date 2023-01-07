@@ -8,23 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="compilerconfig.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="compilerconfig.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <SupportedPlatform Include="browser" />
     <InternalsVisibleTo Include="BlazingStory.Test" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="compilerconfig.json" />
+    <_ContentIncludedByDefault Remove="compilerconfig.json" />
     <None Include="compilerconfig.json" />
-    <None Include="Internals\Components\Buttons\SquareButton.razor" />
-    <None Include="Internals\Components\Router\IdQueryRouter.razor" />
-    <None Include="Internals\Pages\Canvas\AddOnPanel.razor" />
   </ItemGroup>
 
   <ItemGroup>

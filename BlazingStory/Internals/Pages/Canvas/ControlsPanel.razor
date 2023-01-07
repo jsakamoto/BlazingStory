@@ -5,7 +5,7 @@
                 <th class="name">Name</th>
                 <th class="control">
                     <span>Control</span>
-                    <ResetButton Title="Reset controls" OnClick="ResetControls"/>
+                    <ResetButton Title="Reset controls" OnClick="ResetControls" />
                 </th>
             </tr>
         </thead>
@@ -27,7 +27,7 @@
 
                         @if (parameter.Type == typeof(string))
                         {
-                            <textarea rows="1" @oninput="@((args) => OnInputAsync(args.Value, parameter))" value="@(argumentValue ?? "")"></textarea>
+                            <TextArea PlaceHolder="Edit string..." Value="@(argumentValue as string)" OnInput="@((args) => OnInputAsync(args.Value, parameter))" />
                         }
 
                         else if (parameter.Type == typeof(bool))
