@@ -1,0 +1,10 @@
+<button class="square-button" @onclick="@(() => this.OnClick.InvokeAsync())">@Text</button>
+
+@code
+{
+    [Parameter]
+    public string? Text { get; set; }
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+}

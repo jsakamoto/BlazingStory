@@ -1,0 +1,25 @@
+button.icon-button.reset-button {
+    width: 30px;
+    height: 20px;
+    padding: 3px 8px;
+    background-color: var(--bs-hover-back-color);
+    box-shadow: rgb(0 0 0 / 10%) 0 0 0 1px inset;
+    border-radius: 3em;
+    transition: all 150ms ease-out;
+
+    &:focus {
+        box-shadow: var(--bs-focused-color) 0 0 0 1px inset;
+    }
+
+    &:hover {
+        background: #ddebfa;
+    }
+
+    svg {
+        width: 14px;
+        height: 14px;
+        margin: 0;
+        padding: 0;
+        fill: var(--bs-focused-color);
+    }
+}

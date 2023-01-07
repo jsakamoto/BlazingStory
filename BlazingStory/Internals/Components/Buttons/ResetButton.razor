@@ -1,0 +1,10 @@
+<IconButton Icon="SvgIconType.Reset" Class="reset-button" Title="this.Title" OnClick="@(() => this.OnClick.InvokeAsync())" />
+
+@code
+{
+    [Parameter]
+    public string? Title { get; set; }
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+}

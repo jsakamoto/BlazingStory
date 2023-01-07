@@ -1,5 +1,9 @@
 ﻿:root {
-  --bs-sidebar-nav-color: #333333;
+  --bs-back-color: #f6f9fc;
+  --bs-text-size: 13px;
+  --bs-text-color: #333333;
+  --bs-control-caption-size: 12px;
+  --bs-sidebar-nav-color: var(---bs-text-color);
   --bs-sidebar-nav-subheading-color: #999999;
   --bs-sidebar-nav-active-color: #fff;
   --bs-sidebar-nav-active-back-color: #1ea7fd;
@@ -27,8 +31,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-overflow-scrolling: touch;
-  color: #333333;
-  background: #F6F9FC;
+  color: var(--bs-text-color);
+  background: var(--bs-back-color);
   overflow: hidden;
 }
 
@@ -90,12 +94,12 @@ button {
   font-family: inherit;
   -webkit-transition: all 150ms;
   transition: all 150ms;
-  color: #333333;
+  color: var(--bs-text-color);
   width: 100%;
 }
 .sidebar .search-field input:focus {
   outline: 0;
-  background: #f6f9fc;
+  background: var(--bs-back-color);
   border-color: var(--bs-focused-color);
 }
 .sidebar .explorer-menu {
@@ -264,6 +268,21 @@ button.tab-button.active {
   border-bottom: solid 3px var(--bs-focused-color);
 }
 
+span.toolbar-separator {
+  width: 1px;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 0 2px;
+}
+
+svg.svg-icon {
+  width: 12px;
+  height: 12px;
+  padding: 1px;
+  margin-top: 3px;
+  margin-right: 5px;
+}
+
 button.icon-button {
   width: 28px;
   height: 28px;
@@ -281,19 +300,102 @@ button.icon-button:hover svg {
   fill: var(--bs-focused-color);
 }
 
-span.toolbar-separator {
-  width: 1px;
+button.icon-button.reset-button {
+  width: 30px;
   height: 20px;
-  background: rgba(0, 0, 0, 0.1);
-  margin: 0 2px;
+  padding: 3px 8px;
+  background-color: var(--bs-hover-back-color);
+  box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 1px inset;
+  border-radius: 3em;
+  transition: all 150ms ease-out;
+}
+button.icon-button.reset-button:focus {
+  box-shadow: var(--bs-focused-color) 0 0 0 1px inset;
+}
+button.icon-button.reset-button:hover {
+  background: #ddebfa;
+}
+button.icon-button.reset-button svg {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  padding: 0;
+  fill: var(--bs-focused-color);
 }
 
-svg.svg-icon {
-  width: 12px;
-  height: 12px;
+.square-button {
+  background: #fafafa;
+  color: var(--bs-text-color);
+  font-weight: bold;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 1px inset;
+  border-radius: 4px;
+  padding: 10px 16px;
+  font-size: var(--bs-control-caption-size);
+  line-height: 1;
+  transition: all 150ms ease-out;
+}
+.square-button:hover {
+  background: #f2f2f2;
+}
+.square-button:focus {
+  box-shadow: rgb(30, 167, 253) 0 0 0 1px inset;
+}
+
+.toggle-button {
+  cursor: pointer;
+  line-height: 18px;
+  align-items: center;
+  margin-bottom: 8px;
+  display: inline-flex;
+  position: relative;
+  white-space: nowrap;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 3em;
   padding: 1px;
-  margin-top: 3px;
-  margin-right: 5px;
+}
+.toggle-button input {
+  appearance: none;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 3em;
+}
+.toggle-button input:focus {
+  box-shadow: var(--bs-focused-color) 0 0 0 1px inset !important;
+}
+.toggle-button span {
+  text-align: center;
+  font-size: var(--bs-control-caption-size);
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-block;
+  padding: 7px 15px;
+  transition: all 100ms ease-out;
+  user-select: none;
+  border-radius: 3em;
+  color: rgba(51, 51, 51, 0.6);
+  background: transparent;
+}
+.toggle-button span:first-of-type {
+  padding-right: 8px;
+}
+.toggle-button span:last-of-type {
+  padding-left: 8px;
+}
+.toggle-button input:checked ~ span:last-of-type,
+.toggle-button input:not(:checked) ~ span:first-of-type {
+  background: var(--bs-back-color);
+  box-shadow: rgba(0, 0, 0, 0.2) 0 0 2px;
+  color: var(--bs-text-color);
+  padding: 7px 15px;
 }
 
 .body {
@@ -313,7 +415,7 @@ svg.svg-icon {
 }
 
 .add-on-container {
-  height: 300px;
+  height: 340px;
   box-shadow: rgba(0, 0, 0, 0.1) 0 1px 0 0 inset;
 }
 
@@ -328,7 +430,7 @@ svg.svg-icon {
 .controls-panel table {
   border-collapse: collapse;
   border-spacing: 0;
-  color: #333333;
+  color: var(--bs-text-color);
   font-size: 13px;
   line-height: 20px;
   text-align: left;
@@ -355,21 +457,6 @@ svg.svg-icon {
 }
 .controls-panel table th.control span {
   flex: 1;
-}
-.controls-panel table th.control .reset-button {
-  width: 30px;
-  height: 20px;
-  padding: 3px 8px;
-  background-color: var(--bs-hover-back-color);
-  box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 1px inset;
-  border-radius: 3em;
-}
-.controls-panel table th.control .reset-button svg {
-  width: 14px;
-  height: 14px;
-  margin: 0;
-  padding: 0;
-  fill: var(--bs-focused-color);
 }
 .controls-panel table td.name {
   padding: 10px 0 10px 20px;

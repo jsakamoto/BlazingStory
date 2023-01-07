@@ -1,0 +1,63 @@
+.toggle-button {
+    cursor: pointer;
+    line-height: 18px;
+    align-items: center;
+    margin-bottom: 8px;
+    display: inline-flex;
+    position: relative;
+    white-space: nowrap;
+    background: rgba(0,0,0,0.15);
+    border-radius: 3em;
+    padding: 1px;
+
+
+    input {
+        appearance: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        border-radius: 3em;
+
+        &:focus {
+            box-shadow: var(--bs-focused-color) 0 0 0 1px inset !important;
+        }
+    }
+
+    span {
+        text-align: center;
+        font-size: var(--bs-control-caption-size);
+        font-weight: 700;
+        line-height: 1;
+        cursor: pointer;
+        display: inline-block;
+        padding: 7px 15px;
+        transition: all 100ms ease-out;
+        user-select: none;
+        border-radius: 3em;
+        color: rgba(51,51,51,0.6);
+        background: transparent;
+
+        &:first-of-type {
+            padding-right: 8px;
+        }
+
+        &:last-of-type {
+            padding-left: 8px;
+        }
+    }
+
+    input:checked ~ span:last-of-type,
+    input:not(:checked) ~ span:first-of-type {
+        background: var(--bs-back-color);
+        box-shadow: rgb(0 0 0 / 20%) 0 0 2px;
+        color: var(--bs-text-color);
+        padding: 7px 15px;
+    }
+}

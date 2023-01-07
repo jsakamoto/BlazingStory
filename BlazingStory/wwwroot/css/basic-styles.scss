@@ -15,8 +15,8 @@ body {
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     -webkit-overflow-scrolling: touch;
-    color: #333333;
-    background: #F6F9FC;
+    color: var(--bs-text-color);
+    background: var(--bs-back-color);
     overflow: hidden;
 }
 

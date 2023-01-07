@@ -72,10 +72,19 @@
 
     private bool TryConvertType(Type targetType, string valueString, [NotNullWhen(true)] out object? value)
     {
-        if (targetType == typeof(String))
+        if (targetType == typeof(string))
         {
             value = valueString;
             return true;
+        }
+
+        if (targetType == typeof(bool))
+        {
+            if (bool.TryParse(valueString, out var boolValue))
+            {
+                value = boolValue;
+                return true;
+            }
         }
 
         if (targetType.IsEnum)

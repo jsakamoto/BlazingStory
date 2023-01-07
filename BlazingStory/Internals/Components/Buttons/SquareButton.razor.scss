@@ -1,0 +1,19 @@
+.square-button {
+    background: #fafafa;
+    color: var(--bs-text-color);
+    font-weight: bold;
+    box-shadow: rgb(0 0 0 / 10%) 0 0 0 1px inset;
+    border-radius: 4px;
+    padding: 10px 16px;
+    font-size: var(--bs-control-caption-size);
+    line-height: 1;
+    transition: all 150ms ease-out;
+
+    &:hover {
+        background: #f2f2f2;
+    }
+
+    &:focus {
+        box-shadow: rgb(30 167 253) 0 0 0 1px inset;
+    }
+}

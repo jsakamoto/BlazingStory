@@ -19,3 +19,7 @@ button {
 .danger {
     background-color: #dc3545;
 }
+
+.bold {
+    font-weight: bold;
+}

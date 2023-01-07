@@ -5,7 +5,7 @@
                 <th class="name">Name</th>
                 <th class="control">
                     <span>Control</span>
-                    <IconButton Icon="SvgIconType.Reset" Class="reset-button" Title="Reset controls" OnClick="ResetControls"/>
+                    <ResetButton Title="Reset controls" OnClick="ResetControls"/>
                 </th>
             </tr>
         </thead>
@@ -25,9 +25,22 @@
                     </td>
                     <td class="control">
 
-                        @if (parameter.Type == typeof(String))
+                        @if (parameter.Type == typeof(string))
                         {
                             <textarea rows="1" @oninput="@((args) => OnInputAsync(args.Value, parameter))" value="@(argumentValue ?? "")"></textarea>
+                        }
+
+                        else if (parameter.Type == typeof(bool))
+                        {
+                            if (argumentValue == null)
+                            {
+                                <SquareButton Text="Set boolean" OnClick="@(() => OnInputAsync(false, parameter))" />
+                            }
+                            else
+                            {
+                                var boolValue = (bool)argumentValue;
+                                <ToggleButton Value="boolValue" OnChange="@(() => OnInputAsync(!boolValue, parameter))" />
+                            }
                         }
 
                         else if (parameter.Type.IsEnum)

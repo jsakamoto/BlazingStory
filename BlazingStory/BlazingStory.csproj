@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <None Include="compilerconfig.json" />
+    <None Include="Internals\Components\Buttons\SquareButton.razor" />
     <None Include="Internals\Components\Router\IdQueryRouter.razor" />
     <None Include="Internals\Pages\Canvas\AddOnPanel.razor" />
   </ItemGroup>

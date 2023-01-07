@@ -19,12 +19,12 @@
             font-family: inherit;
             -webkit-transition: all 150ms;
             transition: all 150ms;
-            color: #333333;
+            color: var(--bs-text-color);
             width: 100%;
 
             &:focus {
                 outline: 0;
-                background: #f6f9fc;
+                background: var(--bs-back-color);
                 border-color: var(--bs-focused-color);
             }
         }

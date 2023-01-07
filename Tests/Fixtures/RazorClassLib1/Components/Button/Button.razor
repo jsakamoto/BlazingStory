@@ -1,10 +1,14 @@
 ﻿@attribute [Description("This is basic button component.")]
 
-<button class="@(this.Color.ToString().ToLower())" @onclick="@((e) => OnClick.InvokeAsync(e))">
+<button class="@(this.Color.ToString().ToLower()) @(this.Bold ? "bold" : "")" @onclick="@((e) => OnClick.InvokeAsync(e))">
     @this.Text
 </button>
 
 @code {
+
+    [Parameter]
+    public bool Bold { get; set; }
+
     /// <summary>
     /// Set a text that is button caption.
     /// </summary>
@@ -22,4 +26,5 @@
     /// </summary>
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
+
 }

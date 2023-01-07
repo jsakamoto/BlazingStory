@@ -2,7 +2,7 @@
     table {
         border-collapse: collapse;
         border-spacing: 0;
-        color: #333333;
+        color: var(--bs-text-color);
         font-size: 13px;
         line-height: 20px;
         text-align: left;
@@ -34,23 +34,6 @@
 
                 span {
                     flex: 1;
-                }
-
-                .reset-button {
-                    width: 30px;
-                    height: 20px;
-                    padding: 3px 8px;
-                    background-color: var(--bs-hover-back-color);
-                    box-shadow: rgb(0 0 0 / 10%) 0 0 0 1px inset;
-                    border-radius: 3em;
-
-                    svg {
-                        width: 14px;
-                        height: 14px;
-                        margin: 0;
-                        padding: 0;
-                        fill: var(--bs-focused-color);
-                    }
                 }
             }
         }

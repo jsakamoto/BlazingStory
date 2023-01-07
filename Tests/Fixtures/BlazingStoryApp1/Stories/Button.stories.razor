@@ -1,9 +1,15 @@
 ﻿@attribute [Stories("Examples/UI/Button")]
 
 <Story TComponent="Button" Name="Default">
+
+    <Arguments>
+        <Arg For="_ => _!.Bold" Value="true" />
+    </Arguments>
+
     <Template>
         <Button Text="Default" Color="ButtonColor.Default" @attributes="context.Args" />
     </Template>
+
 </Story>
 
 <Story TComponent="Button" Name="Primary">
