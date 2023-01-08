@@ -1,0 +1,18 @@
+<span>
+    @for (var i = 0; i < this.Rate; i++)
+    {
+        <span @key="@("star-" + i)">š</span>
+    }
+    @for (var i = 0; i < MaxRate - this.Rate; i++)
+    {
+        <span @key="@("nostar-"+i)">™</span>
+    }
+</span>
+
+@code
+{
+    [Parameter]
+    public int Rate { get; set; }
+
+    private const int MaxRate = 5;
+}

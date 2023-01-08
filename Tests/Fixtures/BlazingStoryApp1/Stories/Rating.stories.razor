@@ -1,0 +1,21 @@
+﻿@attribute [Stories("Examples/UI/Rating")]
+
+<Story TComponent="Rating" Name="Default">
+
+    <Template>
+        <Rating Rate="3" @attributes="context.Args" />
+    </Template>
+
+</Story>
+
+<Story TComponent="Rating" Name="Rate Control">
+
+    <Arguments>
+        <Arg For="_ => _!.Rate" Value="3" />
+    </Arguments>
+
+    <Template>
+        <Rating @attributes="context.Args" />
+    </Template>
+
+</Story>

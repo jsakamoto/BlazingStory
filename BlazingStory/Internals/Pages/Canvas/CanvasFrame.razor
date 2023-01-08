@@ -78,7 +78,7 @@
             return true;
         }
 
-        if (targetType == typeof(bool))
+        else if (targetType == typeof(bool))
         {
             if (bool.TryParse(valueString, out var boolValue))
             {
@@ -87,7 +87,16 @@
             }
         }
 
-        if (targetType.IsEnum)
+        else if (targetType == typeof(int))
+        {
+            if (int.TryParse(valueString, out var numValue))
+            {
+                value = numValue;
+                return true;
+            }
+        }
+
+        else if (targetType.IsEnum)
         {
             if (Enum.TryParse(targetType, valueString, out var enumValue))
             {

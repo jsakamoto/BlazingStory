@@ -435,6 +435,27 @@ button.icon-button.reset-button svg {
   visibility: hidden;
 }
 
+.number-input {
+  appearance: none;
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 6px 10px;
+  width: 100%;
+  background: #FFFFFF;
+  color: var(--bs-text-color);
+  box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 1px inset;
+  border-radius: 4px;
+  line-height: 20px;
+  transition: box-shadow 200ms ease-out, opacity 200ms ease-out;
+}
+.number-input:focus, .number-input:focus-visible {
+  box-shadow: var(--bs-focused-color) 0 0 0 1px inset;
+}
+.number-input:invalid {
+  box-shadow: #FF4400 0 0 0 1px inset !important;
+}
+
 .body {
   margin: 10px 10px 10px 0;
   background-color: #fff;

@@ -43,6 +43,19 @@
                             }
                         }
 
+                        else if (parameter.Type == typeof(int))
+                        {
+                            if (argumentValue == null)
+                            {
+                                <SquareButton Text="Set number" OnClick="@(() => OnInputAsync(0, parameter))" />
+                            }
+                            else
+                            {
+                                var numValue = (int)argumentValue;
+                                <NumberInput Value="numValue" PlaceHolder="Edit number..." OnInput="@((arg) => int.TryParse(arg.Value?.ToString(), out var n) ? OnInputAsync(n, parameter) : Task.CompletedTask)" />
+                            }
+                        }
+
                         else if (parameter.Type.IsEnum)
                         {
                             var enumValues = Enum.GetValues(parameter.Type);
