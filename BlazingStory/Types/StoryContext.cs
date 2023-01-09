@@ -28,7 +28,14 @@ public class StoryContext
     internal async ValueTask ResetArgumentsAsync()
     {
         this._Args.Clear();
-        foreach (var arg in this._DefaultArgs) this._Args.Add(arg.Key, arg.Value);
+        foreach (var param in this.Parameters.Where(p => p.DefaultValue is not null))
+        {
+            this._Args[param.Name] = param.DefaultValue;
+        }
+        foreach (var arg in this._DefaultArgs)
+        {
+            this._Args[arg.Key] = arg.Value;
+        }
         await this.ArgumentChanged.InvokeAsync();
     }
 

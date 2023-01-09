@@ -1,12 +1,16 @@
-<span>
-    @for (var i = 0; i < this.Rate; i++)
-    {
-        <span @key="@("star-" + i)">š</span>
-    }
-    @for (var i = 0; i < MaxRate - this.Rate; i++)
-    {
-        <span @key="@("nostar-"+i)">™</span>
-    }
+<span style="display: flex;">
+    <span style="color: @(this.Color ?? _DefaultColor)">
+        @for (var i = 0; i < this.Rate; i++)
+        {
+            <span @key="@("star-" + i)">š</span>
+        }
+    </span>
+    <span>
+        @for (var i = 0; i < MaxRate - this.Rate; i++)
+        {
+            <span @key="@("nostar-"+i)">™</span>
+        }
+    </span>
 </span>
 
 @code
@@ -15,4 +19,9 @@
     public int Rate { get; set; }
 
     private const int MaxRate = 5;
+
+    private const string _DefaultColor = "goldenrod";
+
+    [Parameter]
+    public string? Color { get; set; } = _DefaultColor;
 }

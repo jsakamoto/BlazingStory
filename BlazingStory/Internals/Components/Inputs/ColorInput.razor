@@ -1,0 +1,49 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+
+<span class="bs-basic-inputs-holder color-input-holder">
+    <input class="bs-basic-inputs color-input" type="text" value="@this.Value" placeholder="@this.PlaceHolder" @oninput="@((arg) => this.OnInput.InvokeAsync(arg))" />
+
+    <div class="color-box-holder">
+        <div class="color-box-background"></div>
+        <div class="color-box" style="background-color: @(this.Value)"></div>
+        <input type="color" value="@this.Value" @oninput="@((arg) => this.OnInput.InvokeAsync(arg))" />
+    </div>
+
+    <SvgIcon Class="color-exchange-icon" Type="SvgIconType.Exchange" OnClick="OnClickExchangeIcon" />
+</span>
+
+@code
+{
+    [Parameter]
+    public string? Value { get; set; }
+
+    [Parameter]
+    public string? PlaceHolder { get; set; }
+
+    [Parameter]
+    public EventCallback<ChangeEventArgs> OnInput { get; set; }
+
+    private readonly Lazy<Task<IJSObjectReference>> _Module;
+
+    public ColorInput()
+    {
+        _Module = new(async () => await this.JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazingStory/Internals/Components/Inputs/ColorInput.razor.js"));
+    }
+
+    private async Task OnClickExchangeIcon()
+    {
+        var module = await _Module.Value;
+        this.Value = await module.InvokeAsync<string>("exchangeColor", this.Value);
+        await this.OnInput.InvokeAsync(new() { Value = this.Value });
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_Module.IsValueCreated)
+        {
+            var module = await _Module.Value;
+            try { await module.DisposeAsync(); } catch (JSDisconnectedException) { }
+        }
+    }
+}

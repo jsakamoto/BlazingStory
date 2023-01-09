@@ -3,14 +3,17 @@
 @typeparam TParameter
 
 @code {
+    [CascadingParameter]
+    internal IEnumerable<ComponentParameter>? ComponentParameters { get; set; }
+
     [Parameter]
     public Expression<Func<TComponent, TParameter>>? For { get; set; }
 
     [Parameter]
     public ControlType Control { get; set; } = ControlType.Default;
 
-    [CascadingParameter]
-    internal IEnumerable<ComponentParameter>? ComponentParameters { get; set; }
+    [Parameter]
+    public object? DefaultValue { get; set; }
 
     protected override void OnInitialized()
     {
@@ -19,6 +22,7 @@
         if (this.ComponentParameters.TryGetByName(parameterName, out var parameter))
         {
             parameter.Control = this.Control;
+            parameter.DefaultValue = this.DefaultValue;
         }
     }
 }

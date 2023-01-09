@@ -431,6 +431,68 @@ button.icon-button.reset-button svg {
   padding: 7px 15px;
 }
 
+.color-input-holder {
+  max-width: 250px;
+}
+.color-input-holder .color-input {
+  padding-left: 30px;
+}
+.color-input-holder .color-box-holder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+}
+.color-input-holder .color-box-holder .color-box-background, .color-input-holder .color-box-holder .color-box {
+  position: absolute;
+  margin: 8px;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+.color-input-holder .color-box-holder .color-box-background {
+  background-image: linear-gradient(transparent, transparent), url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill-opacity=".05"><path d="M8 0h8v8H8zM0 8h8v8H0z"/></svg>'), linear-gradient(rgb(255, 255, 255), rgb(255, 255, 255));
+}
+.color-input-holder .color-box-holder .color-box {
+  box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 1px inset;
+}
+.color-input-holder .color-box-holder input {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  appearance: none;
+  outline: none;
+  border: 0 none;
+  margin: 4px;
+  cursor: pointer;
+  opacity: 0.01;
+}
+.color-input-holder .color-exchange-icon {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 10px;
+  margin: auto;
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+  cursor: pointer;
+}
+
+.select svg {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: 12px;
+  height: 12px;
+  margin-top: -6px;
+  margin-right: 0;
+  padding: 0;
+  fill: currentColor;
+  pointer-events: none;
+}
+
 .text-area-container {
   position: relative;
 }
@@ -448,19 +510,6 @@ button.icon-button.reset-button svg {
 }
 .text-area-container .text-area-shadow {
   visibility: hidden;
-}
-
-.select svg {
-  position: absolute;
-  z-index: 1;
-  top: 50%;
-  right: 12px;
-  height: 12px;
-  margin-top: -6px;
-  margin-right: 0;
-  padding: 0;
-  fill: currentColor;
-  pointer-events: none;
 }
 
 .body {

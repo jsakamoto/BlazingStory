@@ -11,5 +11,6 @@ public enum SvgIconType
     ZoomIn,
     ZoomOut,
     Reset,
-    Shevron
+    Shevron,
+    Exchange
 }

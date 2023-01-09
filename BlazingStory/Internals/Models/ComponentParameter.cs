@@ -17,6 +17,8 @@ internal class ComponentParameter
 
     internal ControlType Control = ControlType.Default;
 
+    internal object? DefaultValue = null;
+
     internal ComponentParameter(PropertyInfo propertyInfo, string summary)
     {
         this.Name = propertyInfo.Name;

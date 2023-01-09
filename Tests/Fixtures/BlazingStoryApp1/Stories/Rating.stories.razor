@@ -1,21 +1,20 @@
 ﻿@attribute [Stories("Examples/UI/Rating")]
 
-<Story TComponent="Rating" Name="Default">
+<Stories TComponent="Rating">
+    <ArgType For="_ => _!.Color" Control="ControlType.Color" DefaultValue='"goldenrod"' />
 
-    <Template>
-        <Rating Rate="3" @attributes="context.Args" />
-    </Template>
+    <Story Name="Default">
+        <Template>
+            <Rating Rate="3" @attributes="context.Args" />
+        </Template>
+    </Story>
 
-</Story>
-
-<Story TComponent="Rating" Name="Rate Control">
-
-    <Arguments>
-        <Arg For="_ => _!.Rate" Value="3" />
-    </Arguments>
-
-    <Template>
-        <Rating @attributes="context.Args" />
-    </Template>
-
-</Story>
+    <Story Name="Rate Control">
+        <Arguments>
+            <Arg For="_ => _!.Rate" Value="3" />
+        </Arguments>
+        <Template>
+            <Rating @attributes="context.Args" />
+        </Template>
+    </Story>
+</Stories>

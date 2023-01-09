@@ -1,11 +1,14 @@
-﻿<svg viewBox="0 0 1024 1024" class="svg-icon @Class">
+﻿<svg viewBox="0 0 1024 1024" class="svg-icon @Class" @onclick="((arg) => this.OnClick.InvokeAsync(arg))">
     <use href="#icon--@Type.ToString().ToLower()"></use>
 </svg>
 
-@code{
+@code {
     [Parameter]
     public SvgIconType Type { get; set; }
 
     [Parameter]
     public string? Class { get; set; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
 }

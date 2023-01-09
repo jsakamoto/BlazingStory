@@ -27,7 +27,15 @@
 
                         @if (parameter.Type == typeof(string))
                         {
-                            <TextArea PlaceHolder="Edit string..." Value="@(argumentValue as string)" OnInput="@((args) => OnInputAsync(args.Value, parameter))" />
+                            if (parameter.Control is ControlType.Color)
+                            {
+                                var colorValue = (argumentValue ?? parameter.DefaultValue) as string;
+                                <ColorInput Value="@colorValue" PlaceHolder="Choose color..." OnInput="@((args) => OnInputAsync(args.Value, parameter))" />
+                            }
+                            else
+                            {
+                                <TextArea PlaceHolder="Edit string..." Value="@(argumentValue as string)" OnInput="@((args) => OnInputAsync(args.Value, parameter))" />
+                            }
                         }
 
                         else if (parameter.Type == typeof(bool))
