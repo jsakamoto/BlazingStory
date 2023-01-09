@@ -20,7 +20,8 @@ internal class ParameterExtractorTest
         var parameters = ParameterExtractor.GetParametersFromComponentType(typeof(Button));
         parameters
             .Select(p => $"{p.Name}, {p.Type.Name}, {p.Required}, {p.Summary}")
-            .Is("Text, String, True, Set a text that is button caption.",
+            .Is("Bold, Boolean, False, ",
+                "Text, String, True, Set a text that is button caption.",
                 "Color, ButtonColor, False, Set a color of the button.",
                 "OnClick, EventCallback`1, False, Set a callback method that will be invoked when users click the button.");
     }
