@@ -1,8 +1,11 @@
-﻿<svg viewBox="0 0 1024 1024" class="svg-icon">
+﻿<svg viewBox="0 0 1024 1024" class="svg-icon @Class">
     <use href="#icon--@Type.ToString().ToLower()"></use>
 </svg>
 
 @code{
     [Parameter]
     public SvgIconType Type { get; set; }
+
+    [Parameter]
+    public string? Class { get; set; }
 }

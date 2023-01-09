@@ -66,6 +66,39 @@ button {
   flex: 1;
 }
 
+.bs-basic-inputs-holder {
+  display: inline-block;
+  line-height: normal;
+  overflow: hidden;
+  position: relative;
+  vertical-align: top;
+  width: 100%;
+}
+
+.bs-basic-inputs {
+  appearance: none;
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 6px 10px;
+  width: 100%;
+  font-size: var(--bs-text-size);
+  background: #FFFFFF;
+  color: var(--bs-text-color);
+  box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 1px inset;
+  border-radius: 4px;
+  line-height: 20px;
+  text-align: left;
+  overflow: visible;
+  transition: inherit, box-shadow 200ms ease-out, opacity 200ms ease-out;
+}
+.bs-basic-inputs:focus, .bs-basic-inputs:focus-visible {
+  box-shadow: var(--bs-focused-color) 0 0 0 1px inset;
+}
+.bs-basic-inputs:invalid {
+  box-shadow: #FF4400 0 0 0 1px inset !important;
+}
+
 .main-layout {
   overflow: hidden;
   width: 100vw;
@@ -402,27 +435,9 @@ button.icon-button.reset-button svg {
   position: relative;
 }
 .text-area-container textarea, .text-area-container .text-area-shadow {
-  appearance: none;
-  border: none;
-  display: block;
-  outline: none;
-  margin: 0;
-  padding: 6px 10px;
-  font-size: var(--bs-text-size);
-  background: #FFFFFF;
-  color: var(--bs-text-color);
-  box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 1px inset;
-  border-radius: 4px;
-  line-height: 20px;
-  text-align: left;
-  overflow: visible;
   max-height: 400px;
-  transition: box-shadow 200ms ease-out, opacity 200ms ease-out;
   white-space: pre-wrap;
   word-break: break-all;
-}
-.text-area-container textarea:focus, .text-area-container textarea:focus-visible, .text-area-container .text-area-shadow:focus, .text-area-container .text-area-shadow:focus-visible {
-  box-shadow: var(--bs-focused-color) 0 0 0 1px inset;
 }
 .text-area-container textarea {
   position: absolute;
@@ -435,25 +450,17 @@ button.icon-button.reset-button svg {
   visibility: hidden;
 }
 
-.number-input {
-  appearance: none;
-  border: none;
-  outline: none;
-  margin: 0;
-  padding: 6px 10px;
-  width: 100%;
-  background: #FFFFFF;
-  color: var(--bs-text-color);
-  box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 1px inset;
-  border-radius: 4px;
-  line-height: 20px;
-  transition: box-shadow 200ms ease-out, opacity 200ms ease-out;
-}
-.number-input:focus, .number-input:focus-visible {
-  box-shadow: var(--bs-focused-color) 0 0 0 1px inset;
-}
-.number-input:invalid {
-  box-shadow: #FF4400 0 0 0 1px inset !important;
+.select svg {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: 12px;
+  height: 12px;
+  margin-top: -6px;
+  margin-right: 0;
+  padding: 0;
+  fill: currentColor;
+  pointer-events: none;
 }
 
 .body {

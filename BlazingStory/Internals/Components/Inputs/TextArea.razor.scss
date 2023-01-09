@@ -2,28 +2,9 @@
     position: relative;
 
     textarea, .text-area-shadow {
-        appearance: none;
-        border: none;
-        display: block;
-        outline: none;
-        margin: 0;
-        padding: 6px 10px;
-        font-size: var(--bs-text-size);
-        background: #FFFFFF;
-        color: var(--bs-text-color);
-        box-shadow: rgb(0 0 0 / 10%) 0 0 0 1px inset;
-        border-radius: 4px;
-        line-height: 20px;
-        text-align: left;
-        overflow: visible;
         max-height: 400px;
-        transition: box-shadow 200ms ease-out,opacity 200ms ease-out;
         white-space: pre-wrap;
         word-break: break-all;
-
-        &:focus, &:focus-visible {
-            box-shadow: var(--bs-focused-color) 0 0 0 1px inset;
-        }
     }
 
     textarea {

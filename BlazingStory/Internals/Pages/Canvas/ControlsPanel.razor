@@ -59,15 +59,13 @@
                         else if (parameter.Type.IsEnum)
                         {
                             var enumValues = Enum.GetValues(parameter.Type);
-                            foreach (var enumValue in enumValues)
+                            if (parameter.Control is ControlType.Select)
                             {
-                                var isChecked = argumentValue?.Equals(enumValue) == true;
-                                <div>
-                                    <label>
-                                        <input type="radio" name="@key" value="@enumValue" checked="@isChecked" @onchange="@(() => OnInputAsync(enumValue, parameter))">
-                                        <span>@enumValue</span>
-                                    </label>
-                                </div>
+                                <Select Value="argumentValue" Items="enumValues" OnChange="@((arg) => Enum.TryParse(parameter.Type,arg.Value as string, out var enumValue)? OnInputAsync(enumValue, parameter) : Task.CompletedTask)" />
+                            }
+                            else
+                            {
+                                <RadioGroup Name="key" Value="argumentValue" Items="enumValues" OnChange="@((arg) => Enum.TryParse(parameter.Type,arg.Value as string, out var enumValue)? OnInputAsync(enumValue, parameter) : Task.CompletedTask)" />
                             }
                         }
 

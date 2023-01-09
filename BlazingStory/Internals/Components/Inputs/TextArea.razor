@@ -1,6 +1,6 @@
 <label class="text-area-container">
-    <textarea placeholder="@this.PlaceHolder" @oninput="@((args) => this.OnInput.InvokeAsync(args))" value="@(this.Value ?? "")"></textarea>
-    <div class="text-area-shadow">@((this.Value ?? "") + " ")</div>
+    <textarea class="bs-basic-inputs" placeholder="@this.PlaceHolder" @oninput="@((args) => this.OnInput.InvokeAsync(args))" value="@(this.Value ?? "")"></textarea>
+    <div class="bs-basic-inputs text-area-shadow">@((this.Value ?? "") + " ")</div>
 </label>
 
 @code

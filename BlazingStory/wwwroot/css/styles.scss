@@ -1,5 +1,6 @@
 ﻿@import "variables.scss";
 @import "basic-styles.scss";
+@import "basic-styles-inputs.scss";
 
 @import "../../Internals/Components/Layouts/MainLayout.razor.scss";
 
@@ -19,6 +20,7 @@
 @import "../../Internals/Components/Buttons/ToggleButton.razor.scss";
 @import "../../Internals/Components/Inputs/TextArea.razor.scss";
 @import "../../Internals/Components/Inputs/NumberInput.razor.scss";
+@import "../../Internals/Components/Inputs/Select.razor.scss";
 
 @import "../../Internals/Pages/Index.razor.scss";
 @import "../../Internals/Pages/Canvas/CanvasPage.razor.scss";

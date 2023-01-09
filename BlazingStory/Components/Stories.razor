@@ -1,0 +1,18 @@
+@using System.Diagnostics.CodeAnalysis;
+@typeparam TComponent where TComponent: notnull
+@attribute [CascadingTypeParameter(nameof(TComponent))]
+
+<div class="display:none;">
+    <CascadingValue Value="this._ComponentParameters">
+        @ChildContent
+    </CascadingValue>
+</div>
+
+@code
+{
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private readonly IEnumerable<ComponentParameter> _ComponentParameters = ParameterExtractor.GetParametersFromComponentType(typeof(TComponent));
+
+}

@@ -1,0 +1,12 @@
+.select svg {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    right: 12px;
+    height: 12px;
+    margin-top: -6px;
+    margin-right: 0;
+    padding: 0;
+    fill: currentColor;
+    pointer-events: none;
+}

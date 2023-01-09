@@ -1,0 +1,24 @@
+<span class="select bs-basic-inputs-holder">
+    <SvgIcon Type="SvgIconType.Shevron" />
+
+    <select class="bs-basic-inputs" value="Choose option..." @onchange="@((arg) => this.OnChange.InvokeAsync(arg))">
+        <option disabled>Choose option...</option>
+        @foreach (var item in this.Items ?? Array.Empty<object?>())
+        {
+            var isChecked = this.Value?.Equals(item) == true;
+            <option selected="@isChecked">@item</option>
+        }
+    </select>
+</span>
+
+@code
+{
+    [Parameter, EditorRequired]
+    public object? Value { get; set; }
+
+    [Parameter, EditorRequired]
+    public Array? Items { get; set; }
+
+    [Parameter]
+    public EventCallback<ChangeEventArgs> OnChange { get; set; }
+}

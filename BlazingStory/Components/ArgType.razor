@@ -1,0 +1,24 @@
+@using System.Linq.Expressions;
+@typeparam TComponent where TComponent : notnull
+@typeparam TParameter
+
+@code {
+    [Parameter]
+    public Expression<Func<TComponent, TParameter>>? For { get; set; }
+
+    [Parameter]
+    public ControlType Control { get; set; } = ControlType.Default;
+
+    [CascadingParameter]
+    internal IEnumerable<ComponentParameter>? ComponentParameters { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (this.ComponentParameters == null) throw new InvalidOperationException($"The ComponentParameters cascading parameter is required.");
+        var parameterName = ParameterExtractor.GetParameterName(this.For);
+        if (this.ComponentParameters.TryGetByName(parameterName, out var parameter))
+        {
+            parameter.Control = this.Control;
+        }
+    }
+}

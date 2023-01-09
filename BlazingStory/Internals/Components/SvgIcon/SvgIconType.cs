@@ -10,5 +10,6 @@ public enum SvgIconType
     CollapseAll,
     ZoomIn,
     ZoomOut,
-    Reset
+    Reset,
+    Shevron
 }

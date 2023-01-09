@@ -13,6 +13,9 @@
     [CascadingParameter]
     internal StoryContainer? StoryContainer { get; set; }
 
+    [CascadingParameter]
+    internal IEnumerable<ComponentParameter>? ComponentParameters { get; set; }
+
     [Parameter, EditorRequired]
     public string Name { get; set; } = "";
 
@@ -22,12 +25,14 @@
     [Parameter, EditorRequired]
     public RenderFragment<StoryContext>? Template { get; set; }
 
-    private StoryContext _StoryContext = new(ParameterExtractor.GetParametersFromComponentType(typeof(TComponent)));
+    private StoryContext? _StoryContext;
 
     protected override void OnInitialized()
     {
         if (this.StoryContainer == null) throw new InvalidOperationException($"The StoryContainer cascading parameter is required.");
         if (this.Template == null) throw new InvalidOperationException($"The Template parameter is required.");
+
+        this._StoryContext = new(this.ComponentParameters ?? ParameterExtractor.GetParametersFromComponentType(typeof(TComponent)));
 
         this.StoryContainer.RegisterStory(this.Name, this._StoryContext, this.Template);
     }

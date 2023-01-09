@@ -1,17 +1,21 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using BlazingStory.Types;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Internals.Models;
 
 internal class ComponentParameter
 {
-    public readonly string Name;
+    internal readonly string Name;
 
-    public readonly Type Type;
+    internal readonly Type Type;
 
-    public readonly string Summary;
+    internal readonly string Summary;
 
-    public readonly bool Required;
+    internal readonly bool Required;
+
+    internal ControlType Control = ControlType.Default;
 
     internal ComponentParameter(PropertyInfo propertyInfo, string summary)
     {
@@ -19,5 +23,14 @@ internal class ComponentParameter
         this.Type = propertyInfo.PropertyType;
         this.Required = propertyInfo.GetCustomAttribute<EditorRequiredAttribute>() != null;
         this.Summary = summary;
+    }
+}
+
+internal static class ComponentParameterExtensoins
+{
+    public static bool TryGetByName(this IEnumerable<ComponentParameter> componentParameters, string name, [NotNullWhen(true)] out ComponentParameter? parameter)
+    {
+        parameter = componentParameters.FirstOrDefault(p => p.Name == name);
+        return parameter != null;
     }
 }

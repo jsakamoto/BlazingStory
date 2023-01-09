@@ -1,0 +1,25 @@
+@foreach (var item in this.Items ?? Array.Empty<object?>())
+{
+    var isChecked = this.Value?.Equals(item) == true;
+    <div>
+        <label>
+            <input type="radio" name="@this.Name" value="@item" checked="@isChecked" @onchange="@((arg) => this.OnChange.InvokeAsync(arg))">
+            <span>@item</span>
+        </label>
+    </div>
+}
+
+@code
+{
+    [Parameter, EditorRequired]
+    public string? Name { get; set; }
+
+    [Parameter, EditorRequired]
+    public object? Value { get; set; }
+
+    [Parameter, EditorRequired]
+    public Array? Items { get; set; }
+
+    [Parameter]
+    public EventCallback<ChangeEventArgs> OnChange { get; set; }
+}
