@@ -35,6 +35,8 @@ internal class WebColor
 
     internal readonly string HSLAText;
 
+    internal string NormalizedHexText => $"#{Num2Hex(this.R)}{Num2Hex(this.G)}{Num2Hex(this.B)}";
+
     private WebColor(double r, double g, double b, double h, double s, double l, double a, string alphaText, string hexOrNameText, string rgbaText, string hslaText)
     {
         this.R = r;
@@ -50,9 +52,13 @@ internal class WebColor
         this.HSLAText = hslaText;
     }
 
-    internal static (bool success, WebColor? color, Type type) Parse(string colorText)
+    private static string Num2Hex(double n) => ((byte)Math.Min(Math.Round(n), 255)).ToString("x2");
+
+    internal static (WebColor? color, Type type) Parse(string? colorText, string? originalColorText = null)
     {
+        if (colorText == null) return (null, Type.Unknown);
         colorText = colorText.Trim();
+        originalColorText = originalColorText?.Trim();
 
         var matchHex = Regex.Match(colorText, @"(^#(?<R1>[0-9a-f]{2})(?<G1>[0-9a-f]{2})(?<B1>[0-9a-f]{2})$)|(^#(?<R2>[0-9a-f])(?<G2>[0-9a-f])(?<B2>[0-9a-f])$)", RegexOptions.IgnoreCase);
         if (matchHex.Success)
@@ -61,7 +67,7 @@ internal class WebColor
             var r = hex2int(matchHex.Groups["R1"].Value + matchHex.Groups["R2"].Value + matchHex.Groups["R2"].Value);
             var g = hex2int(matchHex.Groups["G1"].Value + matchHex.Groups["G2"].Value + matchHex.Groups["G2"].Value);
             var b = hex2int(matchHex.Groups["B1"].Value + matchHex.Groups["B2"].Value + matchHex.Groups["B2"].Value);
-            return (true, WebColor.FromHex(colorText, r, g, b), Type.Hex);
+            return (WebColor.FromHex(colorText, r, g, b, originalColorText), Type.Hex);
         }
 
         static (double A, string AText) extractAlpha(Match m)
@@ -79,7 +85,7 @@ internal class WebColor
             var g = double.Parse(matchRgba.Groups["G"].Value);
             var b = double.Parse(matchRgba.Groups["B"].Value);
             var (a, alphaText) = extractAlpha(matchRgba);
-            return (true, WebColor.FromRGBA(colorText, r, g, b, a, alphaText), Type.RGBA);
+            return (WebColor.FromRGBA(colorText, r, g, b, a, alphaText, originalColorText), Type.RGBA);
         }
 
         var matchHsla = Regex.Match(colorText, @"^hsla?\((?<H>\d+)[ ,]+(?<S>\d+)%[ ,]+(?<L>\d+)%([ ,]+(?<A>[\d\.]+%?))?\)", RegexOptions.IgnoreCase);
@@ -89,46 +95,41 @@ internal class WebColor
             var s = double.Parse(matchHsla.Groups["S"].Value);
             var l = double.Parse(matchHsla.Groups["L"].Value);
             var (a, alphaText) = extractAlpha(matchHsla);
-            return (true, WebColor.FromHSLA(colorText, h, s, l, a, alphaText), Type.HSLA);
+            return (WebColor.FromHSLA(colorText, h, s, l, a, alphaText, originalColorText), Type.HSLA);
         }
 
-        return (false, null, Type.Unknown);
+        return (null, Type.Unknown);
     }
 
-    private static WebColor FromHex(string hexText, double r, double g, double b)
+    private static WebColor FromHex(string hexText, double r, double g, double b, string? originalColorText)
     {
         var (h, s, l) = RGBtoHSL(r, g, b);
         var rgbaText = BuildRGBAText(r, g, b, "1");
         var hslaText = BuildHSLAText(h, s, l, "1");
-        return new WebColor(r, g, b, h, s, l, 1.0, "1", hexText, rgbaText, hslaText);
+        return new WebColor(r, g, b, h, s, l, 1.0, "1", originalColorText ?? hexText, rgbaText, hslaText);
     }
 
-    private static WebColor FromRGBA(string rgbaText, double r, double g, double b, double a, string alphaText)
+    private static WebColor FromRGBA(string rgbaText, double r, double g, double b, double a, string alphaText, string? originalColorText)
     {
         var (h, s, l) = RGBtoHSL(r, g, b);
-        var hexText = BuildHexText(r, g, b, a);
+        var hexOrNameText = originalColorText ?? BuildHexText(r, g, b, a);
         var hslaText = BuildHSLAText(h, s, l, alphaText);
-        return new WebColor(r, g, b, h, s, l, a, alphaText, hexText, rgbaText, hslaText);
+        return new WebColor(r, g, b, h, s, l, a, alphaText, hexOrNameText, rgbaText, hslaText);
     }
 
-    private static WebColor FromHSLA(string hslaText, double h, double s, double l, double a, string alphaText)
+    private static WebColor FromHSLA(string hslaText, double h, double s, double l, double a, string alphaText, string? originalColorText)
     {
         var (r, g, b) = HSLtoRGB(h, s, l);
-        var hexText = BuildHexText(r, g, b, a);
+        var hexOrNameText = originalColorText ?? BuildHexText(r, g, b, a);
         var rgbaText = BuildRGBAText(r, g, b, alphaText);
-        return new WebColor(r, g, b, h, s, l, a, alphaText, hexText, rgbaText, hslaText);
+        return new WebColor(r, g, b, h, s, l, a, alphaText, hexOrNameText, rgbaText, hslaText);
     }
 
     private static string BuildHexText(double r, double g, double b, double a)
     {
-        static string num2hex(double n) => ((byte)Math.Min(Math.Round(n), 255)).ToString("x2");
-        if (a == 1.0)
-            return $"#{num2hex(r)}{num2hex(g)}{num2hex(b)}";
-        else
-        {
-            var bytea = 255 * a;
-            return $"#{num2hex(r)}{num2hex(g)}{num2hex(b)}{num2hex(bytea)}";
-        }
+        return (a == 1.0) ?
+            $"#{Num2Hex(r)}{Num2Hex(g)}{Num2Hex(b)}" :
+            $"#{Num2Hex(r)}{Num2Hex(g)}{Num2Hex(b)}{Num2Hex(255 * a)}";
     }
 
     private static string BuildRGBAText(double r, double g, double b, string alphaText)

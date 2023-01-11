@@ -13,11 +13,11 @@ internal class WebColorTest
     [Test]
     public void Parse_HexText_Test()
     {
-        var (success, color, type) = WebColor.Parse("#EBA4E8");
-        success.IsTrue();
+        var (color, type) = WebColor.Parse("#EBA4E8");
+        color.IsNotNull();
         type.Is(WebColor.Type.Hex);
 
-        DumpAlpha(color.IsNotNull()).Is("A:1, AText:1");
+        DumpAlpha(color).Is("A:1, AText:1");
 
         DumpHSL(color).Is("H:303, S:64, L:78");
         color.HSLAText.Is("hsla(303, 64%, 78%, 1)");
@@ -31,14 +31,14 @@ internal class WebColorTest
     [Test]
     public void Parse_HexText_Short_Test()
     {
-        var (success, color, type) = WebColor.Parse("#f3c");
-        success.IsTrue();
+        var (color, type) = WebColor.Parse("#f3c");
+        color.IsNotNull();
         type.Is(WebColor.Type.Hex);
 
-        DumpAlpha(color.IsNotNull()).Is("A:1, AText:1");
+        DumpAlpha(color).Is("A:1, AText:1");
 
-        //DumpHSL(color).Is("H:303, S:64, L:78");
-        //color.HSLAText.Is("hsla(303, 64%, 78%, 1)");
+        DumpHSL(color).Is("H:315, S:100, L:60");
+        color.HSLAText.Is("hsla(315, 100%, 60%, 1)");
 
         DumpRGB(color).Is("R:255, G:51, B:204");
         color.RGBAText.Is("rgba(255, 51, 204, 1)");
@@ -46,15 +46,14 @@ internal class WebColorTest
         color.HexOrNameText.Is("#f3c");
     }
 
-
     [Test]
     public void Parse_RGBAText_Test()
     {
-        var (success, color, type) = WebColor.Parse("rgba(235, 164, 232, 30%)");
-        success.IsTrue();
+        var (color, type) = WebColor.Parse("rgba(235, 164, 232, 30%)");
+        color.IsNotNull();
         type.Is(WebColor.Type.RGBA);
 
-        DumpAlpha(color.IsNotNull()).Is("A:0.3, AText:30%");
+        DumpAlpha(color).Is("A:0.3, AText:30%");
 
         DumpHSL(color).Is("H:303, S:64, L:78");
         color.HSLAText.Is("hsla(303, 64%, 78%, 30%)");
@@ -68,11 +67,11 @@ internal class WebColorTest
     [Test]
     public void Parse_HSLAText_Test()
     {
-        var (success, color, type) = WebColor.Parse("hsl(303, 64%, 78%, 0.3)");
-        success.IsTrue();
+        var (color, type) = WebColor.Parse("hsl(303, 64%, 78%, 0.3)");
+        color.IsNotNull();
         type.Is(WebColor.Type.HSLA);
 
-        DumpAlpha(color.IsNotNull()).Is("A:0.3, AText:0.3");
+        DumpAlpha(color).Is("A:0.3, AText:0.3");
 
         DumpHSL(color).Is("H:303, S:64, L:78");
         color.HSLAText.Is("hsl(303, 64%, 78%, 0.3)");

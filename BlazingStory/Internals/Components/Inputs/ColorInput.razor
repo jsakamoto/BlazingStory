@@ -2,12 +2,12 @@
 @inject IJSRuntime JSRuntime
 
 <span class="bs-basic-inputs-holder color-input-holder">
-    <input class="bs-basic-inputs color-input" type="text" value="@this.Value" placeholder="@this.PlaceHolder" @oninput="@((arg) => this.OnInput.InvokeAsync(arg))" />
+    <input class="bs-basic-inputs color-input" type="text" value="@this.Value" placeholder="@this.PlaceHolder" @oninput="OnInputInternal" />
 
     <div class="color-box-holder">
         <div class="color-box-background"></div>
         <div class="color-box" style="background-color: @(this.Value)"></div>
-        <input type="color" value="@this.Value" @oninput="@((arg) => this.OnInput.InvokeAsync(arg))" />
+        <input type="color" value="@this._HexColorText" @oninput="OnInputColorPicker" />
     </div>
 
     <SvgIcon Class="color-exchange-icon" Type="SvgIconType.Exchange" OnClick="OnClickExchangeIcon" />
@@ -24,6 +24,12 @@
     [Parameter]
     public EventCallback<ChangeEventArgs> OnInput { get; set; }
 
+    private string _HexColorText => this._CurrentColor?.NormalizedHexText ?? "#000000";
+
+    private WebColor? _CurrentColor = null;
+
+    private WebColor.Type _CurrentColorType = WebColor.Type.Unknown;
+
     private readonly Lazy<Task<IJSObjectReference>> _Module;
 
     public ColorInput()
@@ -31,11 +37,83 @@
         _Module = new(async () => await this.JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazingStory/Internals/Components/Inputs/ColorInput.razor.js"));
     }
 
-    private async Task OnClickExchangeIcon()
+    private async ValueTask Parse(string? colorText)
+    {
+        var (color, type) = WebColor.Parse(colorText);
+        if (color == null)
+        {
+            var computedColorText = await this.GetComputedColorAsync(colorText);
+            (color, _) = WebColor.Parse(computedColorText, colorText);
+            type = WebColor.Type.Hex;
+        }
+        this._CurrentColor = color;
+        this._CurrentColorType = type;
+    }
+
+    private async ValueTask<string?> GetComputedColorAsync(string? colorText)
     {
         var module = await _Module.Value;
-        this.Value = await module.InvokeAsync<string>("exchangeColor", this.Value);
-        await this.OnInput.InvokeAsync(new() { Value = this.Value });
+        return await module.InvokeAsync<string>("getComputedColor", colorText);
+    }
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        var valueParameter = parameters.GetValueOrDefault(nameof(Value), default(string));
+        var valueHasChanged = this.Value != valueParameter;
+        await base.SetParametersAsync(parameters);
+        if (valueHasChanged)
+        {
+            await this.Parse(valueParameter);
+            this.StateHasChanged();
+        }
+    }
+
+    private async Task OnInputInternal(ChangeEventArgs args)
+    {
+        this.Value = args.Value as string;
+        await this.Parse(this.Value);
+        await this.OnInput.InvokeAsync(args);
+    }
+
+    private async Task OnInputColorPicker(ChangeEventArgs args)
+    {
+        var currentType = this._CurrentColorType;
+        await this.Parse(args.Value as string);
+        if (_CurrentColor != null)
+        {
+            this._CurrentColorType = currentType;
+            args.Value = currentType switch
+            {
+                WebColor.Type.RGBA => this._CurrentColor.RGBAText,
+                WebColor.Type.HSLA => this._CurrentColor.HSLAText,
+                _ => this._CurrentColor.HexOrNameText
+            };
+        }
+        this.Value = args.Value as string;
+        await this.OnInput.InvokeAsync(args);
+    }
+
+    private async Task OnClickExchangeIcon()
+    {
+        if (this._CurrentColor != null)
+        {
+            switch (this._CurrentColorType)
+            {
+                case WebColor.Type.RGBA:
+                    this._CurrentColorType = WebColor.Type.HSLA;
+                    this.Value = _CurrentColor.HSLAText;
+                    break;
+                case WebColor.Type.HSLA:
+                    this._CurrentColorType = WebColor.Type.Hex;
+                    this.Value = _CurrentColor.HexOrNameText;
+                    break;
+                default:
+                    this._CurrentColorType = WebColor.Type.RGBA;
+                    this.Value = _CurrentColor.RGBAText;
+                    break;
+            }
+            await this.OnInput.InvokeAsync(new() { Value = this.Value });
+        }
     }
 
     public async ValueTask DisposeAsync()
