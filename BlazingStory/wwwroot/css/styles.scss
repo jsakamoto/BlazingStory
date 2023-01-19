@@ -1,6 +1,7 @@
 ﻿@import "variables.scss";
 @import "basic-styles.scss";
 @import "basic-styles-inputs.scss";
+@import "basic-styles-splitcontainer.scss";
 
 @import "../../Internals/Components/Layouts/MainLayout.razor.scss";
 
@@ -28,3 +29,4 @@
 @import "../../Internals/Pages/Canvas/AddOnPanel.razor.scss";
 @import "../../Internals/Pages/Canvas/ControlsPanel.razor.scss";
 
+@import "/_content/Toolbelt.Blazor.SplitContainer/Toolbelt.Blazor.SplitContainer.bundle.scp.css";

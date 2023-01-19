@@ -1,21 +1,25 @@
-@using System.Reflection;
+@using System.Reflection
+@inject IJSRuntime JSRuntime
 
 <StoriesDetector Assemblies="this.Assemblies" StoriesStore="this._StoriesStore" />
 
-<CascadingValue Value="this._StoriesStore">
-    <Router AppAssembly="@typeof(BlazingStoryApp).Assembly">
-        <Found Context="routeData">
-            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-            @*<FocusOnNavigate RouteData="@routeData" Selector="h1" />*@
-        </Found>
-        <NotFound>
-            <PageTitle>Not found</PageTitle>
-            <LayoutView Layout="@typeof(MainLayout)">
-                <p role="alert">Sorry, there's nothing at this address.</p>
-            </LayoutView>
-        </NotFound>
-    </Router>
-</CascadingValue>
+<div style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >=2 ? 1 : 0); display: @(this._InitLevel >= 1 ? "block" : "none");">
+    <CascadingValue Value="this._HelperScript">
+        <CascadingValue Value="this._StoriesStore">
+            <Router AppAssembly="@typeof(BlazingStoryApp).Assembly">
+                <Found Context="routeData">
+                    <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                </Found>
+                <NotFound>
+                    <PageTitle>Not found</PageTitle>
+                    <LayoutView Layout="@typeof(MainLayout)">
+                        <p role="alert">Sorry, there's nothing at this address.</p>
+                    </LayoutView>
+                </NotFound>
+            </Router>
+        </CascadingValue>
+    </CascadingValue>
+</div>
 
 @code
 {
@@ -25,4 +29,26 @@
     public IEnumerable<Assembly>? Assemblies { get; set; }
 
     private StoriesStore _StoriesStore = new();
+
+    private HelperScript? _HelperScript;
+
+    private int _InitLevel = 0;
+
+    protected override void OnInitialized()
+    {
+        this._HelperScript = new(this.JSRuntime);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        await Task.Delay(50);
+        this._InitLevel++;
+        this.StateHasChanged();
+
+        await Task.Delay(50);
+        this._InitLevel++;
+        this.StateHasChanged();
+    }
 }

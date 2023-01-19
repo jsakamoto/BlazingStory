@@ -7,13 +7,36 @@
 <SvgIcons />
 
 <PathQueryRouter>
-    <div class="main-layout stack horizontal">
-        <div class="sidebar-container">
-            <SideBar />
-        </div>
-
-        <div class="fill body-container stack">
+    <SplitContainer Class="main-layout" @bind-FirstPaneSize="_SideBarSize" @bind-FirstPaneSize:after="OnSideBarSizeChanged" FirstPaneMinSize="210" SecondPaneMinSize="210">
+        <FirstPane>
+            <div class="sidebar-container fill">
+                <SideBar />
+            </div>
+        </FirstPane>
+        <SecondPane>
             @Body
-        </div>
-    </div>
+        </SecondPane>
+    </SplitContainer>
 </PathQueryRouter>
+
+@code
+{
+    [CascadingParameter]
+    internal HelperScript HelperScript { get; init; } = default!;
+
+    private int _SideBarSize = 210;
+
+    private string SideBarSizeKeyName => this.GetType().Name + "." + nameof(_SideBarSize);
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        this._SideBarSize = await this.HelperScript.GetLocalStorageItemAsync(this.SideBarSizeKeyName, this._SideBarSize);
+        this.StateHasChanged();
+    }
+
+    private async Task OnSideBarSizeChanged()
+    {
+        await this.HelperScript.SetLocalStorageItemAsync(this.SideBarSizeKeyName, _SideBarSize);
+    }
+}

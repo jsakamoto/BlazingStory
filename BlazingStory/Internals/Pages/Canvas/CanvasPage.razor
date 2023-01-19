@@ -4,14 +4,23 @@
 
 <PageTitle>@_PageTitle</PageTitle>
 
+<SplitContainer Class="fill" Orientation="SplitterOrientation.Horizontal" SecondPaneMinSize="80"
+                @bind-SecondPaneSize="_AddonPaneSize"
+                @bind-SecondPaneSize:after="OnAddonPaneSizeChanged">
 
-<div class="canvas-container stack">
-    <iframe @ref="_Iframe" src="@_InitialCanvasFrameUrl" class="canvas-frame fill"></iframe>
-</div>
+    <FirstPane>
+        <div class="canvas-container fill stack">
+            <iframe @ref="_Iframe" src="@_InitialCanvasFrameUrl" class="canvas-frame fill"></iframe>
+        </div>
+    </FirstPane>
 
-<div class="add-on-container stack vertical">
-    <AddOnPanel Story="this._CurrentStory"></AddOnPanel>
-</div>
+    <SecondPane>
+        <div class="add-on-container fill stack vertical">
+            <AddOnPanel Story="this._CurrentStory"></AddOnPanel>
+        </div>
+    </SecondPane>
+
+</SplitContainer>
 
 @code
 {
@@ -20,6 +29,11 @@
 
     [CascadingParameter]
     public required QueryRouteData RouteData { get; set; }
+
+    [CascadingParameter]
+    internal HelperScript HelperScript { get; init; } = default!;
+
+    private int _AddonPaneSize = 210;
 
     private string _PageTitle = "";
 
@@ -35,6 +49,8 @@
 
     private ElementReference _Iframe;
 
+    private string AddOnPaneSizeKeyName => this.GetType().Name + "." + nameof(_AddonPaneSize);
+
     protected override void OnInitialized()
     {
         _InitialCanvasFrameUrl = _CurrentCanvasFrameUrl = this.GetCanvasFrameUrl();
@@ -45,6 +61,13 @@
         this.UpdateCurrentStory();
         this.UpdatePageTitle();
         await this.UpdateCanvasFrameUrlAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        this._AddonPaneSize = await this.HelperScript.GetLocalStorageItemAsync(AddOnPaneSizeKeyName, this._AddonPaneSize);
+        this.StateHasChanged();
     }
 
     private void UpdatePageTitle()
@@ -110,6 +133,11 @@
             this._JSModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazingStory/Internals/Pages/Canvas/CanvasPage.razor.js");
         }
         return this._JSModule;
+    }
+
+    private async Task OnAddonPaneSizeChanged()
+    {
+        await this.HelperScript.SetLocalStorageItemAsync(this.AddOnPaneSizeKeyName, _AddonPaneSize);
     }
 
     public async ValueTask DisposeAsync()
