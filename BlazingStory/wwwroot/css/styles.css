@@ -585,6 +585,10 @@ button.icon-button.reset-button svg {
   box-shadow: rgba(0, 0, 0, 0.1) 0 1px 0 0 inset;
 }
 
+.addon-pane-hidden .canvas-page-container > .spliter-bar, .addon-pane-hidden .canvas-page-container > .pane-of-split-container:last-of-type {
+  display: none;
+}
+
 .add-on-panel {
   overflow: auto;
 }

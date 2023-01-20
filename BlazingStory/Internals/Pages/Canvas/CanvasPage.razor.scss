@@ -6,14 +6,19 @@
     border: none;
 }
 
-.add-on-container {
-    //height: 340px;
-}
-
 .split-container.splitter-orientation-vertical .add-on-container {
     border-left: 1px solid rgba(0,0,0,.1);
 }
 
 .split-container.splitter-orientation-horizontal .add-on-container {
     box-shadow: rgb(0 0 0 / 10%) 0 1px 0 0 inset;
+}
+
+.addon-pane-hidden {
+    .canvas-page-container {
+        & > .spliter-bar,
+        & > .pane-of-split-container:last-of-type {
+            display: none;
+        }
+    }
 }
