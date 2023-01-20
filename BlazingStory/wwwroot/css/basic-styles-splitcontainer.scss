@@ -8,7 +8,7 @@
             content: "";
             position: absolute;
             z-index: 1;
-            transition: background-position 0.2s linear;
+            transition: color 0.2s linear,background-position 0.2s linear,background-size 0.2s linear,background 0.2s linear;
             background-image: radial-gradient(at center center,rgba(0,0,0,0.2) 0%,transparent 70%,transparent 100%);
             background-repeat: no-repeat;
         }
