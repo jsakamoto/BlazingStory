@@ -47,6 +47,7 @@
 
 .pane-of-split-container {
     display: flex;
+    flex-direction: column;
 
     .fill {
         flex: 1;

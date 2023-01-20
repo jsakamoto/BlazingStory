@@ -12,6 +12,11 @@
                 Interactions
             </TabButton>
         </TabButtonGroup>
+
+        <Spacer />
+
+        <IconButton Icon="this.ToggleOrientationButtonIcon" Title="Change addon orientation" OnClick="() => this.OnToggleOrientation.InvokeAsync()" />
+        <IconButton Icon="SvgIconType.CircleClose" Title="Hide addons" />
     </ToolBar>
 
     <div class="fill add-on-panel-content">
@@ -24,6 +29,18 @@
 {
     [Parameter, EditorRequired]
     public Story? Story { get; set; }
+
+    [Parameter]
+    public EventCallback OnToggleOrientation { get; set; }
+
+    [CascadingParameter]
+    internal SplitterOrientation SplitterOrientation { get; set; }
+
+    private SvgIconType ToggleOrientationButtonIcon => this.SplitterOrientation switch
+    {
+        SplitterOrientation.Horizontal => SvgIconType.RightSidePane,
+        _ => SvgIconType.BottomSidePane
+    };
 
     private int GetParametersCount()
     {

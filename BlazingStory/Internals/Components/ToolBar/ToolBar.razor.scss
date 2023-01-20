@@ -2,10 +2,14 @@
     box-shadow: rgb(0 0 0 / 10%) 0 -1px 0 0 inset;
     height: 40px;
     overflow-y: auto;
+    display: flex;
+
 
     .toolbar-content {
+        flex: 1;
         display: inline-flex;
         align-items: center;
         gap: 4px;
+        margin-right: 7px;
     }
 }

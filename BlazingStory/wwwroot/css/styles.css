@@ -139,6 +139,7 @@ button {
 
 .pane-of-split-container {
   display: flex;
+  flex-direction: column;
 }
 .pane-of-split-container .fill {
   flex: 1;
@@ -319,11 +320,14 @@ button {
   box-shadow: rgba(0, 0, 0, 0.1) 0 -1px 0 0 inset;
   height: 40px;
   overflow-y: auto;
+  display: flex;
 }
 .toolbar-viewport .toolbar-content {
+  flex: 1;
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  margin-right: 7px;
 }
 
 .tab-button-group {
@@ -339,6 +343,7 @@ button.tab-button {
   color: var(--bs-sidebar-nav-subheading-color);
   border-top: solid 2px transparent;
   border-bottom: solid 3px transparent;
+  white-space: nowrap;
 }
 button.tab-button.active {
   color: var(--bs-focused-color);
@@ -572,8 +577,11 @@ button.icon-button.reset-button svg {
   border: none;
 }
 
-.add-on-container {
-  height: 340px;
+.split-container.splitter-orientation-vertical .add-on-container {
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.split-container.splitter-orientation-horizontal .add-on-container {
   box-shadow: rgba(0, 0, 0, 0.1) 0 1px 0 0 inset;
 }
 
