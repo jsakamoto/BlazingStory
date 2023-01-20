@@ -4,11 +4,11 @@
 
 <PageTitle>@_PageTitle</PageTitle>
 
-<div class="fill stack vertical addon-pane-@(this._AddonPaneVisible ? "visible" : "hidden")">
+<div class="fill stack vertical addon-pane-@(this._AddonPanelLayout.Visible ? "visible" : "hidden")">
 
-    <SplitContainer Class="canvas-page-container fill" Orientation="this._SplitterOrientation" SecondPaneMinSize="80"
-                    @bind-SecondPaneSize="_AddonPaneSize"
-                    @bind-SecondPaneSize:after="OnAddonPaneSizeChanged">
+    <SplitContainer Class="canvas-page-container fill" Orientation="this._AddonPanelLayout.SplitterOrientation" SecondPaneMinSize="80"
+                    @bind-SecondPaneSize="_AddonPanelSize"
+                    @bind-SecondPaneSize:after="OnAddonPanelSizeChanged">
 
         <FirstPane>
             <div class="canvas-container fill stack vertical">
@@ -28,9 +28,9 @@
 
                     <Spacer />
 
-                    @if (!this._AddonPaneVisible)
+                    @if (!this._AddonPanelLayout.Visible)
                     {
-                        <IconButton Icon="this.ToggleOrientationButtonIcon" Title="Show addons" OnClick="this.OnClickShowAddonPane" />
+                        <IconButton Icon="this.ToggleOrientationButtonIcon" Title="Show addons" OnClick="this.OnClickShowAddonPanel" />
                     }
                 </ToolBar>
 
@@ -41,9 +41,9 @@
         <SecondPane>
             <div class="add-on-container fill stack vertical">
                 <AddOnPanel Story="this._CurrentStory"
-                            SplitterOrientation="this._SplitterOrientation"
-                            OnToggleOrientation="OnToggleOrientation"
-                            OnClickClose="OnClickAddonPaneClose">
+                            SplitterOrientation="this._AddonPanelLayout.SplitterOrientation"
+                            OnToggleOrientation="this.OnToggleOrientation"
+                            OnClickClose="this.OnClickCloseAddonPanel">
                 </AddOnPanel>
             </div>
         </SecondPane>
@@ -63,15 +63,9 @@
     [CascadingParameter]
     internal HelperScript HelperScript { get; init; } = default!;
 
-    private SplitterOrientation _SplitterOrientation = SplitterOrientation.Horizontal;
+    private int _AddonPanelSize = 210;
 
-    private bool _AddonPaneVisible = true;
-
-    private int _AddonPaneSize = 210;
-
-    private int _AddonPaneSizeHorizontal = 210;
-
-    private int _AddonPaneSizeVertical = 210;
+    private AddonPanelLayout _AddonPanelLayout = new();
 
     private string _PageTitle = "";
 
@@ -87,17 +81,9 @@
 
     private ElementReference _Iframe;
 
-    private string AddOnPaneVisibleKeyName => this.GetType().Name + "." + nameof(_AddonPaneVisible);
+    private string AddonPanelLayoutKeyName => this.GetType().Name + "." + nameof(_AddonPanelLayout);
 
-    private string AddOnPaneSizeKeyName => this.GetType().Name + "." + nameof(_AddonPaneSize);
-
-    private string SplitterOrientationKeyName => this.GetType().Name + "." + nameof(_SplitterOrientation);
-
-    private string AddonPaneSizeHorizontalKeyName => this.GetType().Name + "." + nameof(_AddonPaneSizeHorizontal);
-
-    private string AddonPaneSizeVerticalKeyName => this.GetType().Name + "." + nameof(_AddonPaneSizeVertical);
-
-    private SvgIconType ToggleOrientationButtonIcon => this._SplitterOrientation switch
+    private SvgIconType ToggleOrientationButtonIcon => this._AddonPanelLayout.SplitterOrientation switch
     {
         SplitterOrientation.Horizontal => SvgIconType.BottomSidePane,
         _ => SvgIconType.RightSidePane
@@ -118,12 +104,8 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
-        this._SplitterOrientation = (SplitterOrientation)await this.HelperScript.GetLocalStorageItemAsync<int>(SplitterOrientationKeyName, (int)this._SplitterOrientation);
-        this._AddonPaneVisible = (await this.HelperScript.GetLocalStorageItemAsync(this.AddOnPaneVisibleKeyName))?.ToLower() != "false";
-        this._AddonPaneSizeHorizontal = await this.HelperScript.GetLocalStorageItemAsync(this.AddonPaneSizeHorizontalKeyName, this._AddonPaneSizeHorizontal);
-        this._AddonPaneSizeVertical = await this.HelperScript.GetLocalStorageItemAsync(this.AddonPaneSizeVerticalKeyName, this._AddonPaneSizeVertical);
-        this.UpdateAddonPaneSize(this._SplitterOrientation);
-
+        this._AddonPanelLayout = await this.HelperScript.LoadObjectFromLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
+        this.UpdateAddonPanelSize(this._AddonPanelLayout.SplitterOrientation);
         this.StateHasChanged();
     }
 
@@ -192,50 +174,54 @@
         return this._JSModule;
     }
 
-    private async Task OnAddonPaneSizeChanged()
+    private async Task OnAddonPanelSizeChanged()
     {
-        if (_SplitterOrientation == SplitterOrientation.Horizontal)
+        if (_AddonPanelLayout.SplitterOrientation == SplitterOrientation.Horizontal)
         {
-            this._AddonPaneSizeVertical = this._AddonPaneSize;
-            await this.HelperScript.SetLocalStorageItemAsync(this.AddonPaneSizeVerticalKeyName, _AddonPaneSizeVertical);
+            this._AddonPanelLayout.VerticalSize = this._AddonPanelSize;
         }
-        if (_SplitterOrientation == SplitterOrientation.Vertical)
+        else
         {
-            this._AddonPaneSizeHorizontal = this._AddonPaneSize;
-            await this.HelperScript.SetLocalStorageItemAsync(this.AddonPaneSizeHorizontalKeyName, _AddonPaneSizeHorizontal);
+            this._AddonPanelLayout.HorizontalSize = this._AddonPanelSize;
         }
+        await this.SaveAddonPanelLayoutAsync();
     }
 
-    private void UpdateAddonPaneSize(SplitterOrientation splitterOrientation)
+    private void UpdateAddonPanelSize(SplitterOrientation splitterOrientation)
     {
-        this._AddonPaneSize = splitterOrientation switch
+        this._AddonPanelSize = splitterOrientation switch
         {
-            SplitterOrientation.Vertical => this._AddonPaneSizeHorizontal,
-            _ => this._AddonPaneSizeVertical
+            SplitterOrientation.Vertical => this._AddonPanelLayout.HorizontalSize,
+            _ => this._AddonPanelLayout.VerticalSize
         };
     }
 
     private async Task OnToggleOrientation()
     {
-        _SplitterOrientation = _SplitterOrientation switch
+        _AddonPanelLayout.SplitterOrientation = _AddonPanelLayout.SplitterOrientation switch
         {
             SplitterOrientation.Horizontal => SplitterOrientation.Vertical,
             _ => SplitterOrientation.Horizontal
         };
-        this.UpdateAddonPaneSize(this._SplitterOrientation);
-        await this.HelperScript.SetLocalStorageItemAsync(this.SplitterOrientationKeyName, (int)this._SplitterOrientation);
+        this.UpdateAddonPanelSize(this._AddonPanelLayout.SplitterOrientation);
+        await this.SaveAddonPanelLayoutAsync();
     }
 
-    private async Task OnClickShowAddonPane()
+    private async Task OnClickShowAddonPanel()
     {
-        this._AddonPaneVisible = true;
-        await this.HelperScript.SetLocalStorageItemAsync(this.AddOnPaneVisibleKeyName, this._AddonPaneVisible);
+        this._AddonPanelLayout.Visible = true;
+        await this.SaveAddonPanelLayoutAsync();
     }
 
-    private async Task OnClickAddonPaneClose()
+    private async Task OnClickCloseAddonPanel()
     {
-        this._AddonPaneVisible = false;
-        await this.HelperScript.SetLocalStorageItemAsync(this.AddOnPaneVisibleKeyName, this._AddonPaneVisible);
+        this._AddonPanelLayout.Visible = false;
+        await this.SaveAddonPanelLayoutAsync();
+    }
+
+    private async ValueTask SaveAddonPanelLayoutAsync()
+    {
+        await this.HelperScript.SaveObjectToLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
     }
 
     public async ValueTask DisposeAsync()

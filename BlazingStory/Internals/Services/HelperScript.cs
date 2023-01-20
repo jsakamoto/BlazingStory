@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using System.Text.Json;
+using Microsoft.JSInterop;
 
 namespace BlazingStory.Internals.Services;
 
@@ -6,9 +7,24 @@ internal class HelperScript : IAsyncDisposable
 {
     private readonly Lazy<Task<IJSObjectReference>> _Module;
 
+    private readonly JsonSerializerOptions JsonSerializerOptions = new() { IncludeFields = true };
+
     internal HelperScript(IJSRuntime jSRuntime)
     {
         this._Module = new(async () => await jSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazingStory/helper.min.js"));
+    }
+
+    public async ValueTask SaveObjectToLocalStorageAsync<T>(string key, T obj)
+    {
+        var json = JsonSerializer.Serialize(obj, this.JsonSerializerOptions);
+        await this.SetLocalStorageItemAsync(key, json);
+    }
+
+    public async ValueTask<T> LoadObjectFromLocalStorageAsync<T>(string key, T defaultObject)
+    {
+        var json = await this.GetLocalStorageItemAsync(key);
+        if (string.IsNullOrEmpty(json)) return defaultObject;
+        return JsonSerializer.Deserialize<T?>(json, this.JsonSerializerOptions) ?? defaultObject;
     }
 
     public async ValueTask SetLocalStorageItemAsync<T>(string key, T? value)
