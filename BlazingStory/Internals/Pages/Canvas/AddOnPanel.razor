@@ -15,8 +15,8 @@
 
         <Spacer />
 
-        <IconButton Icon="this.ToggleOrientationButtonIcon" Title="Change addon orientation" OnClick="this.OnToggleOrientation" />
-        <IconButton Icon="SvgIconType.CircleClose" Title="Hide addons" OnClick="this.OnClickClose" />
+        <IconButton Icon="this.ToggleOrientationButtonIcon" Command="this._Commands[CommandType.ToggleAddonPanelOrientation]" />
+        <IconButton Icon="SvgIconType.CircleClose" Command="this._Commands[CommandType.CloseAddonPanel]" />
     </ToolBar>
 
     <div class="fill add-on-panel-content">
@@ -54,15 +54,5 @@
         return this.Story?.Context.Parameters
             .Where(p => p.Name != "EventCallback" && !p.Name.StartsWith("EventCallback`"))
             .Count() ?? 0;
-    }
-
-    private async Task OnToggleOrientation()
-    {
-        await this._Commands.InvokeAsync(CommandType.ToggleAddonPanelOrientation);
-    }
-
-    private async Task OnClickClose()
-    {
-        await this._Commands.InvokeAsync(CommandType.CloseAddonPanel);
     }
 }

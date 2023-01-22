@@ -2,30 +2,41 @@
 using Toolbelt.Blazor.HotKeys2;
 
 namespace BlazingStory.Internals.Services.Command;
-internal class Command
+public class Command
 {
-    public readonly CommandType Type;
+    internal readonly CommandType Type;
 
-    public Code HotKey;
+    internal Code HotKey;
+
+    private string? _TitleHolder;
 
     private readonly Dictionary<Guid, AsyncCallback> _Subscribers = new();
 
-    public Command(CommandType type) : this(type, new Code("")) { }
+    internal string? Title => this._TitleHolder == null ? null : string.Format(this._TitleHolder, this.GetHotKeyName());
 
-    public Command(CommandType type, Code hotKey)
+    internal Command(CommandType type, string? title = null) : this(type, new Code(""), title) { }
+
+    internal Command(CommandType type, Code hotKey, string? title = null)
     {
         this.Type = type;
         this.HotKey = hotKey;
+        this._TitleHolder = title;
     }
 
-    public IDisposable Subscribe(AsyncCallback callBack)
+    private string GetHotKeyName()
+    {
+        var hotKeyName = (string)this.HotKey;
+        return hotKeyName.StartsWith("Key") ? hotKeyName.Substring(3) : hotKeyName;
+    }
+
+    internal IDisposable Subscribe(AsyncCallback callBack)
     {
         var key = Guid.NewGuid();
         this._Subscribers.Add(key, callBack);
         return new Disposer(() => { this._Subscribers.Remove(key); });
     }
 
-    public async ValueTask InvokeAsync()
+    internal async ValueTask InvokeAsync()
     {
         var tasks = this._Subscribers.Select(s => InvokeCallbackAsync(s.Value)).ToArray();
         foreach (var task in tasks) { await task; }

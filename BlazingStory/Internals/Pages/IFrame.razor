@@ -1,5 +1,18 @@
 @page "/iframe.html"
 @layout NullLayout
+
 <IdQueryRouter>
     <CanvasFrame />
 </IdQueryRouter>
+
+@code
+{
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var helperScript = this.Services.GetRequiredService<HelperScript>();
+        await helperScript.SetupKeyDownSenderAsync();
+    }
+}

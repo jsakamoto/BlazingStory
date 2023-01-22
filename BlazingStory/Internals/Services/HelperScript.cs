@@ -14,36 +14,44 @@ internal class HelperScript : IAsyncDisposable
         this._Module = new(async () => await jSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazingStory/helper.min.js"));
     }
 
-    public async ValueTask SaveObjectToLocalStorageAsync<T>(string key, T obj)
+    internal async ValueTask InvokeVoidAsync(string id, params object?[]? args)
+    {
+        var module = await this._Module.Value;
+        await module.InvokeVoidAsync(id, args);
+    }
+
+    internal async ValueTask<T> InvokeAsync<T>(string id, params object?[]? args)
+    {
+        var module = await this._Module.Value;
+        return await module.InvokeAsync<T>(id, args);
+    }
+
+    internal async ValueTask SaveObjectToLocalStorageAsync<T>(string key, T obj)
     {
         var json = JsonSerializer.Serialize(obj, this.JsonSerializerOptions);
         await this.SetLocalStorageItemAsync(key, json);
     }
 
-    public async ValueTask<T> LoadObjectFromLocalStorageAsync<T>(string key, T defaultObject)
+    internal async ValueTask<T> LoadObjectFromLocalStorageAsync<T>(string key, T defaultObject)
     {
         var json = await this.GetLocalStorageItemAsync(key);
         if (string.IsNullOrEmpty(json)) return defaultObject;
         return JsonSerializer.Deserialize<T?>(json, this.JsonSerializerOptions) ?? defaultObject;
     }
 
-    public async ValueTask SetLocalStorageItemAsync<T>(string key, T? value)
-    {
-        var module = await this._Module.Value;
-        await module.InvokeVoidAsync("setLocalStorageItem", key, value?.ToString() ?? "");
-    }
+    internal ValueTask SetLocalStorageItemAsync<T>(string key, T? value) => this.InvokeVoidAsync("setLocalStorageItem", key, value?.ToString() ?? "");
 
-    public async ValueTask<string?> GetLocalStorageItemAsync(string key)
-    {
-        var module = await this._Module.Value;
-        return await module.InvokeAsync<string?>("getLocalStorageItem", key);
-    }
+    internal ValueTask<string?> GetLocalStorageItemAsync(string key) => this.InvokeAsync<string?>("getLocalStorageItem", key);
 
     public async ValueTask<T> GetLocalStorageItemAsync<T>(string key, T defaultValue) where T : IParsable<T>
     {
         var stringValue = await this.GetLocalStorageItemAsync(key);
         return T.TryParse(stringValue, null, out var value) ? value : defaultValue;
     }
+
+    internal ValueTask SetupKeyDownSenderAsync() => this.InvokeVoidAsync("setupKeyDownSender");
+
+    internal ValueTask SetupKeyDownReceiverAsync() => this.InvokeVoidAsync("setupKeyDownReceiver");
 
     public async ValueTask DisposeAsync()
     {

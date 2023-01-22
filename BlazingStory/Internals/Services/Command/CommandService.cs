@@ -30,6 +30,8 @@ internal class CommandService : IDisposable
         }
     }
 
+    public Command this[CommandType type] => this._Commands[type];
+
     public async Task InvokeAsync(CommandType type)
     {
         if (!this._Commands.TryGetValue(type, out var command)) return;

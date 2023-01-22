@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@using Toolbelt.Blazor.HotKeys2
 
 <HeadContent>
     <link rel="stylesheet" href="_content/BlazingStory/css/styles.min.css" />
@@ -30,9 +31,22 @@
 
     private string SideBarSizeKeyName => this.GetType().Name + "." + nameof(_SideBarSize);
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        this.ConfigureCommands(this.Services);
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
+        await this.HelperScript.SetupKeyDownReceiverAsync();
+    }
+
+    private void ConfigureCommands(IServiceProvider services)
+    {
+        var commandServce = services.GetRequiredService<CommandService>();
+        commandServce.AddCommands(new Command[]
+        {
+            new(CommandType.OpenAddonPanel),
+            new(CommandType.CloseAddonPanel, Code.A, "Hide addons [{0}]"),
+            new(CommandType.ToggleAddonPanelOrientation, Code.D, "Change addon orientation [{0}]"),
+        });
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

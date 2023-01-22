@@ -1,4 +1,4 @@
-<button class="icon-button @Class" title="@Title" @onclick="(args => OnClick.InvokeAsync(args))">
+<button class="icon-button @Class" title="@this.GetTitleText()" @onclick="this.ClickHandler">
     <SvgIcon Type="Icon" />
 </button>
 
@@ -14,4 +14,16 @@
 
     [Parameter]
     public string? Class { get; set; }
+
+    [Parameter]
+    public Command? Command { get; set; }
+
+    private string? GetTitleText() => this.Title ?? this.Command?.Title;
+
+    private async Task ClickHandler(MouseEventArgs args)
+    {
+        var t1 = this.OnClick.InvokeAsync(args);
+        if (this.Command != null) await this.Command.InvokeAsync();
+        await t1;
+    }
 }
