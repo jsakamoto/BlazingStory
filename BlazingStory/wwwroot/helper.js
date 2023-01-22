@@ -1,5 +1,6 @@
 export const setLocalStorageItem = (key, value) => { localStorage.setItem(key, value); };
 export const getLocalStorageItem = (key) => (localStorage.getItem(key) || null);
+export const copyTextToClipboard = (text) => navigator.clipboard.writeText(text);
 const keydown = "keydown";
 export const setupKeyDownSender = () => {
     document.addEventListener(keydown, event => {

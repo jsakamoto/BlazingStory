@@ -2,6 +2,8 @@ export const setLocalStorageItem = (key: string, value: string): void => { local
 
 export const getLocalStorageItem = (key: string): string | null => (localStorage.getItem(key) || null);
 
+export const copyTextToClipboard = (text: string): Promise<void> => navigator.clipboard.writeText(text);
+
 const keydown = "keydown";
 
 type KeyEventArgument = {
@@ -14,7 +16,7 @@ type KeyEventArgument = {
 };
 
 type MessageArgument = {
-    action:"keydown",
+    action: "keydown",
     eventArgs: KeyEventArgument
 }
 

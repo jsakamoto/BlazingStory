@@ -32,7 +32,9 @@
                     {
                         <IconButton Icon="this.ToggleOrientationButtonIcon" Command="this._Commands[CommandType.OpenAddonPanel]" />
                     }
-                    <IconButton Icon="SvgIconType.OpenNewTab" Href="@this.GetCanvasFrameUrl()" Target="_blank" Title="Open canvas in new tab" />
+
+                    <IconButton Icon="SvgIconType.OpenNewTab" Href="@this._CurrentCanvasFrameUrl" Target="_blank" Title="Open canvas in new tab" />
+                    <IconButton Icon="SvgIconType.Link" Title="Copy canvas link" OnClick="this.OnClickCopyCanvasLink" />
                 </ToolBar>
 
                 <iframe @ref="_Iframe" src="@_InitialCanvasFrameUrl" class="canvas-frame fill"></iframe>
@@ -229,6 +231,12 @@
     {
         this._AddonPanelLayout.Visible = false;
         await this.SaveAddonPanelLayoutAsync();
+    }
+
+    private async Task OnClickCopyCanvasLink()
+    {
+        var canvalLinkUrl = this._CurrentCanvasFrameUrl.TrimStart('.', '/');
+        await this.HelperScript.CopyTextToClipboardAsync(canvalLinkUrl);
     }
 
     private async ValueTask SaveAddonPanelLayoutAsync()

@@ -26,6 +26,8 @@ internal class HelperScript : IAsyncDisposable
         return await module.InvokeAsync<T>(id, args);
     }
 
+    internal ValueTask CopyTextToClipboardAsync(string text) => this.InvokeVoidAsync("copyTextToClipboard", text);
+
     internal async ValueTask SaveObjectToLocalStorageAsync<T>(string key, T obj)
     {
         var json = JsonSerializer.Serialize(obj, this.JsonSerializerOptions);

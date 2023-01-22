@@ -16,5 +16,6 @@ public enum SvgIconType
     CircleClose,
     RightSidePane,
     BottomSidePane,
-    OpenNewTab
+    OpenNewTab,
+    Link
 }
