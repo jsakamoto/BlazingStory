@@ -7,18 +7,23 @@
 
 <SvgIcons />
 
-<PathQueryRouter>
-    <SplitContainer Class="main-layout" @bind-FirstPaneSize="_SideBarSize" @bind-FirstPaneSize:after="OnSideBarSizeChanged" FirstPaneMinSize="210" SecondPaneMinSize="210">
-        <FirstPane>
-            <div class="sidebar-container fill">
-                <SideBar />
-            </div>
-        </FirstPane>
-        <SecondPane>
-            @Body
-        </SecondPane>
-    </SplitContainer>
-</PathQueryRouter>
+@if (this._Ready)
+{
+    <PathQueryRouter>
+        <SplitContainer Class="main-layout" @bind-FirstPaneSize="_SideBarSize" @bind-FirstPaneSize:after="OnSideBarSizeChanged" FirstPaneMinSize="210" SecondPaneMinSize="210">
+
+            <FirstPane>
+                <div class="sidebar-container fill">
+                    <SideBar />
+                </div>
+            </FirstPane>
+
+            <SecondPane>
+                @Body
+            </SecondPane>
+        </SplitContainer>
+    </PathQueryRouter>
+}
 
 @code
 {
@@ -31,29 +36,33 @@
 
     private string SideBarSizeKeyName => this.GetType().Name + "." + nameof(_SideBarSize);
 
-    protected override async Task OnInitializedAsync()
-    {
-        this.ConfigureCommands(this.Services);
-        this.HelperScript = this.Services.GetRequiredService<HelperScript>();
-        await this.HelperScript.SetupKeyDownReceiverAsync();
-    }
+    private bool _Ready = false;
 
-    private void ConfigureCommands(IServiceProvider services)
+    protected override void OnInitialized()
     {
-        var commandServce = services.GetRequiredService<CommandService>();
-        commandServce.AddCommands(new Command[]
-        {
-            new(CommandType.OpenAddonPanel, "Show addons"),
-            new(CommandType.CloseAddonPanel, Code.A, "Hide addons [{0}]"),
-            new(CommandType.ToggleAddonPanelOrientation, Code.D, "Change addon orientation [{0}]"),
-        });
+        this.HelperScript = this.Services.GetRequiredService<HelperScript>();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
+        await this.ConfigureCommandsAsync(this.Services);
+        this._Ready = true;
+        this.StateHasChanged();
+
+        await this.HelperScript.SetupKeyDownReceiverAsync();
         this._SideBarSize = await this.HelperScript.GetLocalStorageItemAsync(this.SideBarSizeKeyName, this._SideBarSize);
         this.StateHasChanged();
+    }
+
+    private async ValueTask ConfigureCommandsAsync(IServiceProvider services)
+    {
+        var commandServce = services.GetRequiredService<CommandService>();
+        await commandServce.AddCommandsAsync(new Command[]
+        {
+            new(CommandType.AddonPanelVisible, Code.A, "Show addons [{0}]", flag: true),
+            new(CommandType.AddonPanelOrientation, Code.D, "Change addon orientation [{0}]"),
+        });
     }
 
     private async Task OnSideBarSizeChanged()

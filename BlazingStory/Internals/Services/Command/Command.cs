@@ -2,28 +2,38 @@
 using Toolbelt.Blazor.HotKeys2;
 
 namespace BlazingStory.Internals.Services.Command;
+
 public class Command
 {
-    internal readonly CommandType Type;
+    public readonly CommandType Type;
 
-    internal Code HotKey;
+    public Code HotKey { get => this._HotKey; set { if (this._HotKey == value) return; this._HotKey = value; this.StateChanged?.Invoke(this, EventArgs.Empty); } }
 
-    private readonly string? _TitleHolder;
+    public bool Flag { get => this._Flag; set { if (this._Flag == value) return; this._Flag = value; this.StateChanged?.Invoke(this, EventArgs.Empty); } }
+
+    internal readonly string? Title;
+
+    private Code _HotKey;
+
+    private bool _Flag;
+
+    internal string? GetTitleText() => this.Title == null ? null : string.Format(this.Title, this.GetHotKeyName());
 
     private readonly Dictionary<Guid, AsyncCallback> _Subscribers = new();
 
-    internal string? Title => this._TitleHolder == null ? null : string.Format(this._TitleHolder, this.GetHotKeyName());
+    internal event EventHandler? StateChanged;
 
-    internal Command(CommandType type, string? title = null) : this(type, new Code(""), title) { }
+    internal Command(CommandType type, string? title = null, bool flag = false) : this(type, new Code(""), title, false) { }
 
-    internal Command(CommandType type, Code hotKey, string? title = null)
+    public Command(CommandType type, Code hotKey, string? title = null, bool flag = false)
     {
         this.Type = type;
-        this.HotKey = hotKey;
-        this._TitleHolder = title;
+        this._HotKey = hotKey;
+        this.Title = title;
+        this._Flag = flag;
     }
 
-    private string GetHotKeyName()
+    internal string GetHotKeyName()
     {
         var hotKeyName = (string)this.HotKey;
         return hotKeyName.StartsWith("Key") ? hotKeyName[3..] : hotKeyName;

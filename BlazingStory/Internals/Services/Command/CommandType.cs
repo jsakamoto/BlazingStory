@@ -1,8 +1,7 @@
 ﻿namespace BlazingStory.Internals.Services.Command;
 
-internal enum CommandType
+public enum CommandType
 {
-    OpenAddonPanel,
-    CloseAddonPanel,
-    ToggleAddonPanelOrientation,
+    AddonPanelVisible,
+    AddonPanelOrientation,
 }

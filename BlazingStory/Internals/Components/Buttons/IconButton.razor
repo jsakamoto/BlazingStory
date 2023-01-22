@@ -33,7 +33,11 @@ else
     [Parameter]
     public string? Target { get; set; }
 
-    private string? GetTitleText() => this.Title ?? this.Command?.Title;
+    private string? GetTitleText()
+    {
+        if (string.IsNullOrEmpty(this.Title)) return this.Command?.GetTitleText();
+        return string.Format(this.Title, this.Command?.GetHotKeyName());
+    }
 
     private async Task ClickHandler(MouseEventArgs args)
     {

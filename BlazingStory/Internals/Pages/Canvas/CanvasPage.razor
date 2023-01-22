@@ -4,7 +4,7 @@
 
 <PageTitle>@_PageTitle</PageTitle>
 
-<div class="fill stack vertical addon-pane-@(this._AddonPanelLayout.Visible ? "visible" : "hidden")">
+<div class="fill stack vertical addon-pane-@(this._AddonPanelVisibleCommand?.Flag == true ? "visible" : "hidden")">
 
     <SplitContainer Class="canvas-page-container fill" Orientation="this._AddonPanelLayout.SplitterOrientation" SecondPaneMinSize="80"
                     @bind-SecondPaneSize="_AddonPanelSize"
@@ -28,9 +28,9 @@
 
                     <Spacer />
 
-                    @if (!this._AddonPanelLayout.Visible)
+                    @if (this._AddonPanelVisibleCommand?.Flag != true)
                     {
-                        <IconButton Icon="this.ToggleOrientationButtonIcon" Command="this._Commands[CommandType.OpenAddonPanel]" />
+                        <IconButton Icon="this.ToggleOrientationButtonIcon" Command="this._Commands[CommandType.AddonPanelVisible]" />
                     }
 
                     <IconButton Icon="SvgIconType.OpenNewTab" Href="@this._CurrentCanvasFrameUrl" Target="_blank" Title="Open canvas in new tab" />
@@ -73,6 +73,8 @@
 
     private AddonPanelLayout _AddonPanelLayout = new();
 
+    private Command? _AddonPanelVisibleCommand;
+
     private string _PageTitle = "";
 
     private string _LastTitledParameter = "";
@@ -99,10 +101,10 @@
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
         this._Commands = this.Services.GetRequiredService<CommandService>();
+        this._AddonPanelVisibleCommand = this._Commands[CommandType.AddonPanelVisible];
         this._Subscriptions.Add(
-            this._Commands.Subscribe(CommandType.ToggleAddonPanelOrientation, this.OnToggleOrientation),
-            this._Commands.Subscribe(CommandType.OpenAddonPanel, this.OnOpenAddonPanel),
-            this._Commands.Subscribe(CommandType.CloseAddonPanel, this.OnCloseAddonPanel)
+            this._Commands.Subscribe(CommandType.AddonPanelOrientation, this.OnToggleOrientation),
+            this._AddonPanelVisibleCommand.Subscribe(this.OnToggleAddonPanelVisible)
         );
         this._InitialCanvasFrameUrl = this._CurrentCanvasFrameUrl = this.GetCanvasFrameUrl();
     }
@@ -221,15 +223,10 @@
         await this.SaveAddonPanelLayoutAsync();
     }
 
-    private async ValueTask OnOpenAddonPanel()
+    private async ValueTask OnToggleAddonPanelVisible()
     {
-        this._AddonPanelLayout.Visible = true;
-        await this.SaveAddonPanelLayoutAsync();
-    }
-
-    private async ValueTask OnCloseAddonPanel()
-    {
-        this._AddonPanelLayout.Visible = false;
+        var command = this._Commands[CommandType.AddonPanelVisible];
+        command.Flag = !command.Flag;
         await this.SaveAddonPanelLayoutAsync();
     }
 
