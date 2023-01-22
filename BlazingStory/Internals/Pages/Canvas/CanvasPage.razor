@@ -61,7 +61,9 @@
     public required QueryRouteData RouteData { get; set; }
 
     [CascadingParameter]
-    internal HelperScript HelperScript { get; init; } = default!;
+    internal IServiceProvider Services { get; init; } = default!;
+
+    private HelperScript HelperScript = default!;
 
     private int _AddonPanelSize = 210;
 
@@ -91,7 +93,8 @@
 
     protected override void OnInitialized()
     {
-        _InitialCanvasFrameUrl = _CurrentCanvasFrameUrl = this.GetCanvasFrameUrl();
+        this.HelperScript = this.Services.GetRequiredService<HelperScript>();
+        this._InitialCanvasFrameUrl = this._CurrentCanvasFrameUrl = this.GetCanvasFrameUrl();
     }
 
     protected override async Task OnParametersSetAsync()

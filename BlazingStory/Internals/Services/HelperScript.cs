@@ -9,7 +9,7 @@ internal class HelperScript : IAsyncDisposable
 
     private readonly JsonSerializerOptions JsonSerializerOptions = new() { IncludeFields = true };
 
-    internal HelperScript(IJSRuntime jSRuntime)
+    public HelperScript(IJSRuntime jSRuntime)
     {
         this._Module = new(async () => await jSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazingStory/helper.min.js"));
     }

@@ -4,7 +4,7 @@
 <StoriesDetector Assemblies="this.Assemblies" StoriesStore="this._StoriesStore" />
 
 <div style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >=2 ? 1 : 0); display: @(this._InitLevel >= 1 ? "block" : "none");">
-    <CascadingValue Value="this._HelperScript">
+    <CascadingValue Value="this._ServiceProvider">
         <CascadingValue Value="this._StoriesStore">
             <Router AppAssembly="@typeof(BlazingStoryApp).Assembly">
                 <Found Context="routeData">
@@ -30,13 +30,16 @@
 
     private StoriesStore _StoriesStore = new();
 
-    private HelperScript? _HelperScript;
-
     private int _InitLevel = 0;
+
+    private IServiceProvider? _ServiceProvider;
 
     protected override void OnInitialized()
     {
-        this._HelperScript = new(this.JSRuntime);
+        this._ServiceProvider = new ServiceCollection()
+            .AddSingleton<IJSRuntime>(_ => this.JSRuntime)
+            .AddSingleton<HelperScript>()
+            .BuildServiceProvider();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -22,11 +22,18 @@
 @code
 {
     [CascadingParameter]
-    internal HelperScript HelperScript { get; init; } = default!;
+    internal IServiceProvider Services { get; init; } = default!;
+
+    private HelperScript HelperScript = default!;
 
     private int _SideBarSize = 210;
 
     private string SideBarSizeKeyName => this.GetType().Name + "." + nameof(_SideBarSize);
+
+    protected override void OnInitialized()
+    {
+        this.HelperScript = this.Services.GetRequiredService<HelperScript>();
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
