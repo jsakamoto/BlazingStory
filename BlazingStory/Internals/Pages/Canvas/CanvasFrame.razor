@@ -18,17 +18,17 @@
 
     private Story? _Story;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         this.NavigationManager.LocationChanged += NavigationManager_LocationChanged;
-        await this.UpdateComponentArgsFromUrlAsync();
     }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         if (!this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story)) return;
         if (Object.ReferenceEquals(this._Story, story)) return;
         this._Story = story;
+        await this.UpdateComponentArgsFromUrlAsync();
         this.StateHasChanged();
     }
 
