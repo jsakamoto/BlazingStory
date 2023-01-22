@@ -30,7 +30,7 @@
 
                     @if (!this._AddonPanelLayout.Visible)
                     {
-                        <IconButton Icon="this.ToggleOrientationButtonIcon" Title="Show addons" OnClick="this.OnClickShowAddonPanel" />
+                        <IconButton Icon="this.ToggleOrientationButtonIcon" Title="Show addons" OnClick="() => this._Commands.InvokeAsync(CommandType.OpenAddonPanel)" />
                     }
                 </ToolBar>
 
@@ -40,10 +40,7 @@
 
         <SecondPane>
             <div class="add-on-container fill stack vertical">
-                <AddOnPanel Story="this._CurrentStory"
-                            SplitterOrientation="this._AddonPanelLayout.SplitterOrientation"
-                            OnToggleOrientation="this.OnToggleOrientation"
-                            OnClickClose="this.OnClickCloseAddonPanel">
+                <AddOnPanel Story="this._CurrentStory" SplitterOrientation="this._AddonPanelLayout.SplitterOrientation">
                 </AddOnPanel>
             </div>
         </SecondPane>
@@ -64,6 +61,10 @@
     internal IServiceProvider Services { get; init; } = default!;
 
     private HelperScript HelperScript = default!;
+
+    private CommandService _Commands = default!;
+
+    private readonly Subscriptions _Subscriptions = new();
 
     private int _AddonPanelSize = 210;
 
@@ -94,6 +95,12 @@
     protected override void OnInitialized()
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
+        this._Commands = this.Services.GetRequiredService<CommandService>();
+        this._Subscriptions.Add(
+            this._Commands.Subscribe(CommandType.ToggleAddonPanelOrientation, this.OnToggleOrientation),
+            this._Commands.Subscribe(CommandType.OpenAddonPanel, this.OnOpenAddonPanel),
+            this._Commands.Subscribe(CommandType.CloseAddonPanel, this.OnCloseAddonPanel)
+        );
         this._InitialCanvasFrameUrl = this._CurrentCanvasFrameUrl = this.GetCanvasFrameUrl();
     }
 
@@ -199,7 +206,7 @@
         };
     }
 
-    private async Task OnToggleOrientation()
+    private async ValueTask OnToggleOrientation()
     {
         _AddonPanelLayout.SplitterOrientation = _AddonPanelLayout.SplitterOrientation switch
         {
@@ -210,13 +217,13 @@
         await this.SaveAddonPanelLayoutAsync();
     }
 
-    private async Task OnClickShowAddonPanel()
+    private async ValueTask OnOpenAddonPanel()
     {
         this._AddonPanelLayout.Visible = true;
         await this.SaveAddonPanelLayoutAsync();
     }
 
-    private async Task OnClickCloseAddonPanel()
+    private async ValueTask OnCloseAddonPanel()
     {
         this._AddonPanelLayout.Visible = false;
         await this.SaveAddonPanelLayoutAsync();
@@ -229,6 +236,7 @@
 
     public async ValueTask DisposeAsync()
     {
+        this._Subscriptions.Dispose();
         if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
         if (this._JSModule != null) try { await this._JSModule.DisposeAsync(); } catch (JSDisconnectedException) { }
     }

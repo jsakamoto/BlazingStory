@@ -33,11 +33,10 @@
     [Parameter]
     public SplitterOrientation SplitterOrientation { get; set; }
 
-    [Parameter]
-    public EventCallback OnToggleOrientation { get; set; }
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
 
-    [Parameter]
-    public EventCallback OnClickClose { get; set; }
+    private CommandService _Commands = default!;
 
     private SvgIconType ToggleOrientationButtonIcon => this.SplitterOrientation switch
     {
@@ -45,10 +44,25 @@
         _ => SvgIconType.BottomSidePane
     };
 
+    protected override void OnInitialized()
+    {
+        this._Commands = this.Services.GetRequiredService<CommandService>();
+    }
+
     private int GetParametersCount()
     {
         return this.Story?.Context.Parameters
             .Where(p => p.Name != "EventCallback" && !p.Name.StartsWith("EventCallback`"))
             .Count() ?? 0;
+    }
+
+    private async Task OnToggleOrientation()
+    {
+        await this._Commands.InvokeAsync(CommandType.ToggleAddonPanelOrientation);
+    }
+
+    private async Task OnClickClose()
+    {
+        await this._Commands.InvokeAsync(CommandType.CloseAddonPanel);
     }
 }

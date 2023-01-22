@@ -1,5 +1,8 @@
 @using System.Reflection
+@using Toolbelt.Blazor.HotKeys2
+@using Toolbelt.Blazor.Extensions.DependencyInjection
 @inject IJSRuntime JSRuntime
+@inject ILoggerFactory LoggerFactory
 
 <StoriesDetector Assemblies="this.Assemblies" StoriesStore="this._StoriesStore" />
 
@@ -36,10 +39,31 @@
 
     protected override void OnInitialized()
     {
-        this._ServiceProvider = new ServiceCollection()
+        this._ServiceProvider = this.ConfigureServices();
+        this.ConfigureCommands(this._ServiceProvider);
+    }
+
+    private IServiceProvider ConfigureServices()
+    {
+        return new ServiceCollection()
             .AddSingleton<IJSRuntime>(_ => this.JSRuntime)
+            .AddSingleton<ILoggerFactory>(_ => LoggerFactory)
+            .AddSingleton(typeof(ILogger<>), typeof(Logger<>))
+            .AddHotKeys2()
             .AddSingleton<HelperScript>()
+            .AddSingleton<CommandService>()
             .BuildServiceProvider();
+    }
+
+    private void ConfigureCommands(IServiceProvider services)
+    {
+        var commandServce = services.GetRequiredService<CommandService>();
+        commandServce.AddCommands(new Command[]
+        {
+            new(CommandType.OpenAddonPanel),
+            new(CommandType.CloseAddonPanel),
+            new(CommandType.ToggleAddonPanelOrientation, Code.D),
+        });
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
