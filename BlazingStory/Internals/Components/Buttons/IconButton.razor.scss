@@ -1,7 +1,8 @@
-﻿button.icon-button {
+﻿.icon-button {
     width: 28px;
     height: 28px;
     border-radius: 4px;
+    padding: 1px 6px;
 
     & svg {
         width: 16px;
@@ -16,4 +17,8 @@
             fill: var(--bs-focused-color);
         }
     }
+}
+
+a.icon-button {
+    padding-top: 2px;
 }

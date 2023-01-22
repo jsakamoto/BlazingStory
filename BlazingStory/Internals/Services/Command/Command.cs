@@ -8,7 +8,7 @@ public class Command
 
     internal Code HotKey;
 
-    private string? _TitleHolder;
+    private readonly string? _TitleHolder;
 
     private readonly Dictionary<Guid, AsyncCallback> _Subscribers = new();
 
@@ -26,7 +26,7 @@ public class Command
     private string GetHotKeyName()
     {
         var hotKeyName = (string)this.HotKey;
-        return hotKeyName.StartsWith("Key") ? hotKeyName.Substring(3) : hotKeyName;
+        return hotKeyName.StartsWith("Key") ? hotKeyName[3..] : hotKeyName;
     }
 
     internal IDisposable Subscribe(AsyncCallback callBack)
@@ -45,7 +45,6 @@ public class Command
     private static async ValueTask InvokeCallbackAsync(AsyncCallback callback)
     {
         await callback.Invoke();
-        var handleEvent = callback.Target as IHandleEvent;
-        if (handleEvent != null) { await handleEvent.HandleEventAsync(EventCallbackWorkItem.Empty, null); }
+        if (callback.Target is IHandleEvent handleEvent) { await handleEvent.HandleEventAsync(EventCallbackWorkItem.Empty, null); }
     }
 }

@@ -365,21 +365,26 @@ svg.svg-icon {
   margin-right: 5px;
 }
 
-button.icon-button {
+.icon-button {
   width: 28px;
   height: 28px;
   border-radius: 4px;
+  padding: 1px 6px;
 }
-button.icon-button svg {
+.icon-button svg {
   width: 16px;
   height: 16px;
   fill: var(--bs-sidebar-nav-subheading-color);
 }
-button.icon-button:hover {
+.icon-button:hover {
   background-color: var(--bs-hover-back-color);
 }
-button.icon-button:hover svg {
+.icon-button:hover svg {
   fill: var(--bs-focused-color);
+}
+
+a.icon-button {
+  padding-top: 2px;
 }
 
 button.icon-button.reset-button {

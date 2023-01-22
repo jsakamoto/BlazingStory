@@ -1,6 +1,15 @@
-<button class="icon-button @Class" title="@this.GetTitleText()" @onclick="this.ClickHandler">
-    <SvgIcon Type="Icon" />
-</button>
+@if (string.IsNullOrEmpty(this.Href))
+{
+    <button class="icon-button @Class" title="@this.GetTitleText()" @onclick="this.ClickHandler">
+        <SvgIcon Type="Icon" />
+    </button>
+}
+else
+{
+    <a class="icon-button @Class" title="@this.GetTitleText()" @onclick="this.ClickHandler" href="@this.Href" target="@this.Target">
+        <SvgIcon Type="Icon" />
+    </a>
+}
 
 @code {
     [Parameter]
@@ -17,6 +26,12 @@
 
     [Parameter]
     public Command? Command { get; set; }
+
+    [Parameter]
+    public string? Href { get; set; }
+
+    [Parameter]
+    public string? Target { get; set; }
 
     private string? GetTitleText() => this.Title ?? this.Command?.Title;
 

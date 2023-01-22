@@ -46,6 +46,7 @@ internal class CommandService : IDisposable
 
     private void HotKeys_OnKeyDown(object? sender, HotKeyDownEventArgs args)
     {
+        if (args.SrcElementTagName is "TEXTAREA" or "INPUT") return;
         var commad = this._Commands.FirstOrDefault(item => item.Value.HotKey == args.Code).Value;
         if (commad == null) return;
         commad.InvokeAsync().AndLogException(this._Logger);

@@ -43,7 +43,7 @@
         var commandServce = services.GetRequiredService<CommandService>();
         commandServce.AddCommands(new Command[]
         {
-            new(CommandType.OpenAddonPanel),
+            new(CommandType.OpenAddonPanel, "Show addons"),
             new(CommandType.CloseAddonPanel, Code.A, "Hide addons [{0}]"),
             new(CommandType.ToggleAddonPanelOrientation, Code.D, "Change addon orientation [{0}]"),
         });
