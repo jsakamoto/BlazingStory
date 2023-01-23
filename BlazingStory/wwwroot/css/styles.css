@@ -5,7 +5,7 @@
   --bs-text-color: #333333;
   --bs-control-caption-size: 12px;
   --bs-sidebar-nav-color: var(---bs-text-color);
-  --bs-sidebar-nav-subheading-color: #999999;
+  --bs-sidebar-nav-subheading-color: rgb(115,130,140);
   --bs-sidebar-nav-active-color: #fff;
   --bs-sidebar-nav-active-back-color: #1ea7fd;
   --bs-focused-color: #1ea7fd;
@@ -149,6 +149,9 @@ button {
   overflow: hidden;
   width: 100vw;
   height: 100vh;
+}
+.main-layout > .pane-of-split-container:last-of-type {
+  box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.05), 0px 0 0px 1px rgba(0, 0, 0, 0.05);
 }
 
 .sidebar-container {
@@ -327,11 +330,15 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  margin-left: 8px;
   margin-right: 7px;
 }
 
 .tab-button-group {
   display: inline-flex;
+}
+.toolbar-content .tab-button-group {
+  margin-left: -8px;
 }
 
 button.tab-button {
@@ -385,29 +392,6 @@ svg.svg-icon {
 
 a.icon-button {
   padding-top: 3px;
-}
-
-button.icon-button.reset-button {
-  width: 30px;
-  height: 20px;
-  padding: 3px 8px;
-  background-color: var(--bs-hover-back-color);
-  box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 1px inset;
-  border-radius: 3em;
-  transition: all 150ms ease-out;
-}
-button.icon-button.reset-button:focus {
-  box-shadow: var(--bs-focused-color) 0 0 0 1px inset;
-}
-button.icon-button.reset-button:hover {
-  background: #ddebfa;
-}
-button.icon-button.reset-button svg {
-  width: 14px;
-  height: 14px;
-  margin: 0;
-  padding: 0;
-  fill: var(--bs-focused-color);
 }
 
 .square-button {
@@ -567,7 +551,6 @@ button.icon-button.reset-button svg {
 }
 
 .body {
-  margin: 10px 10px 10px 0;
   background-color: #fff;
   border-radius: 4px;
   overflow: hidden;
@@ -582,12 +565,12 @@ button.icon-button.reset-button svg {
   border: none;
 }
 
-.split-container.splitter-orientation-vertical .add-on-container {
+.canvas-page-container.splitter-orientation-vertical .add-on-container {
   border-left: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.split-container.splitter-orientation-horizontal .add-on-container {
-  box-shadow: rgba(0, 0, 0, 0.1) 0 1px 0 0 inset;
+.canvas-page-container.splitter-orientation-horizontal .add-on-container {
+  border-top: 1px solid hsla(203deg, 50%, 30%, 0.2);
 }
 
 .addon-pane-hidden .canvas-page-container > .spliter-bar, .addon-pane-hidden .canvas-page-container > .pane-of-split-container:last-of-type {
@@ -632,6 +615,9 @@ button.icon-button.reset-button svg {
 }
 .controls-panel table th.control span {
   flex: 1;
+}
+.controls-panel table th.control .reset-button {
+  margin: -4px -12px -4px 0;
 }
 .controls-panel table td.name {
   padding: 10px 0 10px 20px;

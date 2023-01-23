@@ -8,6 +8,7 @@ public enum SvgIconType
     BookmarkHollow,
     ExpandAll,
     CollapseAll,
+    Reload,
     ZoomIn,
     ZoomOut,
     Reset,
@@ -17,5 +18,6 @@ public enum SvgIconType
     RightSidePane,
     BottomSidePane,
     OpenNewTab,
-    Link
+    Link,
+    FullScreen
 }

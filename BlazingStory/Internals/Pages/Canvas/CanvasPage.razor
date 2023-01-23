@@ -14,15 +14,7 @@
             <div class="canvas-container fill stack vertical">
 
                 <ToolBar>
-                    <TabButtonGroup>
-                        <TabButton Active="true">
-                            Canvas
-                        </TabButton>
-                        <TabButton>
-                            Docs
-                        </TabButton>
-                    </TabButtonGroup>
-                    <Separator />
+                    <IconButton Icon="SvgIconType.Reload" />
                     <IconButton Icon="SvgIconType.ZoomIn" />
                     <IconButton Icon="SvgIconType.ZoomOut" />
 
@@ -33,6 +25,7 @@
                         <IconButton Icon="this.ToggleOrientationButtonIcon" Command="this._Commands[CommandType.AddonPanelVisible]" />
                     }
 
+                    <IconButton Icon="SvgIconType.FullScreen" />
                     <IconButton Icon="SvgIconType.OpenNewTab" Href="@this._CurrentCanvasFrameUrl" Target="_blank" Title="Open canvas in new tab" />
                     <IconButton Icon="SvgIconType.Link" Title="Copy canvas link" OnClick="this.OnClickCopyCanvasLink" />
                 </ToolBar>
