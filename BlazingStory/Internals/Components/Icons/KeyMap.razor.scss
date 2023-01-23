@@ -1,0 +1,14 @@
+.key-map {
+    --bs-keymap-size: 16px;
+    display: inline-block;
+    width: var(--bs-keymap-size);
+    height: var(--bs-keymap-size);
+    line-height: var(--bs-keymap-size);
+    text-align: center;
+    font-size: 11px;
+    background: var(--bs-keymap-back-color);
+    color: var(--bs-keymap-text-color);
+    border-radius: 2px;
+    user-select: none;
+    pointer-events: none;
+}

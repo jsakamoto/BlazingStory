@@ -1,11 +1,11 @@
 ﻿@import "/_content/Toolbelt.Blazor.SplitContainer/Toolbelt.Blazor.SplitContainer.bundle.scp.css";
 :root {
-  --bs-back-color: #f6f9fc;
+  --bs-back-color: #f5fbff;
   --bs-text-size: 13px;
   --bs-text-color: #333333;
+  --bs-dimmed-text-color: #73828c;
   --bs-control-caption-size: 12px;
   --bs-sidebar-nav-color: var(---bs-text-color);
-  --bs-sidebar-nav-subheading-color: rgb(115,130,140);
   --bs-sidebar-nav-active-color: #fff;
   --bs-sidebar-nav-active-back-color: #1ea7fd;
   --bs-focused-color: #1ea7fd;
@@ -13,6 +13,8 @@
   --bs-icon-folder-color: #2a0481;
   --bs-icon-story-container-color: #1ea7fd;
   --bs-icon-story-color: #37d5d3;
+  --bs-keymap-text-color: #5c6870;
+  --bs-keymap-back-color: rgba(0,0,0,0.05);
 }
 
 * {
@@ -159,19 +161,27 @@ button {
 }
 
 .sidebar .sidebar-header {
+  display: flex;
+  height: 28px;
+  align-items: center;
+}
+.sidebar .sidebar-header .sidebar-header-title {
   font-size: 18px;
   font-weight: bold;
-  height: 28px;
+  flex: 1;
+}
+.sidebar .search-field {
+  position: relative;
 }
 .sidebar .search-field input {
   appearance: none;
-  height: 28px;
-  padding-left: 28px;
-  padding-right: 28px;
+  height: 32px;
+  padding-left: 30px;
+  padding-right: 32px;
   border: 1px solid rgba(153, 153, 153, 0.4);
   background: transparent;
   border-radius: 28px;
-  font-size: 12px;
+  font-size: 13px;
   font-family: inherit;
   -webkit-transition: all 150ms;
   transition: all 150ms;
@@ -182,6 +192,22 @@ button {
   outline: 0;
   background: var(--bs-back-color);
   border-color: var(--bs-focused-color);
+}
+.sidebar .search-field input:focus ~ .shortcut-keymap {
+  display: none;
+}
+.sidebar .search-field .find-icon {
+  --bs-svg-icon-size: 14px;
+  position: absolute;
+  left: 11px;
+  top: 6px;
+  color: var(--bs-dimmed-text-color);
+  pointer-events: none;
+}
+.sidebar .search-field .shortcut-keymap {
+  position: absolute;
+  top: 8px;
+  right: 16px;
 }
 .sidebar .explorer-menu {
   margin-left: -20px;
@@ -264,7 +290,7 @@ button {
 }
 .navigation-tree .sub-heading > .caption .action {
   font-size: 11px;
-  color: var(--bs-sidebar-nav-subheading-color);
+  color: var(--bs-dimmed-text-color);
   text-transform: uppercase;
   font-weight: 900;
   letter-spacing: 3.85px;
@@ -300,23 +326,23 @@ button {
   visibility: hidden;
 }
 .navigation-tree .sub-heading-action svg {
-  fill: var(--bs-sidebar-nav-subheading-color);
+  color: var(--bs-dimmed-text-color);
   margin: 0;
 }
 .navigation-tree .sub-heading-action:hover svg, .navigation-tree .sub-heading-action:focus svg {
-  fill: var(--bs-focused-color);
+  color: var(--bs-focused-color);
 }
 .navigation-tree .expanded > .caption .sub-heading-action {
   visibility: visible;
 }
 .navigation-tree .type-container > .caption .action svg {
-  fill: var(--bs-icon-folder-color);
+  color: var(--bs-icon-folder-color);
 }
 .navigation-tree .type-story-collection > .caption .action svg {
-  fill: var(--bs-icon-story-container-color);
+  color: var(--bs-icon-story-container-color);
 }
 .navigation-tree .type-story > .caption .action svg {
-  fill: var(--bs-icon-story-color);
+  color: var(--bs-icon-story-color);
 }
 
 .toolbar-viewport {
@@ -330,7 +356,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  margin-left: 8px;
+  margin-left: 7px;
   margin-right: 7px;
 }
 
@@ -338,7 +364,7 @@ button {
   display: inline-flex;
 }
 .toolbar-content .tab-button-group {
-  margin-left: -8px;
+  margin-left: -7px;
 }
 
 button.tab-button {
@@ -347,7 +373,7 @@ button.tab-button {
   height: 40px;
   padding: 0 15px;
   margin: 0;
-  color: var(--bs-sidebar-nav-subheading-color);
+  color: var(--bs-dimmed-text-color);
   border-top: solid 2px transparent;
   border-bottom: solid 3px transparent;
   white-space: nowrap;
@@ -365,11 +391,29 @@ span.toolbar-separator {
 }
 
 svg.svg-icon {
-  width: 12px;
-  height: 12px;
+  --bs-svg-icon-size: 12px;
+  display: inline-block;
+  width: var(--bs-svg-icon-size);
+  height: var(--bs-svg-icon-size);
   padding: 1px;
   margin-top: 3px;
   margin-right: 5px;
+  fill: currentColor;
+}
+
+.key-map {
+  --bs-keymap-size: 16px;
+  display: inline-block;
+  width: var(--bs-keymap-size);
+  height: var(--bs-keymap-size);
+  line-height: var(--bs-keymap-size);
+  text-align: center;
+  font-size: 11px;
+  background: var(--bs-keymap-back-color);
+  color: var(--bs-keymap-text-color);
+  border-radius: 2px;
+  user-select: none;
+  pointer-events: none;
 }
 
 .icon-button {
@@ -381,13 +425,13 @@ svg.svg-icon {
 .icon-button svg {
   width: 16px;
   height: 16px;
-  fill: var(--bs-sidebar-nav-subheading-color);
+  color: var(--bs-dimmed-text-color);
 }
 .icon-button:hover {
   background-color: var(--bs-hover-back-color);
 }
 .icon-button:hover svg {
-  fill: var(--bs-focused-color);
+  color: var(--bs-focused-color);
 }
 
 a.icon-button {
@@ -566,7 +610,7 @@ a.icon-button {
 }
 
 .canvas-page-container.splitter-orientation-vertical .add-on-container {
-  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  border-left: 1px solid hsla(203deg, 50%, 30%, 0.2);
 }
 
 .canvas-page-container.splitter-orientation-horizontal .add-on-container {

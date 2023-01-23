@@ -89,7 +89,7 @@
 
             .action {
                 font-size: 11px;
-                color: var(--bs-sidebar-nav-subheading-color);
+                color: var(--bs-dimmed-text-color);
                 text-transform: uppercase;
                 font-weight: 900;
                 letter-spacing: 3.85px;
@@ -134,13 +134,13 @@
         visibility: hidden;
 
         svg {
-            fill: var(--bs-sidebar-nav-subheading-color);
+            color: var(--bs-dimmed-text-color);
             margin: 0;
         }
 
         &:hover svg,
         &:focus svg {
-            fill: var(--bs-focused-color);
+            color: var(--bs-focused-color);
         }
     }
 
@@ -150,14 +150,14 @@
     //
     /* ---- Icons ---- */
     .type-container > .caption .action svg {
-        fill: var(--bs-icon-folder-color);
+        color: var(--bs-icon-folder-color);
     }
 
     .type-story-collection > .caption .action svg {
-        fill: var(--bs-icon-story-container-color);
+        color: var(--bs-icon-story-container-color);
     }
 
     .type-story > .caption .action svg {
-        fill: var(--bs-icon-story-color);
+        color: var(--bs-icon-story-color);
     }
 }

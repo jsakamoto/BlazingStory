@@ -1,9 +1,16 @@
 ﻿<nav class="sidebar stack vertical gap">
 
-    <div class="sidebar-header">@BlazingStoryApp.Title</div>
+    <div class="sidebar-header">
+        <span class="sidebar-header-title">
+            @BlazingStoryApp.Title
+        </span>
+        <IconButton Icon="SvgIconType.Gear" />
+    </div>
 
     <div class="search-field">
-        <input type="text" placeholder="Find components" />
+        <input type="text" placeholder="@this.SearchBoxPlaceHolder" required autocomplete="off" @onfocus="OnFocusSearchBox" @onblur="OnBlurSearchBox" />
+        <SvgIcon Type="SvgIconType.Find" Class="find-icon" /> 
+        <KeyMap Text="/" Class="shortcut-keymap"/>
     </div>
 
     <div class="explorer-menu">
@@ -23,6 +30,10 @@
 
     private NavigationTreeItem _NavigationRoot = new();
 
+    private bool _SearchBoxHasFocus = false;
+
+    private string SearchBoxPlaceHolder => this._SearchBoxHasFocus ? "Type to find..." : "Find components";
+
     protected override void OnInitialized()
     {
         if (this.StoriesStore == null) throw new InvalidOperationException("The StoriesStore cascading parameter was null.");
@@ -31,4 +42,8 @@
         var expandedNavigationPath = this.RouteData.RouteToStoryOrDocs ? this.RouteData.Parameter : null;
         _NavigationRoot = _NavigationTreeBuilder.Build(this.StoriesStore.StoryContainers, expandedNavigationPath);
     }
+
+    private void OnFocusSearchBox() => _SearchBoxHasFocus = true;
+
+    private void OnBlurSearchBox() => _SearchBoxHasFocus = false;
 }

@@ -1,10 +1,10 @@
 ﻿:root {
-    --bs-back-color: #f6f9fc;
+    --bs-back-color: #f5fbff;
     --bs-text-size: 13px;
     --bs-text-color: #333333;
+    --bs-dimmed-text-color: #73828c;
     --bs-control-caption-size: 12px;
     --bs-sidebar-nav-color: var(---bs-text-color);
-    --bs-sidebar-nav-subheading-color: rgb(115,130,140);
     --bs-sidebar-nav-active-color: #fff;
     --bs-sidebar-nav-active-back-color: #1ea7fd;
     --bs-focused-color: #1ea7fd;
@@ -12,4 +12,6 @@
     --bs-icon-folder-color: #2a0481;
     --bs-icon-story-container-color: #1ea7fd;
     --bs-icon-story-color: #37d5d3;
+    --bs-keymap-text-color: #5c6870;
+    --bs-keymap-back-color: rgba(0,0,0,0.05);
 }

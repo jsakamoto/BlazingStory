@@ -7,14 +7,14 @@
     & svg {
         width: 16px;
         height: 16px;
-        fill: var(--bs-sidebar-nav-subheading-color);
+        color: var(--bs-dimmed-text-color);
     }
 
     &:hover {
         background-color: var(--bs-hover-back-color);
 
         svg {
-            fill: var(--bs-focused-color);
+            color: var(--bs-focused-color);
         }
     }
 }
