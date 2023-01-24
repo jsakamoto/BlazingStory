@@ -1,5 +1,12 @@
-﻿export const getPopupPos = (element) => {
-    const rect = element.getBoundingClientRect();
-    return ({ x: 0 ^ (rect.left + rect.width / 2), y: rect.bottom });
+﻿export const getBoundingClientRect = (element) => {
+    return element.getBoundingClientRect();
 };
 
+export const subscribeDocumentEvent = (eventType, dotnetObj, methodName, excludeSelector) => {
+    const evendListener = (ev) => {
+        if (excludeSelector && ev.srcElement.matches(excludeSelector)) return;
+        dotnetObj.invokeMethodAsync(methodName);
+    }
+    document.addEventListener(eventType, evendListener);
+    return ({ dispose: () => document.removeEventListener(eventType, evendListener) });
+}

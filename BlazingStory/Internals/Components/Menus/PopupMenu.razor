@@ -3,18 +3,16 @@
 
 <div class="popup-menu @Class">
 
-    <div @ref="_TriggerElement" class="popup-menu-trigger" @onclick="OnClickPopupMenuTrigger">
+    <div @ref="_TriggerElement" class="popup-menu-trigger" @onclick="OpenPopup">
         @Trigger
     </div>
 
     @if (_PopupShown && _PopupPos != null)
     {
-        <div class="popup-menu-holder" @onclick:stopPropagation style="left:@(this._PopupPos.X)px; top:@(this._PopupPos.Y)px;">
+        <div class="popup-menu-holder" style="@this._PopupPosString">
             <div class="popup-menu-leader"></div>
             <div class="popup-menu-body">
-                <div>Lorem </div>
-                <div>ipsum</div>
-                <div>dolor</div>
+                @MenuItems
             </div>
         </div>
     }
@@ -42,38 +40,57 @@
 
     private Position? _PopupPos;
 
+    private string _PopupPosString => this._PopupPos != null ? $"left:{this._PopupPos.X}px; top:{this._PopupPos.Y}px;" : "";
+
     private readonly Lazy<Task<IJSObjectReference>> _Module;
+
+    private DotNetObjectReference<PopupMenu> _This;
+
+    private IJSObjectReference? _EventSubscriber;
 
     public PopupMenu()
     {
+        this._This = DotNetObjectReference.Create(this);
         this._Module = new(async () => await this.JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazingStory/Internals/Components/Menus/PopupMenu.razor.js"));
     }
 
-    protected override void OnInitialized()
+    private async Task OpenPopup()
     {
-        this._HotKeysContext = this.Services.GetRequiredService<HotKeys>()
-            .CreateContext()
-            .Add(Code.Escape, ClosePopup);
-    }
+        if (this._PopupShown) return;
 
-    private async Task OnClickPopupMenuTrigger()
-    {
         var module = await this._Module.Value;
-        this._PopupPos = await module.InvokeAsync<Position>("getPopupPos", this._TriggerElement);
+        var rect = await module.InvokeAsync<Rect>("getBoundingClientRect", this._TriggerElement);
+        this._PopupPos = new() { X = rect.Left + rect.Width / 2, Y = rect.Bottom };
+        this._EventSubscriber = await module.InvokeAsync<IJSObjectReference>("subscribeDocumentEvent", "click", this._This, nameof(ClosePopup), ".popup-menu-holder, .popup-menu-holder *");
+        this._HotKeysContext = this.Services.GetRequiredService<HotKeys>().CreateContext().Add(Code.Escape, ClosePopup);
         this._PopupShown = true;
     }
 
 
-    private void ClosePopup()
+    [JSInvokable(nameof(ClosePopup))]
+    public async ValueTask ClosePopup()
     {
+        await this.UnsubscribeEventAsync();
         if (this._PopupShown == false) return;
         this._PopupShown = false;
         this.StateHasChanged();
     }
 
-    public async ValueTask DisposeAsync()
+    private async ValueTask UnsubscribeEventAsync()
     {
         this._HotKeysContext?.Dispose();
+        this._HotKeysContext = null;
+
+        if (this._EventSubscriber == null) return;
+        await this._EventSubscriber.InvokeVoidAsync("dispose");
+        await this._EventSubscriber.DisposeAsync();
+        this._EventSubscriber = null;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await this.UnsubscribeEventAsync();
+        this._This?.Dispose();
         if (!this._Module.IsValueCreated) return;
         try { await (await this._Module.Value).DisposeAsync(); } catch (JSDisconnectedException) { }
     }
