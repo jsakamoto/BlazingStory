@@ -1,4 +1,4 @@
-﻿namespace BlazingStory.Internals.Components.SvgIcon;
+﻿namespace BlazingStory.Internals.Components.Icons;
 
 public enum SvgIconType
 {

@@ -1,0 +1,80 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+
+<div class="popup-menu @Class">
+
+    <div @ref="_TriggerElement" class="popup-menu-trigger" @onclick="OnClickPopupMenuTrigger">
+        @Trigger
+    </div>
+
+    @if (_PopupShown && _PopupPos != null)
+    {
+        <div class="popup-menu-holder" @onclick:stopPropagation style="left:@(this._PopupPos.X)px; top:@(this._PopupPos.Y)px;">
+            <div class="popup-menu-leader"></div>
+            <div class="popup-menu-body">
+                <div>Lorem </div>
+                <div>ipsum</div>
+                <div>dolor</div>
+            </div>
+        </div>
+    }
+</div>
+
+@code
+{
+    [Parameter]
+    public string? Class { get; set; }
+
+    [Parameter]
+    public RenderFragment? Trigger { get; set; }
+
+    [Parameter]
+    public RenderFragment? MenuItems { get; set; }
+
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
+    private HotKeysContext? _HotKeysContext;
+
+    private ElementReference _TriggerElement;
+
+    private bool _PopupShown = false;
+
+    private Position? _PopupPos;
+
+    private readonly Lazy<Task<IJSObjectReference>> _Module;
+
+    public PopupMenu()
+    {
+        this._Module = new(async () => await this.JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazingStory/Internals/Components/Menus/PopupMenu.razor.js"));
+    }
+
+    protected override void OnInitialized()
+    {
+        this._HotKeysContext = this.Services.GetRequiredService<HotKeys>()
+            .CreateContext()
+            .Add(Code.Escape, ClosePopup);
+    }
+
+    private async Task OnClickPopupMenuTrigger()
+    {
+        var module = await this._Module.Value;
+        this._PopupPos = await module.InvokeAsync<Position>("getPopupPos", this._TriggerElement);
+        this._PopupShown = true;
+    }
+
+
+    private void ClosePopup()
+    {
+        if (this._PopupShown == false) return;
+        this._PopupShown = false;
+        this.StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        this._HotKeysContext?.Dispose();
+        if (!this._Module.IsValueCreated) return;
+        try { await (await this._Module.Value).DisposeAsync(); } catch (JSDisconnectedException) { }
+    }
+}

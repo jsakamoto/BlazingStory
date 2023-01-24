@@ -15,6 +15,7 @@
   --bs-icon-story-color: #37d5d3;
   --bs-keymap-text-color: #5c6870;
   --bs-keymap-back-color: rgba(0,0,0,0.05);
+  --bs-popup-back-color: rgba(255,255,255,0.95);
 }
 
 * {
@@ -169,6 +170,9 @@ button {
   font-size: 18px;
   font-weight: bold;
   flex: 1;
+}
+.sidebar .sidebar-header .settings-popup-menu .popup-menu-holder {
+  min-width: 180px;
 }
 .sidebar .search-field {
   position: relative;
@@ -592,6 +596,35 @@ a.icon-button {
 }
 .text-area-container .text-area-shadow {
   visibility: hidden;
+}
+
+.popup-menu-trigger {
+  display: inline-block;
+}
+
+.popup-menu-holder {
+  position: fixed;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  filter: drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.05)) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
+}
+
+.popup-menu-leader {
+  width: 0;
+  margin-left: -8px;
+  font-size: 0;
+  border: solid 8px var(--bs-popup-back-color);
+  border-top-width: 0;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+
+.popup-menu-body {
+  background-color: var(--bs-popup-back-color);
+  padding: 2px 6px;
+  margin: 0 50% 0 -50%;
+  border-radius: 8px;
 }
 
 .body {

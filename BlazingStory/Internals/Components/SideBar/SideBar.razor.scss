@@ -10,7 +10,12 @@
             font-weight: bold;
             flex: 1;
         }
+
+        .settings-popup-menu .popup-menu-holder {
+            min-width: 180px;
+        }
     }
+
 
     .search-field {
         position: relative;

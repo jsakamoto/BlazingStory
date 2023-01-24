@@ -18,7 +18,6 @@
     <_ContentIncludedByDefault Remove="compilerconfig.json" />
     <None Include="bundleconfig.json" />
     <None Include="compilerconfig.json" />
-    <None Include="Internals\Components\Icons\KeyMap.razor" />
   </ItemGroup>
 
   <ItemGroup>
