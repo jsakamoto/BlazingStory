@@ -30,11 +30,11 @@
 
     private WebColor.Type _CurrentColorType = WebColor.Type.Unknown;
 
-    private readonly Lazy<Task<IJSObjectReference>> _Module;
+    private readonly JSModule _JSModule;
 
     public ColorInput()
     {
-        _Module = new(async () => await this.JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazingStory/Internals/Components/Inputs/ColorInput.razor.js"));
+        this._JSModule = new(()=>this.JSRuntime, "./_content/BlazingStory/Internals/Components/Inputs/ColorInput.razor.js");
     }
 
     private async ValueTask Parse(string? colorText)
@@ -50,10 +50,9 @@
         this._CurrentColorType = type;
     }
 
-    private async ValueTask<string?> GetComputedColorAsync(string? colorText)
+    private ValueTask<string?> GetComputedColorAsync(string? colorText)
     {
-        var module = await _Module.Value;
-        return await module.InvokeAsync<string>("getComputedColor", colorText);
+        return this._JSModule.InvokeAsync<string?>("getComputedColor", colorText);
     }
 
     public override async Task SetParametersAsync(ParameterView parameters)
@@ -118,10 +117,6 @@
 
     public async ValueTask DisposeAsync()
     {
-        if (_Module.IsValueCreated)
-        {
-            var module = await _Module.Value;
-            try { await module.DisposeAsync(); } catch (JSDisconnectedException) { }
-        }
+        await _JSModule.DisposeAsync();
     }
 }

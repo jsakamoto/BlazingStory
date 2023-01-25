@@ -18,7 +18,7 @@
                     <IconButton Icon="SvgIconType.ZoomIn" />
                     <IconButton Icon="SvgIconType.ZoomOut" />
                     <IconButton Icon="SvgIconType.ZoomReset" />
-                    <Separator/>
+                    <Separator />
 
                     <Spacer />
 
@@ -80,17 +80,24 @@
 
     private Story? _CurrentStory = null;
 
-    private IJSObjectReference? _JSModule;
+    private readonly JSModule _JSModule;
 
     private ElementReference _Iframe;
 
     private string AddonPanelLayoutKeyName => this.GetType().Name + "." + nameof(_AddonPanelLayout);
+
+    private bool _AfterFirstRenderd = false;
 
     private SvgIconType ToggleOrientationButtonIcon => this._AddonPanelLayout.SplitterOrientation switch
     {
         SplitterOrientation.Horizontal => SvgIconType.BottomSidePane,
         _ => SvgIconType.RightSidePane
     };
+
+    public CanvasPage()
+    {
+        this._JSModule = new(() => this.JSRuntime, "./_content/BlazingStory/Internals/Pages/Canvas/CanvasPage.razor.js");
+    }
 
     protected override void OnInitialized()
     {
@@ -117,6 +124,7 @@
         this._AddonPanelLayout = await this.HelperScript.LoadObjectFromLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
         this.UpdateAddonPanelSize(this._AddonPanelLayout.SplitterOrientation);
         this.StateHasChanged();
+        this._AfterFirstRenderd = true;
     }
 
     private void UpdatePageTitle()
@@ -131,11 +139,11 @@
 
     private async ValueTask UpdateCanvasFrameUrlAsync()
     {
+        if (!this._AfterFirstRenderd) return;
         var nextCanvasFrameUrl = this.GetCanvasFrameUrl();
         if (this._CurrentCanvasFrameUrl == nextCanvasFrameUrl) return;
         this._CurrentCanvasFrameUrl = nextCanvasFrameUrl;
-        var jsModule = await this.GetJSModuleAsync();
-        await jsModule.InvokeVoidAsync("navigateCanvasFrameTo", this._Iframe, nextCanvasFrameUrl);
+        await _JSModule.InvokeVoidAsync("navigateCanvasFrameTo", this._Iframe, nextCanvasFrameUrl);
     }
 
     private void UpdateCurrentStory()
@@ -174,15 +182,6 @@
     {
         await this.UpdateCanvasFrameUrlAsync();
         this.StateHasChanged();
-    }
-
-    private async ValueTask<IJSObjectReference> GetJSModuleAsync()
-    {
-        if (this._JSModule == null)
-        {
-            this._JSModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazingStory/Internals/Pages/Canvas/CanvasPage.razor.js");
-        }
-        return this._JSModule;
     }
 
     private async Task OnAddonPanelSizeChanged()
@@ -240,6 +239,6 @@
     {
         this._Subscriptions.Dispose();
         if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
-        if (this._JSModule != null) try { await this._JSModule.DisposeAsync(); } catch (JSDisconnectedException) { }
+        await _JSModule.DisposeAsync();
     }
 }

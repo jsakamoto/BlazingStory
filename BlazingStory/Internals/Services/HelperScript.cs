@@ -5,25 +5,23 @@ namespace BlazingStory.Internals.Services;
 
 internal class HelperScript : IAsyncDisposable
 {
-    private readonly Lazy<Task<IJSObjectReference>> _Module;
+    private readonly JSModule _JSModule;
 
     private readonly JsonSerializerOptions JsonSerializerOptions = new() { IncludeFields = true };
 
     public HelperScript(IJSRuntime jSRuntime)
     {
-        this._Module = new(async () => await jSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazingStory/helper.min.js"));
+        this._JSModule = new(() => jSRuntime, "./_content/BlazingStory/helper.min.js");
     }
 
     internal async ValueTask InvokeVoidAsync(string id, params object?[]? args)
     {
-        var module = await this._Module.Value;
-        await module.InvokeVoidAsync(id, args);
+        await this._JSModule.InvokeVoidAsync(id, args);
     }
 
     internal async ValueTask<T> InvokeAsync<T>(string id, params object?[]? args)
     {
-        var module = await this._Module.Value;
-        return await module.InvokeAsync<T>(id, args);
+        return await this._JSModule.InvokeAsync<T>(id, args);
     }
 
     internal ValueTask CopyTextToClipboardAsync(string text) => this.InvokeVoidAsync("copyTextToClipboard", text);
@@ -57,8 +55,6 @@ internal class HelperScript : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        if (this._Module.IsValueCreated) return;
-        var module = await this._Module.Value;
-        try { await module.DisposeAsync(); } catch (JSDisconnectedException) { }
+        await this._JSModule.DisposeAsync();
     }
 }

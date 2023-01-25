@@ -42,7 +42,7 @@
 
     private string _PopupPosString => this._PopupPos != null ? $"left:{this._PopupPos.X}px; top:{this._PopupPos.Y}px;" : "";
 
-    private readonly Lazy<Task<IJSObjectReference>> _Module;
+    private readonly JSModule _JSModule;
 
     private DotNetObjectReference<PopupMenu> _This;
 
@@ -51,17 +51,16 @@
     public PopupMenu()
     {
         this._This = DotNetObjectReference.Create(this);
-        this._Module = new(async () => await this.JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazingStory/Internals/Components/Menus/PopupMenu.razor.js"));
+        this._JSModule = new(() => this.JSRuntime, "./_content/BlazingStory/Internals/Components/Menus/PopupMenu.razor.js");
     }
 
     private async Task OpenPopup()
     {
         if (this._PopupShown) return;
 
-        var module = await this._Module.Value;
-        var rect = await module.InvokeAsync<Rect>("getBoundingClientRect", this._TriggerElement);
+        var rect = await this._JSModule.InvokeAsync<Rect>("getBoundingClientRect", this._TriggerElement);
         this._PopupPos = new() { X = rect.Left + rect.Width / 2, Y = rect.Bottom };
-        this._EventSubscriber = await module.InvokeAsync<IJSObjectReference>("subscribeDocumentEvent", "click", this._This, nameof(ClosePopup), ".popup-menu-holder, .popup-menu-holder *");
+        this._EventSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeDocumentEvent", "click", this._This, nameof(ClosePopup), ".popup-menu-holder, .popup-menu-holder *");
         this._HotKeysContext = this.Services.GetRequiredService<HotKeys>().CreateContext().Add(Code.Escape, ClosePopup);
         this._PopupShown = true;
     }
@@ -90,8 +89,7 @@
     public async ValueTask DisposeAsync()
     {
         await this.UnsubscribeEventAsync();
+        await this._JSModule.DisposeAsync();
         this._This?.Dispose();
-        if (!this._Module.IsValueCreated) return;
-        try { await (await this._Module.Value).DisposeAsync(); } catch (JSDisconnectedException) { }
     }
 }
