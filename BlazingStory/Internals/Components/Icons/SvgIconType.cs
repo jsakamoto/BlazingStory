@@ -22,5 +22,6 @@ public enum SvgIconType
     BottomSidePane,
     OpenNewTab,
     Link,
-    FullScreen
+    FullScreen,
+    Check
 }

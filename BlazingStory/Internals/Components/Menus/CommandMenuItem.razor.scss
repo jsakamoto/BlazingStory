@@ -1,0 +1,26 @@
+.command-menu-item {
+    height: 32px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px 0 8px;
+
+    &.has-hotkey {
+        height: 33px;
+    }
+
+    .check-mark-area {
+        color: var(--bs-focused-color);
+        width: 17px;
+    }
+
+    .command-title {
+        font-size: 12px;
+        color: var(--bs-popup-text-color);
+        flex: 1;
+    }
+
+    .hotkey-area {
+        padding-left: 10px;
+        margin-top: -3px;
+    }
+}

@@ -1,0 +1,28 @@
+﻿@using BlazingStory.Internals.Services.Command;
+
+@if (this.Command != null)
+{
+    var hotKeyName = this.Command.GetHotKeyName();
+
+    <div class="menu-item command-menu-item @(hotKeyName != "" ? "has-hotkey" : "")">
+        <span class="check-mark-area">
+            @if (this.Command.Flag == true)
+            {
+                <span><SvgIcon Type="SvgIconType.Check" /></span>
+            }
+        </span>
+        <span class="command-title">@this.Command.Title</span>
+        <span class="hotkey-area">
+            @if (hotKeyName != "")
+            {
+                <KeyMap Text="@hotKeyName" />
+            }
+        </span>
+    </div>
+}
+
+@code
+{
+    [Parameter, EditorRequired]
+    public Command? Command { get; set; }
+}

@@ -8,14 +8,15 @@
   --bs-sidebar-nav-color: var(---bs-text-color);
   --bs-sidebar-nav-active-color: #fff;
   --bs-sidebar-nav-active-back-color: #1ea7fd;
-  --bs-focused-color: #1ea7fd;
+  --bs-focused-color: #029cfd;
   --bs-hover-back-color: rgba(30, 167, 253, 0.12);
   --bs-icon-folder-color: #2a0481;
-  --bs-icon-story-container-color: #1ea7fd;
+  --bs-icon-story-container-color: #029cfd;
   --bs-icon-story-color: #37d5d3;
   --bs-keymap-text-color: #5c6870;
   --bs-keymap-back-color: rgba(0,0,0,0.05);
   --bs-popup-back-color: rgba(255,255,255,0.95);
+  --bs-popup-text-color: #2E3438;
 }
 
 * {
@@ -407,12 +408,13 @@ svg.svg-icon {
 
 .key-map {
   --bs-keymap-size: 16px;
+  font-family: ui-monospace, Menlo, Monaco, "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Droid Sans Mono", "Courier New", monospace;
+  font-size: 11px;
   display: inline-block;
   width: var(--bs-keymap-size);
   height: var(--bs-keymap-size);
   line-height: var(--bs-keymap-size);
   text-align: center;
-  font-size: 11px;
   background: var(--bs-keymap-back-color);
   color: var(--bs-keymap-text-color);
   border-radius: 2px;
@@ -622,9 +624,38 @@ a.icon-button {
 
 .popup-menu-body {
   background-color: var(--bs-popup-back-color);
-  padding: 2px 6px;
-  margin: 0 50% 0 -50%;
+  margin: 0 calc(50% - 8px) 0 calc(-50% + 8px);
   border-radius: 8px;
+  overflow: hidden;
+}
+
+.menu-item-divider {
+  border-bottom: 4px solid rgba(38, 85, 115, 0.2);
+  height: 0;
+  min-width: 210.33px;
+}
+
+.command-menu-item {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  padding: 0 15px 0 8px;
+}
+.command-menu-item.has-hotkey {
+  height: 33px;
+}
+.command-menu-item .check-mark-area {
+  color: var(--bs-focused-color);
+  width: 17px;
+}
+.command-menu-item .command-title {
+  font-size: 12px;
+  color: var(--bs-popup-text-color);
+  flex: 1;
+}
+.command-menu-item .hotkey-area {
+  padding-left: 10px;
+  margin-top: -3px;
 }
 
 .body {

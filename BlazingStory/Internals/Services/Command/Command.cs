@@ -9,23 +9,23 @@ public class Command
 
     public Code HotKey { get => this._HotKey; set { if (this._HotKey == value) return; this._HotKey = value; this.StateChanged?.Invoke(this, EventArgs.Empty); } }
 
-    public bool Flag { get => this._Flag; set { if (this._Flag == value) return; this._Flag = value; this.StateChanged?.Invoke(this, EventArgs.Empty); } }
+    public bool? Flag { get => this._Flag; set { if (this._Flag == value) return; this._Flag = value; this.StateChanged?.Invoke(this, EventArgs.Empty); } }
 
     internal readonly string? Title;
 
     private Code _HotKey;
 
-    private bool _Flag;
+    private bool? _Flag;
 
-    internal string? GetTitleText() => this.Title == null ? null : string.Format(this.Title, this.GetHotKeyName());
+    internal string? GetTitleText() => this._HotKey.ToString() == "" ? this.Title : $"{this.Title} [{this.GetHotKeyName()}]";
 
     private readonly Dictionary<Guid, AsyncCallback> _Subscribers = new();
 
     internal event EventHandler? StateChanged;
 
-    internal Command(CommandType type, string? title = null, bool flag = false) : this(type, new Code(""), title, false) { }
+    internal Command(CommandType type, string? title = null, bool? flag = null) : this(type, new Code(""), title, flag) { }
 
-    public Command(CommandType type, Code hotKey, string? title = null, bool flag = false)
+    public Command(CommandType type, Code hotKey, string? title = null, bool? flag = null)
     {
         this.Type = type;
         this._HotKey = hotKey;
@@ -35,8 +35,8 @@ public class Command
 
     internal string GetHotKeyName()
     {
-        var hotKeyName = (string)this.HotKey;
-        return hotKeyName.StartsWith("Key") ? hotKeyName[3..] : hotKeyName;
+        var hotKeyName = (string?)this.HotKey;
+        return hotKeyName?.StartsWith("Key") == true ? hotKeyName[3..] : hotKeyName ?? "";
     }
 
     internal IDisposable Subscribe(AsyncCallback callBack)

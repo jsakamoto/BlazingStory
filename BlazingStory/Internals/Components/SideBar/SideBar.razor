@@ -6,37 +6,28 @@
             @BlazingStoryApp.Title
         </span>
 
-        <PopupMenu Class="settings-popup-menu">
-            <Trigger>
-                <IconButton Icon="SvgIconType.Gear" />
-            </Trigger>
-            <MenuItems>
-                <div>Lorem </div>
-                <div>ipsum</div>
-                <div>dolor</div>
-            </MenuItems>
-        </PopupMenu>
+        <SettingsMenu />
 
     </div>
 
     <div class="search-field">
         <input type="text" placeholder="@this.SearchBoxPlaceHolder" required autocomplete="off" @onfocus="OnFocusSearchBox" @onblur="OnBlurSearchBox" />
-        <SvgIcon Type="SvgIconType.Find" Class="find-icon" /> 
-        <KeyMap Text="/" Class="shortcut-keymap"/>
+        <SvgIcon Type="SvgIconType.Find" Class="find-icon" />
+        <KeyMap Text="/" Class="shortcut-keymap" />
     </div>
 
     <div class="explorer-menu">
-        <NavigationTree Item="_NavigationRoot" SubHeading="true"/>
+        <NavigationTree Item="_NavigationRoot" SubHeading="true" />
     </div>
 
 </nav>
 
 @code {
     [CascadingParameter]
-    public StoriesStore? StoriesStore { get; set; }
+    protected StoriesStore StoriesStore { get; init; } = default!;
 
     [CascadingParameter]
-    public QueryRouteData? RouteData { get; set; }
+    protected QueryRouteData RouteData { get; init; } = default!;
 
     private readonly NavigationTreeBuilder _NavigationTreeBuilder = new();
 
@@ -48,19 +39,11 @@
 
     protected override void OnInitialized()
     {
-        if (this.StoriesStore == null) throw new InvalidOperationException("The StoriesStore cascading parameter was null.");
-        if (this.RouteData == null) throw new InvalidOperationException("The RouteData cascading parameter was null.");
-
         var expandedNavigationPath = this.RouteData.RouteToStoryOrDocs ? this.RouteData.Parameter : null;
-        _NavigationRoot = _NavigationTreeBuilder.Build(this.StoriesStore.StoryContainers, expandedNavigationPath);
+        this._NavigationRoot = _NavigationTreeBuilder.Build(this.StoriesStore.StoryContainers, expandedNavigationPath);
     }
 
     private void OnFocusSearchBox() => _SearchBoxHasFocus = true;
 
     private void OnBlurSearchBox() => _SearchBoxHasFocus = false;
-
-    private void M(MouseEventArgs a)
-    {
-        
-    }
 }

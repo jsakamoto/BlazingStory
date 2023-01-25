@@ -6,7 +6,7 @@ internal class CommandState
 {
     public CommandType Type;
     public string? HotKey;
-    public bool Flag;
+    public bool? Flag;
 
     public CommandState()
     {

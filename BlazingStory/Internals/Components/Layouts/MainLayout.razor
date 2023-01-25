@@ -60,8 +60,21 @@
         var commandServce = services.GetRequiredService<CommandService>();
         await commandServce.AddCommandsAsync(new Command[]
         {
-            new(CommandType.AddonPanelVisible, Code.A, "Show addons [{0}]", flag: true),
-            new(CommandType.AddonPanelOrientation, Code.D, "Change addon orientation [{0}]"),
+            new(CommandType.AboutYourBlazingStory, default, "About your Blazing Story"),
+            new(CommandType.ReleaseNotes, default, "Release notes"),
+            new(CommandType.KeyboardShortcuts, Code.Comma, "Keyboard shortcuts"),
+
+            new(CommandType.SideBarVisible, Code.S, "Show sidebar", flag: true),
+            new(CommandType.ToolBarVisible, Code.T, "Show toolbar", flag: true),
+            new(CommandType.AddonPanelVisible, Code.A, "Show addons", flag: true),
+            new(CommandType.AddonPanelOrientation, Code.D, "Change addons orientation"),
+            new(CommandType.GoFullScreen, Code.F, "Go full screen"),
+            new(CommandType.GoSearch, Code.Slash, "Search"),
+            new(CommandType.PreviousComponent, Code.ArrowUp, "Previous component"),
+            new(CommandType.NextComponent, Code.ArrowDown, "Next component"),
+            new(CommandType.PreviousStory, Code.ArrowLeft, "Previous Story"),
+            new(CommandType.NextStory, Code.ArrowRight, "Next Story"),
+            new(CommandType.CollapseAll, Code.ArrowUp, "Collapse All"),
         });
     }
 

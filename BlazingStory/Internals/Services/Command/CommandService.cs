@@ -1,4 +1,5 @@
-﻿using BlazingStory.Internals.Extensions;
+﻿using System.Collections.Specialized;
+using BlazingStory.Internals.Extensions;
 using Microsoft.Extensions.Logging;
 using Toolbelt.Blazor.HotKeys2;
 
@@ -14,9 +15,11 @@ internal class CommandService : IDisposable
 
     private readonly ILogger<CommandService> _Logger;
 
-    private readonly Dictionary<CommandType, Command> _Commands = new();
+    private readonly OrderedDictionary _Commands = new();
 
     private string CommandStateKeyName => this.GetType().Name + "." + nameof(this._Commands);
+
+    public IEnumerable<Command> Commands => this._Commands.Values.Cast<Command>();
 
     public CommandService(HotKeys hotKeys, HelperScript helperScript, ILogger<CommandService> logger)
     {
@@ -39,24 +42,24 @@ internal class CommandService : IDisposable
         }
     }
 
-    public Command this[CommandType type] => this._Commands[type];
+    public Command? this[CommandType type] => this._Commands[(object)type] as Command;
 
     public async Task InvokeAsync(CommandType type)
     {
-        if (!this._Commands.TryGetValue(type, out var command)) return;
+        if (this._Commands[type] is not Command command) return;
         await command.InvokeAsync();
     }
 
     public IDisposable Subscribe(CommandType type, AsyncCallback callBack)
     {
-        if (!this._Commands.TryGetValue(type, out var command)) throw new KeyNotFoundException();
+        if (this._Commands[type] is not Command command) throw new KeyNotFoundException();
         return command.Subscribe(callBack);
     }
 
     private void HotKeys_OnKeyDown(object? sender, HotKeyDownEventArgs args)
     {
         if (args.SrcElementTagName is "TEXTAREA" or "INPUT") return;
-        var commad = this._Commands.Values.FirstOrDefault(cmd => cmd.HotKey == args.Code);
+        var commad = this._Commands.Values.Cast<Command>().FirstOrDefault(cmd => cmd.HotKey == args.Code);
         if (commad == null) return;
         commad.InvokeAsync().AndLogException(this._Logger);
     }
@@ -64,13 +67,13 @@ internal class CommandService : IDisposable
     private void Command_StateChanged(object? sender, EventArgs e)
     {
         this._HelperScript
-            .SaveObjectToLocalStorageAsync(this.CommandStateKeyName, this._Commands.Values.Select(cmd => new CommandState(cmd)))
+            .SaveObjectToLocalStorageAsync(this.CommandStateKeyName, this._Commands.Values.Cast<Command>().Select(cmd => new CommandState(cmd)))
             .AndLogException(this._Logger);
     }
 
     public void Dispose()
     {
-        foreach (var cmd in this._Commands.Values)
+        foreach (var cmd in this._Commands.Values.Cast<Command>())
         {
             cmd.StateChanged -= this.Command_StateChanged;
         }

@@ -27,7 +27,7 @@
                         <IconButton Icon="this.ToggleOrientationButtonIcon" Command="this._Commands[CommandType.AddonPanelVisible]" />
                     }
 
-                    <IconButton Icon="SvgIconType.FullScreen" />
+                    <IconButton Icon="SvgIconType.FullScreen" Command="this._Commands[CommandType.GoFullScreen]" />
                     <IconButton Icon="SvgIconType.OpenNewTab" Href="@this._CurrentCanvasFrameUrl" Target="_blank" Title="Open canvas in new tab" />
                     <IconButton Icon="SvgIconType.Link" Title="Copy canvas link" OnClick="this.OnClickCopyCanvasLink" />
                 </ToolBar>
@@ -103,7 +103,7 @@
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
         this._Commands = this.Services.GetRequiredService<CommandService>();
-        this._AddonPanelVisibleCommand = this._Commands[CommandType.AddonPanelVisible];
+        this._AddonPanelVisibleCommand = this._Commands[CommandType.AddonPanelVisible]!;
         this._Subscriptions.Add(
             this._Commands.Subscribe(CommandType.AddonPanelOrientation, this.OnToggleOrientation),
             this._AddonPanelVisibleCommand.Subscribe(this.OnToggleAddonPanelVisible)
@@ -219,7 +219,7 @@
 
     private async ValueTask OnToggleAddonPanelVisible()
     {
-        var command = this._Commands[CommandType.AddonPanelVisible];
+        var command = this._Commands[CommandType.AddonPanelVisible]!;
         command.Flag = !command.Flag;
         await this.SaveAddonPanelLayoutAsync();
     }

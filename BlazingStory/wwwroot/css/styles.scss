@@ -6,6 +6,7 @@
 @import "../../Internals/Components/Layouts/MainLayout.razor.scss";
 
 @import "../../Internals/Components/SideBar/SideBar.razor.scss";
+@import "../../Internals/Components/SideBar/SettingsMenu.razor.scss";
 @import "../../Internals/Components/SideBar/NavigationTree.razor.scss";
 
 @import "../../Internals/Components/ToolBar/ToolBar.razor.scss";
@@ -26,6 +27,8 @@
 @import "../../Internals/Components/Inputs/TextArea.razor.scss";
 
 @import "../../Internals/Components/Menus/PopupMenu.razor.scss";
+@import "../../Internals/Components/Menus/MenuItemDivider.razor.scss";
+@import "../../Internals/Components/Menus/CommandMenuItem.razor.scss";
 
 @import "../../Internals/Pages/Index.razor.scss";
 @import "../../Internals/Pages/Canvas/CanvasPage.razor.scss";

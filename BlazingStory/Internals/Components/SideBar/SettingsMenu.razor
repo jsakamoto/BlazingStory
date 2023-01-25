@@ -1,0 +1,45 @@
+<PopupMenu Class="settings-popup-menu">
+    <Trigger>
+        <IconButton Icon="SvgIconType.Gear" />
+    </Trigger>
+    <MenuItems>
+        @if (_CommandSegments != null)
+        {
+            var topCommands = this._CommandSegments[true];
+            var restCommands = this._CommandSegments[false];
+            
+            @foreach (var command in topCommands)
+            {
+                <CommandMenuItem Command="command" />
+            }
+            
+            <MenuItemDivider />
+
+            @foreach (var command in restCommands)
+            {
+                <CommandMenuItem Command="command" />
+            }
+        }
+    </MenuItems>
+</PopupMenu>
+
+@code
+{
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
+    private IReadOnlyDictionary<bool, IEnumerable<Command>>? _CommandSegments;
+
+    protected override void OnInitialized()
+    {
+        var commandService = this.Services.GetRequiredService<CommandService>();
+        var topCommandsTypes = new[] { 
+            CommandType.AboutYourBlazingStory,
+            CommandType.ReleaseNotes,
+            CommandType.KeyboardShortcuts,
+        };
+        this._CommandSegments = commandService.Commands
+            .GroupBy(cmd => topCommandsTypes.Contains(cmd.Type))
+            .ToDictionary(g => g.Key, g => g.ToArray().AsEnumerable());
+    }
+}
