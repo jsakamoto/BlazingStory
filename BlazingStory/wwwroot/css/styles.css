@@ -17,6 +17,7 @@
   --bs-keymap-back-color: rgba(0,0,0,0.05);
   --bs-popup-back-color: rgba(255,255,255,0.95);
   --bs-popup-text-color: #2E3438;
+  --bs-popup-hover-back-color: rgba(2,156,253,0.07);
 }
 
 * {
@@ -615,6 +616,7 @@ a.icon-button {
   display: flex;
   flex-direction: column;
   filter: drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.05)) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
+  pointer-events: none;
 }
 
 .popup-menu-leader {
@@ -632,6 +634,7 @@ a.icon-button {
   margin: 0 calc(50% - 8px) 0 calc(-50% + 8px);
   border-radius: 8px;
   overflow: hidden;
+  pointer-events: all;
 }
 
 .menu-item-divider {
@@ -644,6 +647,8 @@ a.icon-button {
   display: flex;
   align-items: center;
   padding: 0 15px 0 8px;
+  transition: all 150ms ease-out;
+  cursor: pointer;
 }
 .command-menu-item.has-hotkey {
   height: 33px;
@@ -660,6 +665,9 @@ a.icon-button {
 .command-menu-item .hotkey-area {
   padding-left: 10px;
   margin-top: -3px;
+}
+.command-menu-item:hover {
+  background: var(--bs-popup-hover-back-color);
 }
 
 .body {

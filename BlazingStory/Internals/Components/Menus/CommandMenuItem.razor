@@ -1,11 +1,12 @@
 ﻿@using BlazingStory.Internals.Services.Command;
+@implements IDisposable
 
 @if (this.Command != null)
 {
     var hotKey = this.Command.HotKey;
     var hasHotkey = hotKey != null && hotKey.Code != "";
 
-    <div class="menu-item command-menu-item @(hasHotkey ? "has-hotkey" : "")">
+    <div class="menu-item command-menu-item @(hasHotkey ? "has-hotkey" : "")" @onclick="OnClickMenuItem">
         <span class="check-mark-area">
             @if (this.Command.Flag == true)
             {
@@ -26,4 +27,27 @@
 {
     [Parameter, EditorRequired]
     public Command? Command { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (this.Command == null) return;
+        this.Command.StateChanged += Command_StateChanged;
+    }
+
+    private async Task OnClickMenuItem()
+    {
+        if (this.Command == null) return;
+        await this.Command.InvokeAsync();
+    }
+
+    private void Command_StateChanged(object? sender, EventArgs args)
+    {
+        this.StateHasChanged();    
+    }
+
+    public void Dispose()
+    {
+        if (this.Command == null) return;
+        this.Command.StateChanged -= Command_StateChanged;
+    }
 }
