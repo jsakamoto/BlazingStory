@@ -6,13 +6,13 @@ public class Command
 {
     public readonly CommandType Type;
 
-    public HotKeyEntry? HotKey { get => this._HotKey; set { if (this._HotKey == value) return; this._HotKey = value; this.StateChanged?.Invoke(this, EventArgs.Empty); } }
+    public HotKeyCombo? HotKey { get => this._HotKey; set { if (this._HotKey == value) return; this._HotKey = value; this.StateChanged?.Invoke(this, EventArgs.Empty); } }
 
     public bool? Flag { get => this._Flag; set { if (this._Flag == value) return; this._Flag = value; this.StateChanged?.Invoke(this, EventArgs.Empty); } }
 
     internal readonly string? Title;
 
-    private HotKeyEntry? _HotKey;
+    private HotKeyCombo? _HotKey;
 
     private bool? _Flag;
 
@@ -24,7 +24,7 @@ public class Command
 
     internal Command(CommandType type, string? title = null, bool? flag = null) : this(type, default, title, flag) { }
 
-    public Command(CommandType type, HotKeyEntry? hotKey, string? title = null, bool? flag = null)
+    public Command(CommandType type, HotKeyCombo? hotKey, string? title = null, bool? flag = null)
     {
         this.Type = type;
         this._HotKey = hotKey;

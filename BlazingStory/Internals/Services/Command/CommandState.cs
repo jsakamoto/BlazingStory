@@ -21,7 +21,7 @@ internal class CommandState
 
     internal void Apply(Command command)
     {
-        command.HotKey = new HotKeyEntry(this.KeyMod, new(this.KeyCode ?? ""));
+        command.HotKey = new HotKeyCombo(this.KeyMod, new(this.KeyCode ?? ""));
         command.Flag = this.Flag;
     }
 }

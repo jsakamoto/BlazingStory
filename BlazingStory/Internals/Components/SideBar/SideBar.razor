@@ -40,7 +40,7 @@
 
     private string SearchBoxPlaceHolder => this._SearchBoxHasFocus ? "Type to find..." : "Find components";
 
-    private BlazingStory.Internals.Services.HotKeyEntry? _GoSearchHotKey;
+    private HotKeyCombo? _GoSearchHotKey;
 
     protected override void OnInitialized()
     {
