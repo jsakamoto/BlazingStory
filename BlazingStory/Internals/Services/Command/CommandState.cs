@@ -4,8 +4,8 @@ namespace BlazingStory.Internals.Services.Command;
 
 internal class CommandState
 {
-    public CommandType Type;
-    public string? HotKey;
+    public ModCode KeyMod;
+    public string? KeyCode;
     public bool? Flag;
 
     public CommandState()
@@ -14,14 +14,14 @@ internal class CommandState
 
     public CommandState(Command command)
     {
-        this.Type = command.Type;
-        this.HotKey = command.HotKey;
+        this.KeyMod = command.HotKey?.Modifiers ?? ModCode.None;
+        this.KeyCode = command.HotKey?.Code;
         this.Flag = command.Flag;
     }
 
     internal void Apply(Command command)
     {
-        command.HotKey = new Code(this.HotKey ?? "");
+        command.HotKey = new HotKeyEntry(this.KeyMod, new(this.KeyCode ?? ""));
         command.Flag = this.Flag;
     }
 }

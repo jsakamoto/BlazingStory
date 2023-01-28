@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Toolbelt.Blazor.HotKeys2;
 
 namespace BlazingStory.Internals.Services.Command;
 
@@ -7,25 +6,25 @@ public class Command
 {
     public readonly CommandType Type;
 
-    public Code HotKey { get => this._HotKey; set { if (this._HotKey == value) return; this._HotKey = value; this.StateChanged?.Invoke(this, EventArgs.Empty); } }
+    public HotKeyEntry? HotKey { get => this._HotKey; set { if (this._HotKey == value) return; this._HotKey = value; this.StateChanged?.Invoke(this, EventArgs.Empty); } }
 
     public bool? Flag { get => this._Flag; set { if (this._Flag == value) return; this._Flag = value; this.StateChanged?.Invoke(this, EventArgs.Empty); } }
 
     internal readonly string? Title;
 
-    private Code _HotKey;
+    private HotKeyEntry? _HotKey;
 
     private bool? _Flag;
 
-    internal string? GetTitleText() => this._HotKey.ToString() == "" ? this.Title : $"{this.Title} [{this.GetHotKeyName()}]";
+    internal string? GetTitleText() => string.IsNullOrEmpty(this._HotKey?.Code.ToString()) ? this.Title : $"{this.Title} [{this.GetHotKeyName()}]";
 
     private readonly Dictionary<Guid, AsyncCallback> _Subscribers = new();
 
     internal event EventHandler? StateChanged;
 
-    internal Command(CommandType type, string? title = null, bool? flag = null) : this(type, new Code(""), title, flag) { }
+    internal Command(CommandType type, string? title = null, bool? flag = null) : this(type, default, title, flag) { }
 
-    public Command(CommandType type, Code hotKey, string? title = null, bool? flag = null)
+    public Command(CommandType type, HotKeyEntry? hotKey, string? title = null, bool? flag = null)
     {
         this.Type = type;
         this._HotKey = hotKey;
@@ -35,7 +34,7 @@ public class Command
 
     internal string GetHotKeyName()
     {
-        var hotKeyName = (string?)this.HotKey;
+        var hotKeyName = (string?)this.HotKey?.Code;
         return hotKeyName?.StartsWith("Key") == true ? hotKeyName[3..] : hotKeyName ?? "";
     }
 

@@ -18,6 +18,7 @@
     <_ContentIncludedByDefault Remove="compilerconfig.json" />
     <None Include="bundleconfig.json" />
     <None Include="compilerconfig.json" />
+    <EmbeddedResource Include="Resources\KeyCodeMap.csv" />
   </ItemGroup>
 
   <ItemGroup>

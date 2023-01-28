@@ -32,8 +32,7 @@ internal class CommandService : IDisposable
 
     public async ValueTask AddCommandsAsync(params Command[] commands)
     {
-        var commandStates = (await this._HelperScript.LoadObjectFromLocalStorageAsync(this.CommandStateKeyName, Array.Empty<CommandState>()))
-            .ToDictionary(s => s.Type, s => s);
+        var commandStates = await this._HelperScript.LoadObjectFromLocalStorageAsync(this.CommandStateKeyName, new Dictionary<CommandType, CommandState>());
         foreach (var cmd in commands)
         {
             if (commandStates.TryGetValue(cmd.Type, out var state)) state.Apply(cmd);
@@ -59,15 +58,18 @@ internal class CommandService : IDisposable
     private void HotKeys_OnKeyDown(object? sender, HotKeyDownEventArgs args)
     {
         if (args.SrcElementTagName is "TEXTAREA" or "INPUT") return;
-        var commad = this._Commands.Values.Cast<Command>().FirstOrDefault(cmd => cmd.HotKey == args.Code);
+        var commad = this._Commands.Values.Cast<Command>()
+            .FirstOrDefault(cmd => cmd.HotKey != null && cmd.HotKey.Code == args.Code && cmd.HotKey.Modifiers == args.Modifiers);
         if (commad == null) return;
         commad.InvokeAsync().AndLogException(this._Logger);
     }
 
     private void Command_StateChanged(object? sender, EventArgs e)
     {
+        var commandStates = this._Commands.Values.Cast<Command>()
+            .ToDictionary(cmd => cmd.Type, cmd => new CommandState(cmd));
         this._HelperScript
-            .SaveObjectToLocalStorageAsync(this.CommandStateKeyName, this._Commands.Values.Cast<Command>().Select(cmd => new CommandState(cmd)))
+            .SaveObjectToLocalStorageAsync(this.CommandStateKeyName, commandStates)
             .AndLogException(this._Logger);
     }
 

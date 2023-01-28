@@ -62,19 +62,19 @@
         {
             new(CommandType.AboutYourBlazingStory, default, "About your Blazing Story"),
             new(CommandType.ReleaseNotes, default, "Release notes"),
-            new(CommandType.KeyboardShortcuts, Code.Comma, "Keyboard shortcuts"),
+            new(CommandType.KeyboardShortcuts, new(Code.Comma), "Keyboard shortcuts"),
 
-            new(CommandType.SideBarVisible, Code.S, "Show sidebar", flag: true),
-            new(CommandType.ToolBarVisible, Code.T, "Show toolbar", flag: true),
-            new(CommandType.AddonPanelVisible, Code.A, "Show addons", flag: true),
-            new(CommandType.AddonPanelOrientation, Code.D, "Change addons orientation"),
-            new(CommandType.GoFullScreen, Code.F, "Go full screen"),
-            new(CommandType.GoSearch, Code.Slash, "Search"),
-            new(CommandType.PreviousComponent, Code.ArrowUp, "Previous component"),
-            new(CommandType.NextComponent, Code.ArrowDown, "Next component"),
-            new(CommandType.PreviousStory, Code.ArrowLeft, "Previous Story"),
-            new(CommandType.NextStory, Code.ArrowRight, "Next Story"),
-            new(CommandType.CollapseAll, Code.ArrowUp, "Collapse All"),
+            new(CommandType.SideBarVisible, new(Code.S), "Show sidebar", flag: true),
+            new(CommandType.ToolBarVisible, new(Code.T), "Show toolbar", flag: true),
+            new(CommandType.AddonPanelVisible, new(Code.A), "Show addons", flag: true),
+            new(CommandType.AddonPanelOrientation, new(Code.D), "Change addons orientation"),
+            new(CommandType.GoFullScreen, new(Code.F), "Go full screen"),
+            new(CommandType.GoSearch, new(Code.Slash), "Search"),
+            new(CommandType.PreviousComponent, new(Code.ArrowUp), "Previous component"),
+            new(CommandType.NextComponent, new(Code.ArrowDown), "Next component"),
+            new(CommandType.PreviousStory, new(Code.ArrowLeft), "Previous Story"),
+            new(CommandType.NextStory, new(Code.ArrowRight), "Next Story"),
+            new(CommandType.CollapseAll, new(Code.ArrowUp), "Collapse All"),
         });
     }
 
