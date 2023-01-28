@@ -19,10 +19,10 @@ Delete,Delete
 Backspace,Backspace
 Insert,Insert
 Enter,Enter
-ArrowUp,ArrowUp
-ArrowRight,ArrowRight
-ArrowDown,ArrowDown
-ArrowLeft,ArrowLeft
+↑,ArrowUp
+→,ArrowRight
+↓,ArrowDown
+←,ArrowLeft
 PageUp,PageUp
 PageDown,PageDown
 Home,Home

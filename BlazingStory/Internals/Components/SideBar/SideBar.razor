@@ -13,7 +13,7 @@
     <div class="search-field">
         <input type="text" placeholder="@this.SearchBoxPlaceHolder" required autocomplete="off" @onfocus="OnFocusSearchBox" @onblur="OnBlurSearchBox" />
         <SvgIcon Type="SvgIconType.Find" Class="find-icon" />
-        <KeyMap Text="/" Class="shortcut-keymap" />
+        <KeyMap Key="this._GoSearchHotKey" Class="shortcut-keymap" />
     </div>
 
     <div class="explorer-menu">
@@ -29,6 +29,9 @@
     [CascadingParameter]
     protected QueryRouteData RouteData { get; init; } = default!;
 
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
     private readonly NavigationTreeBuilder _NavigationTreeBuilder = new();
 
     private NavigationTreeItem _NavigationRoot = new();
@@ -37,8 +40,13 @@
 
     private string SearchBoxPlaceHolder => this._SearchBoxHasFocus ? "Type to find..." : "Find components";
 
+    private BlazingStory.Internals.Services.HotKeyEntry? _GoSearchHotKey;
+
     protected override void OnInitialized()
     {
+        var commandService = this.Services.GetRequiredService<CommandService>();
+        this._GoSearchHotKey = commandService[CommandType.GoSearch]?.HotKey;
+
         var expandedNavigationPath = this.RouteData.RouteToStoryOrDocs ? this.RouteData.Parameter : null;
         this._NavigationRoot = _NavigationTreeBuilder.Build(this.StoriesStore.StoryContainers, expandedNavigationPath);
     }

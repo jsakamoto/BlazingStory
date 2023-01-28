@@ -2,9 +2,10 @@
 
 @if (this.Command != null)
 {
-    var hotKeyName = this.Command.GetHotKeyName();
+    var hotKey = this.Command.HotKey;
+    var hasHotkey = hotKey != null && hotKey.Code != "";
 
-    <div class="menu-item command-menu-item @(hotKeyName != "" ? "has-hotkey" : "")">
+    <div class="menu-item command-menu-item @(hasHotkey ? "has-hotkey" : "")">
         <span class="check-mark-area">
             @if (this.Command.Flag == true)
             {
@@ -13,9 +14,9 @@
         </span>
         <span class="command-title">@this.Command.Title</span>
         <span class="hotkey-area">
-            @if (hotKeyName != "")
+            @if (hasHotkey)
             {
-                <KeyMap Text="@hotKeyName" />
+                <KeyMap Key="hotKey" />
             }
         </span>
     </div>

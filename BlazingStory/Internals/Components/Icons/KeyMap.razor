@@ -1,11 +1,23 @@
-<code class="key-map @Class">
-    @Text
-</code>
+<div class="key-map @Class">
+    @foreach (var keyText in this.EnumKeyText())
+    {
+        <code>@keyText</code>
+    }
+</div>
 @code
 {
     [Parameter, EditorRequired]
-    public string? Text { get; set; }
+    public BlazingStory.Internals.Services.HotKeyEntry? Key { get; set; }
 
     [Parameter]
     public string? Class { get; set; }
+
+    private IEnumerable<string> EnumKeyText()
+    {
+        if (this.Key == null) yield break;
+        if (this.Key.Modifiers.HasFlag(ModCode.Alt)) yield return "alt";
+        if (this.Key.Modifiers.HasFlag(ModCode.Ctrl)) yield return "⌃";
+        if (this.Key.Modifiers.HasFlag(ModCode.Shift)) yield return "⇧​";
+        yield return KeyCodeMapper.GetKeyTextFromCode(this.Key.Code);
+    }
 }

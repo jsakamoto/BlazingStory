@@ -1,15 +1,21 @@
 .key-map {
-    --bs-keymap-size: 16px;
-    font-family: ui-monospace,Menlo,Monaco,"Roboto Mono","Oxygen Mono","Ubuntu Monospace","Source Code Pro","Droid Sans Mono","Courier New",monospace;
-    font-size: 11px;
-    display: inline-block;
-    width: var(--bs-keymap-size);
-    height: var(--bs-keymap-size);
-    line-height: var(--bs-keymap-size);
-    text-align: center;
-    background: var(--bs-keymap-back-color);
-    color: var(--bs-keymap-text-color);
-    border-radius: 2px;
-    user-select: none;
-    pointer-events: none;
+    display: inline-flex;
+    gap: 2px;
+
+    code {
+        --bs-keymap-size: 16px;
+        font-family: ui-monospace,Menlo,Monaco,"Roboto Mono","Oxygen Mono","Ubuntu Monospace","Source Code Pro","Droid Sans Mono","Courier New",monospace;
+        font-size: 11px;
+        display: inline-block;
+        width: var(--bs-keymap-size);
+        height: var(--bs-keymap-size);
+        line-height: var(--bs-keymap-size);
+        text-align: center;
+        background: var(--bs-keymap-back-color);
+        color: var(--bs-keymap-text-color);
+        border-radius: 2px;
+        user-select: none;
+        pointer-events: none;
+        padding: 0px 2px;
+    }
 }

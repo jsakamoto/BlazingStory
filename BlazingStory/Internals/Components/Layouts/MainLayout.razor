@@ -62,7 +62,7 @@
         {
             new(CommandType.AboutYourBlazingStory, default, "About your Blazing Story"),
             new(CommandType.ReleaseNotes, default, "Release notes"),
-            new(CommandType.KeyboardShortcuts, new(Code.Comma), "Keyboard shortcuts"),
+            new(CommandType.KeyboardShortcuts, new(ModCode.Ctrl|ModCode.Shift, Code.Comma), "Keyboard shortcuts"),
 
             new(CommandType.SideBarVisible, new(Code.S), "Show sidebar", flag: true),
             new(CommandType.ToolBarVisible, new(Code.T), "Show toolbar", flag: true),
@@ -70,11 +70,11 @@
             new(CommandType.AddonPanelOrientation, new(Code.D), "Change addons orientation"),
             new(CommandType.GoFullScreen, new(Code.F), "Go full screen"),
             new(CommandType.GoSearch, new(Code.Slash), "Search"),
-            new(CommandType.PreviousComponent, new(Code.ArrowUp), "Previous component"),
-            new(CommandType.NextComponent, new(Code.ArrowDown), "Next component"),
-            new(CommandType.PreviousStory, new(Code.ArrowLeft), "Previous Story"),
-            new(CommandType.NextStory, new(Code.ArrowRight), "Next Story"),
-            new(CommandType.CollapseAll, new(Code.ArrowUp), "Collapse All"),
+            new(CommandType.PreviousComponent, new(ModCode.Alt, Code.ArrowUp), "Previous component"),
+            new(CommandType.NextComponent, new(ModCode.Alt, Code.ArrowDown), "Next component"),
+            new(CommandType.PreviousStory, new(ModCode.Alt, Code.ArrowLeft), "Previous story"),
+            new(CommandType.NextStory, new(ModCode.Alt, Code.ArrowRight), "Next story"),
+            new(CommandType.CollapseAll, new(ModCode.Ctrl|ModCode.Shift, Code.ArrowUp), "Collapse all"),
         });
     }
 
