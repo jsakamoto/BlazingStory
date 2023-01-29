@@ -15,9 +15,9 @@
 
                 <ToolBar>
                     <IconButton Icon="SvgIconType.Reload" OnClick="OnClickReload" Title="Reload the story" />
-                    <IconButton Icon="SvgIconType.ZoomIn" />
-                    <IconButton Icon="SvgIconType.ZoomOut" />
-                    <IconButton Icon="SvgIconType.ZoomReset" />
+                    <IconButton Icon="SvgIconType.ZoomIn" OnClick="OnClickZoomIn" Title="Zoom in" />
+                    <IconButton Icon="SvgIconType.ZoomOut" OnClick="OnClickZoomOut" Title="Zoom out" />
+                    <IconButton Icon="SvgIconType.ZoomReset" OnClick="OnClickResetZoom" Title="Reset zoom" />
                     <Separator />
 
                     <Spacer />
@@ -233,6 +233,21 @@
     private async Task OnClickReload()
     {
         await this._JSModule.InvokeVoidAsync("reloadCanvasFrame", this._Iframe);
+    }
+
+    private async Task OnClickZoomIn()
+    {
+        await this._JSModule.InvokeVoidAsync("zoomInCanvasFrame", this._Iframe);
+    }
+
+    private async Task OnClickZoomOut()
+    {
+        await this._JSModule.InvokeVoidAsync("zoomOutCanvasFrame", this._Iframe);
+    }
+
+    private async Task OnClickResetZoom()
+    {
+        await this._JSModule.InvokeVoidAsync("resetZoomCanvasFrame", this._Iframe);
     }
 
     private async ValueTask SaveAddonPanelLayoutAsync()

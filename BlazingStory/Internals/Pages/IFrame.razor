@@ -1,5 +1,7 @@
 @page "/iframe.html"
 @layout NullLayout
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
 
 <IdQueryRouter>
     <CanvasFrame />
@@ -7,12 +9,21 @@
 
 @code
 {
-    [CascadingParameter]
-    internal IServiceProvider Services { get; init; } = default!;
+    private readonly JSModule _JSModule;
 
-    protected override async Task OnInitializedAsync()
+    public IFrame()
     {
-        var helperScript = this.Services.GetRequiredService<HelperScript>();
-        await helperScript.SetupKeyDownSenderAsync();
+        this._JSModule = new(() => this.JSRuntime, "./_content/BlazingStory/Internals/Pages/IFrame.razor.js");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await this._JSModule.InvokeVoidAsync("initializeCanvasFrame");
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await this._JSModule.DisposeAsync();    
     }
 }

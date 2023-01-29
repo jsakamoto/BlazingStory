@@ -1,4 +1,4 @@
-export const getComputedColor = (colorText) => {
+export const getComputedColor = (colorText: string) => {
     const element = document.createElement("div");
     element.style.position = "fixed";
     element.style.width = "0";
@@ -8,4 +8,4 @@ export const getComputedColor = (colorText) => {
     const computedColorText = getComputedStyle(element).color;
     element.remove();
     return computedColorText;
-};
+}
