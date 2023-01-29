@@ -58,7 +58,7 @@
     private async ValueTask ConfigureCommandsAsync(IServiceProvider services)
     {
         var commandServce = services.GetRequiredService<CommandService>();
-        await commandServce.AddCommandsAsync(new Command[]
+        await commandServce.EnsureCommandsAsync(() => new Command[]
         {
             new(CommandType.AboutYourBlazingStory, default, "About your Blazing Story"),
             new(CommandType.ReleaseNotes, default, "Release notes"),

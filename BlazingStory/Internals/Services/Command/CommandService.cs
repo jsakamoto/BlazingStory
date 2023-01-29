@@ -19,6 +19,8 @@ internal class CommandService : IDisposable
 
     private string CommandStateKeyName => this.GetType().Name + "." + nameof(this._Commands);
 
+    private bool _Initialized = false;
+
     public IEnumerable<Command> Commands => this._Commands.Values.Cast<Command>();
 
     public CommandService(HotKeys hotKeys, HelperScript helperScript, ILogger<CommandService> logger)
@@ -28,6 +30,13 @@ internal class CommandService : IDisposable
         this._Logger = logger;
         this._HotKeysContext = this._HotKeys.CreateContext();
         this._HotKeys.KeyDown += this.HotKeys_OnKeyDown;
+    }
+
+    public async ValueTask EnsureCommandsAsync(Func<Command[]> getCommands)
+    {
+        if (this._Initialized) return;
+        this._Initialized = true;
+        await this.AddCommandsAsync(getCommands());
     }
 
     public async ValueTask AddCommandsAsync(params Command[] commands)
