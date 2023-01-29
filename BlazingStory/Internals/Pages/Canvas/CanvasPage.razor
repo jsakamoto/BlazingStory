@@ -14,7 +14,7 @@
             <div class="canvas-container fill stack vertical">
 
                 <ToolBar>
-                    <IconButton Icon="SvgIconType.Reload" />
+                    <IconButton Icon="SvgIconType.Reload" OnClick="OnClickReload" Title="Reload the story" />
                     <IconButton Icon="SvgIconType.ZoomIn" />
                     <IconButton Icon="SvgIconType.ZoomOut" />
                     <IconButton Icon="SvgIconType.ZoomReset" />
@@ -228,6 +228,11 @@
     {
         var canvalLinkUrl = this._CurrentCanvasFrameUrl.TrimStart('.', '/');
         await this.HelperScript.CopyTextToClipboardAsync(canvalLinkUrl);
+    }
+
+    private async Task OnClickReload()
+    {
+        await this._JSModule.InvokeVoidAsync("reloadCanvasFrame", this._Iframe);
     }
 
     private async ValueTask SaveAddonPanelLayoutAsync()
