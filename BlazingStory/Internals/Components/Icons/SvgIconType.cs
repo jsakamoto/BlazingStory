@@ -23,5 +23,6 @@ public enum SvgIconType
     OpenNewTab,
     Link,
     FullScreen,
-    Check
+    Check,
+    Sidebar
 }

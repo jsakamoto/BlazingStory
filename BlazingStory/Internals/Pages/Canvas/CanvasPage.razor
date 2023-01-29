@@ -15,6 +15,12 @@
 
                 @* -- Toolbar -- *@
                 <ToolBar Visible="this._ToolbarVisibleCommand?.Flag == true">
+                    @if (this._Commands[CommandType.SideBarVisible]?.Flag == false)
+                    {
+                        <IconButton Icon="SvgIconType.Sidebar" Command="this._Commands[CommandType.SideBarVisible]" />
+                        <Separator />
+                    }
+
                     <IconButton Icon="SvgIconType.Reload" OnClick="OnClickReload" Title="Reload the story" />
                     <IconButton Icon="SvgIconType.ZoomIn" OnClick="OnClickZoomIn" Title="Zoom in" />
                     <IconButton Icon="SvgIconType.ZoomOut" OnClick="OnClickZoomOut" Title="Zoom out" />
@@ -68,15 +74,15 @@
 
     private CommandService _Commands = default!;
 
+    private Command? _ToolbarVisibleCommand;
+
+    private Command? _AddonPanelVisibleCommand;
+
     private readonly Subscriptions _Subscriptions = new();
 
     private int _AddonPanelSize = 210;
 
     private AddonPanelLayout _AddonPanelLayout = new();
-
-    private Command? _ToolbarVisibleCommand;
-
-    private Command? _AddonPanelVisibleCommand;
 
     private string _PageTitle = "";
 

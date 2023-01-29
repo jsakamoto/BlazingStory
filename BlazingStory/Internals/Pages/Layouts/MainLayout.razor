@@ -10,7 +10,7 @@
 @if (this._Ready)
 {
     <PathQueryRouter>
-        <SplitContainer Class="main-layout" @bind-FirstPaneSize="_SideBarSize" @bind-FirstPaneSize:after="OnSideBarSizeChanged" FirstPaneMinSize="200" SecondPaneMinSize="210">
+        <SplitContainer Class="@CssClass("main-layout", this._SidBarVisibilityState)" @bind-FirstPaneSize="_SideBarSize" @bind-FirstPaneSize:after="OnSideBarSizeChanged" FirstPaneMinSize="200" SecondPaneMinSize="210">
 
             <FirstPane>
                 <div class="sidebar-container fill">
@@ -30,13 +30,27 @@
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
 
+    private bool _Ready = false;
+
     private HelperScript HelperScript = default!;
 
     private int _SideBarSize = 210;
 
     private string SideBarSizeKeyName => this.GetType().Name + "." + nameof(_SideBarSize);
 
-    private bool _Ready = false;
+    private Command? _SideBarVisibleCommand;
+
+    private readonly Subscriptions _Subscriptions = new();
+
+    private enum SidBarVisibilityStates
+    {
+        SidebarShowing,
+        SidebarShown,
+        SidebarHiding,
+        SidebarHidden,
+    }
+
+    private SidBarVisibilityStates _SidBarVisibilityState = SidBarVisibilityStates.SidebarShown;
 
     protected override void OnInitialized()
     {
@@ -45,17 +59,39 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender) return;
-        await this.ConfigureCommandsAsync(this.Services);
-        this._Ready = true;
-        this.StateHasChanged();
+        if (firstRender)
+        {
+            var commandService = await this.ConfigureCommandsAsync(this.Services);
 
-        await this.HelperScript.SetupKeyDownReceiverAsync();
-        this._SideBarSize = await this.HelperScript.GetLocalStorageItemAsync(this.SideBarSizeKeyName, this._SideBarSize);
-        this.StateHasChanged();
+            this._SideBarVisibleCommand = commandService[CommandType.SideBarVisible]!;
+            this._Subscriptions.Add(this._SideBarVisibleCommand.Subscribe(this.OnToggleSideBarVisible));
+            this._SidBarVisibilityState = this._SideBarVisibleCommand.Flag == true ? SidBarVisibilityStates.SidebarShown : SidBarVisibilityStates.SidebarHidden;
+
+            this._Ready = true;
+            this.StateHasChanged();
+
+            await this.HelperScript.SetupKeyDownReceiverAsync();
+            this._SideBarSize = await this.HelperScript.GetLocalStorageItemAsync(this.SideBarSizeKeyName, this._SideBarSize);
+            this.StateHasChanged();
+        }
+
+        else
+        {
+            if (this._SidBarVisibilityState == SidBarVisibilityStates.SidebarHiding)
+            {
+                this._SidBarVisibilityState = SidBarVisibilityStates.SidebarHidden;
+                this.StateHasChanged();
+            }
+            else if (this._SidBarVisibilityState == SidBarVisibilityStates.SidebarShowing)
+            {
+                await Task.Delay(100);
+                this._SidBarVisibilityState = SidBarVisibilityStates.SidebarShown;
+                this.StateHasChanged();
+            }
+        }
     }
 
-    private async ValueTask ConfigureCommandsAsync(IServiceProvider services)
+    private async ValueTask<CommandService> ConfigureCommandsAsync(IServiceProvider services)
     {
         var commandServce = services.GetRequiredService<CommandService>();
         await commandServce.EnsureCommandsAsync(() => new Command[]
@@ -76,10 +112,19 @@
             new(CommandType.NextStory, new(ModCode.Alt, Code.ArrowRight), "Next story"),
             new(CommandType.CollapseAll, new(ModCode.Ctrl|ModCode.Shift, Code.ArrowUp), "Collapse all"),
         });
+        return commandServce;
     }
 
     private async Task OnSideBarSizeChanged()
     {
         await this.HelperScript.SetLocalStorageItemAsync(this.SideBarSizeKeyName, _SideBarSize);
+    }
+
+    private async ValueTask OnToggleSideBarVisible()
+    {
+        if (this._SideBarVisibleCommand == null) return;
+        this._SideBarVisibleCommand.ToggleFlag();
+        this._SidBarVisibilityState = this._SideBarVisibleCommand.Flag == true ? SidBarVisibilityStates.SidebarShowing: SidBarVisibilityStates.SidebarHiding;
+        await ValueTask.CompletedTask;
     }
 }
