@@ -6,13 +6,14 @@
     display: inline-flex;
     position: relative;
     white-space: nowrap;
-    background: rgba(0,0,0,0.15);
+    background: var(--bs-dimmed-back-color);
     border-radius: 3em;
     padding: 1px;
 
 
     input {
         appearance: none;
+        outline: none;
         width: 100%;
         height: 100%;
         position: absolute;
@@ -25,7 +26,7 @@
         cursor: pointer;
         border-radius: 3em;
 
-        &:focus {
+        &:focus, &:focus-visible {
             box-shadow: var(--bs-focused-color) 0 0 0 1px inset !important;
         }
     }
@@ -55,7 +56,7 @@
 
     input:checked ~ span:last-of-type,
     input:not(:checked) ~ span:first-of-type {
-        background: var(--bs-back-color);
+        background: var(--bs-inputs-background);
         box-shadow: rgb(0 0 0 / 20%) 0 0 2px;
         color: var(--bs-text-color);
         padding: 7px 15px;

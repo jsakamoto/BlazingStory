@@ -15,9 +15,9 @@
     padding: 6px 10px;
     width: 100%;
     font-size: var(--bs-text-size);
-    background: #FFFFFF;
+    background: var(--bs-inputs-background);
     color: var(--bs-text-color);
-    box-shadow: rgb(0 0 0 / 10%) 0 0 0 1px inset;
+    box-shadow: var(--bs-inputs-box-shadow);
     border-radius: 4px;
     line-height: 20px;
     text-align: left;
