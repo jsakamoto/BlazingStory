@@ -10,11 +10,7 @@
 
     </div>
 
-    <div class="search-field">
-        <input type="text" placeholder="@this.SearchBoxPlaceHolder" required autocomplete="off" @onfocus="OnFocusSearchBox" @onblur="OnBlurSearchBox" />
-        <SvgIcon Type="SvgIconType.Find" Class="find-icon" />
-        <KeyMap Key="this._GoSearchHotKey" Class="shortcut-keymap" />
-    </div>
+    <SearchField />
 
     <div class="explorer-menu">
         <NavigationTree Item="_NavigationRoot" SubHeading="true" />
@@ -29,29 +25,13 @@
     [CascadingParameter]
     protected QueryRouteData RouteData { get; init; } = default!;
 
-    [CascadingParameter]
-    protected IServiceProvider Services { get; init; } = default!;
-
     private readonly NavigationTreeBuilder _NavigationTreeBuilder = new();
 
     private NavigationTreeItem _NavigationRoot = new();
 
-    private bool _SearchBoxHasFocus = false;
-
-    private string SearchBoxPlaceHolder => this._SearchBoxHasFocus ? "Type to find..." : "Find components";
-
-    private HotKeyCombo? _GoSearchHotKey;
-
     protected override void OnInitialized()
     {
-        var commandService = this.Services.GetRequiredService<CommandService>();
-        this._GoSearchHotKey = commandService[CommandType.GoSearch]?.HotKey;
-
         var expandedNavigationPath = this.RouteData.RouteToStoryOrDocs ? this.RouteData.Parameter : null;
         this._NavigationRoot = _NavigationTreeBuilder.Build(this.StoriesStore.StoryContainers, expandedNavigationPath);
     }
-
-    private void OnFocusSearchBox() => _SearchBoxHasFocus = true;
-
-    private void OnBlurSearchBox() => _SearchBoxHasFocus = false;
 }

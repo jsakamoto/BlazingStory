@@ -176,10 +176,15 @@ button {
 .sidebar .sidebar-header .settings-popup-menu .popup-menu-holder {
   min-width: 180px;
 }
-.sidebar .search-field {
+.sidebar .explorer-menu {
+  margin-left: -20px;
+  margin-right: -20px;
+}
+
+.search-field {
   position: relative;
 }
-.sidebar .search-field input {
+.search-field input {
   appearance: none;
   height: 32px;
   padding-left: 30px;
@@ -194,15 +199,15 @@ button {
   color: var(--bs-text-color);
   width: 100%;
 }
-.sidebar .search-field input:focus {
+.search-field input:focus {
   outline: 0;
   background: var(--bs-back-color);
   border-color: var(--bs-focused-color);
 }
-.sidebar .search-field input:focus ~ .shortcut-keymap {
+.search-field input:focus ~ .shortcut-keymap {
   display: none;
 }
-.sidebar .search-field .find-icon {
+.search-field .find-icon {
   --bs-svg-icon-size: 14px;
   position: absolute;
   left: 11px;
@@ -210,14 +215,10 @@ button {
   color: var(--bs-dimmed-text-color);
   pointer-events: none;
 }
-.sidebar .search-field .shortcut-keymap {
+.search-field .shortcut-keymap {
   position: absolute;
   top: 8px;
   right: 16px;
-}
-.sidebar .explorer-menu {
-  margin-left: -20px;
-  margin-right: -20px;
 }
 
 .navigation-tree {

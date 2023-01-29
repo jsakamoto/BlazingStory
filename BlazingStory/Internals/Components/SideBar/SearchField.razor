@@ -1,0 +1,39 @@
+<div class="search-field">
+    <input @ref="_InputElement" type="text" placeholder="@this.SearchBoxPlaceHolder" required autocomplete="off" @onfocus="OnFocusSearchBox" @onblur="OnBlurSearchBox" role="search" />
+    <SvgIcon Type="SvgIconType.Find" Class="find-icon" />
+    <KeyMap Key="this._GoSearchHotKey" Class="shortcut-keymap" />
+</div>
+
+@code
+{
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
+    private ElementReference _InputElement;
+
+    private bool _SearchBoxHasFocus = false;
+
+    private string SearchBoxPlaceHolder => this._SearchBoxHasFocus ? "Type to find..." : "Find components";
+
+    private HotKeyCombo? _GoSearchHotKey;
+
+    protected override void OnInitialized()
+    {
+        var commandService = this.Services.GetRequiredService<CommandService>();
+        var goSearchCommand = commandService[CommandType.GoSearch];
+        if (goSearchCommand == null) return;
+        this._GoSearchHotKey = goSearchCommand.HotKey;
+        goSearchCommand.Subscribe(OnGoSearchCommand);
+    }
+
+    private void OnFocusSearchBox() => _SearchBoxHasFocus = true;
+
+    private void OnBlurSearchBox() => _SearchBoxHasFocus = false;
+
+    private async ValueTask OnGoSearchCommand()
+    {
+        await Task.Delay(100);
+        await _InputElement.FocusAsync();
+    }
+
+}

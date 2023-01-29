@@ -3,10 +3,11 @@
 @import "basic-styles-inputs.scss";
 @import "basic-styles-splitcontainer.scss";
 
-@import "../../Internals/Components/Layouts/MainLayout.razor.scss";
+@import "../../Internals/Pages/Layouts/MainLayout.razor.scss";
 
 @import "../../Internals/Components/SideBar/SideBar.razor.scss";
 @import "../../Internals/Components/SideBar/SettingsMenu.razor.scss";
+@import "../../Internals/Components/SideBar/SearchField.razor.scss";
 @import "../../Internals/Components/SideBar/NavigationTree.razor.scss";
 
 @import "../../Internals/Components/ToolBar/ToolBar.razor.scss";
