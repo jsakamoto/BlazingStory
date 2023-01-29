@@ -51,6 +51,11 @@ public class Command
         foreach (var task in tasks) { await task; }
     }
 
+    internal void ToggleFlag()
+    {
+        this.Flag = !this.Flag;
+    }
+
     private static async ValueTask InvokeCallbackAsync(AsyncCallback callback)
     {
         await callback.Invoke();

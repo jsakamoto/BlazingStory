@@ -357,10 +357,12 @@ button {
 }
 
 .toolbar-viewport {
+  --bs-toolbar-height: 40px;
   box-shadow: rgba(0, 0, 0, 0.1) 0 -1px 0 0 inset;
-  height: 40px;
-  overflow-y: auto;
+  height: 0;
+  overflow-y: hidden;
   display: flex;
+  transition: height linear 0.1s;
 }
 .toolbar-viewport .toolbar-content {
   flex: 1;
@@ -369,6 +371,15 @@ button {
   gap: 4px;
   margin-left: 7px;
   margin-right: 7px;
+  height: var(--bs-toolbar-height);
+  transition: margin-top linear 0.2s;
+  margin-top: calc(-1.5 * var(--bs-toolbar-height));
+}
+.toolbar-viewport.toolbar-visible {
+  height: var(--bs-toolbar-height);
+}
+.toolbar-viewport.toolbar-visible .toolbar-content {
+  margin-top: 0;
 }
 
 .tab-button-group {

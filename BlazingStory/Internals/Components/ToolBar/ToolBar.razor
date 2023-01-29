@@ -1,4 +1,4 @@
-<div class="toolbar-viewport">
+<div class="toolbar-viewport @(CssClass(Class ?? "", new { ToolbarVisible = this.Visible }))">
     <div class="toolbar-content">
         @ChildContent
     </div>
@@ -7,4 +7,10 @@
 @code {
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public string? Class { get; set; }
+
+    [Parameter]
+    public bool Visible { get; set; }
 }

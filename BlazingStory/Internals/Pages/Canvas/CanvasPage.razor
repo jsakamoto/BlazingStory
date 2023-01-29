@@ -13,7 +13,8 @@
         <FirstPane>
             <div class="canvas-container fill stack vertical">
 
-                <ToolBar>
+                @* -- Toolbar -- *@
+                <ToolBar Visible="this._ToolbarVisibleCommand?.Flag == true">
                     <IconButton Icon="SvgIconType.Reload" OnClick="OnClickReload" Title="Reload the story" />
                     <IconButton Icon="SvgIconType.ZoomIn" OnClick="OnClickZoomIn" Title="Zoom in" />
                     <IconButton Icon="SvgIconType.ZoomOut" OnClick="OnClickZoomOut" Title="Zoom out" />
@@ -32,11 +33,16 @@
                     <IconButton Icon="SvgIconType.Link" Title="Copy canvas link" OnClick="this.OnClickCopyCanvasLink" />
                 </ToolBar>
 
+                @* -- IFrame -- *@
+
                 <iframe @ref="_Iframe" src="@_InitialCanvasFrameUrl" class="canvas-frame fill"></iframe>
             </div>
         </FirstPane>
 
         <SecondPane>
+
+            @* -- Addons -- *@
+
             <div class="add-on-container fill stack vertical">
                 <AddOnPanel Story="this._CurrentStory" SplitterOrientation="this._AddonPanelLayout.SplitterOrientation">
                 </AddOnPanel>
@@ -67,6 +73,8 @@
     private int _AddonPanelSize = 210;
 
     private AddonPanelLayout _AddonPanelLayout = new();
+
+    private Command? _ToolbarVisibleCommand;
 
     private Command? _AddonPanelVisibleCommand;
 
@@ -103,9 +111,11 @@
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
         this._Commands = this.Services.GetRequiredService<CommandService>();
+        this._ToolbarVisibleCommand = this._Commands[CommandType.ToolBarVisible]!;
         this._AddonPanelVisibleCommand = this._Commands[CommandType.AddonPanelVisible]!;
         this._Subscriptions.Add(
             this._Commands.Subscribe(CommandType.AddonPanelOrientation, this.OnToggleOrientation),
+            this._ToolbarVisibleCommand.Subscribe(this.OnToggleToolbarVisible),
             this._AddonPanelVisibleCommand.Subscribe(this.OnToggleAddonPanelVisible)
         );
         this._InitialCanvasFrameUrl = this._CurrentCanvasFrameUrl = this.GetCanvasFrameUrl();
@@ -217,11 +227,16 @@
         await this.SaveAddonPanelLayoutAsync();
     }
 
+    private async ValueTask OnToggleToolbarVisible()
+    {
+        this._ToolbarVisibleCommand?.ToggleFlag();
+        await ValueTask.CompletedTask;
+    }
+
     private async ValueTask OnToggleAddonPanelVisible()
     {
-        var command = this._Commands[CommandType.AddonPanelVisible]!;
-        command.Flag = !command.Flag;
-        await this.SaveAddonPanelLayoutAsync();
+        this._AddonPanelVisibleCommand?.ToggleFlag();
+        await ValueTask.CompletedTask;
     }
 
     private async Task OnClickCopyCanvasLink()
