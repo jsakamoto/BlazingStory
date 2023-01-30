@@ -40,6 +40,8 @@
 
     private Command? _SideBarVisibleCommand;
 
+    private Command? _GoFullScreenCommand;
+
     private readonly Subscriptions _Subscriptions = new();
 
     private enum SidBarVisibilityStates
@@ -64,8 +66,10 @@
             var commandService = await this.ConfigureCommandsAsync(this.Services);
 
             this._SideBarVisibleCommand = commandService[CommandType.SideBarVisible]!;
+            this._GoFullScreenCommand = commandService[CommandType.GoFullScreen]!;
             this._Subscriptions.Add(this._SideBarVisibleCommand.Subscribe(this.OnToggleSideBarVisible));
-            this._SidBarVisibilityState = this._SideBarVisibleCommand.Flag == true ? SidBarVisibilityStates.SidebarShown : SidBarVisibilityStates.SidebarHidden;
+            this._Subscriptions.Add(this._GoFullScreenCommand.Subscribe(this.OnToggleFullscreen));
+            this._SidBarVisibilityState = this.GetSidebarVisible() ? SidBarVisibilityStates.SidebarShown : SidBarVisibilityStates.SidebarHidden;
 
             this._Ready = true;
             this.StateHasChanged();
@@ -104,7 +108,7 @@
             new(CommandType.ToolBarVisible, new(Code.T), "Show toolbar", flag: true),
             new(CommandType.AddonPanelVisible, new(Code.A), "Show addons", flag: true),
             new(CommandType.AddonPanelOrientation, new(Code.D), "Change addons orientation"),
-            new(CommandType.GoFullScreen, new(Code.F), "Go full screen"),
+            new(CommandType.GoFullScreen, new(Code.F), "Go full screen", flag: false),
             new(CommandType.GoSearch, new(Code.Slash), "Search"),
             new(CommandType.PreviousComponent, new(ModCode.Alt, Code.ArrowUp), "Previous component"),
             new(CommandType.NextComponent, new(ModCode.Alt, Code.ArrowDown), "Next component"),
@@ -120,11 +124,17 @@
         await this.HelperScript.SetLocalStorageItemAsync(this.SideBarSizeKeyName, _SideBarSize);
     }
 
-    private async ValueTask OnToggleSideBarVisible()
+    private ValueTask OnToggleSideBarVisible() => this.ToggleSideBarVisibliy(this._SideBarVisibleCommand);
+
+    private ValueTask OnToggleFullscreen() => this.ToggleSideBarVisibliy(this._GoFullScreenCommand);
+
+    private async ValueTask ToggleSideBarVisibliy(Command? command)
     {
-        if (this._SideBarVisibleCommand == null) return;
-        this._SideBarVisibleCommand.ToggleFlag();
-        this._SidBarVisibilityState = this._SideBarVisibleCommand.Flag == true ? SidBarVisibilityStates.SidebarShowing: SidBarVisibilityStates.SidebarHiding;
+        if (command == null) return;
+        command.ToggleFlag();
+        this._SidBarVisibilityState = this.GetSidebarVisible() ? SidBarVisibilityStates.SidebarShowing : SidBarVisibilityStates.SidebarHiding;
         await ValueTask.CompletedTask;
     }
+
+    private bool GetSidebarVisible() => (this._SideBarVisibleCommand?.Flag ?? true) && !(this._GoFullScreenCommand?.Flag ?? false);
 }

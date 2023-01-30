@@ -4,7 +4,7 @@
 
 <PageTitle>@_PageTitle</PageTitle>
 
-<div class="fill stack vertical addon-pane-@(this._AddonPanelVisibleCommand?.Flag == true ? "visible" : "hidden")">
+<div class="fill stack vertical addon-pane-@(this.AddonPanelVisible ? "visible" : "hidden")">
 
     <SplitContainer Class="canvas-page-container fill" Orientation="this._AddonPanelLayout.SplitterOrientation" SecondPaneMinSize="80"
                     @bind-SecondPaneSize="_AddonPanelSize"
@@ -78,7 +78,11 @@
 
     private Command? _AddonPanelVisibleCommand;
 
+    private Command? _GoFullscreenCommand;
+
     private readonly Subscriptions _Subscriptions = new();
+
+    private bool AddonPanelVisible => (this._AddonPanelVisibleCommand?.Flag ?? true) && !(this._GoFullscreenCommand?.Flag ?? false);
 
     private int _AddonPanelSize = 210;
 
@@ -119,6 +123,8 @@
         this._Commands = this.Services.GetRequiredService<CommandService>();
         this._ToolbarVisibleCommand = this._Commands[CommandType.ToolBarVisible]!;
         this._AddonPanelVisibleCommand = this._Commands[CommandType.AddonPanelVisible]!;
+        this._GoFullscreenCommand = this._Commands[CommandType.GoFullScreen];
+
         this._Subscriptions.Add(
             this._Commands.Subscribe(CommandType.AddonPanelOrientation, this.OnToggleOrientation),
             this._ToolbarVisibleCommand.Subscribe(this.OnToggleToolbarVisible),
