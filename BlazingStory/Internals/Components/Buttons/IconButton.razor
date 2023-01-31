@@ -1,12 +1,12 @@
 @if (string.IsNullOrEmpty(this.Href))
 {
-    <button class="icon-button @Class" title="@this.GetTitleText()" @onclick="this.ClickHandler">
+    <button class="icon-button @GetCssClass()" title="@this.GetTitleText()" @onclick="this.ClickHandler">
         <SvgIcon Type="Icon" />
     </button>
 }
 else
 {
-    <a class="icon-button @Class" title="@this.GetTitleText()" @onclick="this.ClickHandler" href="@this.Href" target="@this.Target">
+    <a class="icon-button @GetCssClass()" title="@this.GetTitleText()" @onclick="this.ClickHandler" href="@this.Href" target="@this.Target">
         <SvgIcon Type="Icon" />
     </a>
 }
@@ -32,6 +32,12 @@ else
 
     [Parameter]
     public string? Target { get; set; }
+
+    private string GetCssClass()
+    {
+        var flagged = this.Command?.Flag ?? false == true;
+        return $"{this.Class} {(flagged ? "flagged" : "")}";
+    }
 
     private string? GetTitleText()
     {

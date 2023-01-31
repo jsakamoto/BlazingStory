@@ -19,6 +19,7 @@
   --bs-icon-story-color: #37d5d3;
   --bs-keymap-text-color: #5c6870;
   --bs-keymap-back-color: rgba(0,0,0,0.05);
+  --bs-button-flagged-back-color: rgba(2,156,253,0.07);
   --bs-popup-back-color: rgba(255,255,255,0.95);
   --bs-popup-text-color: #2E3438;
   --bs-popup-hover-back-color: rgba(2,156,253,0.07);
@@ -468,16 +469,20 @@ svg.svg-icon {
   height: 28px;
   border-radius: 4px;
   padding: 1px 6px;
+  color: var(--bs-dimmed-text-color);
 }
-.icon-button svg {
+.icon-button > svg {
   width: 16px;
   height: 16px;
-  color: var(--bs-dimmed-text-color);
+  pointer-events: none;
+}
+.icon-button.flagged {
+  background-color: var(--bs-hover-back-color);
+  background-color: var(--bs-button-flagged-back-color);
+  color: var(--bs-focused-color);
 }
 .icon-button:hover {
   background-color: var(--bs-hover-back-color);
-}
-.icon-button:hover svg {
   color: var(--bs-focused-color);
 }
 

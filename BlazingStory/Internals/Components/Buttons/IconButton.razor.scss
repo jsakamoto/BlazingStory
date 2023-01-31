@@ -3,19 +3,23 @@
     height: 28px;
     border-radius: 4px;
     padding: 1px 6px;
+    color: var(--bs-dimmed-text-color);
 
-    & svg {
+    & > svg {
         width: 16px;
         height: 16px;
-        color: var(--bs-dimmed-text-color);
+        pointer-events: none;
+    }
+
+    &.flagged {
+        background-color: var(--bs-hover-back-color);
+        background-color: var(--bs-button-flagged-back-color);
+        color: var(--bs-focused-color);
     }
 
     &:hover {
         background-color: var(--bs-hover-back-color);
-
-        svg {
-            color: var(--bs-focused-color);
-        }
+        color: var(--bs-focused-color);
     }
 }
 

@@ -1,5 +1,6 @@
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
+@inject ILogger<CanvasPage> Logger
 @inject NavigationManager NavigationManager
 
 <PageTitle>@_PageTitle</PageTitle>
@@ -27,7 +28,7 @@
                     <IconButton Icon="SvgIconType.ZoomReset" OnClick="OnClickResetZoom" Title="Reset zoom" />
                     <Separator />
                     <IconButton Icon="SvgIconType.Background" Title="Change the background of the preview" />
-                    <IconButton Icon="SvgIconType.Grid" OnClick="OnClickGrid" Title="Apply a grid to the preview" />
+                    <IconButton Icon="SvgIconType.Grid" Command="this._GridCommand" />
                     <IconButton Icon="SvgIconType.ChangeSize" Title="Change the size of the preview" />
                     <IconButton Icon="SvgIconType.Measure" Title="Enable measure" />
                     <IconButton Icon="SvgIconType.Outlines" Title="Apply outlines to the preview" />
@@ -36,7 +37,7 @@
 
                     @if (this._AddonPanelVisibleCommand?.Flag != true)
                     {
-                        <IconButton Icon="this.ToggleOrientationButtonIcon" Command="this._Commands[CommandType.AddonPanelVisible]" />
+                        <IconButton Icon="this.ToggleOrientationButtonIcon" Command="this._AddonPanelVisibleCommand" />
                     }
                     @if ((this._GoFullscreenCommand?.Flag ?? true) == true)
                     {
@@ -91,6 +92,16 @@
 
     private Command? _GoFullscreenCommand;
 
+    private enum CanvasCommandType
+    {
+        Grid,
+        Outline
+    }
+
+    private CommandSet<CanvasCommandType>? _CommandSet;
+
+    private Command _GridCommand = new("Apply a grid to the preview", flag: false);
+
     private readonly Subscriptions _Subscriptions = new();
 
     private bool AddonPanelVisible => (this._AddonPanelVisibleCommand?.Flag ?? true) && !(this._GoFullscreenCommand?.Flag ?? false);
@@ -131,6 +142,13 @@
     protected override void OnInitialized()
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
+
+        this._CommandSet = new("key", this.HelperScript, this.Logger);
+        this._CommandSet.EnsureInitializedAsync(() => new (CanvasCommandType, Command)[]
+        {
+            (CanvasCommandType.Grid, this._GridCommand)
+        }).AndLogException(this.Logger);
+
         this._Commands = this.Services.GetRequiredService<CommandService>();
         this._ToolbarVisibleCommand = this._Commands[CommandType.ToolBarVisible]!;
         this._AddonPanelVisibleCommand = this._Commands[CommandType.AddonPanelVisible]!;
@@ -139,8 +157,10 @@
         this._Subscriptions.Add(
             this._Commands.Subscribe(CommandType.AddonPanelOrientation, this.OnToggleOrientation),
             this._ToolbarVisibleCommand.Subscribe(this.OnToggleToolbarVisible),
-            this._AddonPanelVisibleCommand.Subscribe(this.OnToggleAddonPanelVisible)
+            this._AddonPanelVisibleCommand.Subscribe(this.OnToggleAddonPanelVisible),
+            this._GridCommand.Subscribe(this.OnClickGrid)
         );
+
         this._InitialCanvasFrameUrl = this._CurrentCanvasFrameUrl = this.GetCanvasFrameUrl();
     }
 
@@ -179,6 +199,34 @@
         await _JSModule.InvokeVoidAsync("navigateCanvasFrameTo", this._Iframe, nextCanvasFrameUrl);
     }
 
+    private string GetCanvasFrameUrl()
+    {
+        return this.NavigationManager.GetUriWithQueryParameters(
+            uri: "./iframe.html",
+            parameters: new Dictionary<string, object?>
+                {
+                    ["viewMode"] = this.RouteData.View,
+                    ["id"] = this.RouteData.Parameter,
+                    ["args"] = this.GetArgumentsUrlText(),
+                    ["globals"] = this.GetGlobalStateUrlText()
+                });
+    }
+
+    private string GetArgumentsUrlText()
+    {
+        if (this._CurrentStory == null) return "";
+        return string.Join(':', this._CurrentStory.Context.Args.Select(arg => $"{arg.Key}:{arg.Value}"));
+    }
+
+    private string GetGlobalStateUrlText()
+    {
+        var globalState = new Dictionary<string, string>
+            {
+                ["background.grid"] = (this._GridCommand.Flag ?? false).ToString().ToLower()
+            };
+        return string.Join(':', globalState.Select(arg => $"{arg.Key}:{arg.Value}"));
+    }
+
     private void UpdateCurrentStory()
     {
         if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
@@ -191,24 +239,6 @@
         else this._CurrentStory = null;
 
         if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged += Context_ArgumentChanged;
-    }
-
-    private string GetCanvasFrameUrl()
-    {
-        return this.NavigationManager.GetUriWithQueryParameters(
-            uri: "./iframe.html",
-            parameters: new Dictionary<string, object?>
-                {
-                    ["viewMode"] = this.RouteData.View,
-                    ["id"] = this.RouteData.Parameter,
-                    ["args"] = this.GetArgumentsUrlText()
-                });
-    }
-
-    private string GetArgumentsUrlText()
-    {
-        if (this._CurrentStory == null) return "";
-        return string.Join(':', this._CurrentStory.Context.Args.Select(arg => $"{arg.Key}:{arg.Value}"));
     }
 
     private async ValueTask Context_ArgumentChanged()
@@ -288,9 +318,10 @@
         await this._JSModule.InvokeVoidAsync("resetZoomCanvasFrame", this._Iframe);
     }
 
-    private async Task OnClickGrid()
+    private async ValueTask OnClickGrid()
     {
-        await Task.CompletedTask;
+        _GridCommand.ToggleFlag();
+        await this.UpdateCanvasFrameUrlAsync();
     }
 
     private async ValueTask SaveAddonPanelLayoutAsync()
