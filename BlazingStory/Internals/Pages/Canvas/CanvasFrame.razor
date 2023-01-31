@@ -4,6 +4,18 @@
 @inject NavigationManager NavigationManager
 @inject ILogger<CanvasFrame> Logger
 
+@if (this._EnableGrid)
+{
+    <style>
+        body {
+            background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px !important;
+            background-position: 0px 0px, 0px 0px, 0px 0px, 0px 0px !important;
+            background-blend-mode: difference !important;
+            background-image: linear-gradient(rgba(130, 130, 130, 0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(130, 130, 130, 0.5) 1px, transparent 1px), linear-gradient(rgba(130, 130, 130, 0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(130, 130, 130, 0.25) 1px, transparent 1px) !important;
+        }
+    </style>
+}
+
 @if (this._Story != null)
 {
     @this._Story.RenderFragment(this._Story.Context)
@@ -18,6 +30,8 @@
     public required QueryRouteData RouteData { get; set; }
 
     private Story? _Story;
+
+    private bool _EnableGrid = false;
 
     protected override void OnInitialized()
     {
@@ -116,6 +130,11 @@
     {
         var globalEffectsString = queryStrings["globals"] ?? "";
         if (this._GlobalEffectsString == globalEffectsString) return;
+
+        var globalEffects = UriParameterKit.DecodeKeyValues(globalEffectsString);
+        this._EnableGrid = bool.TryParse(globalEffects["background.grid"]?.ToString(), out var b) ? b : false;
+
+        this.StateHasChanged();
         await ValueTask.CompletedTask;
     }
 
