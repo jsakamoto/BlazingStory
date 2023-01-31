@@ -1,7 +1,10 @@
 ﻿:root {
     --bs-back-color: #f5fbff;
     --bs-dimmed-back-color: #ecf4f9;
-    --bs-hover-back-color: #ebf7ff;
+    //
+    // --bs-hover-back-color: #ebf7ff;
+    --bs-hover-back-color: rgba(2,156,253,0.12);
+    //
     --bs-text-size: 13px;
     --bs-text-color: #333333;
     --bs-dimmed-text-color: #73828c;

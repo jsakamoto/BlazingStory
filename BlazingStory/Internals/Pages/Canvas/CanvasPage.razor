@@ -26,6 +26,11 @@
                     <IconButton Icon="SvgIconType.ZoomOut" OnClick="OnClickZoomOut" Title="Zoom out" />
                     <IconButton Icon="SvgIconType.ZoomReset" OnClick="OnClickResetZoom" Title="Reset zoom" />
                     <Separator />
+                    <IconButton Icon="SvgIconType.Background" Title="Change the background of the preview" />
+                    <IconButton Icon="SvgIconType.Grid" OnClick="OnClickGrid" Title="Apply a grid to the preview" />
+                    <IconButton Icon="SvgIconType.ChangeSize" Title="Change the size of the preview" />
+                    <IconButton Icon="SvgIconType.Measure" Title="Enable measure" />
+                    <IconButton Icon="SvgIconType.Outlines" Title="Apply outlines to the preview" />
 
                     <Spacer />
 
@@ -33,8 +38,14 @@
                     {
                         <IconButton Icon="this.ToggleOrientationButtonIcon" Command="this._Commands[CommandType.AddonPanelVisible]" />
                     }
-
-                    <IconButton Icon="SvgIconType.FullScreen" Command="this._Commands[CommandType.GoFullScreen]" />
+                    @if ((this._GoFullscreenCommand?.Flag ?? true) == true)
+                    {
+                        <IconButton Icon="SvgIconType.CircleClose" Command="this._GoFullscreenCommand" Title="Exit full screen [{0}]" />
+                    }
+                    else
+                    {
+                        <IconButton Icon="SvgIconType.FullScreen" Command="this._GoFullscreenCommand" />
+                    }
                     <IconButton Icon="SvgIconType.OpenNewTab" Href="@this._CurrentCanvasFrameUrl" Target="_blank" Title="Open canvas in new tab" />
                     <IconButton Icon="SvgIconType.Link" Title="Copy canvas link" OnClick="this.OnClickCopyCanvasLink" />
                 </ToolBar>
@@ -275,6 +286,11 @@
     private async Task OnClickResetZoom()
     {
         await this._JSModule.InvokeVoidAsync("resetZoomCanvasFrame", this._Iframe);
+    }
+
+    private async Task OnClickGrid()
+    {
+        await Task.CompletedTask;
     }
 
     private async ValueTask SaveAddonPanelLayoutAsync()
