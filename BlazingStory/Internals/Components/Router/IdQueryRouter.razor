@@ -20,10 +20,10 @@
 
     private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs args)
     {
-        var uri = new Uri(args.Location);
-        var queryStrings = HttpUtility.ParseQueryString(uri.Query);
+        var queryStrings = HttpUtility.ParseQueryString(new Uri(args.Location).Query);
         var viewMode = queryStrings["viewMode"] ?? "";
         var id = queryStrings["id"] ?? "";
+
         var newRouteData = new QueryRouteData(viewMode, id);
         if (this._RouteData != newRouteData)
         {

@@ -1,4 +1,5 @@
 @using System.Web
+@using System.Collections.Specialized;
 @implements IDisposable
 @inject NavigationManager NavigationManager
 @inject ILogger<CanvasFrame> Logger
@@ -28,46 +29,47 @@
         if (!this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story)) return;
         if (Object.ReferenceEquals(this._Story, story)) return;
         this._Story = story;
-        await this.UpdateComponentArgsFromUrlAsync();
+        await this.UpdateComponentStatesFromUrlAsync();
         this.StateHasChanged();
     }
 
     private string _ComponentArgsString = "";
 
+    private string _GlobalEffectsString = "";
+
     private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs args)
     {
-        this.UpdateComponentArgsFromUrlAsync().AndLogException(this.Logger);
+        this.UpdateComponentStatesFromUrlAsync().AndLogException(this.Logger);
     }
 
-    private async ValueTask UpdateComponentArgsFromUrlAsync()
+    private async ValueTask UpdateComponentStatesFromUrlAsync()
     {
-        var uri = new Uri(this.NavigationManager.Uri);
-        var queryStrings = HttpUtility.ParseQueryString(uri.Query);
-        var componentArgsString = queryStrings["args"] ?? "";
-        if (this._ComponentArgsString == componentArgsString) return;
-
-        this._ComponentArgsString = componentArgsString;
-        await this.ApplyComponentArgsFromUrlAsync();
-        this.StateHasChanged();
+        var queryStrings = HttpUtility.ParseQueryString(new Uri(this.NavigationManager.Uri).Query);
+        await this.UpdateComponentArgsFromUrlAsync(queryStrings);
+        await this.UpdateGlobalEffectsFromUrlAsync(queryStrings);
     }
 
-    private async ValueTask ApplyComponentArgsFromUrlAsync()
+    private async ValueTask UpdateComponentArgsFromUrlAsync(NameValueCollection queryStrings)
     {
         if (this._Story == null) return;
+
+        var componentArgsString = queryStrings["args"] ?? "";
+        if (this._ComponentArgsString == componentArgsString) return;
+        this._ComponentArgsString = componentArgsString;
+
         await this._Story.Context.ResetArgumentsAsync();
 
-        var componentArgsPairs = this._ComponentArgsString.Split(':').Chunk(2).ToArray();
+        var componentArgs = UriParameterKit.DecodeKeyValues(this._ComponentArgsString);
         var parameters = this._Story.Context.Parameters;
-        foreach (var argsPair in componentArgsPairs)
+        foreach (var arg in componentArgs)
         {
-            var name = argsPair.First();
-            var valueString = argsPair.Last();
-            var parameter = parameters.FirstOrDefault(p => p.Name == name);
+            var parameter = parameters.FirstOrDefault(p => p.Name == arg.Key);
             if (parameter == null) continue;
-            if (!this.TryConvertType(parameter.Type, valueString, out var value)) continue;
+            if (!this.TryConvertType(parameter.Type, arg.Value, out var value)) continue;
 
-            await this._Story.Context.AddOrUpdateArgumentAsync(name, value);
+            await this._Story.Context.AddOrUpdateArgumentAsync(arg.Key, value);
         }
+        this.StateHasChanged();
     }
 
     private bool TryConvertType(Type targetType, string valueString, [NotNullWhen(true)] out object? value)
@@ -109,6 +111,13 @@
         return false;
     }
 
+
+    private async ValueTask UpdateGlobalEffectsFromUrlAsync(NameValueCollection queryStrings)
+    {
+        var globalEffectsString = queryStrings["globals"] ?? "";
+        if (this._GlobalEffectsString == globalEffectsString) return;
+        await ValueTask.CompletedTask;
+    }
 
     public void Dispose()
     {

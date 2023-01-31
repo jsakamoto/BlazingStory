@@ -201,30 +201,23 @@
 
     private string GetCanvasFrameUrl()
     {
-        return this.NavigationManager.GetUriWithQueryParameters(
+        return UriParameterKit.GetUri(
             uri: "./iframe.html",
             parameters: new Dictionary<string, object?>
                 {
                     ["viewMode"] = this.RouteData.View,
                     ["id"] = this.RouteData.Parameter,
-                    ["args"] = this.GetArgumentsUrlText(),
+                    ["args"] = UriParameterKit.EncodeKeyValues(this._CurrentStory?.Context.Args),
                     ["globals"] = this.GetGlobalStateUrlText()
                 });
     }
 
-    private string GetArgumentsUrlText()
-    {
-        if (this._CurrentStory == null) return "";
-        return string.Join(':', this._CurrentStory.Context.Args.Select(arg => $"{arg.Key}:{arg.Value}"));
-    }
-
     private string GetGlobalStateUrlText()
     {
-        var globalState = new Dictionary<string, string>
+        return UriParameterKit.EncodeKeyValues(new Dictionary<string, object?>
             {
                 ["background.grid"] = (this._GridCommand.Flag ?? false).ToString().ToLower()
-            };
-        return string.Join(':', globalState.Select(arg => $"{arg.Key}:{arg.Value}"));
+            });
     }
 
     private void UpdateCurrentStory()
