@@ -98,23 +98,23 @@
     private async ValueTask<CommandService> ConfigureCommandsAsync(IServiceProvider services)
     {
         var commandServce = services.GetRequiredService<CommandService>();
-        await commandServce.EnsureCommandsAsync(() => new Command[]
+        await commandServce.EnsureCommandsAsync(() => new (CommandType, Command)[]
         {
-            new(CommandType.AboutYourBlazingStory, default, "About your Blazing Story"),
-            new(CommandType.ReleaseNotes, default, "Release notes"),
-            new(CommandType.KeyboardShortcuts, new(ModCode.Ctrl|ModCode.Shift, Code.Comma), "Keyboard shortcuts"),
+            (CommandType.AboutYourBlazingStory, new(default, "About your Blazing Story")),
+            (CommandType.ReleaseNotes, new(default, "Release notes")),
+            (CommandType.KeyboardShortcuts, new(new(ModCode.Ctrl|ModCode.Shift, Code.Comma), "Keyboard shortcuts")),
 
-            new(CommandType.SideBarVisible, new(Code.S), "Show sidebar", flag: true),
-            new(CommandType.ToolBarVisible, new(Code.T), "Show toolbar", flag: true),
-            new(CommandType.AddonPanelVisible, new(Code.A), "Show addons", flag: true),
-            new(CommandType.AddonPanelOrientation, new(Code.D), "Change addons orientation"),
-            new(CommandType.GoFullScreen, new(Code.F), "Go full screen", flag: false),
-            new(CommandType.GoSearch, new(Code.Slash), "Search"),
-            new(CommandType.PreviousComponent, new(ModCode.Alt, Code.ArrowUp), "Previous component"),
-            new(CommandType.NextComponent, new(ModCode.Alt, Code.ArrowDown), "Next component"),
-            new(CommandType.PreviousStory, new(ModCode.Alt, Code.ArrowLeft), "Previous story"),
-            new(CommandType.NextStory, new(ModCode.Alt, Code.ArrowRight), "Next story"),
-            new(CommandType.CollapseAll, new(ModCode.Ctrl|ModCode.Shift, Code.ArrowUp), "Collapse all"),
+            (CommandType.SideBarVisible,new(new(Code.S), "Show sidebar", flag: true)),
+            (CommandType.ToolBarVisible,new(new(Code.T), "Show toolbar", flag: true)),
+            (CommandType.AddonPanelVisible, new(new(Code.A), "Show addons", flag: true)),
+            (CommandType.AddonPanelOrientation, new(new(Code.D), "Change addons orientation")),
+            (CommandType.GoFullScreen, new(new(Code.F), "Go full screen", flag: false)),
+            (CommandType.GoSearch, new(new(Code.Slash), "Search")),
+            (CommandType.PreviousComponent, new(new(ModCode.Alt, Code.ArrowUp), "Previous component")),
+            (CommandType.NextComponent, new(new(ModCode.Alt, Code.ArrowDown), "Next component")),
+            (CommandType.PreviousStory, new(new(ModCode.Alt, Code.ArrowLeft), "Previous story")),
+            (CommandType.NextStory, new(new(ModCode.Alt, Code.ArrowRight), "Next story")),
+            (CommandType.CollapseAll, new(new(ModCode.Ctrl|ModCode.Shift, Code.ArrowUp), "Collapse all"))
         });
         return commandServce;
     }

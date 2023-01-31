@@ -4,8 +4,6 @@ namespace BlazingStory.Internals.Services.Command;
 
 public class Command
 {
-    public readonly CommandType Type;
-
     public HotKeyCombo? HotKey { get => this._HotKey; set { if (this._HotKey == value) return; this._HotKey = value; this.StateChanged?.Invoke(this, EventArgs.Empty); } }
 
     public bool? Flag { get => this._Flag; set { if (this._Flag == value) return; this._Flag = value; this.StateChanged?.Invoke(this, EventArgs.Empty); } }
@@ -22,11 +20,10 @@ public class Command
 
     internal event EventHandler? StateChanged;
 
-    internal Command(CommandType type, string? title = null, bool? flag = null) : this(type, default, title, flag) { }
+    internal Command(string? title = null, bool? flag = null) : this(default, title, flag) { }
 
-    public Command(CommandType type, HotKeyCombo? hotKey, string? title = null, bool? flag = null)
+    public Command(HotKeyCombo? hotKey, string? title = null, bool? flag = null)
     {
-        this.Type = type;
         this._HotKey = hotKey;
         this.Title = title;
         this._Flag = flag;

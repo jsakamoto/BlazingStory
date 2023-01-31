@@ -21,7 +21,7 @@ internal class CommandService : IDisposable
 
     private bool _Initialized = false;
 
-    public IEnumerable<Command> Commands => this._Commands.Values.Cast<Command>();
+    public IEnumerable<(CommandType Type, Command Command)> Commands => this._Commands.Keys.Cast<CommandType>().Select(key => (key, this[key]!));
 
     public CommandService(HotKeys hotKeys, HelperScript helperScript, ILogger<CommandService> logger)
     {
@@ -32,21 +32,17 @@ internal class CommandService : IDisposable
         this._HotKeys.KeyDown += this.HotKeys_OnKeyDown;
     }
 
-    public async ValueTask EnsureCommandsAsync(Func<Command[]> getCommands)
+    public async ValueTask EnsureCommandsAsync(Func<IEnumerable<(CommandType Type, Command Command)>> getCommandEntries)
     {
         if (this._Initialized) return;
         this._Initialized = true;
-        await this.AddCommandsAsync(getCommands());
-    }
 
-    public async ValueTask AddCommandsAsync(params Command[] commands)
-    {
         var commandStates = await this._HelperScript.LoadObjectFromLocalStorageAsync(this.CommandStateKeyName, new Dictionary<CommandType, CommandState>());
-        foreach (var cmd in commands)
+        foreach (var cmdEntry in getCommandEntries())
         {
-            if (commandStates.TryGetValue(cmd.Type, out var state)) state.Apply(cmd);
-            cmd.StateChanged += this.Command_StateChanged;
-            this._Commands.Add(cmd.Type, cmd);
+            if (commandStates.TryGetValue(cmdEntry.Type, out var state)) state.Apply(cmdEntry.Command);
+            cmdEntry.Command.StateChanged += this.Command_StateChanged;
+            this._Commands.Add(cmdEntry.Type, cmdEntry.Command);
         }
     }
 
@@ -75,8 +71,9 @@ internal class CommandService : IDisposable
 
     private void Command_StateChanged(object? sender, EventArgs e)
     {
-        var commandStates = this._Commands.Values.Cast<Command>()
-            .ToDictionary(cmd => cmd.Type, cmd => new CommandState(cmd));
+        var commandStates = this._Commands.Keys
+            .Cast<CommandType>()
+            .ToDictionary(key => key, key => new CommandState(this[key]!));
         this._HelperScript
             .SaveObjectToLocalStorageAsync(this.CommandStateKeyName, commandStates)
             .AndLogException(this._Logger);

@@ -40,6 +40,6 @@
         };
         this._CommandSegments = commandService.Commands
             .GroupBy(cmd => topCommandsTypes.Contains(cmd.Type))
-            .ToDictionary(g => g.Key, g => g.ToArray().AsEnumerable());
+            .ToDictionary(g => g.Key, g => g.Select(a => a.Command).ToArray().AsEnumerable());
     }
 }
