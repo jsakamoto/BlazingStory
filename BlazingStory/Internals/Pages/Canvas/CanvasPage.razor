@@ -28,10 +28,10 @@
                     <IconButton Icon="SvgIconType.ZoomReset" OnClick="OnClickResetZoom" Title="Reset zoom" />
                     <Separator />
                     <IconButton Icon="SvgIconType.Background" Title="Change the background of the preview" />
-                    <IconButton Icon="SvgIconType.Grid" Command="this._GridCommand" />
+                    <IconButton Icon="SvgIconType.Grid" Command="this._CanvasCommands?[CanvasCommand.Grid]" />
                     <IconButton Icon="SvgIconType.ChangeSize" Title="Change the size of the preview" />
-                    <IconButton Icon="SvgIconType.Measure" Title="Enable measure" />
-                    <IconButton Icon="SvgIconType.Outlines" Command="this._OutlineCommand"/>
+                    <IconButton Icon="SvgIconType.Measure" Command="this._CanvasCommands?[CanvasCommand.Measure]" />
+                    <IconButton Icon="SvgIconType.Outlines" Command="this._CanvasCommands?[CanvasCommand.Outline]" />
 
                     <Spacer />
 
@@ -92,17 +92,14 @@
 
     private Command? _GoFullscreenCommand;
 
-    private enum CanvasCommandType
+    private enum CanvasCommand
     {
         Grid,
-        Outline
+        Outline,
+        Measure
     }
 
-    private CommandSet<CanvasCommandType>? _CommandSet;
-
-    private readonly Command _GridCommand = new("Apply a grid to the preview", flag: false);
-
-    private readonly Command _OutlineCommand = new("Apply outlines to the preview", flag: false);
+    private CommandSet<CanvasCommand>? _CanvasCommands;
 
     private readonly Subscriptions _Subscriptions = new();
 
@@ -144,29 +141,31 @@
         this._JSModule = new(() => this.JSRuntime, "./_content/BlazingStory/Internals/Pages/Canvas/CanvasPage.razor.js");
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
-
-        this._CommandSet = new("CanvasPage.Commands", this.HelperScript, this.Logger);
-        this._CommandSet.EnsureInitializedAsync(() => new (CanvasCommandType, Command)[]
-        {
-            (CanvasCommandType.Grid, this._GridCommand),
-            (CanvasCommandType.Outline, this._OutlineCommand),
-        }).AndLogException(this.Logger);
 
         this._Commands = this.Services.GetRequiredService<CommandService>();
         this._ToolbarVisibleCommand = this._Commands[CommandType.ToolBarVisible]!;
         this._AddonPanelVisibleCommand = this._Commands[CommandType.AddonPanelVisible]!;
         this._GoFullscreenCommand = this._Commands[CommandType.GoFullScreen];
 
+        this._CanvasCommands = new("CanvasPage.Commands", this.HelperScript, this.Logger);
+        await this._CanvasCommands.EnsureInitializedAsync(() => new (CanvasCommand, Command)[]
+        {
+            (CanvasCommand.Grid, new("Apply a grid to the preview", flag: false)),
+            (CanvasCommand.Measure, new("Enable measure", flag: false)),
+            (CanvasCommand.Outline, new("Apply outlines to the preview", flag: false)),
+        });
+
         this._Subscriptions.Add(
             this._Commands.Subscribe(CommandType.AddonPanelOrientation, this.OnToggleOrientation),
             this._ToolbarVisibleCommand.Subscribe(this.OnToggleToolbarVisible),
             this._AddonPanelVisibleCommand.Subscribe(this.OnToggleAddonPanelVisible),
-            
-            this._GridCommand.Subscribe(this.OnClickGrid),
-            this._OutlineCommand.Subscribe(this.OnClickOutline)
+
+            this._CanvasCommands.Subscribe(CanvasCommand.Grid, this.HandleToggleCommand),
+            this._CanvasCommands.Subscribe(CanvasCommand.Measure, this.HandleToggleCommand),
+            this._CanvasCommands.Subscribe(CanvasCommand.Outline, this.HandleToggleCommand)
         );
 
         this._InitialCanvasFrameUrl = this._CurrentCanvasFrameUrl = this.GetCanvasFrameUrl();
@@ -222,11 +221,14 @@
 
     private string GetGlobalStateUrlText()
     {
-        return UriParameterKit.EncodeKeyValues(new Dictionary<string, object?>
-            {
-                ["background.grid"] = (this._GridCommand.Flag ?? false).ToString().ToLower(),
-                ["outline"] = (this._OutlineCommand.Flag ?? false).ToString().ToLower(),
-            });
+        if (this._CanvasCommands == null) return "";
+
+        var globalState = new Dictionary<string, object?>();
+        if (this._CanvasCommands?[CanvasCommand.Grid]?.Flag == true) globalState.Add("background.grid", "true");
+        if (this._CanvasCommands?[CanvasCommand.Measure]?.Flag == true) globalState.Add("measureEnabled", "true");
+        if (this._CanvasCommands?[CanvasCommand.Outline]?.Flag == true) globalState.Add("outline", "true");
+
+        return UriParameterKit.EncodeKeyValues(globalState);
     }
 
     private void UpdateCurrentStory()
@@ -320,15 +322,9 @@
         await this._JSModule.InvokeVoidAsync("resetZoomCanvasFrame", this._Iframe);
     }
 
-    private async ValueTask OnClickGrid()
+    private async ValueTask HandleToggleCommand(Command command)
     {
-        _GridCommand.ToggleFlag();
-        await this.UpdateCanvasFrameUrlAsync();
-    }
-
-    private async ValueTask OnClickOutline()
-    {
-        _OutlineCommand.ToggleFlag();
+        command.ToggleFlag();
         await this.UpdateCanvasFrameUrlAsync();
     }
 

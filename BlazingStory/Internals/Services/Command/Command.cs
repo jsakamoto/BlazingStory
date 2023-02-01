@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BlazingStory.Internals.Utils;
+using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Internals.Services.Command;
 
@@ -16,7 +17,7 @@ public class Command
 
     internal string? GetTitleText() => string.IsNullOrEmpty(this._HotKey?.Code.ToString()) ? this.Title : $"{this.Title} [{this.GetHotKeyName()}]";
 
-    private readonly Dictionary<Guid, AsyncCallback> _Subscribers = new();
+    private readonly Dictionary<Guid, ValueTaskCallback<Command>> _Subscribers = new();
 
     internal event EventHandler? StateChanged;
 
@@ -35,7 +36,16 @@ public class Command
         return hotKeyName?.StartsWith("Key") == true ? hotKeyName[3..] : hotKeyName ?? "";
     }
 
-    internal IDisposable Subscribe(AsyncCallback callBack)
+    internal IDisposable Subscribe(ValueTaskCallback callBack)
+    {
+        return this.Subscribe(async _ =>
+        {
+            await callBack();
+            await StateHasChanged(callBack);
+        });
+    }
+
+    internal IDisposable Subscribe(ValueTaskCallback<Command> callBack)
     {
         var key = Guid.NewGuid();
         this._Subscribers.Add(key, callBack);
@@ -44,7 +54,7 @@ public class Command
 
     internal async ValueTask InvokeAsync()
     {
-        var tasks = this._Subscribers.Select(s => InvokeCallbackAsync(s.Value)).ToArray();
+        var tasks = this._Subscribers.Select(s => this.InvokeCallbackAsync(s.Value)).ToArray();
         foreach (var task in tasks) { await task; }
     }
 
@@ -53,9 +63,14 @@ public class Command
         this.Flag = !this.Flag;
     }
 
-    private static async ValueTask InvokeCallbackAsync(AsyncCallback callback)
+    private async ValueTask InvokeCallbackAsync(ValueTaskCallback<Command> callBack)
     {
-        await callback.Invoke();
-        if (callback.Target is IHandleEvent handleEvent) { await handleEvent.HandleEventAsync(EventCallbackWorkItem.Empty, null); }
+        await callBack.Invoke(this);
+        await StateHasChanged(callBack);
+    }
+
+    private static async ValueTask StateHasChanged(Delegate callBack)
+    {
+        if (callBack.Target is IHandleEvent handleEvent) { await handleEvent.HandleEventAsync(EventCallbackWorkItem.Empty, null); }
     }
 }

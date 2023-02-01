@@ -1,4 +1,5 @@
 ﻿using BlazingStory.Internals.Extensions;
+using BlazingStory.Internals.Utils;
 using Microsoft.Extensions.Logging;
 using Toolbelt.Blazor.HotKeys2;
 
@@ -33,7 +34,7 @@ internal class CommandService : IDisposable
         await command.InvokeAsync();
     }
 
-    public IDisposable Subscribe(CommandType type, AsyncCallback callBack)
+    public IDisposable Subscribe(CommandType type, ValueTaskCallback callBack)
     {
         if (this.Commands[type] is not Command command) throw new KeyNotFoundException();
         return command.Subscribe(callBack);

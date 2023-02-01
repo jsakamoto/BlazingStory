@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Specialized;
 using BlazingStory.Internals.Extensions;
+using BlazingStory.Internals.Utils;
 using Microsoft.Extensions.Logging;
 
 namespace BlazingStory.Internals.Services.Command;
@@ -39,6 +40,18 @@ internal class CommandSet<TKey> : IDisposable, IEnumerable<(TKey Type, Command C
             cmdEntry.Command.StateChanged += this.Command_StateChanged;
             this._Commands.Add(cmdEntry.Type, cmdEntry.Command);
         }
+    }
+
+    public IDisposable Subscribe(TKey type, ValueTaskCallback callBack)
+    {
+        if (this[type] is not Command command) throw new KeyNotFoundException();
+        return command.Subscribe(callBack);
+    }
+
+    public IDisposable Subscribe(TKey type, ValueTaskCallback<Command> callBack)
+    {
+        if (this[type] is not Command command) throw new KeyNotFoundException();
+        return command.Subscribe(callBack);
     }
 
     private void Command_StateChanged(object? sender, EventArgs e)

@@ -1,4 +1,4 @@
-﻿namespace BlazingStory.Internals.Services;
+﻿namespace BlazingStory.Internals.Utils;
 
 internal class Disposer : IDisposable
 {
