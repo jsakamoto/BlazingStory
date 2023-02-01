@@ -2,5 +2,13 @@
   {
     "outputFile": "wwwroot/css/styles.css",
     "inputFile": "wwwroot/css/styles.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/preview/outline.css",
+    "inputFile": "wwwroot/css/preview/outline.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/preview/background-grid.css",
+    "inputFile": "wwwroot/css/preview/background-grid.scss"
   }
 ]

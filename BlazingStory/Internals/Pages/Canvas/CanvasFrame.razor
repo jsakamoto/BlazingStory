@@ -1,20 +1,9 @@
 @using System.Web
 @using System.Collections.Specialized;
-@implements IDisposable
-@inject NavigationManager NavigationManager
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
 @inject ILogger<CanvasFrame> Logger
-
-@if (this._EnableGrid)
-{
-    <style>
-        body {
-            background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px !important;
-            background-position: 0px 0px, 0px 0px, 0px 0px, 0px 0px !important;
-            background-blend-mode: difference !important;
-            background-image: linear-gradient(rgba(130, 130, 130, 0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(130, 130, 130, 0.5) 1px, transparent 1px), linear-gradient(rgba(130, 130, 130, 0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(130, 130, 130, 0.25) 1px, transparent 1px) !important;
-        }
-    </style>
-}
+@inject NavigationManager NavigationManager
 
 @if (this._Story != null)
 {
@@ -29,9 +18,17 @@
     [CascadingParameter]
     public required QueryRouteData RouteData { get; set; }
 
+    private readonly JSModule _JSModule;
+
     private Story? _Story;
 
-    private bool _EnableGrid = false;
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public CanvasFrame()
+    {
+        this._JSModule = new(() => this.JSRuntime, "./_content/BlazingStory/Internals/Pages/Canvas/CanvasFrame.razor.js");
+    }
 
     protected override void OnInitialized()
     {
@@ -130,16 +127,24 @@
     {
         var globalEffectsString = queryStrings["globals"] ?? "";
         if (this._GlobalEffectsString == globalEffectsString) return;
+        this._GlobalEffectsString = globalEffectsString;
 
         var globalEffects = UriParameterKit.DecodeKeyValues(globalEffectsString);
-        this._EnableGrid = bool.TryParse(globalEffects["background.grid"]?.ToString(), out var b) ? b : false;
+        var enableGrid = bool.TryParse(globalEffects["background.grid"]?.ToString(), out var grid) ? grid : false;
+        var enableOutline = bool.TryParse(globalEffects["outline"]?.ToString(), out var outline) ? outline : false;
+
+        var basePath = "./_content/BlazingStory/css/preview/";
+        var styleDescripters = new[] {
+            new { Id = "addon-background-grid", Enable = enableGrid, Href = basePath + "background-grid.min.css" },
+            new { Id = "addon-outline", Enable = enableOutline, Href = basePath + "outline.min.css" }};
+        await this._JSModule.InvokeVoidAsync("ensurePreviewStyle", new object[] { styleDescripters });
 
         this.StateHasChanged();
-        await ValueTask.CompletedTask;
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         this.NavigationManager.LocationChanged -= NavigationManager_LocationChanged;
+        await this._JSModule.DisposeAsync();
     }
 }
