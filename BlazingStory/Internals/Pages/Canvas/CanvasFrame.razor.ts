@@ -19,24 +19,3 @@ export const ensurePreviewStyle = (styleDescripters: StyleDescriptor[]) => {
         }
     }
 }
-
-export const ensureMeasure = (enableMeasure: boolean) => {
-    const canvasId = "blazingstory-addon-measure";
-    const existCanvas = document.body.querySelector("canvas#" + canvasId);
-    if (existCanvas !== null && !enableMeasure) {
-        existCanvas.remove();
-    }
-    else if (existCanvas === null && enableMeasure) {
-        const canvas = document.createElement("canvas");
-        canvas.id = canvasId;
-        canvas.style.position = "fixed";
-        canvas.style.top = "0";
-        canvas.style.left = "0";
-        canvas.style.width = "100vw";
-        canvas.style.height = "100vh";
-        canvas.style.zIndex = "1";
-        canvas.style.pointerEvents = "none";
-
-        document.body.appendChild(canvas);
-    }
-}

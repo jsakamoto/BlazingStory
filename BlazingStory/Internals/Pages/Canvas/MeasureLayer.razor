@@ -1,0 +1,76 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+
+<div style="position:fixed; top:0; left:0; bottom:0; right:0; pointer-events:none;">
+
+    @if (this._ElementLayout != null)
+    {
+        <div style="@this._ContentAreaStyle">
+        </div>
+    }
+
+</div>
+
+@code
+{
+    /*
+    const colors = {
+    margin: "#f6b26b",
+    border: "#ffe599",
+    padding: "#93c47d",
+    content: "#6fa8dc",
+    text: "#232020"
+    } as const;
+
+    const colors2 = {
+    margin: "#f6b26ba8",
+    border: "#ffe599a8",
+    padding: "#93c47d8c",
+    content: "#6fa8dca8"
+    } as const;
+
+    */
+    private readonly DotNetObjectReference<MeasureLayer> _This;
+
+    private readonly JSModule _JSModule;
+
+    public class ElementLayout
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Width { get; set; }
+        public double Height { get; set; }
+    }
+
+    private ElementLayout? _ElementLayout = null;
+
+    private string _ContentAreaStyle =>
+        "position:absolute; background:#6fa8dca8; " +
+        $"top:{_ElementLayout?.Y}px; left:{_ElementLayout?.X}px; width:{_ElementLayout?.Width}px; height:{_ElementLayout?.Height}px;";
+
+    public MeasureLayer()
+    {
+        this._This = DotNetObjectReference.Create(this);
+        this._JSModule = new(() => this.JSRuntime, "./_content/BlazingStory/Internals/Pages/Canvas/MeasureLayer.razor.js");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await this._JSModule.InvokeVoidAsync("attach", this._This);
+    }
+
+    [JSInvokable(nameof(TargetElementChanged))]
+    public void TargetElementChanged(ElementLayout? layout)
+    {
+        this._ElementLayout = layout;
+        this.StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await this._JSModule.InvokeVoidAsync("detach");
+        await this._JSModule.DisposeAsync();
+        this._This.Dispose();
+    }
+}

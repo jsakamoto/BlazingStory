@@ -10,6 +10,11 @@
     @this._Story.RenderFragment(this._Story.Context)
 }
 
+@if (this._EnableMeasure)
+{
+    <MeasureLayer />
+}
+
 @code
 {
     [CascadingParameter]
@@ -21,6 +26,8 @@
     private readonly JSModule _JSModule;
 
     private Story? _Story;
+
+    private bool _EnableMeasure = false;
 
     /// <summary>
     /// Constructor
@@ -131,8 +138,8 @@
 
         var globalEffects = UriParameterKit.DecodeKeyValues(globalEffectsString);
         var enableGrid = globalEffects.TryGetValue("background.grid", out var gridStr) ? bool.TryParse(gridStr, out var grid) ? grid : false : false;
-        var enableMeasure = globalEffects.TryGetValue("measureEnabled", out var measureStr) ? bool.TryParse(measureStr, out var measure) ? measure : false : false;
         var enableOutline = globalEffects.TryGetValue("outline", out var outlineStr) ? bool.TryParse(outlineStr, out var outline) ? outline : false : false;
+        this._EnableMeasure = globalEffects.TryGetValue("measureEnabled", out var measureStr) ? bool.TryParse(measureStr, out var measure) ? measure : false : false;
 
         var basePath = "./_content/BlazingStory/css/preview/";
         var styleDescripters = new[] {
@@ -140,8 +147,6 @@
             new { Id = "addon-outline", Enable = enableOutline, Href = basePath + "outline.min.css" }};
         await this._JSModule.InvokeVoidAsync("ensurePreviewStyle", new object[] { styleDescripters });
         
-        await this._JSModule.InvokeVoidAsync("ensureMeasure", enableMeasure);
-
         this.StateHasChanged();
     }
 

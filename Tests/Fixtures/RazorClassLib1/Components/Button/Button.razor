@@ -1,7 +1,7 @@
 ﻿@attribute [Description("This is basic button component.")]
 
 <button class="@(this.Color.ToString().ToLower()) @(this.Bold ? "bold" : "")" @onclick="@((e) => OnClick.InvokeAsync(e))">
-    @this.Text
+    <span>@this.Text</span>
 </button>
 
 @code {
