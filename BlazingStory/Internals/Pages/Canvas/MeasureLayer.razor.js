@@ -1,30 +1,45 @@
-const TargetElementChanged = "TargetElementChanged";
 const doc = document;
+const targetEvents = [
+    "pointerenter",
+    "pointerover",
+    "pointerleave",
+    "scroll"
+];
 let lastHoveredElement = null;
 let attachedOwner = null;
+const pxToNumber = (px) => parseInt(px.replace("px", ""), 10);
+const getSpacingSize = (style, prefix) => {
+    const [top, left, bottom, right] = ["Top", "Left", "Bottom", "Right"].map(sufix => pxToNumber(style[prefix + sufix]));
+    return { top, left, bottom, right };
+};
 const handler = (ev) => {
     if (attachedOwner === null)
         return;
-    let hoveredElement = document.elementFromPoint(ev.clientX, ev.clientY);
+    let hoveredElement = (ev instanceof MouseEvent) && document.elementFromPoint(ev.clientX, ev.clientY);
+    let measurement = null;
     if (lastHoveredElement !== null && hoveredElement === null) {
         lastHoveredElement = null;
-        attachedOwner.invokeMethodAsync(TargetElementChanged, null);
     }
     else if (hoveredElement !== null && lastHoveredElement !== hoveredElement) {
-        lastHoveredElement = hoveredElement;
-        const rect = hoveredElement.getBoundingClientRect();
-        attachedOwner.invokeMethodAsync(TargetElementChanged, rect);
+        lastHoveredElement = hoveredElement === false ? lastHoveredElement : hoveredElement;
+        if (lastHoveredElement !== null) {
+            const computedStyle = window.getComputedStyle(lastHoveredElement);
+            measurement = {
+                boundary: lastHoveredElement.getBoundingClientRect(),
+                padding: getSpacingSize(computedStyle, "padding"),
+                margin: getSpacingSize(computedStyle, "margin"),
+            };
+        }
     }
+    else
+        return;
+    attachedOwner.invokeMethodAsync("TargetElementChanged", measurement);
 };
 export const attach = (owner) => {
     attachedOwner = owner;
-    doc.addEventListener("mouseenter", handler);
-    doc.addEventListener("mouseover", handler);
-    doc.addEventListener("mouseleave", handler);
+    targetEvents.forEach(eventName => doc.addEventListener(eventName, handler));
 };
 export const detach = () => {
     attachedOwner = null;
-    doc.removeEventListener("mouseenter", handler);
-    doc.removeEventListener("mouseover", handler);
-    doc.removeEventListener("mouseleave", handler);
+    targetEvents.forEach(eventName => doc.removeEventListener(eventName, handler));
 };

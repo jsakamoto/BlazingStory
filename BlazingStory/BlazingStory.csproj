@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="tsconfig.json" CopyToOutputDirectory="Never" Pack="false" />
     <Content Remove="bundleconfig.json" />
     <Content Remove="compilerconfig.json" />
     <_ContentIncludedByDefault Remove="compilerconfig.json" />

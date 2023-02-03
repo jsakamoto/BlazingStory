@@ -25,7 +25,11 @@
             <Arg For="_ => _!.Color" Value="ButtonColor.Danger" />
         </Arguments>
         <Template>
-            <h1>This is Button</h1>
+            <h1>
+                <span style="display:inline-block; padding:12px 24px; margin:24px 12px;">
+                    This is Button
+                </span>
+            </h1>
             <Button @attributes="context.Args" />
         </Template>
     </Story>
