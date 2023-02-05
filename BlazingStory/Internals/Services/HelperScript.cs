@@ -11,7 +11,7 @@ internal class HelperScript : IAsyncDisposable
 
     public HelperScript(IJSRuntime jSRuntime)
     {
-        this._JSModule = new(() => jSRuntime, "./_content/BlazingStory/helper.min.js");
+        this._JSModule = new(() => jSRuntime, "helper.min.js");
     }
 
     internal async ValueTask InvokeVoidAsync(string id, params object?[]? args)

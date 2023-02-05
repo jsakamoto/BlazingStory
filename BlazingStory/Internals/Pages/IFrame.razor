@@ -13,7 +13,7 @@
 
     public IFrame()
     {
-        this._JSModule = new(() => this.JSRuntime, "./_content/BlazingStory/Internals/Pages/IFrame.razor.js");
+        this._JSModule = new(() => this.JSRuntime, "Internals/Pages/IFrame.razor.js");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

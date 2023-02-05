@@ -10,6 +10,8 @@ internal class JSModule : IAsyncDisposable
 
     private readonly string _ModulePath;
 
+    private const string _DefayltBasePath = "./_content/BlazingStory/";
+
     internal JSModule(Func<IJSRuntime> jSRuntime, string modulePath)
     {
         this._GetJSRuntime = jSRuntime;
@@ -21,7 +23,7 @@ internal class JSModule : IAsyncDisposable
         if (this._Module == null)
         {
             var jsRuntime = this._GetJSRuntime();
-            this._Module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", this._ModulePath);
+            this._Module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", _DefayltBasePath + this._ModulePath);
         }
         return this._Module;
     }

@@ -51,7 +51,7 @@
     public PopupMenu()
     {
         this._This = DotNetObjectReference.Create(this);
-        this._JSModule = new(() => this.JSRuntime, "./_content/BlazingStory/Internals/Components/Menus/PopupMenu.razor.js");
+        this._JSModule = new(() => this.JSRuntime, "Internals/Components/Menus/PopupMenu.razor.js");
     }
 
     private async Task OpenPopup()

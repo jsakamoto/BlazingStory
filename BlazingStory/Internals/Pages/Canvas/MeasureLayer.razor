@@ -132,7 +132,7 @@
     public MeasureLayer()
     {
         this._This = DotNetObjectReference.Create(this);
-        this._JSModule = new(() => this.JSRuntime, "./_content/BlazingStory/Internals/Pages/Canvas/MeasureLayer.razor.js");
+        this._JSModule = new(() => this.JSRuntime, "Internals/Pages/Canvas/MeasureLayer.razor.js");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
