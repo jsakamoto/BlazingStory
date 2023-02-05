@@ -1,0 +1,21 @@
+.menu-item {
+    min-width: 180px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px 0 15px;
+    transition: all 150ms ease-out;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--bs-popup-text-color);
+
+    &:hover {
+        background: var(--bs-popup-hover-back-color);
+    }
+
+    &.active {
+        font-weight: bold;
+        color: var(--bs-popup-active-text-color);
+    }
+}

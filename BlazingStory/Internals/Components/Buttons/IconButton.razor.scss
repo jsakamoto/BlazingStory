@@ -11,7 +11,7 @@
         pointer-events: none;
     }
 
-    &.flagged {
+    &.active {
         background-color: var(--bs-hover-back-color);
         background-color: var(--bs-button-flagged-back-color);
         color: var(--bs-focused-color);

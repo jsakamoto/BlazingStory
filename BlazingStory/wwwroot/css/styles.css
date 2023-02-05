@@ -21,8 +21,9 @@
   --bs-keymap-back-color: rgba(0,0,0,0.05);
   --bs-button-flagged-back-color: rgba(2,156,253,0.07);
   --bs-popup-back-color: rgba(255,255,255,0.95);
-  --bs-popup-text-color: #2E3438;
+  --bs-popup-text-color: #2e3438;
   --bs-popup-hover-back-color: rgba(2,156,253,0.07);
+  --bs-popup-active-text-color: #ff4785;
 }
 
 * {
@@ -476,7 +477,7 @@ svg.svg-icon {
   height: 16px;
   pointer-events: none;
 }
-.icon-button.flagged {
+.icon-button.active {
   background-color: var(--bs-hover-back-color);
   background-color: var(--bs-button-flagged-back-color);
   color: var(--bs-focused-color);
@@ -679,37 +680,46 @@ a.icon-button {
   pointer-events: all;
 }
 
+.menu-item {
+  min-width: 180px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px 0 15px;
+  transition: all 150ms ease-out;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--bs-popup-text-color);
+}
+.menu-item:hover {
+  background: var(--bs-popup-hover-back-color);
+}
+.menu-item.active {
+  font-weight: bold;
+  color: var(--bs-popup-active-text-color);
+}
+
 .menu-item-divider {
   border-bottom: 4px solid rgba(38, 85, 115, 0.2);
   height: 0;
 }
 
-.command-menu-item {
-  height: 32px;
-  display: flex;
-  align-items: center;
+.menu-item.command-menu-item {
   padding: 0 15px 0 8px;
-  transition: all 150ms ease-out;
-  cursor: pointer;
 }
-.command-menu-item.has-hotkey {
+.menu-item.command-menu-item.has-hotkey {
   height: 33px;
 }
-.command-menu-item .check-mark-area {
+.menu-item.command-menu-item .check-mark-area {
   color: var(--bs-focused-color);
   width: 17px;
 }
-.command-menu-item .command-title {
-  font-size: 12px;
-  color: var(--bs-popup-text-color);
+.menu-item.command-menu-item .command-title {
   flex: 1;
 }
-.command-menu-item .hotkey-area {
+.menu-item.command-menu-item .hotkey-area {
   padding-left: 10px;
-  margin-top: -3px;
-}
-.command-menu-item:hover {
-  background: var(--bs-popup-hover-back-color);
 }
 
 .body {

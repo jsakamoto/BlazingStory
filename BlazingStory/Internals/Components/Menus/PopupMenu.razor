@@ -24,6 +24,9 @@
     public string? Class { get; set; }
 
     [Parameter]
+    public int MarginTop { get; set; } = 0;
+
+    [Parameter]
     public RenderFragment? Trigger { get; set; }
 
     [Parameter]
@@ -40,7 +43,7 @@
 
     private Position? _PopupPos;
 
-    private string _PopupPosString => this._PopupPos != null ? $"left:{this._PopupPos.X}px; top:{this._PopupPos.Y}px;" : "";
+    private string _PopupPosString => this._PopupPos != null ? $"left:{this._PopupPos.X}px; top:{this._PopupPos.Y}px; margin-top:{this.MarginTop}px;" : "";
 
     private readonly JSModule _JSModule;
 

@@ -27,7 +27,29 @@
                     <IconButton Icon="SvgIconType.ZoomOut" OnClick="OnClickZoomOut" Title="Zoom out" />
                     <IconButton Icon="SvgIconType.ZoomReset" OnClick="OnClickResetZoom" Title="Reset zoom" />
                     <Separator />
-                    <IconButton Icon="SvgIconType.Background" Title="Change the background of the preview" />
+
+                    <PopupMenu MarginTop="6">
+                        <Trigger>
+                            <IconButton Icon="SvgIconType.Background" Title="Change the background of the preview" Active="@(this._BackgroundMode != BackgroundMode.None)" />
+                        </Trigger>
+                        <MenuItems>
+                            @if (this._BackgroundMode != BackgroundMode.None)
+                            {
+                                <MenuItem OnClick="() => OnClickBackground(BackgroundMode.None)">
+                                    Clear background
+                                </MenuItem>
+                            }
+                            <MenuItem Active="@(this._BackgroundMode == BackgroundMode.Light)" OnClick="() => OnClickBackground(BackgroundMode.Light)">
+                                <span>light</span>
+                                <span style="background:#f8f8f8; border-radius:1rem; display:block; height:1rem; width:1rem; box-shadow:hsl(203deg 50% 30% / 20%) 0 0 0 1px inset;"></span>
+                            </MenuItem>
+                            <MenuItem Active="@(this._BackgroundMode == BackgroundMode.Dark)" OnClick="() => OnClickBackground(BackgroundMode.Dark)">
+                                <span>dark</span>
+                                <span style="background:#333333; border-radius:1rem; display:block; height:1rem; width:1rem; box-shadow:hsl(203deg 50% 30% / 20%) 0 0 0 1px inset;"></span>
+                            </MenuItem>
+                        </MenuItems>
+                    </PopupMenu>
+
                     <IconButton Icon="SvgIconType.Grid" Command="this._CanvasCommands?[CanvasCommand.Grid]" />
                     <IconButton Icon="SvgIconType.ChangeSize" Title="Change the size of the preview" />
                     <IconButton Icon="SvgIconType.Measure" Command="this._CanvasCommands?[CanvasCommand.Measure]" />
@@ -91,6 +113,20 @@
     private Command? _AddonPanelVisibleCommand;
 
     private Command? _GoFullscreenCommand;
+
+    private static class StorageKeys
+    {
+        public const string BackgroundMode = "CanvasPage.BackgroundMode";
+    }
+
+    private enum BackgroundMode
+    {
+        None,
+        Light,
+        Dark
+    }
+
+    private BackgroundMode _BackgroundMode = BackgroundMode.None;
 
     private enum CanvasCommand
     {
@@ -168,6 +204,9 @@
             this._CanvasCommands.Subscribe(CanvasCommand.Outline, this.HandleToggleCommand)
         );
 
+        var backgroudnModeStr = await this.HelperScript.GetLocalStorageItemAsync(StorageKeys.BackgroundMode);
+        this._BackgroundMode = Enum.TryParse<BackgroundMode>(backgroudnModeStr, out var backgroundMode) ? backgroundMode : BackgroundMode.None;
+
         this._InitialCanvasFrameUrl = this._CurrentCanvasFrameUrl = this.GetCanvasFrameUrl();
     }
 
@@ -224,7 +263,8 @@
         if (this._CanvasCommands == null) return "";
 
         var globalState = new Dictionary<string, object?>();
-        if (this._CanvasCommands?[CanvasCommand.Grid]?.Flag == true) globalState.Add("background.grid", "true");
+        if (this._BackgroundMode != BackgroundMode.None) globalState.Add("backgrounds.value", _BackgroundMode switch { BackgroundMode.Light => "#F8F8F8", BackgroundMode.Dark => "#333333", _ => "transparent" });
+        if (this._CanvasCommands?[CanvasCommand.Grid]?.Flag == true) globalState.Add("backgrounds.grid", "true");
         if (this._CanvasCommands?[CanvasCommand.Measure]?.Flag == true) globalState.Add("measureEnabled", "true");
         if (this._CanvasCommands?[CanvasCommand.Outline]?.Flag == true) globalState.Add("outline", "true");
 
@@ -326,6 +366,14 @@
     {
         command.ToggleFlag();
         await this.UpdateCanvasFrameUrlAsync();
+    }
+
+    private async Task OnClickBackground(BackgroundMode backgroundMode)
+    {
+        if (backgroundMode == BackgroundMode.None) await Task.Delay(10);
+        this._BackgroundMode = backgroundMode;
+        await this.UpdateCanvasFrameUrlAsync();
+        await this.HelperScript.SetLocalStorageItemAsync(StorageKeys.BackgroundMode, this._BackgroundMode.ToString());
     }
 
     private async ValueTask SaveAddonPanelLayoutAsync()

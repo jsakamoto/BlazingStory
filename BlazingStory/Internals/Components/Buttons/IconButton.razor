@@ -36,10 +36,13 @@ else
     [Parameter]
     public bool FlagStyle { get; set; } = true;
 
+    [Parameter]
+    public bool Active { get; set; }
+
     private string GetCssClass()
     {
-        var flagged = this.Command?.Flag ?? false == true;
-        return $"{this.Class} {(flagged && this.FlagStyle ? "flagged" : "")}";
+        var active = this.Active || (this.Command?.Flag ?? false == true);
+        return $"{this.Class} {(active && this.FlagStyle ? "active" : "")}";
     }
 
     private string? GetTitleText()
