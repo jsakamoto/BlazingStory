@@ -658,11 +658,12 @@ a.icon-button {
   flex-direction: column;
   filter: drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.05)) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
   pointer-events: none;
+  transform: translate(-50%);
 }
 
 .popup-menu-leader {
   width: 0;
-  margin-left: -8px;
+  margin: auto;
   font-size: 0;
   border: solid 8px var(--bs-popup-back-color);
   border-top-width: 0;
@@ -672,7 +673,7 @@ a.icon-button {
 
 .popup-menu-body {
   background-color: var(--bs-popup-back-color);
-  margin: 0 calc(50% - 8px) 0 calc(-50% + 8px);
+  margin-left: 16px;
   border-radius: 8px;
   overflow: hidden;
   pointer-events: all;
