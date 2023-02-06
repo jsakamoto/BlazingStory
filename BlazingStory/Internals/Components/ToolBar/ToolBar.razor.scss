@@ -1,5 +1,6 @@
 ﻿.toolbar-viewport {
     --bs-toolbar-height: 40px;
+    --bs-toolbar-content-gap: 4px;
     box-shadow: rgb(0 0 0 / 10%) 0 -1px 0 0 inset;
     height: 0;
     overflow-y: hidden;
@@ -10,7 +11,7 @@
         flex: 1;
         display: inline-flex;
         align-items: center;
-        gap: 4px;
+        gap: var(--bs-toolbar-content-gap);
         margin-left: 7px;
         margin-right: 7px;
         height: var(--bs-toolbar-height);
@@ -18,12 +19,12 @@
         margin-top: calc(-1.5 * var(--bs-toolbar-height));
         white-space: nowrap;
 
-        & > .text {
+        & .toolbar-content-text {
             font-size: 13px;
             font-weight: bold;
             color: var(--bs-dimmed-text-color);
             padding: 10px;
-            margin: 0;
+            margin: -2px 0 0 0;
         }
     }
 

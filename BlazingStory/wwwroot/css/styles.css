@@ -401,6 +401,7 @@ button {
 
 .toolbar-viewport {
   --bs-toolbar-height: 40px;
+  --bs-toolbar-content-gap: 4px;
   box-shadow: rgba(0, 0, 0, 0.1) 0 -1px 0 0 inset;
   height: 0;
   overflow-y: hidden;
@@ -411,7 +412,7 @@ button {
   flex: 1;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--bs-toolbar-content-gap);
   margin-left: 7px;
   margin-right: 7px;
   height: var(--bs-toolbar-height);
@@ -419,12 +420,12 @@ button {
   margin-top: calc(-1.5 * var(--bs-toolbar-height));
   white-space: nowrap;
 }
-.toolbar-viewport .toolbar-content > .text {
+.toolbar-viewport .toolbar-content .toolbar-content-text {
   font-size: 13px;
   font-weight: bold;
   color: var(--bs-dimmed-text-color);
   padding: 10px;
-  margin: 0;
+  margin: -2px 0 0 0;
 }
 .toolbar-viewport.toolbar-visible {
   height: var(--bs-toolbar-height);
@@ -513,7 +514,7 @@ svg.svg-icon {
 .icon-button > .text {
   display: inline-block;
   font-size: 13px;
-  margin-left: 9px;
+  margin: 1px 1px 0 9px;
 }
 .icon-button.active {
   background-color: var(--bs-hover-back-color);
