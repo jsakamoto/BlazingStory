@@ -24,6 +24,8 @@
   --bs-popup-text-color: #2e3438;
   --bs-popup-hover-back-color: rgba(2,156,253,0.07);
   --bs-popup-active-text-color: #ff4785;
+  --bs-scrollbar-thumb-color: #ccc;
+  --bs-scrollbar-back-color: #e0e0e0;
 }
 
 * {
@@ -154,6 +156,26 @@ button {
 }
 .pane-of-split-container .fill {
   flex: 1;
+}
+
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bs-scrollbar-thumb-color) var(--bs-scrollbar-back-color);
+}
+.thin-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: transparent;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: transparent;
+}
+.thin-scrollbar:hover::-webkit-scrollbar {
+  background-color: var(--bs-scrollbar-back-color);
+}
+.thin-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: var(--bs-scrollbar-thumb-color);
 }
 
 .main-layout {
@@ -395,6 +417,7 @@ button {
   height: var(--bs-toolbar-height);
   transition: margin-top linear 0.2s;
   margin-top: calc(-1.5 * var(--bs-toolbar-height));
+  white-space: nowrap;
 }
 .toolbar-viewport .toolbar-content > .text {
   font-size: 13px;
@@ -767,8 +790,12 @@ a.icon-button {
   display: none;
 }
 
+.add-on-container {
+  overflow: hidden;
+}
+
 .add-on-panel {
-  overflow: auto;
+  overflow: hidden;
 }
 
 .add-on-panel-content {

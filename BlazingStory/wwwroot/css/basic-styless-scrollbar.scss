@@ -1,0 +1,25 @@
+.thin-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bs-scrollbar-thumb-color) var(--bs-scrollbar-back-color);
+
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+        background-color: transparent;
+    }
+
+    &:hover {
+        &::-webkit-scrollbar {
+            background-color: var(--bs-scrollbar-back-color);
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: var(--bs-scrollbar-thumb-color);
+        }
+    }
+}

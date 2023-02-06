@@ -16,6 +16,7 @@
         height: var(--bs-toolbar-height);
         transition: margin-top linear 0.2s;
         margin-top: calc(-1.5 * var(--bs-toolbar-height));
+        white-space: nowrap;
 
         & > .text {
             font-size: 13px;
