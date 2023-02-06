@@ -1,0 +1,13 @@
+@code
+{
+    [CascadingParameter]
+    public required AddonsStore AddonsStore { get; init; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (this.ChildContent != null) this.AddonsStore.RegisterCanvasToolbarRenderer(ChildContent);
+    }
+}

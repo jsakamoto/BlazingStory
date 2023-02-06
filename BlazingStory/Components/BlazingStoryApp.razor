@@ -5,23 +5,34 @@
 
 <StoriesDetector Assemblies="this.Assemblies" StoriesStore="this._StoriesStore" />
 
-<div style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >=2 ? 1 : 0); display: @(this._InitLevel >= 1 ? "block" : "none");">
-    <CascadingValue Value="this._ServiceProvider">
-        <CascadingValue Value="this._StoriesStore">
-            <Router AppAssembly="@typeof(BlazingStoryApp).Assembly">
-                <Found Context="routeData">
-                    <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-                </Found>
-                <NotFound>
-                    <PageTitle>Not found</PageTitle>
-                    <LayoutView Layout="@typeof(MainLayout)">
-                        <p role="alert" style="padding:12px 32px;">Sorry, there's nothing at this address.</p>
-                    </LayoutView>
-                </NotFound>
-            </Router>
-        </CascadingValue>
+<CascadingValue Value="this._ServiceProvider">
+    <CascadingValue Value="this._AddonsStore">
+
+        <div style="display:none;">
+            @foreach (var addonType in this._AddonsTypes)
+            {
+                <DynamicComponent Type="addonType" />
+            }
+        </div>
+
+        <div style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >=2 ? 1 : 0); display: @(this._InitLevel >= 1 ? "block" : "none");">
+            <CascadingValue Value="this._StoriesStore">
+                <Router AppAssembly="@typeof(BlazingStoryApp).Assembly">
+                    <Found Context="routeData">
+                        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                    </Found>
+                    <NotFound>
+                        <PageTitle>Not found</PageTitle>
+                        <LayoutView Layout="@typeof(MainLayout)">
+                            <p role="alert" style="padding:12px 32px;">Sorry, there's nothing at this address.</p>
+                        </LayoutView>
+                    </NotFound>
+                </Router>
+            </CascadingValue>
+        </div>
+
     </CascadingValue>
-</div>
+</CascadingValue>
 
 @code
 {
@@ -30,11 +41,19 @@
     [Parameter, EditorRequired]
     public IEnumerable<Assembly>? Assemblies { get; set; }
 
-    private StoriesStore _StoriesStore = new();
+    private readonly StoriesStore _StoriesStore = new();
 
-    private int _InitLevel = 0;
+    private readonly AddonsStore _AddonsStore = new();
+
+    private int _InitLevel = 2;//0;
 
     private IServiceProvider? _ServiceProvider;
+
+    private readonly IEnumerable<Type> _AddonsTypes = new Type[]
+    {
+        typeof(BlazingStory.Internals.Pages.Canvas.Addons.Background.BackgroundAddon),
+        typeof(BlazingStory.Internals.Pages.Canvas.Addons.ChangeSize.ChangeSizeAddon),
+    };
 
     protected override void OnInitialized()
     {
@@ -50,6 +69,7 @@
             .AddHotKeys2()
             .AddSingleton<HelperScript>()
             .AddSingleton<CommandService>()
+            .AddSingleton<AddonsStore>(_ => this._AddonsStore)
             .BuildServiceProvider();
     }
 

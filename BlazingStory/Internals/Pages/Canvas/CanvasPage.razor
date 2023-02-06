@@ -28,55 +28,14 @@
                     <IconButton Icon="SvgIconType.ZoomReset" OnClick="OnClickResetZoom" Title="Reset zoom" />
                     <Separator />
 
-                    <PopupMenu MarginTop="6">
-                        <Trigger>
-                            <IconButton Icon="SvgIconType.Background" Title="Change the background of the preview" Active="@(this._BackgroundMode != BackgroundMode.None)" />
-                        </Trigger>
-                        <MenuItems>
-                            @if (this._BackgroundMode != BackgroundMode.None)
-                            {
-                                <MenuItem OnClick="() => OnClickBackground(BackgroundMode.None)">
-                                    Clear background
-                                </MenuItem>
-                            }
-                            <MenuItem Active="@(this._BackgroundMode == BackgroundMode.Light)" OnClick="() => OnClickBackground(BackgroundMode.Light)">
-                                <span>light</span>
-                                <span style="background:#f8f8f8; border-radius:1rem; display:block; height:1rem; width:1rem; box-shadow:hsl(203deg 50% 30% / 20%) 0 0 0 1px inset;"></span>
-                            </MenuItem>
-                            <MenuItem Active="@(this._BackgroundMode == BackgroundMode.Dark)" OnClick="() => OnClickBackground(BackgroundMode.Dark)">
-                                <span>dark</span>
-                                <span style="background:#333333; border-radius:1rem; display:block; height:1rem; width:1rem; box-shadow:hsl(203deg 50% 30% / 20%) 0 0 0 1px inset;"></span>
-                            </MenuItem>
-                        </MenuItems>
-                    </PopupMenu>
-
                     <IconButton Icon="SvgIconType.Grid" Command="this._CanvasCommands?[CanvasCommand.Grid]" />
 
-                    <PopupMenu MarginTop="6">
-                        <Trigger>
-                            <IconButton Icon="SvgIconType.ChangeSize" Title="Change the size of the preview" Active="true">
-                                Small mobile (P)
-                            </IconButton>
-                        </Trigger>
-                        <MenuItems>
-                            <MenuItem>
-                                Reset viewport
-                            </MenuItem>
-                            <MenuItem>
-                                Small mobile
-                            </MenuItem>
-                            <MenuItem>
-                                Large mobile
-                            </MenuItem>
-                            <MenuItem>
-                                Tablet
-                            </MenuItem>
-                        </MenuItems>
-                    </PopupMenu>
+                    @* -- Render Add-On's Toolbar Contents -- *@
 
-                    <span class="text">320</span>
-                    <IconButton Icon="SvgIconType.Swap" Title="Rotate viewport" />
-                    <span class="text">568</span>
+                    @foreach (var renderer in this.AddonsStore.CanvasToolbarRenderer)
+                    {
+                        <text>@renderer</text>
+                    }
 
                     <IconButton Icon="SvgIconType.Measure" Command="this._CanvasCommands?[CanvasCommand.Measure]" />
                     <IconButton Icon="SvgIconType.Outlines" Command="this._CanvasCommands?[CanvasCommand.Outline]" />
@@ -122,10 +81,13 @@
 @code
 {
     [CascadingParameter]
-    public required StoriesStore StoriesStore { get; set; }
+    public required StoriesStore StoriesStore { get; init; }
 
     [CascadingParameter]
-    public required QueryRouteData RouteData { get; set; }
+    public required QueryRouteData RouteData { get; init; }
+
+    [CascadingParameter]
+    public required AddonsStore AddonsStore { get; init; }
 
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
@@ -139,20 +101,6 @@
     private Command? _AddonPanelVisibleCommand;
 
     private Command? _GoFullscreenCommand;
-
-    private static class StorageKeys
-    {
-        public const string BackgroundMode = "CanvasPage.BackgroundMode";
-    }
-
-    private enum BackgroundMode
-    {
-        None,
-        Light,
-        Dark
-    }
-
-    private BackgroundMode _BackgroundMode = BackgroundMode.None;
 
     private enum CanvasCommand
     {
@@ -206,6 +154,7 @@
     protected override async Task OnInitializedAsync()
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
+        this.AddonsStore.OnSetCanvasFrameArguments += AddonsStore_OnSetCanvasFrameArguments;
 
         this._Commands = this.Services.GetRequiredService<CommandService>();
         this._ToolbarVisibleCommand = this._Commands[CommandType.ToolBarVisible]!;
@@ -229,9 +178,6 @@
             this._CanvasCommands.Subscribe(CanvasCommand.Measure, this.HandleToggleCommand),
             this._CanvasCommands.Subscribe(CanvasCommand.Outline, this.HandleToggleCommand)
         );
-
-        var backgroudnModeStr = await this.HelperScript.GetLocalStorageItemAsync(StorageKeys.BackgroundMode);
-        this._BackgroundMode = Enum.TryParse<BackgroundMode>(backgroudnModeStr, out var backgroundMode) ? backgroundMode : BackgroundMode.None;
 
         this._InitialCanvasFrameUrl = this._CurrentCanvasFrameUrl = this.GetCanvasFrameUrl();
     }
@@ -280,22 +226,26 @@
                     ["viewMode"] = this.RouteData.View,
                     ["id"] = this.RouteData.Parameter,
                     ["args"] = UriParameterKit.EncodeKeyValues(this._CurrentStory?.Context.Args),
-                    ["globals"] = this.GetGlobalStateUrlText()
+                    ["globals"] = UriParameterKit.EncodeKeyValues(this.AddonsStore.CanvasFrameArguments)
                 });
     }
 
-    private string GetGlobalStateUrlText()
+    private void AddonsStore_OnSetCanvasFrameArguments(object? sender, AddonsStore.CanvasFrameArgumentsEventArgs args)
     {
-        if (this._CanvasCommands == null) return "";
-
-        var globalState = new Dictionary<string, object?>();
-        if (this._BackgroundMode != BackgroundMode.None) globalState.Add("backgrounds.value", _BackgroundMode switch { BackgroundMode.Light => "#F8F8F8", BackgroundMode.Dark => "#333333", _ => "transparent" });
-        if (this._CanvasCommands?[CanvasCommand.Grid]?.Flag == true) globalState.Add("backgrounds.grid", "true");
-        if (this._CanvasCommands?[CanvasCommand.Measure]?.Flag == true) globalState.Add("measureEnabled", "true");
-        if (this._CanvasCommands?[CanvasCommand.Outline]?.Flag == true) globalState.Add("outline", "true");
-
-        return UriParameterKit.EncodeKeyValues(globalState);
+        this.StateHasChanged();
+        this.UpdateCanvasFrameUrlAsync().AndLogException(this.Logger);
     }
+
+    //private string GetGlobalStateUrlText()
+    //{
+    //if (this._CanvasCommands == null) return "";
+    //
+    //var globalState = new Dictionary<string, object?>();
+    //if (this._CanvasCommands?[CanvasCommand.Grid]?.Flag == true) globalState.Add("backgrounds.grid", "true");
+    //if (this._CanvasCommands?[CanvasCommand.Measure]?.Flag == true) globalState.Add("measureEnabled", "true");
+    //if (this._CanvasCommands?[CanvasCommand.Outline]?.Flag == true) globalState.Add("outline", "true");
+    //return UriParameterKit.EncodeKeyValues(globalState);
+    //}
 
     private void UpdateCurrentStory()
     {
@@ -392,14 +342,6 @@
     {
         command.ToggleFlag();
         await this.UpdateCanvasFrameUrlAsync();
-    }
-
-    private async Task OnClickBackground(BackgroundMode backgroundMode)
-    {
-        if (backgroundMode == BackgroundMode.None) await Task.Delay(10);
-        this._BackgroundMode = backgroundMode;
-        await this.UpdateCanvasFrameUrlAsync();
-        await this.HelperScript.SetLocalStorageItemAsync(StorageKeys.BackgroundMode, this._BackgroundMode.ToString());
     }
 
     private async ValueTask SaveAddonPanelLayoutAsync()
