@@ -19,6 +19,7 @@ public enum SvgIconType
     Background,
     Grid,
     ChangeSize,
+    Swap,
     Measure,
     Outlines,
 

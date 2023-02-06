@@ -2,15 +2,15 @@
 
 internal class Rect
 {
-    public int Top { get; set; }
+    public double Top { get; set; }
 
-    public int Bottom { get; set; }
+    public double Bottom { get; set; }
 
-    public int Left { get; set; }
+    public double Left { get; set; }
 
-    public int Right { get; set; }
+    public double Right { get; set; }
 
-    public int Width { get; set; }
+    public double Width { get; set; }
 
-    public int Height { get; set; }
+    public double Height { get; set; }
 }

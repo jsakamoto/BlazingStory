@@ -1,20 +1,33 @@
 ﻿.icon-button {
-    width: 28px;
+    min-width: 28px;
     height: 28px;
     border-radius: 4px;
     padding: 1px 6px;
     color: var(--bs-dimmed-text-color);
+    display: flex;
+    align-items: center;
 
     & > svg {
         width: 16px;
         height: 16px;
+        margin: 0;
         pointer-events: none;
+    }
+
+    & > .text {
+        display: inline-block;
+        font-size: 13px;
+        margin-left: 9px;
     }
 
     &.active {
         background-color: var(--bs-hover-back-color);
         background-color: var(--bs-button-flagged-back-color);
         color: var(--bs-focused-color);
+
+        & > .text {
+            font-weight: bold;
+        }
     }
 
     &:hover {

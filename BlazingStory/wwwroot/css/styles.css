@@ -396,6 +396,13 @@ button {
   transition: margin-top linear 0.2s;
   margin-top: calc(-1.5 * var(--bs-toolbar-height));
 }
+.toolbar-viewport .toolbar-content > .text {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--bs-dimmed-text-color);
+  padding: 10px;
+  margin: 0;
+}
 .toolbar-viewport.toolbar-visible {
   height: var(--bs-toolbar-height);
 }
@@ -466,21 +473,32 @@ svg.svg-icon {
 }
 
 .icon-button {
-  width: 28px;
+  min-width: 28px;
   height: 28px;
   border-radius: 4px;
   padding: 1px 6px;
   color: var(--bs-dimmed-text-color);
+  display: flex;
+  align-items: center;
 }
 .icon-button > svg {
   width: 16px;
   height: 16px;
+  margin: 0;
   pointer-events: none;
+}
+.icon-button > .text {
+  display: inline-block;
+  font-size: 13px;
+  margin-left: 9px;
 }
 .icon-button.active {
   background-color: var(--bs-hover-back-color);
   background-color: var(--bs-button-flagged-back-color);
   color: var(--bs-focused-color);
+}
+.icon-button.active > .text {
+  font-weight: bold;
 }
 .icon-button:hover {
   background-color: var(--bs-hover-back-color);
