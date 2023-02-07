@@ -1,28 +1,15 @@
 <CanvasToolbarRegistrar>
-    <style>
-        .addons-change-size.none .icon-button .text {
-            display: none;
-        }
-    </style>
     @{
-        var active = this._CurrentState.Size != SizeType.None;
-        var sizeDetail = this.SizeTypeToDetail[this._CurrentState.Size];
-        var orientation = this._CurrentState.Orientation;
-        var orientationInitial = orientation.ToString().Substring(0, 1);
-        var size1 = orientation == Orientation.Portrait ? sizeDetail.ShrotSide : sizeDetail.LongSide;
-        var size2 = orientation == Orientation.Portrait ? sizeDetail.LongSide : sizeDetail.ShrotSide;
+        var orientationInitial = this._CurrentState.Orientation.ToString().Substring(0, 1);
+        var sizes = this.GetSizes();
+        var toolButtonText = this.Active ? $"{this.DisplayName} ({orientationInitial})" : "";
     }
-    <PopupMenu MarginTop="6" Class="@CssClass("addons-change-size", this._CurrentState.Size)">
+    <PopupMenu MarginTop="6">
         <Trigger>
-            <IconButton Icon="SvgIconType.ChangeSize" Title="Change the size of the preview" Active="active">
-                @if (active)
-                {
-                    <text>@sizeDetail.DisplayName (@orientationInitial)</text>
-                }
-            </IconButton>
+            <IconButton Icon="SvgIconType.ChangeSize" Title="Change the size of the preview" Active="this.Active" Text="@toolButtonText" />
         </Trigger>
         <MenuItems>
-            @if (active)
+            @if (this.Active)
             {
                 <MenuItem OnClick="@(() => OnClickSize(SizeType.None))">
                     Reset viewport
@@ -43,13 +30,27 @@
     @if (this._CurrentState.Size != SizeType.None)
     {
         <div class="stack horizontal" style="align-items:center;">
-            <span class="toolbar-content-text">@size1</span>
+            <span class="toolbar-content-text">@sizes.Size1</span>
             <IconButton Icon="SvgIconType.Swap" Title="Rotate viewport" OnClick="OnClickRotateViewport" />
-            <span class="toolbar-content-text">@size2</span>
+            <span class="toolbar-content-text">@sizes.Size2</span>
         </div>
     }
 
 </CanvasToolbarRegistrar>
+
+@if (this.Active)
+{
+    var sizes = this.GetSizes();
+    <style>
+        .canvas-frame {
+            box-shadow: 0 0 100px 100vw rgb(0 0 0 / 50%);
+            border: 1px solid black !important;
+            margin: 10px;
+            width: @(sizes.Size1)px !important;
+            height: @(sizes.Size2)px !important;
+        }
+    </style>
+}
 
 @code
 {
@@ -60,20 +61,6 @@
     internal IServiceProvider Services { get; init; } = default!;
 
     private HelperScript HelperScript = default!;
-
-    private enum Orientation
-    {
-        Portrait,
-        Landscape
-    }
-
-    private enum SizeType
-    {
-        None,
-        SmallMobile,
-        LargeMobile,
-        Tablet
-    }
 
     private readonly IReadOnlyDictionary<SizeType, (string DisplayName, int ShrotSide, int LongSide)> SizeTypeToDetail = new Dictionary<SizeType, (string, int, int)>
         {
@@ -91,8 +78,21 @@
 
     private const string StorageKey = "Addons.ChangeSize.State";
 
-
     private SizeState _CurrentState = new();
+
+    private bool Active => this._CurrentState.Size != SizeType.None;
+
+    private string DisplayName => this.SizeTypeToDetail[this._CurrentState.Size].DisplayName;
+
+    private (int Size1, int Size2) GetSizes()
+    {
+        var sizeDetail = this.SizeTypeToDetail[this._CurrentState.Size];
+        var orientation = this._CurrentState.Orientation;
+        return (
+            Size1: orientation == Orientation.Portrait ? sizeDetail.ShrotSide : sizeDetail.LongSide,
+            Size2: orientation == Orientation.Portrait ? sizeDetail.LongSide : sizeDetail.ShrotSide
+        );
+    }
 
     protected override async Task OnInitializedAsync()
     {

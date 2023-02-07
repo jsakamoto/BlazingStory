@@ -2,9 +2,9 @@
 {
     <button class="icon-button @GetCssClass()" title="@this.GetTitleText()" @onclick="this.ClickHandler">
         <SvgIcon Type="Icon" />
-        @if (this.ChildContent != null)
+        @if (!string.IsNullOrEmpty(this.Text))
         {
-            <span class="text">@ChildContent</span>
+            <span class="text">@this.Text</span>
         }
     </button>
 }
@@ -12,9 +12,9 @@ else
 {
     <a class="icon-button @GetCssClass()" title="@this.GetTitleText()" @onclick="this.ClickHandler" href="@this.Href" target="@this.Target">
         <SvgIcon Type="Icon" />
-        @if (this.ChildContent != null)
+        @if (!string.IsNullOrEmpty (this.Text))
         {
-            <span class="text">@ChildContent</span>
+            <span class="text">@this.Text</span>
         }
     </a>
 }
@@ -24,10 +24,10 @@ else
     public SvgIconType Icon { get; set; }
 
     [Parameter]
-    public EventCallback<MouseEventArgs> OnClick { get; set; }
+    public string? Text { get; set; }
 
     [Parameter]
-    public RenderFragment? ChildContent { get; set; }
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
 
     [Parameter]
     public string? Title { get; set; }

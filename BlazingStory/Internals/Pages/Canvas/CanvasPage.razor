@@ -59,8 +59,11 @@
                 </ToolBar>
 
                 @* -- IFrame -- *@
-
-                <iframe @ref="_Iframe" src="@_InitialCanvasFrameUrl" class="canvas-frame fill"></iframe>
+                <div class="canvas-frame-viewport fill">
+                    <div class="canvas-frame-content">
+                        <iframe @ref="_Iframe" src="@_InitialCanvasFrameUrl" class="canvas-frame"></iframe>
+                    </div>
+                </div>
             </div>
         </FirstPane>
 

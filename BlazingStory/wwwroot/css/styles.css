@@ -774,9 +774,26 @@ a.icon-button {
 .canvas-container {
   flex: 1;
 }
-
-.canvas-frame {
+.canvas-container .canvas-frame-viewport {
+  position: relative;
+}
+.canvas-container .canvas-frame-viewport .canvas-frame-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  overflow: auto;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+}
+.canvas-container .canvas-frame-viewport .canvas-frame-content .canvas-frame {
+  transition: width 0.3s, height 0.3s;
+  box-sizing: content-box;
   border: none;
+  width: 100%;
+  height: 100%;
 }
 
 .canvas-page-container.splitter-orientation-vertical .add-on-container {
