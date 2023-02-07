@@ -1,0 +1,40 @@
+<CanvasToolbarRegistrar>
+    <IconButton Icon="SvgIconType.Grid" OnClick="OnClickGrid" Active="this._EnableGrid" Title="Apply a grid to the preview" />
+</CanvasToolbarRegistrar>
+
+@code
+{
+    [CascadingParameter]
+    public required AddonsStore AddonsStore { get; init; }
+
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
+    private HelperScript HelperScript = default!;
+
+    private const string StorageKey = "Addons.Grid";
+
+    private bool _EnableGrid = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.HelperScript = this.Services.GetRequiredService<HelperScript>();
+        var enableGridStr = await this.HelperScript.GetLocalStorageItemAsync(StorageKey);
+        this._EnableGrid = bool.TryParse(enableGridStr, out var enableGrid) ? enableGrid : this._EnableGrid;
+        this.SetCanvasFrameArguments();
+    }
+
+    private async Task OnClickGrid()
+    {
+        this._EnableGrid = !this._EnableGrid;
+        this.SetCanvasFrameArguments();
+        await this.HelperScript.SetLocalStorageItemAsync(StorageKey, this._EnableGrid);
+    }
+
+    private void SetCanvasFrameArguments()
+    {
+        object? value = this._EnableGrid ? true : null;
+        this.AddonsStore.SetCanvasFrameArguments(("backgrounds.grid", value));
+    }
+
+}

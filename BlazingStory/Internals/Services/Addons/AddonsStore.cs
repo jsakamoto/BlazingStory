@@ -1,22 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
 
-namespace BlazingStory.Internals.Services;
+namespace BlazingStory.Internals.Services.Addons;
 
 public class AddonsStore
 {
-    internal readonly List<RenderFragment> _CanvasToolbarRenderer = new();
+    private readonly List<RenderFragment> _CanvasToolbarRenderer = new();
 
     internal IEnumerable<RenderFragment> CanvasToolbarRenderer => this._CanvasToolbarRenderer;
-
-    internal class CanvasFrameArgumentsEventArgs : EventArgs
-    {
-        public IEnumerable<(string Key, object? Value)> Arguments { get; }
-
-        public CanvasFrameArgumentsEventArgs(IEnumerable<(string Key, object? Value)> arguments)
-        {
-            this.Arguments = arguments;
-        }
-    }
 
     internal event EventHandler<CanvasFrameArgumentsEventArgs>? OnSetCanvasFrameArguments;
 

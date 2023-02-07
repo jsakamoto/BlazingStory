@@ -28,10 +28,7 @@
                     <IconButton Icon="SvgIconType.ZoomReset" OnClick="OnClickResetZoom" Title="Reset zoom" />
                     <Separator />
 
-                    <IconButton Icon="SvgIconType.Grid" Command="this._CanvasCommands?[CanvasCommand.Grid]" />
-
                     @* -- Render Add-On's Toolbar Contents -- *@
-
                     @foreach (var renderer in this.AddonsStore.CanvasToolbarRenderer)
                     {
                         <text>@renderer</text>
@@ -107,7 +104,6 @@
 
     private enum CanvasCommand
     {
-        Grid,
         Outline,
         Measure
     }
@@ -167,7 +163,6 @@
         this._CanvasCommands = new("CanvasPage.Commands", this.HelperScript, this.Logger);
         await this._CanvasCommands.EnsureInitializedAsync(() => new (CanvasCommand, Command)[]
         {
-            (CanvasCommand.Grid, new("Apply a grid to the preview", flag: false)),
             (CanvasCommand.Measure, new("Enable measure", flag: false)),
             (CanvasCommand.Outline, new("Apply outlines to the preview", flag: false)),
         });
@@ -177,7 +172,6 @@
             this._ToolbarVisibleCommand.Subscribe(this.OnToggleToolbarVisible),
             this._AddonPanelVisibleCommand.Subscribe(this.OnToggleAddonPanelVisible),
 
-            this._CanvasCommands.Subscribe(CanvasCommand.Grid, this.HandleToggleCommand),
             this._CanvasCommands.Subscribe(CanvasCommand.Measure, this.HandleToggleCommand),
             this._CanvasCommands.Subscribe(CanvasCommand.Outline, this.HandleToggleCommand)
         );
@@ -233,7 +227,7 @@
                 });
     }
 
-    private void AddonsStore_OnSetCanvasFrameArguments(object? sender, AddonsStore.CanvasFrameArgumentsEventArgs args)
+    private void AddonsStore_OnSetCanvasFrameArguments(object? sender, CanvasFrameArgumentsEventArgs args)
     {
         this.StateHasChanged();
         this.UpdateCanvasFrameUrlAsync().AndLogException(this.Logger);
@@ -244,7 +238,6 @@
     //if (this._CanvasCommands == null) return "";
     //
     //var globalState = new Dictionary<string, object?>();
-    //if (this._CanvasCommands?[CanvasCommand.Grid]?.Flag == true) globalState.Add("backgrounds.grid", "true");
     //if (this._CanvasCommands?[CanvasCommand.Measure]?.Flag == true) globalState.Add("measureEnabled", "true");
     //if (this._CanvasCommands?[CanvasCommand.Outline]?.Flag == true) globalState.Add("outline", "true");
     //return UriParameterKit.EncodeKeyValues(globalState);
