@@ -34,7 +34,6 @@
                         <text>@renderer</text>
                     }
 
-                    <IconButton Icon="SvgIconType.Measure" Command="this._CanvasCommands?[CanvasCommand.Measure]" />
                     <IconButton Icon="SvgIconType.Outlines" Command="this._CanvasCommands?[CanvasCommand.Outline]" />
 
                     <Spacer />
@@ -104,8 +103,7 @@
 
     private enum CanvasCommand
     {
-        Outline,
-        Measure
+        Outline
     }
 
     private CommandSet<CanvasCommand>? _CanvasCommands;
@@ -163,7 +161,6 @@
         this._CanvasCommands = new("CanvasPage.Commands", this.HelperScript, this.Logger);
         await this._CanvasCommands.EnsureInitializedAsync(() => new (CanvasCommand, Command)[]
         {
-            (CanvasCommand.Measure, new("Enable measure", flag: false)),
             (CanvasCommand.Outline, new("Apply outlines to the preview", flag: false)),
         });
 
@@ -172,7 +169,6 @@
             this._ToolbarVisibleCommand.Subscribe(this.OnToggleToolbarVisible),
             this._AddonPanelVisibleCommand.Subscribe(this.OnToggleAddonPanelVisible),
 
-            this._CanvasCommands.Subscribe(CanvasCommand.Measure, this.HandleToggleCommand),
             this._CanvasCommands.Subscribe(CanvasCommand.Outline, this.HandleToggleCommand)
         );
 
@@ -238,7 +234,6 @@
     //if (this._CanvasCommands == null) return "";
     //
     //var globalState = new Dictionary<string, object?>();
-    //if (this._CanvasCommands?[CanvasCommand.Measure]?.Flag == true) globalState.Add("measureEnabled", "true");
     //if (this._CanvasCommands?[CanvasCommand.Outline]?.Flag == true) globalState.Add("outline", "true");
     //return UriParameterKit.EncodeKeyValues(globalState);
     //}
