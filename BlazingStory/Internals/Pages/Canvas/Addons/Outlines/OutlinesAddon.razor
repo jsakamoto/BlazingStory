@@ -1,0 +1,39 @@
+<CanvasToolbarRegistrar>
+    <IconButton Icon="SvgIconType.Outlines" OnClick="OnClicOutlines" Active="this._EnableOutlines" Title="Apply outlines to the preview" />
+</CanvasToolbarRegistrar>
+
+@code
+{
+    [CascadingParameter]
+    public required AddonsStore AddonsStore { get; init; }
+
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
+    private HelperScript HelperScript = default!;
+
+    private const string StorageKey = "Addons.Outlines";
+
+    private bool _EnableOutlines = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.HelperScript = this.Services.GetRequiredService<HelperScript>();
+        var enableOutlinesStr = await this.HelperScript.GetLocalStorageItemAsync(StorageKey);
+        this._EnableOutlines = bool.TryParse(enableOutlinesStr, out var enableOutlines) ? enableOutlines : this._EnableOutlines;
+        this.SetCanvasFrameArguments();
+    }
+
+    private async Task OnClicOutlines()
+    {
+        this._EnableOutlines = !this._EnableOutlines;
+        this.SetCanvasFrameArguments();
+        await this.HelperScript.SetLocalStorageItemAsync(StorageKey, this._EnableOutlines);
+    }
+
+    private void SetCanvasFrameArguments()
+    {
+        object? value = this._EnableOutlines ? "true" : null;
+        this.AddonsStore.SetCanvasFrameArguments(("outline", value));
+    }
+}

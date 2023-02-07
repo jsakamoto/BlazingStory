@@ -34,8 +34,6 @@
                         <text>@renderer</text>
                     }
 
-                    <IconButton Icon="SvgIconType.Outlines" Command="this._CanvasCommands?[CanvasCommand.Outline]" />
-
                     <Spacer />
 
                     @if (this._AddonPanelVisibleCommand?.Flag != true)
@@ -101,13 +99,6 @@
 
     private Command? _GoFullscreenCommand;
 
-    private enum CanvasCommand
-    {
-        Outline
-    }
-
-    private CommandSet<CanvasCommand>? _CanvasCommands;
-
     private readonly Subscriptions _Subscriptions = new();
 
     private bool AddonPanelVisible => (this._AddonPanelVisibleCommand?.Flag ?? true) && !(this._GoFullscreenCommand?.Flag ?? false);
@@ -148,7 +139,7 @@
         this._JSModule = new(() => this.JSRuntime, "Internals/Pages/Canvas/CanvasPage.razor.js");
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
         this.AddonsStore.OnSetCanvasFrameArguments += AddonsStore_OnSetCanvasFrameArguments;
@@ -158,18 +149,10 @@
         this._AddonPanelVisibleCommand = this._Commands[CommandType.AddonPanelVisible]!;
         this._GoFullscreenCommand = this._Commands[CommandType.GoFullScreen];
 
-        this._CanvasCommands = new("CanvasPage.Commands", this.HelperScript, this.Logger);
-        await this._CanvasCommands.EnsureInitializedAsync(() => new (CanvasCommand, Command)[]
-        {
-            (CanvasCommand.Outline, new("Apply outlines to the preview", flag: false)),
-        });
-
         this._Subscriptions.Add(
             this._Commands.Subscribe(CommandType.AddonPanelOrientation, this.OnToggleOrientation),
             this._ToolbarVisibleCommand.Subscribe(this.OnToggleToolbarVisible),
-            this._AddonPanelVisibleCommand.Subscribe(this.OnToggleAddonPanelVisible),
-
-            this._CanvasCommands.Subscribe(CanvasCommand.Outline, this.HandleToggleCommand)
+            this._AddonPanelVisibleCommand.Subscribe(this.OnToggleAddonPanelVisible)
         );
 
         this._InitialCanvasFrameUrl = this._CurrentCanvasFrameUrl = this.GetCanvasFrameUrl();
@@ -228,15 +211,6 @@
         this.StateHasChanged();
         this.UpdateCanvasFrameUrlAsync().AndLogException(this.Logger);
     }
-
-    //private string GetGlobalStateUrlText()
-    //{
-    //if (this._CanvasCommands == null) return "";
-    //
-    //var globalState = new Dictionary<string, object?>();
-    //if (this._CanvasCommands?[CanvasCommand.Outline]?.Flag == true) globalState.Add("outline", "true");
-    //return UriParameterKit.EncodeKeyValues(globalState);
-    //}
 
     private void UpdateCurrentStory()
     {
@@ -327,12 +301,6 @@
     private async Task OnClickResetZoom()
     {
         await this._JSModule.InvokeVoidAsync("resetZoomCanvasFrame", this._Iframe);
-    }
-
-    private async ValueTask HandleToggleCommand(Command command)
-    {
-        command.ToggleFlag();
-        await this.UpdateCanvasFrameUrlAsync();
     }
 
     private async ValueTask SaveAddonPanelLayoutAsync()

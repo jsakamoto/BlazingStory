@@ -20,7 +20,7 @@
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
         var enableMeasureStr = await this.HelperScript.GetLocalStorageItemAsync(StorageKey);
-        this._EnableMeasure = bool.TryParse(enableMeasureStr, out var enableGrid) ? enableGrid : this._EnableMeasure;
+        this._EnableMeasure = bool.TryParse(enableMeasureStr, out var enableMeasure) ? enableMeasure : this._EnableMeasure;
         this.SetCanvasFrameArguments();
     }
 
@@ -33,7 +33,7 @@
 
     private void SetCanvasFrameArguments()
     {
-        object? value = this._EnableMeasure ? true : null;
+        object? value = this._EnableMeasure ? "true" : null;
         this.AddonsStore.SetCanvasFrameArguments(("measureEnabled", value));
     }
 

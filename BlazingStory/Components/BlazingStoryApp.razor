@@ -45,7 +45,7 @@
 
     private readonly AddonsStore _AddonsStore = new();
 
-    private int _InitLevel = 2;//0;
+    private int _InitLevel = 0;
 
     private IServiceProvider? _ServiceProvider;
 
@@ -55,6 +55,7 @@
         typeof(BlazingStory.Internals.Pages.Canvas.Addons.Grid.GridAddon),
         typeof(BlazingStory.Internals.Pages.Canvas.Addons.ChangeSize.ChangeSizeAddon),
         typeof(BlazingStory.Internals.Pages.Canvas.Addons.Measure.MeasureAddon),
+        typeof(BlazingStory.Internals.Pages.Canvas.Addons.Outlines.OutlinesAddon),
     };
 
     protected override void OnInitialized()
