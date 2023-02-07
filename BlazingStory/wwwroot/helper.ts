@@ -7,7 +7,7 @@ export const getLocalStorageItem = (key: string): string | null => (localStorage
 export const copyTextToClipboard = (text: string): Promise<void> => navigator.clipboard.writeText(text);
 
 const keydown = "keydown";
-const click = "click";
+const pointerdown = "pointerdown";
 
 export const setupKeyDownReceiver = (): void => {
     window.addEventListener("message", (event) => {
@@ -19,8 +19,8 @@ export const setupKeyDownReceiver = (): void => {
                 const keydownEvent = new KeyboardEvent(keydown, { ...message.eventArgs, ...{ bubbles: true } });
                 document.body.dispatchEvent(keydownEvent);
                 break;
-            case click:
-                const clickEvent = new MouseEvent(click, { bubbles: true });
+            case pointerdown:
+                const clickEvent = new MouseEvent(pointerdown, { bubbles: true });
                 document.body.dispatchEvent(clickEvent);
                 break;
         }

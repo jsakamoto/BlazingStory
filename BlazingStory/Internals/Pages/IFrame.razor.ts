@@ -1,7 +1,7 @@
 ﻿import { CSSStyle, MessageArgument } from "../../Scripts/types";
 
 const keydown = "keydown";
-const click = "click";
+const pointerdown = "pointerdown";
 const SessionStateKey = "IFrame.SessionState";
 
 type IFrameSessionState = {
@@ -44,9 +44,9 @@ export const initializeCanvasFrame = () => {
     });
 
     // Transfer the click event to parent window.
-    document.addEventListener(click, event => {
+    document.addEventListener(pointerdown, event => {
         window.parent.postMessage({
-            action: click
+            action: pointerdown
         } as MessageArgument, location.origin);
     });
 }

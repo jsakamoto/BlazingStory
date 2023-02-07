@@ -691,7 +691,12 @@ a.icon-button {
 }
 
 .popup-menu-trigger {
-  display: inline-block;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+.popup-menu-trigger .popup-menu-anchor {
+  width: 0;
 }
 
 .popup-menu-holder {

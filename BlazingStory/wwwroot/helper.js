@@ -2,7 +2,7 @@ export const setLocalStorageItem = (key, value) => { localStorage.setItem(key, v
 export const getLocalStorageItem = (key) => (localStorage.getItem(key) || null);
 export const copyTextToClipboard = (text) => navigator.clipboard.writeText(text);
 const keydown = "keydown";
-const click = "click";
+const pointerdown = "pointerdown";
 export const setupKeyDownReceiver = () => {
     window.addEventListener("message", (event) => {
         if (event.origin !== location.origin)
@@ -13,8 +13,8 @@ export const setupKeyDownReceiver = () => {
                 const keydownEvent = new KeyboardEvent(keydown, { ...message.eventArgs, ...{ bubbles: true } });
                 document.body.dispatchEvent(keydownEvent);
                 break;
-            case click:
-                const clickEvent = new MouseEvent(click, { bubbles: true });
+            case pointerdown:
+                const clickEvent = new MouseEvent(pointerdown, { bubbles: true });
                 document.body.dispatchEvent(clickEvent);
                 break;
         }

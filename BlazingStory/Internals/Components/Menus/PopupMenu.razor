@@ -4,18 +4,22 @@
 <div class="popup-menu @Class">
 
     <div @ref="_TriggerElement" class="popup-menu-trigger" @onclick="OpenPopup">
-        @Trigger
+        <div class="popup-menu-trigger-content">
+            @Trigger
+        </div>
+        <div class="popup-menu-anchor">
+            @if (_PopupShown)
+            {
+                <div class="popup-menu-holder" style="@this._PopupStylesString">
+                    <div class="popup-menu-leader"></div>
+                    <div class="popup-menu-body">
+                        @MenuItems
+                    </div>
+                </div>
+            }
+        </div>
     </div>
 
-    @if (_PopupShown && _PopupPos != null)
-    {
-        <div class="popup-menu-holder" style="@this._PopupPosString">
-            <div class="popup-menu-leader"></div>
-            <div class="popup-menu-body">
-                @MenuItems
-            </div>
-        </div>
-    }
 </div>
 
 @code
@@ -41,9 +45,7 @@
 
     private bool _PopupShown = false;
 
-    private Position? _PopupPos;
-
-    private string _PopupPosString => this._PopupPos != null ? $"left:{this._PopupPos.X}px; top:{this._PopupPos.Y}px; margin-top:{this.MarginTop}px;" : "";
+    private string _PopupStylesString => $"margin-top:{this.MarginTop}px;";
 
     private readonly JSModule _JSModule;
 
@@ -61,13 +63,10 @@
     {
         if (this._PopupShown) return;
 
-        var rect = await this._JSModule.InvokeAsync<Rect>("getBoundingClientRect", this._TriggerElement);
-        this._PopupPos = new() { X = rect.Left + rect.Width / 2, Y = rect.Bottom };
-        this._EventSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeDocumentEvent", "click", this._This, nameof(ClosePopup), ".popup-menu-holder, .popup-menu-holder *");
+        this._EventSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeDocumentEvent", "pointerdown", this._This, nameof(ClosePopup), ".popup-menu-holder, .popup-menu-holder *");
         this._HotKeysContext = this.Services.GetRequiredService<HotKeys>().CreateContext().Add(Code.Escape, ClosePopup);
         this._PopupShown = true;
     }
-
 
     [JSInvokable(nameof(ClosePopup))]
     public async ValueTask ClosePopup()

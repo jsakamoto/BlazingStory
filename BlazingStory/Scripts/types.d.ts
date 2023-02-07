@@ -23,7 +23,7 @@ export type MessageArgument = {
     action: "keydown",
     eventArgs: KeyEventArgument
 } | {
-    action: "click"
+    action: "pointerdown"
 } | {
     action: "reload"
 }

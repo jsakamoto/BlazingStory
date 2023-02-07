@@ -1,5 +1,5 @@
 const keydown = "keydown";
-const click = "click";
+const pointerdown = "pointerdown";
 const SessionStateKey = "IFrame.SessionState";
 export const initializeCanvasFrame = () => {
     const sessionState = {
@@ -27,9 +27,9 @@ export const initializeCanvasFrame = () => {
             }
         }, location.origin);
     });
-    document.addEventListener(click, event => {
+    document.addEventListener(pointerdown, event => {
         window.parent.postMessage({
-            action: click
+            action: pointerdown
         }, location.origin);
     });
 };

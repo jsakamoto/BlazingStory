@@ -1,6 +1,3 @@
-export const getBoundingClientRect = (element) => {
-    return element.getBoundingClientRect();
-};
 export const subscribeDocumentEvent = (eventType, dotnetObj, methodName, excludeSelector) => {
     const evendListener = (ev) => {
         if (excludeSelector && ev.target && ev.target.matches(excludeSelector))

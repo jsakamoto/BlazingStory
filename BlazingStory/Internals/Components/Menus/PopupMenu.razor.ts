@@ -1,9 +1,5 @@
 import { DotNetObjectReference, IDisposable } from "../../../Scripts/types";
 
-export const getBoundingClientRect = (element:HTMLElement) => {
-    return element.getBoundingClientRect();
-};
-
 export const subscribeDocumentEvent = (eventType: string, dotnetObj: DotNetObjectReference, methodName: string, excludeSelector: string): IDisposable => {
 
     const evendListener = (ev: Event) => {
