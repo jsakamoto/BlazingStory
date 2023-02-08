@@ -1,40 +1,4 @@
-<CanvasToolbarRegistrar>
-    <IconButton Icon="SvgIconType.Measure" OnClick="OnClickMeasure" Active="this._EnableMeasure" Title="Enable measure" />
-</CanvasToolbarRegistrar>
-
-@code
-{
-    [CascadingParameter]
-    public required AddonsStore AddonsStore { get; init; }
-
-    [CascadingParameter]
-    internal IServiceProvider Services { get; init; } = default!;
-
-    private HelperScript HelperScript = default!;
-
-    private const string StorageKey = "Addons.Measure";
-
-    private bool _EnableMeasure = false;
-
-    protected override async Task OnInitializedAsync()
-    {
-        this.HelperScript = this.Services.GetRequiredService<HelperScript>();
-        var enableMeasureStr = await this.HelperScript.GetLocalStorageItemAsync(StorageKey);
-        this._EnableMeasure = bool.TryParse(enableMeasureStr, out var enableMeasure) ? enableMeasure : this._EnableMeasure;
-        this.SetCanvasFrameArguments();
-    }
-
-    private async Task OnClickMeasure()
-    {
-        this._EnableMeasure = !this._EnableMeasure;
-        this.SetCanvasFrameArguments();
-        await this.HelperScript.SetLocalStorageItemAsync(StorageKey, this._EnableMeasure);
-    }
-
-    private void SetCanvasFrameArguments()
-    {
-        object? value = this._EnableMeasure ? "true" : null;
-        this.AddonsStore.SetCanvasFrameArguments(("measureEnabled", value));
-    }
-
-}
+<CommonAddonComponent Icon="SvgIconType.Measure"
+                      Title="Enable measure"
+                      StorageKey="Addons.Measure"
+                      CanvasFrameArgumentName="measureEnabled" />
