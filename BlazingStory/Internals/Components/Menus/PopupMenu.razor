@@ -1,10 +1,10 @@
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 
-<div class="popup-menu @Class">
+<div @ref="this._PopupMenuElement" class="popup-menu @Class">
 
-    <div @ref="_TriggerElement" class="popup-menu-trigger" @onclick="OpenPopup">
-        <div class="popup-menu-trigger-content">
+    <div class="popup-menu-trigger">
+        <div class="popup-menu-trigger-content" @onclick="OpenPopup">
             @Trigger
         </div>
         <div class="popup-menu-anchor">
@@ -41,7 +41,7 @@
 
     private HotKeysContext? _HotKeysContext;
 
-    private ElementReference _TriggerElement;
+    private ElementReference _PopupMenuElement;
 
     private bool _PopupShown = false;
 
@@ -61,9 +61,13 @@
 
     private async Task OpenPopup()
     {
-        if (this._PopupShown) return;
+        if (this._PopupShown)
+        {
+            await this.ClosePopup();
+            return;
+        }
 
-        this._EventSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeDocumentEvent", "pointerdown", this._This, nameof(ClosePopup), ".popup-menu-holder, .popup-menu-holder *");
+        this._EventSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeDocumentEvent", "pointerdown", this._This, nameof(ClosePopup), this._PopupMenuElement);
         this._HotKeysContext = this.Services.GetRequiredService<HotKeys>().CreateContext().Add(Code.Escape, ClosePopup);
         this._PopupShown = true;
     }

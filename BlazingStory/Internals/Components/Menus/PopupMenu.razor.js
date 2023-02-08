@@ -1,6 +1,6 @@
-export const subscribeDocumentEvent = (eventType, dotnetObj, methodName, excludeSelector) => {
+export const subscribeDocumentEvent = (eventType, dotnetObj, methodName, popupMenuElement) => {
     const evendListener = (ev) => {
-        if (excludeSelector && ev.target && ev.target.matches(excludeSelector))
+        if (popupMenuElement.contains(ev.target))
             return;
         dotnetObj.invokeMethodAsync(methodName);
     };

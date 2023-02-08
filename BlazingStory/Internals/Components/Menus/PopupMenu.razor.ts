@@ -1,9 +1,9 @@
 import { DotNetObjectReference, IDisposable } from "../../../Scripts/types";
 
-export const subscribeDocumentEvent = (eventType: string, dotnetObj: DotNetObjectReference, methodName: string, excludeSelector: string): IDisposable => {
+export const subscribeDocumentEvent = (eventType: string, dotnetObj: DotNetObjectReference, methodName: string, popupMenuElement: HTMLElement): IDisposable => {
 
     const evendListener = (ev: Event) => {
-        if (excludeSelector && ev.target && (ev.target as HTMLElement).matches(excludeSelector)) return;
+        if (popupMenuElement.contains(ev.target as HTMLElement)) return;
         dotnetObj.invokeMethodAsync(methodName);
     }
     document.addEventListener(eventType, evendListener);
