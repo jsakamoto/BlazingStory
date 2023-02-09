@@ -1,5 +1,8 @@
+@implements IDisposable
+@inject NavigationManager NavigationManager
+
 <div class="explorer-menu">
-    <NavigationTreeItemComponent Item="_NavigationRoot" SubHeading="true" />
+    <NavigationTreeItemComponent Item="_NavigationRoot" SubHeading="true" GetNavigationUrl="this.GetNavigationUrl" />
 </div>
 
 @code {
@@ -9,13 +12,52 @@
     [CascadingParameter]
     protected QueryRouteData RouteData { get; init; } = default!;
 
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
     private readonly NavigationTreeBuilder _NavigationTreeBuilder = new();
 
     private NavigationTreeItem _NavigationRoot = new();
+
+    private readonly Subscriptions _Subscriptions = new();
 
     protected override void OnInitialized()
     {
         var expandedNavigationPath = this.RouteData.RouteToStoryOrDocs ? this.RouteData.Parameter : null;
         this._NavigationRoot = _NavigationTreeBuilder.Build(this.StoriesStore.StoryContainers, expandedNavigationPath);
+
+        var commandService = this.Services.GetRequiredService<CommandService>();
+        this._Subscriptions.Add(
+            commandService.Subscribe(CommandType.PreviousStory, OnPreviousStory),
+            commandService.Subscribe(CommandType.NextStory, OnNextStory)
+        );
+    }
+
+    private ValueTask OnPreviousStory() => this.MoveStory(delta: -1);
+
+    private ValueTask OnNextStory() => this.MoveStory(delta: +1);
+
+    private ValueTask MoveStory(int delta)
+    {
+        var storyItems = this._NavigationRoot.EnumAll(NavigationTreeItemType.Story).ToArray();
+        var index = Array.FindIndex<NavigationTreeItem>(storyItems, item => this.RouteData?.Parameter == item.NavigationPath);
+        var indexMoveTo = index + delta;
+        if (indexMoveTo < 0 || storyItems.Length <= indexMoveTo) return ValueTask.CompletedTask;
+
+        var itemMoveTo = storyItems[index + delta];
+        this._NavigationRoot.EnsureExpandedTo(itemMoveTo);
+
+        this.NavigationManager.NavigateTo(this.GetNavigationUrl(itemMoveTo));
+        return ValueTask.CompletedTask;
+    }
+
+    private string GetNavigationUrl(NavigationTreeItem item)
+    {
+        return "./?path=/story/" + item.NavigationPath;
+    }
+
+    public void Dispose()
+    {
+        this._Subscriptions.Dispose();
     }
 }

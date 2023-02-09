@@ -5,6 +5,8 @@
     {
         @foreach (var item in this.Item.SubItems)
         {
+            if (this.GetNavigationUrl == null) throw new InvalidOperationException($"The {nameof(GetNavigationUrl)} parameter is required.");
+            var href = this.GetNavigationUrl(item);
             var style = $"padding-left: calc({this.IndentLevel} * var(--bs-sidebar-nav-indent-size));";
             var tabIndex = this.SubHeading ? "unset" : "-1";
             var active = (item.Type == NavigationTreeItemType.Story) && (this.RouteData?.RouteToStoryOrDocs == true) && (this.RouteData?.Parameter == item.NavigationPath);
@@ -23,7 +25,7 @@
                     else
                     {
                         @* .action *@
-                        <a href="@GetNavigationUrl(item)" class="action" tabindex="@tabIndex" @onclick="(() => ToggleItemExpansion(item))" style="@style">
+                        <a href="@href" class="action" tabindex="@tabIndex" @onclick="(() => ToggleItemExpansion(item))" style="@style">
                             @NavigationTreeItemContent(item)
                         </a>
                     }
@@ -38,7 +40,7 @@
                 </div>
 
                 <div class="sub-items">
-                    <NavigationTreeItemComponent Item="item" IndentLevel="@(this.SubHeading ? this.IndentLevel : this.IndentLevel + 1)" ExpansionChanged="(() => this.ExpansionChanged.InvokeAsync())" />
+                    <NavigationTreeItemComponent Item="item" IndentLevel="@(this.SubHeading ? this.IndentLevel : this.IndentLevel + 1)" ExpansionChanged="(() => this.ExpansionChanged.InvokeAsync())" GetNavigationUrl="this.GetNavigationUrl" />
                 </div>
             </div>
         }
@@ -53,7 +55,7 @@
             <SvgIcon Type="GetIconType(item)" />
         </span>
         @item.Caption
-    </text>
+        </text>
     ;
 
     [CascadingParameter]
@@ -71,15 +73,20 @@
     [Parameter]
     public EventCallback ExpansionChanged { get; set; }
 
+    [Parameter, EditorRequired]
+    public Func<NavigationTreeItem, string>? GetNavigationUrl { get; set; }
+
     private async Task ToggleItemExpansion(NavigationTreeItem item)
     {
+        if (this.GetNavigationUrl == null) throw new InvalidOperationException($"The {nameof(GetNavigationUrl)} parameter is required.");
+
         item.Expanded = !item.Expanded;
         await ExpansionChanged.InvokeAsync();
 
         if (item.Type == NavigationTreeItemType.StoryCollection && item.Expanded && item.SubItems.Any())
         {
             var storyItemOf1st = item.SubItems.First();
-            this.NavigationManager.NavigateTo(GetNavigationUrl(storyItemOf1st));
+            this.NavigationManager.NavigateTo(this.GetNavigationUrl.Invoke(storyItemOf1st));
         }
     }
 
@@ -91,10 +98,5 @@
             NavigationTreeItemType.Story => SvgIconType.BookmarkHollow,
             _ => SvgIconType.Folder
         };
-    }
-
-    private string GetNavigationUrl(NavigationTreeItem item)
-    {
-        return "./?path=/story/" + item.NavigationPath;
     }
 }

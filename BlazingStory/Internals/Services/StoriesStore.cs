@@ -29,15 +29,17 @@ public class StoriesStore
         }
     }
 
+    internal IEnumerable<Story> EnumAllStories()
+    {
+        return this._StoryContainers.SelectMany(container => container.Stories);
+    }
 
     /// <summary>
     /// Try to find story by navigationn path, such as "examples-ui-button--default".
     /// </summary>
     internal bool TryGetStoryByPath(string navigationPath, [NotNullWhen(true)] out Story? story)
     {
-        story = this._StoryContainers
-            .SelectMany(container => container.Stories)
-            .FirstOrDefault(s => s.NavigationPath == navigationPath);
+        story = this.EnumAllStories().FirstOrDefault(s => s.NavigationPath == navigationPath);
         return story != null;
     }
 }
