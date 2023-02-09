@@ -47,6 +47,7 @@ internal class CommandService : IDisposable
             .Select(entry => entry.Command)
             .FirstOrDefault(cmd => cmd.HotKey != null && cmd.HotKey.Code == args.Code && cmd.HotKey.Modifiers == args.Modifiers);
         if (commad == null) return;
+        // TODO: args.PreventDefault = true;
         commad.InvokeAsync().AndLogException(this._Logger);
     }
 

@@ -1,0 +1,100 @@
+﻿@inject NavigationManager NavigationManager
+
+<div class="navigation-tree">
+    @if (this.Item != null)
+    {
+        @foreach (var item in this.Item.SubItems)
+        {
+            var style = $"padding-left: calc({this.IndentLevel} * var(--bs-sidebar-nav-indent-size));";
+            var tabIndex = this.SubHeading ? "unset" : "-1";
+            var active = (item.Type == NavigationTreeItemType.Story) && (this.RouteData?.RouteToStoryOrDocs == true) && (this.RouteData?.Parameter == item.NavigationPath);
+
+            <div @key="item.Caption" class="navigation-tree-item @CssClass(new {item.Expanded, this.SubHeading, Type = item.Type.ToString(), active })">
+
+                @* .caption *@
+                <div class="caption">
+                    @if (item.Type != NavigationTreeItemType.Story)
+                    {
+                        @* .action *@
+                        <button class="action" tabindex="@tabIndex" @onclick="(() => ToggleItemExpansion(item))" style="@style">
+                            @NavigationTreeItemContent(item)
+                        </button>
+                    }
+                    else
+                    {
+                        @* .action *@
+                        <a href="@GetNavigationUrl(item)" class="action" tabindex="@tabIndex" @onclick="(() => ToggleItemExpansion(item))" style="@style">
+                            @NavigationTreeItemContent(item)
+                        </a>
+                    }
+                    @if (this.SubHeading)
+                    {
+                        @* .sub-heading-action *@
+                        var subHeadingActionIcon = item.IsExpandedAll ? SvgIconType.CollapseAll : SvgIconType.ExpandAll;
+                        <button class="sub-heading-action" @onclick="() => item.ToggleSubItemsExpansion()">
+                            <SvgIcon Type="subHeadingActionIcon" />
+                        </button>
+                    }
+                </div>
+
+                <div class="sub-items">
+                    <NavigationTreeItemComponent Item="item" IndentLevel="@(this.SubHeading ? this.IndentLevel : this.IndentLevel + 1)" ExpansionChanged="(() => this.ExpansionChanged.InvokeAsync())" />
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private RenderFragment<NavigationTreeItem> NavigationTreeItemContent => (NavigationTreeItem item) =>
+    @<text>
+        <span class="chevron"></span>
+        <span class="icon">
+            <SvgIcon Type="GetIconType(item)" />
+        </span>
+        @item.Caption
+    </text>
+    ;
+
+    [CascadingParameter]
+    public QueryRouteData? RouteData { get; set; }
+
+    [Parameter, EditorRequired]
+    public NavigationTreeItem? Item { get; set; }
+
+    [Parameter]
+    public bool SubHeading { get; set; }
+
+    [Parameter]
+    public int IndentLevel { get; set; }
+
+    [Parameter]
+    public EventCallback ExpansionChanged { get; set; }
+
+    private async Task ToggleItemExpansion(NavigationTreeItem item)
+    {
+        item.Expanded = !item.Expanded;
+        await ExpansionChanged.InvokeAsync();
+
+        if (item.Type == NavigationTreeItemType.StoryCollection && item.Expanded && item.SubItems.Any())
+        {
+            var storyItemOf1st = item.SubItems.First();
+            this.NavigationManager.NavigateTo(GetNavigationUrl(storyItemOf1st));
+        }
+    }
+
+    private SvgIconType GetIconType(NavigationTreeItem item)
+    {
+        return item.Type switch
+        {
+            NavigationTreeItemType.StoryCollection => SvgIconType.Component,
+            NavigationTreeItemType.Story => SvgIconType.BookmarkHollow,
+            _ => SvgIconType.Folder
+        };
+    }
+
+    private string GetNavigationUrl(NavigationTreeItem item)
+    {
+        return "./?path=/story/" + item.NavigationPath;
+    }
+}

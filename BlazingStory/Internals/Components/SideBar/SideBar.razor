@@ -12,26 +12,6 @@
 
     <SearchField />
 
-    <div class="explorer-menu">
-        <NavigationTree Item="_NavigationRoot" SubHeading="true" />
-    </div>
+    <NavigationTree />
 
 </nav>
-
-@code {
-    [CascadingParameter]
-    protected StoriesStore StoriesStore { get; init; } = default!;
-
-    [CascadingParameter]
-    protected QueryRouteData RouteData { get; init; } = default!;
-
-    private readonly NavigationTreeBuilder _NavigationTreeBuilder = new();
-
-    private NavigationTreeItem _NavigationRoot = new();
-
-    protected override void OnInitialized()
-    {
-        var expandedNavigationPath = this.RouteData.RouteToStoryOrDocs ? this.RouteData.Parameter : null;
-        this._NavigationRoot = _NavigationTreeBuilder.Build(this.StoriesStore.StoryContainers, expandedNavigationPath);
-    }
-}
