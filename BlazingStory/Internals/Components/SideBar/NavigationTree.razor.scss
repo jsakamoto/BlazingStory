@@ -1,9 +1,10 @@
 ﻿.navigation-tree {
 
     .caption {
+        height: 23px;
         display: flex;
         justify-content: space-between;
-        height: 23px;
+        align-items: center;
 
         button, a {
             outline: 0;
@@ -11,6 +12,7 @@
             color: var(--bs-sidebar-nav-color);
             background-color: transparent;
             cursor: pointer;
+            height: 100%;
         }
 
         .action {
@@ -20,10 +22,13 @@
             display: flex;
             flex-wrap: nowrap;
             width: 100%;
-            height: 24px;
-            padding: 3px 10px 3px 1px;
+            padding: 0;
             appearance: none;
             text-decoration: none;
+
+            .icon {
+                margin-left: 3px;
+            }
         }
 
         .action:hover, button.action:focus {
@@ -51,7 +56,7 @@
         width: 0;
         height: 0;
         margin-left: 10px;
-        margin-right: 5px;
+        margin-right: 2px;
         color: rgba(153,153,153,0.6);
         border-top: 3px solid transparent;
         border-bottom: 3px solid transparent;
@@ -74,7 +79,6 @@
     //
     /* ---- Sub Items ---- */
     .sub-items {
-        /*padding-left: 10px;*/
         display: none;
     }
 
@@ -86,6 +90,9 @@
     .sub-heading {
 
         & > .caption {
+            height: 20px;
+            margin-top: var(--bs-sidebar-gap-size);
+            margin-bottom: 4px;
 
             .action {
                 font-size: 11px;
@@ -94,6 +101,14 @@
                 font-weight: 900;
                 letter-spacing: 3.85px;
                 width: unset;
+
+                .chevron {
+                    margin-right: 7px;
+                }
+
+                .icon {
+                    display: none;
+                }
 
                 &:hover, &:focus {
                     background-color: transparent;
@@ -105,10 +120,6 @@
                     .chevron {
                         color: var(--bs-focused-color);
                     }
-                }
-
-                .icon {
-                    display: none;
                 }
             }
 
@@ -127,7 +138,7 @@
         width: 18px;
         height: 18px;
         padding: 0;
-        margin: 0 20px 0 0;
+        margin: 0 21px 0 0;
         display: inline-flex;
         align-items: center;
         justify-content: center;

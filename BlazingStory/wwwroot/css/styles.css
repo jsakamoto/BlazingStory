@@ -26,6 +26,8 @@
   --bs-popup-active-text-color: #ff4785;
   --bs-scrollbar-thumb-color: #ccc;
   --bs-scrollbar-back-color: #e0e0e0;
+  --bs-sidebar-gap-size: 16px;
+  --bs-sidebar-nav-indent-size: 16px;
 }
 
 * {
@@ -214,6 +216,7 @@ button {
   display: flex;
   height: 28px;
   align-items: center;
+  margin-bottom: var(--bs-sidebar-gap-size);
 }
 .sidebar .sidebar-header .sidebar-header-title {
   font-size: 18px;
@@ -275,9 +278,10 @@ button {
   /* ---- Icons ---- */
 }
 .navigation-tree .caption {
+  height: 23px;
   display: flex;
   justify-content: space-between;
-  height: 23px;
+  align-items: center;
 }
 .navigation-tree .caption button, .navigation-tree .caption a {
   outline: 0;
@@ -285,6 +289,7 @@ button {
   color: var(--bs-sidebar-nav-color);
   background-color: transparent;
   cursor: pointer;
+  height: 100%;
 }
 .navigation-tree .caption .action {
   align-items: center;
@@ -293,10 +298,12 @@ button {
   display: flex;
   flex-wrap: nowrap;
   width: 100%;
-  height: 24px;
-  padding: 3px 10px 3px 1px;
+  padding: 0;
   appearance: none;
   text-decoration: none;
+}
+.navigation-tree .caption .action .icon {
+  margin-left: 3px;
 }
 .navigation-tree .caption .action:hover, .navigation-tree .caption button.action:focus {
   background-color: rgba(30, 167, 253, 0.07);
@@ -317,7 +324,7 @@ button {
   width: 0;
   height: 0;
   margin-left: 10px;
-  margin-right: 5px;
+  margin-right: 2px;
   color: rgba(153, 153, 153, 0.6);
   border-top: 3px solid transparent;
   border-bottom: 3px solid transparent;
@@ -336,11 +343,15 @@ button {
   visibility: hidden;
 }
 .navigation-tree .sub-items {
-  /*padding-left: 10px;*/
   display: none;
 }
 .navigation-tree .expanded > .sub-items {
   display: block;
+}
+.navigation-tree .sub-heading > .caption {
+  height: 20px;
+  margin-top: var(--bs-sidebar-gap-size);
+  margin-bottom: 4px;
 }
 .navigation-tree .sub-heading > .caption .action {
   font-size: 11px;
@@ -350,6 +361,12 @@ button {
   letter-spacing: 3.85px;
   width: unset;
 }
+.navigation-tree .sub-heading > .caption .action .chevron {
+  margin-right: 7px;
+}
+.navigation-tree .sub-heading > .caption .action .icon {
+  display: none;
+}
 .navigation-tree .sub-heading > .caption .action:hover, .navigation-tree .sub-heading > .caption .action:focus {
   background-color: transparent;
 }
@@ -358,9 +375,6 @@ button {
 }
 .navigation-tree .sub-heading > .caption .action:focus .chevron {
   color: var(--bs-focused-color);
-}
-.navigation-tree .sub-heading > .caption .action .icon {
-  display: none;
 }
 .navigation-tree .sub-heading > .caption button:focus-visible {
   outline: 1px solid var(--bs-focused-color);
@@ -373,7 +387,7 @@ button {
   width: 18px;
   height: 18px;
   padding: 0;
-  margin: 0 20px 0 0;
+  margin: 0 21px 0 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;

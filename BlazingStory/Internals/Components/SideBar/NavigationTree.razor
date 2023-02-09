@@ -5,7 +5,7 @@
     {
         @foreach (var item in this.Item.SubItems)
         {
-            var style = $"padding-left: {this.IndentLevel * 14}px;";
+            var style = $"padding-left: calc({this.IndentLevel} * var(--bs-sidebar-nav-indent-size));";
             var tabIndex = this.SubHeading ? "unset" : "-1";
             var active = (item.Type == NavigationTreeItemType.Story) && (this.RouteData?.RouteToStoryOrDocs == true) && (this.RouteData?.Parameter == item.NavigationPath);
 
