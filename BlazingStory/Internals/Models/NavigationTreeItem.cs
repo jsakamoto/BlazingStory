@@ -16,10 +16,10 @@ public class NavigationTreeItem
     {
     }
 
-    internal IEnumerable<NavigationTreeItem> EnumAll(NavigationTreeItemType type)
+    internal IEnumerable<NavigationTreeItem> EnumAll()
     {
-        if (this.Type == type) yield return this;
-        foreach (var item in this.SubItems.SelectMany(subItem => subItem.EnumAll(type)))
+        yield return this;
+        foreach (var item in this.SubItems.SelectMany(subItem => subItem.EnumAll()))
         {
             yield return item;
         }
@@ -33,7 +33,7 @@ public class NavigationTreeItem
         this.SubItems.ForEach(item => item.ApplyExpansionRecursively(expanded));
     }
 
-    private void ApplyExpansionRecursively(bool expanded)
+    internal void ApplyExpansionRecursively(bool expanded)
     {
         this.Expanded = expanded;
         this.SubItems.ForEach(item => item.ApplyExpansionRecursively(expanded));

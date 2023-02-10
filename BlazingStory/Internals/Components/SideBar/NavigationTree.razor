@@ -28,9 +28,64 @@
 
         var commandService = this.Services.GetRequiredService<CommandService>();
         this._Subscriptions.Add(
+            commandService.Subscribe(CommandType.PreviousComponent, OnPreviousComponent),
+            commandService.Subscribe(CommandType.NextComponent, OnNextComponent),
             commandService.Subscribe(CommandType.PreviousStory, OnPreviousStory),
-            commandService.Subscribe(CommandType.NextStory, OnNextStory)
+            commandService.Subscribe(CommandType.NextStory, OnNextStory),
+            commandService.Subscribe(CommandType.CollapseAll, OnCollapseAll)
         );
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        var navigationPath = this.RouteData?.Parameter;
+        var storyItems = this._NavigationRoot.EnumAll()
+            .Where(item => item.Type == NavigationTreeItemType.Story)
+            .ToArray();
+        var activeStory = storyItems.FirstOrDefault(item => item.NavigationPath == navigationPath);
+        if (activeStory != null) return;
+
+        var firstStory = storyItems.FirstOrDefault();
+        if (firstStory == null) return;
+
+        this._NavigationRoot.EnsureExpandedTo(firstStory);
+        this.NavigationManager.NavigateTo(this.GetNavigationUrl(firstStory));
+    }
+
+    private ValueTask OnPreviousComponent() => this.MoveComponent(delta: -1);
+
+    private ValueTask OnNextComponent() => this.MoveComponent(delta: +1);
+
+    private ValueTask MoveComponent(int delta)
+    {
+        var navigationPath = this.RouteData?.Parameter;
+
+        var currentComponent = default(NavigationTreeItem);
+        foreach (var item in this._NavigationRoot.EnumAll())
+        {
+            if (item.Type == NavigationTreeItemType.StoryCollection) currentComponent = item;
+            if (item.NavigationPath == navigationPath) break;
+        }
+        if (currentComponent == null) return ValueTask.CompletedTask;
+
+        var componentItems = this._NavigationRoot.EnumAll()
+            .Where(item => item.Type == NavigationTreeItemType.StoryCollection)
+            .ToArray();
+
+        var index = Array.IndexOf<NavigationTreeItem>(componentItems, currentComponent);
+        var indexMoveTo = index + delta;
+        if (indexMoveTo < 0 || componentItems.Length <= indexMoveTo) return ValueTask.CompletedTask;
+
+        var componentMoveTo = componentItems[index + delta];
+        var itemMoveTo = componentMoveTo.SubItems.FirstOrDefault();
+        if (itemMoveTo == null) return ValueTask.CompletedTask;
+
+        this._NavigationRoot.EnsureExpandedTo(itemMoveTo);
+
+        this.NavigationManager.NavigateTo(this.GetNavigationUrl(itemMoveTo));
+        return ValueTask.CompletedTask;
     }
 
     private ValueTask OnPreviousStory() => this.MoveStory(delta: -1);
@@ -39,7 +94,9 @@
 
     private ValueTask MoveStory(int delta)
     {
-        var storyItems = this._NavigationRoot.EnumAll(NavigationTreeItemType.Story).ToArray();
+        var storyItems = this._NavigationRoot.EnumAll()
+            .Where(item => item.Type == NavigationTreeItemType.Story)
+            .ToArray();
         var index = Array.FindIndex<NavigationTreeItem>(storyItems, item => this.RouteData?.Parameter == item.NavigationPath);
         var indexMoveTo = index + delta;
         if (indexMoveTo < 0 || storyItems.Length <= indexMoveTo) return ValueTask.CompletedTask;
@@ -48,6 +105,15 @@
         this._NavigationRoot.EnsureExpandedTo(itemMoveTo);
 
         this.NavigationManager.NavigateTo(this.GetNavigationUrl(itemMoveTo));
+        return ValueTask.CompletedTask;
+    }
+
+    private ValueTask OnCollapseAll()
+    {
+        foreach (var item in this._NavigationRoot.SubItems.SelectMany(headerItem => headerItem.SubItems))
+        {
+            item.ApplyExpansionRecursively(false);
+        }
         return ValueTask.CompletedTask;
     }
 
