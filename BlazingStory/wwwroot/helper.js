@@ -1,6 +1,7 @@
 export const setLocalStorageItem = (key, value) => { localStorage.setItem(key, value); };
 export const getLocalStorageItem = (key) => (localStorage.getItem(key) || null);
 export const copyTextToClipboard = (text) => navigator.clipboard.writeText(text);
+export const releaseFocus = () => { var _a; (_a = document.activeElement) === null || _a === void 0 ? void 0 : _a.blur(); };
 const keydown = "keydown";
 const pointerdown = "pointerdown";
 export const setupKeyDownReceiver = () => {

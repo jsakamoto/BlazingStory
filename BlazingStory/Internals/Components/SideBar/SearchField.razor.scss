@@ -4,8 +4,7 @@
     input {
         appearance: none;
         height: 32px;
-        padding-left: 30px;
-        padding-right: 32px;
+        padding: 1px 32px 3px 30px;
         border: 1px solid rgba(153,153,153,0.4);
         background: transparent;
         border-radius: 28px;
@@ -20,10 +19,6 @@
             outline: 0;
             background: var(--bs-back-color);
             border-color: var(--bs-focused-color);
-
-            & ~ .shortcut-keymap {
-                display: none;
-            }
         }
     }
 
@@ -40,5 +35,32 @@
         position: absolute;
         top: 8px;
         right: 16px;
+    }
+
+    .clear-icon {
+        display: none;
+        position: absolute;
+        top: 5px;
+        right: 11px;
+        width: 16px;
+        height: 16px;
+        padding: 4px;
+        z-index: 1;
+        background: rgba(0,0,0,0.05);
+        border-radius: 16px;
+        color: #5C6870;
+        cursor: pointer;
+    }
+
+    &.has-focus, &.has-text {
+        .shortcut-keymap {
+            display: none;
+        }
+    }
+
+    &.has-text {
+        .clear-icon {
+            display: block;
+        }
     }
 }

@@ -28,6 +28,7 @@ public enum SvgIconType
     Chevron,
     Exchange,
 
+    Close,
     CircleClose,
     RightSidePane,
     BottomSidePane,

@@ -1,7 +1,17 @@
-<div class="search-field">
-    <input @ref="_InputElement" type="text" placeholder="@this.SearchBoxPlaceHolder" required autocomplete="off" @onfocus="OnFocusSearchBox" @onblur="OnBlurSearchBox" role="search" />
+<div class="@CssClass("search-field", new {
+    HasFocus = this._SearchBoxHasFocus,
+    HasText = this._SearchBoxHasText
+})">
     <SvgIcon Type="SvgIconType.Find" Class="find-icon" />
+
+    <input @ref="_InputElement" type="text" placeholder="@this.SearchBoxPlaceHolder" required autocomplete="off"
+           value="@this.SearchText"
+           @oninput="OnInputSearchText"
+           @onfocus="OnFocusSearchBox"
+           @onblur="OnBlurSearchBox" role="search" />
+
     <KeyMap Key="this._GoSearchHotKey" Class="shortcut-keymap" />
+    <SvgIcon Type="SvgIconType.Close" Class="clear-icon" OnClick="ClearSearchText" />
 </div>
 
 @code
@@ -9,9 +19,23 @@
     [CascadingParameter]
     protected IServiceProvider Services { get; init; } = default!;
 
+    [Parameter]
+    public string? SearchText { get; set; }
+
+    [Parameter]
+    public EventCallback<string?> SearchTextChanged { get; set; }
+
+    [Parameter]
+    public EventCallback Focus { get; set; }
+
+    [Parameter]
+    public EventCallback Cleared { get; set; }
+
     private ElementReference _InputElement;
 
     private bool _SearchBoxHasFocus = false;
+
+    private bool _SearchBoxHasText => !string.IsNullOrEmpty(this.SearchText);
 
     private string SearchBoxPlaceHolder => this._SearchBoxHasFocus ? "Type to find..." : "Find components";
 
@@ -26,7 +50,17 @@
         goSearchCommand.Subscribe(OnGoSearchCommand);
     }
 
-    private void OnFocusSearchBox() => _SearchBoxHasFocus = true;
+    private async Task OnInputSearchText(ChangeEventArgs args)
+    {
+        this.SearchText = args.Value as string;
+        await this.SearchTextChanged.InvokeAsync(this.SearchText);
+    }
+
+    private async Task OnFocusSearchBox()
+    {
+        await this.Focus.InvokeAsync();
+        _SearchBoxHasFocus = true;
+    }
 
     private void OnBlurSearchBox() => _SearchBoxHasFocus = false;
 
@@ -36,4 +70,10 @@
         await _InputElement.FocusAsync();
     }
 
+    private async Task ClearSearchText()
+    {
+        this.SearchText = "";
+        await this.SearchTextChanged.InvokeAsync(this.SearchText);
+        await this.Cleared.InvokeAsync();
+    }
 }

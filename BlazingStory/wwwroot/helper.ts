@@ -6,6 +6,8 @@ export const getLocalStorageItem = (key: string): string | null => (localStorage
 
 export const copyTextToClipboard = (text: string): Promise<void> => navigator.clipboard.writeText(text);
 
+export const releaseFocus = (): void => { (document.activeElement as HTMLElement)?.blur(); };
+
 const keydown = "keydown";
 const pointerdown = "pointerdown";
 

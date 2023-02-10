@@ -1,0 +1,64 @@
+@implements IDisposable
+
+<div class="search-and-history">
+    <SearchField @bind-SearchText="_SearchText" Focus="OnFocus" Cleared="OnCleared" />
+</div>
+
+@code
+{
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
+    [Parameter]
+    public bool SearchMode { get; set; } = false;
+
+    [Parameter]
+    public EventCallback<bool> SearchModeChanged { get; set; }
+
+    private string? _SearchText;
+
+    private HotKeysContext? _HotKeysContext;
+
+    private void OnFocus()
+    {
+        this.SearchMode = true;
+        this.SearchModeChanged.InvokeAsync(this.SearchMode);
+
+        this._HotKeysContext?.Dispose();
+        var hotKeys = this.Services.GetRequiredService<HotKeys>();
+        this._HotKeysContext = hotKeys.CreateContext().Add(Code.Escape, OnEscape, exclude: Exclude.None);
+    }
+
+    private async Task OnCleared()
+    {
+        await this.ExitSearchMode();
+    }
+
+    private async ValueTask OnEscape()
+    {
+        if (!string.IsNullOrWhiteSpace(this._SearchText))
+        {
+            this._SearchText = "";
+            this.StateHasChanged();
+            return;
+        }
+
+        this._SearchText = "";
+        await this.ExitSearchMode();
+    }
+    private async ValueTask ExitSearchMode()
+    {
+        this.SearchMode = false;
+        this._HotKeysContext?.Dispose();
+        this._HotKeysContext = null;
+        await this.SearchModeChanged.InvokeAsync(this.SearchMode);
+
+        var helperScript = this.Services.GetRequiredService<HelperScript>();
+        await helperScript.InvokeVoidAsync("releaseFocus");
+    }
+
+    public void Dispose()
+    {
+        this._HotKeysContext?.Dispose();
+    }
+}

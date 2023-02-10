@@ -10,8 +10,16 @@
 
     </div>
 
-    <SearchField />
+    <SearchAndHistory  @bind-SearchMode="this._SearchMode" />
 
-    <NavigationTree />
+    @if (!_SearchMode)
+    {
+        <NavigationTree />
+    }
 
 </nav>
+
+@code
+{
+    private bool _SearchMode = false;
+}
