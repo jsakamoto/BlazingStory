@@ -11,10 +11,10 @@
             var tabIndex = this.SubHeading ? "unset" : "-1";
             var active = (item.Type == NavigationTreeItemType.Story) && (this.RouteData?.RouteToStoryOrDocs == true) && (this.RouteData?.Parameter == item.NavigationPath);
 
-            <div @key="item.Caption" class="navigation-tree-item @CssClass(new {item.Expanded, this.SubHeading, Type = item.Type.ToString(), active })">
+            <div @key="item.Caption" class="navigation-tree-item @CssClass(new {item.Expanded, Type = item.Type.ToString(), active })">
 
                 @* .caption *@
-                <div class="caption">
+                <div class="@CssClass("caption", new {this.SubHeading})">
                     @if (item.Type != NavigationTreeItemType.Story)
                     {
                         @* .action *@

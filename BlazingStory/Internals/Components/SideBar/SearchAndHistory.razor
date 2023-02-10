@@ -1,7 +1,21 @@
 @implements IDisposable
 
 <div class="search-and-history">
-    <SearchField @bind-SearchText="_SearchText" Focus="OnFocus" Cleared="OnCleared" />
+
+    <SearchField @bind-SearchText="this._SearchText" Focus="OnFocus" Cleared="OnCleared" />
+
+    @if (this.SearchMode)
+    {
+        @if (string.IsNullOrEmpty(this._SearchText))
+        {
+            <History />
+        }
+        else
+        {
+            <SearchResult SearchText="@this._SearchText" />
+        }
+    }
+
 </div>
 
 @code

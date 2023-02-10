@@ -4,7 +4,7 @@
     input {
         appearance: none;
         height: 32px;
-        padding: 1px 32px 3px 30px;
+        padding: 1px 32px 1px 30px;
         border: 1px solid rgba(153,153,153,0.4);
         background: transparent;
         border-radius: 28px;
@@ -46,9 +46,9 @@
         height: 16px;
         padding: 4px;
         z-index: 1;
-        background: rgba(0,0,0,0.05);
         border-radius: 16px;
-        color: #5C6870;
+        background: var(--bs-keymap-back-color);
+        color: var(--bs-keymap-text-color);
         cursor: pointer;
     }
 
