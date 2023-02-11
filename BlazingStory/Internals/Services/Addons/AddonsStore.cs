@@ -4,9 +4,11 @@ namespace BlazingStory.Internals.Services.Addons;
 
 public class AddonsStore
 {
-    private readonly List<RenderFragment> _CanvasToolbarRenderer = new();
+    private class CanvasToolbarRenderer { public int Order; public required RenderFragment Fragment; }
 
-    internal IEnumerable<RenderFragment> CanvasToolbarRenderer => this._CanvasToolbarRenderer;
+    private IEnumerable<CanvasToolbarRenderer> _CanvasToolbarRenderers = Enumerable.Empty<CanvasToolbarRenderer>();
+
+    internal IEnumerable<RenderFragment> CanvasToolbarRenderers => this._CanvasToolbarRenderers.Select(r => r.Fragment);
 
     internal event EventHandler<CanvasFrameArgumentsEventArgs>? OnSetCanvasFrameArguments;
 
@@ -14,9 +16,13 @@ public class AddonsStore
 
     internal IReadOnlyDictionary<string, object?> CanvasFrameArguments => this._CanvasFrameArguments;
 
-    internal void RegisterCanvasToolbarRenderer(RenderFragment renderer)
+    internal void RegisterCanvasToolbarRenderer(int toolButtonOrder, RenderFragment renderer)
     {
-        this._CanvasToolbarRenderer.Add(renderer);
+        this._CanvasToolbarRenderers = this._CanvasToolbarRenderers
+            .Append(new() { Order = toolButtonOrder, Fragment = renderer })
+            .OrderBy(r => r.Order)
+            .ToArray();
+
     }
 
     internal void SetCanvasFrameArguments(params (string Key, object? Value)[] args)

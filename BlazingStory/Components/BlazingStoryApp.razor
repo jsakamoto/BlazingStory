@@ -11,7 +11,7 @@
         <div style="display:none;">
             @foreach (var addonType in this._AddonsTypes)
             {
-                <DynamicComponent Type="addonType" />
+                <DynamicComponent @key="addonType" Type="addonType" />
             }
         </div>
 

@@ -339,7 +339,7 @@ button {
   display: inline-block;
   width: 0;
   height: 0;
-  margin: -2px 2px 0 10px;
+  margin: 0 2px 0 10px;
   color: rgba(153, 153, 153, 0.6);
   border-top: 3px solid transparent;
   border-bottom: 3px solid transparent;
@@ -365,7 +365,6 @@ button {
 }
 .navigation-tree .caption.sub-heading {
   height: 20px;
-  padding-top: 2px;
   margin-top: var(--bs-sidebar-gap-size);
   margin-bottom: 4px;
 }
@@ -403,7 +402,7 @@ button {
   width: 18px;
   height: 18px;
   padding: 0;
-  margin: -2px 21px 0 0;
+  margin: 0 21px 0 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;

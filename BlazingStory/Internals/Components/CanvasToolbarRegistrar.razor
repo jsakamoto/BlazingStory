@@ -6,8 +6,14 @@
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
+    [Parameter, EditorRequired]
+    public int ToolbuttonOrder { get; set; }
+
     protected override void OnInitialized()
     {
-        if (this.ChildContent != null) this.AddonsStore.RegisterCanvasToolbarRenderer(ChildContent);
+        if (this.ChildContent != null)
+        {
+            this.AddonsStore.RegisterCanvasToolbarRenderer(this.ToolbuttonOrder, this.ChildContent);
+        }
     }
 }

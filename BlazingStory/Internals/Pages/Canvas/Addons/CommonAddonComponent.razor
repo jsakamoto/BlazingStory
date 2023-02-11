@@ -1,4 +1,4 @@
-<CanvasToolbarRegistrar>
+<CanvasToolbarRegistrar ToolbuttonOrder="this.ToolbuttonOrder">
     <IconButton Icon="this.Icon" OnClick="OnClickButton" Active="this._Enable" Title="@this.Title" />
 </CanvasToolbarRegistrar>
 
@@ -22,6 +22,8 @@
     [Parameter, EditorRequired]
     public string CanvasFrameArgumentName { get; set; } = default!;
 
+    [Parameter, EditorRequired]
+    public int ToolbuttonOrder { get; set; }
 
     private HelperScript HelperScript = default!;
 
