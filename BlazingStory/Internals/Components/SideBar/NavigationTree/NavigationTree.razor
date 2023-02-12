@@ -40,7 +40,10 @@
     {
         if (!firstRender) return;
 
+        // Navigte to default story if the navigationPath is empty.
         var navigationPath = this.RouteData?.Parameter;
+        if (!string.IsNullOrEmpty(navigationPath)) return;
+
         var storyItems = this._NavigationRoot.EnumAll()
             .Where(item => item.Type == NavigationTreeItemType.Story)
             .ToArray();

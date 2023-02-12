@@ -1,0 +1,42 @@
+<style>
+    .nothing-to-address[blazing-story] {
+        box-sizing: border-box;
+        border: solid 20px rgb(187, 49, 49);
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #222;
+        color: #eee;
+        padding: 20px;
+    }
+
+        .nothing-to-address[blazing-story] pre {
+            margin: 10px 0;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+
+        .nothing-to-address[blazing-story] code {
+            white-space: pre-line;
+            display: block;
+            padding: 1px 10px 10px 10px;
+            line-height: 16px;
+        }
+</style>
+<div class="nothing-to-address" blazing-story>
+    <pre>Couldn't find story matching '@this.RouteData.Parameter'.</pre>
+    <code>
+        - Are you sure a story with that id exists?
+        - Please check your stories field of your main.js config.
+        - Also check the browser console and terminal for error messages.
+    </code>
+</div>
+
+@code
+{
+    [CascadingParameter]
+    public required QueryRouteData RouteData { get; set; }
+}

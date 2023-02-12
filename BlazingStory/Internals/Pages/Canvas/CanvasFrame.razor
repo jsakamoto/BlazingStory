@@ -5,7 +5,11 @@
 @inject ILogger<CanvasFrame> Logger
 @inject NavigationManager NavigationManager
 
-@if (this._Story != null)
+@if (this._Story == null)
+{
+    <CanvasFrameNothingToAddress />
+}
+else
 {
     @this._Story.RenderFragment(this._Story.Context)
 }
@@ -147,7 +151,7 @@
             new { Id = "addon-background-grid", Enable = enableGrid, Href = basePath + "background-grid.min.css" },
             new { Id = "addon-outline", Enable = enableOutline, Href = basePath + "outline.min.css" }};
         await this._JSModule.InvokeVoidAsync("ensurePreviewStyle", new object[] { background, styleDescripters });
-        
+
         this.StateHasChanged();
     }
 
