@@ -4,6 +4,37 @@
         Recently opened
     </div>
 
+    <div class="recently-opened">
+
+        <button title="Examples / UI / Button / Docs" class="item type-docs" @onpointerenter="@(() => OnHover("p:examples-ui-button-docs"))" aria-selected="@IsSelected("p:examples-ui-button-docs")">
+            <SvgIcon Type="SvgIconType.Document" />
+            <div class="label">
+                <div class="title">
+                    Docs
+                </div>
+                <div class="path">
+                    <span>Examples</span>
+                    <span>UI</span>
+                    <span>Button</span>
+                </div>
+            </div>
+        </button>
+
+        <button title="Examples / UI / Button" class="item type-story-collection" @onpointerenter="@(() => OnHover("p:examples-ui-button"))" aria-selected="@IsSelected("p:examples-ui-button")">
+            <SvgIcon Type="SvgIconType.Component"/>
+            <div class="label">
+                <div class="title">
+                    Button
+                </div>
+                <div class="path">
+                    <span>Examples</span>
+                    <span>UI</span>
+                </div>
+            </div>
+        </button>
+
+    </div>
+
     <div class="actions">
 
         <div class="action" @onclick="BackToComponents" @onpointerenter="@(() => OnHover("back-to-components"))" aria-selected="@IsSelected("back-to-components")">

@@ -18,6 +18,7 @@
   --bs-icon-folder-color: #2a0481;
   --bs-icon-story-container-color: #029cfd;
   --bs-icon-story-color: #37d5d3;
+  --bs-icon-document-color: #ff8300;
   --bs-keymap-text-color: #5c6870;
   --bs-keymap-back-color: rgba(0,0,0,0.05);
   --bs-button-flagged-back-color: rgba(2,156,253,0.07);
@@ -316,6 +317,52 @@ button {
   color: var(--bs-dimmed-text-color);
   letter-spacing: 3.85px;
 }
+.history .recently-opened {
+  margin: 0 -20px;
+}
+.history .recently-opened .item {
+  padding: 3px 3px 3px 18px;
+  width: 100%;
+  display: flex;
+  text-align: left;
+}
+.history .recently-opened .item.type-story-collection .svg-icon {
+  color: var(--bs-icon-story-container-color);
+}
+.history .recently-opened .item.type-docs .svg-icon {
+  color: var(--bs-icon-document-color);
+}
+.history .recently-opened .item .label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+}
+.history .recently-opened .item .label .title {
+  font-weight: 600;
+}
+.history .recently-opened .item .label .path {
+  font-size: 11px;
+  color: var(--bs-dimmed-text-color);
+  display: grid;
+  justify-content: start;
+  grid-auto-flow: column;
+}
+.history .recently-opened .item .label .path span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.history .recently-opened .item .label .path span + span {
+  position: relative;
+  margin-left: 4px;
+  padding-left: 7px;
+}
+.history .recently-opened .item .label .path span + span:before {
+  content: "/";
+  position: absolute;
+  left: 0;
+}
 .history .actions {
   margin-top: 8px;
 }
@@ -335,7 +382,7 @@ button {
 .history .actions .action > .text {
   flex: 1;
 }
-.history .actions .action[aria-selected] {
+.history [aria-selected] {
   background-color: var(--bs-hover-light-back-color);
 }
 
