@@ -8,7 +8,7 @@
     {
         @if (string.IsNullOrEmpty(this._SearchText))
         {
-            <History />
+            <History OnClickExit="ExitSearchMode" />
         }
         else
         {
@@ -60,7 +60,8 @@
         this._SearchText = "";
         await this.ExitSearchMode();
     }
-    private async ValueTask ExitSearchMode()
+
+    private async Task ExitSearchMode()
     {
         this.SearchMode = false;
         this._HotKeysContext?.Dispose();

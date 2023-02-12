@@ -1,4 +1,4 @@
-<div class="key-map @Class">
+<div class="@CssClass("key-map", this.Class ?? "", new {this.FreeSize})">
     @foreach (var keyText in this.EnumKeyText())
     {
         <code>@keyText</code>
@@ -8,6 +8,9 @@
 {
     [Parameter, EditorRequired]
     public HotKeyCombo? Key { get; set; }
+
+    [Parameter]
+    public bool FreeSize { get; set; }
 
     [Parameter]
     public string? Class { get; set; }

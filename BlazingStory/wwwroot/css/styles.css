@@ -3,6 +3,7 @@
   --bs-back-color: #f5fbff;
   --bs-dimmed-back-color: #ecf4f9;
   --bs-hover-back-color: rgba(2,156,253,0.12);
+  --bs-hover-light-back-color: rgba(30,167,253,0.07);
   --bs-text-size: 13px;
   --bs-text-color: #333333;
   --bs-dimmed-text-color: #73828c;
@@ -212,6 +213,20 @@ button {
   padding: 20px;
 }
 
+.sidebar {
+  /*    .sub-heading-style {
+          display:inline-block !important;
+          height: unset !important;
+          line-height: 16px;
+          margin-top: var(--bs-sidebar-gap-size) !important;
+          margin-bottom: 4px;
+          font-size: 11px !important;
+          font-weight: 600 !important;
+          text-transform: uppercase;
+          color: var(--bs-dimmed-text-color) !important;
+          letter-spacing: 3.85px;
+      }*/
+}
 .sidebar .sidebar-header {
   display: flex;
   height: 28px;
@@ -287,6 +302,43 @@ button {
   display: block;
 }
 
+.history .caption {
+  height: 24px;
+}
+.history .caption.sub-heading {
+  height: unset;
+  line-height: 16px;
+  margin-top: var(--bs-sidebar-gap-size);
+  margin-bottom: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--bs-dimmed-text-color);
+  letter-spacing: 3.85px;
+}
+.history .actions {
+  margin-top: 8px;
+}
+.history .actions .action {
+  font-size: 12px;
+  color: var(--bs-dimmed-text-color);
+  min-height: 16px;
+  margin: 0 -20px;
+  padding: 6px 19px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.history .actions .action .svg-icon {
+  margin: 0 5px 0 -1px;
+}
+.history .actions .action > .text {
+  flex: 1;
+}
+.history .actions .action[aria-selected] {
+  background-color: var(--bs-hover-light-back-color);
+}
+
 .navigation-tree {
   /* ---- Chevron ---- */
   /* ---- Sub Items ---- */
@@ -322,7 +374,7 @@ button {
   margin: 1px 0 0 3px;
 }
 .navigation-tree .caption .action:hover, .navigation-tree .caption button.action:focus {
-  background-color: rgba(30, 167, 253, 0.07);
+  background-color: var(--bs-hover-light-back-color);
 }
 .navigation-tree .caption button.action:focus {
   background-color: #d5edfc;
@@ -523,6 +575,9 @@ svg.svg-icon {
   user-select: none;
   pointer-events: none;
   padding: 0px 2px;
+}
+.key-map.free-size code {
+  width: unset;
 }
 
 .icon-button {

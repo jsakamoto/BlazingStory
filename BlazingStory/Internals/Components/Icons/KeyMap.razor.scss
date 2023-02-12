@@ -18,4 +18,10 @@
         pointer-events: none;
         padding: 0px 2px;
     }
+
+    &.free-size {
+        code {
+            width: unset;
+        }
+    }
 }

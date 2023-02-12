@@ -32,7 +32,7 @@
         }
 
         .action:hover, button.action:focus {
-            background-color: rgba(30, 167, 253, 0.07);
+            background-color: var(--bs-hover-light-back-color);
         }
 
         button.action:focus {

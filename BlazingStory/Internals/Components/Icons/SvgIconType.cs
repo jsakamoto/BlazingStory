@@ -11,6 +11,10 @@ public enum SvgIconType
     Gear,
     Find,
 
+    // ---- icons on the side bar's history ----
+    NavigationBack,
+    TrashCan,
+
     // ---- icons on the canvas page's toolbar ----
     Reload,
     ZoomIn,

@@ -1,7 +1,45 @@
-<div>
-    Recentry opened
+<div class="history">
+
+    <div class="caption sub-heading">
+        Recently opened
+    </div>
+
+    <div class="actions">
+
+        <div class="action" @onclick="BackToComponents" @onpointerenter="@(() => OnHover("back-to-components"))" aria-selected="@IsSelected("back-to-components")">
+            <SvgIcon Type="SvgIconType.NavigationBack" />
+            <span class="text">Back to components</span>
+            <KeyMap Key="new (Code.Escape)" FreeSize="true" />
+        </div>
+
+        <div class="action" @onclick="ClearHistory" @onpointerenter="@(() => OnHover("clear-history"))" aria-selected="@IsSelected("clear-history")">
+            <SvgIcon Type="SvgIconType.TrashCan" />
+            <span class="text">Clear history</span>
+        </div>
+
+    </div>
 </div>
 
 @code
 {
+    [Parameter]
+    public EventCallback OnClickExit { get; set; }
+
+    private string? _LastHoveredId;
+
+    private void OnHover(string id)
+    {
+        _LastHoveredId = id;
+    }
+
+    private bool IsSelected(string id) => this._LastHoveredId == id;
+
+    private async Task BackToComponents()
+    {
+        await this.OnClickExit.InvokeAsync();
+    }
+
+    private void ClearHistory()
+    {
+    }
 }
