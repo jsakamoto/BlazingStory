@@ -24,7 +24,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="bunit" Version="1.13.5" />
+    <PackageReference Include="bunit" Version="1.16.2" />
   </ItemGroup>
  
   <ItemGroup>

@@ -31,6 +31,6 @@ internal class StoriesDetectorTest
             })
             .Add(_ => _.StoriesStore, storiesStore));
 
-        storiesStore.StoryContainers.Count().Is(4);
+        storiesStore.StoryContainers.Count().Is(5);
     }
 }

@@ -6,32 +6,29 @@
 
     <div class="recently-opened">
 
-        <button title="Examples / UI / Button / Docs" class="item type-docs" @onpointerenter="@(() => OnHover("p:examples-ui-button-docs"))" aria-selected="@IsSelected("p:examples-ui-button-docs")">
-            <SvgIcon Type="SvgIconType.Document" />
-            <div class="label">
-                <div class="title">
-                    Docs
-                </div>
-                <div class="path">
-                    <span>Examples</span>
-                    <span>UI</span>
-                    <span>Button</span>
-                </div>
-            </div>
-        </button>
+        <!-- Max 8 items -->
+        @foreach (var item in this.NavigationHistory.HistoryItems)
+        {
+            var title = string.Join(" / ", item.Segments.Append(item.Caption));
+            var id = $"p:{item.Id}";
+            var iconType = item.Type == NavigationTreeItemType.Story ? SvgIconType.Component : SvgIconType.Document;
+            var cssClass = item.Type == NavigationTreeItemType.Story ? "type-story-collection" : "type-docs";
 
-        <button title="Examples / UI / Button" class="item type-story-collection" @onpointerenter="@(() => OnHover("p:examples-ui-button"))" aria-selected="@IsSelected("p:examples-ui-button")">
-            <SvgIcon Type="SvgIconType.Component"/>
-            <div class="label">
-                <div class="title">
-                    Button
+            <button @key="id" title="@title" class="item @cssClass" @onclick="@(() => this.OnClickHistoryItem(item))" @onpointerenter="@(() => OnHover(id))" aria-selected="@IsSelected(id)">
+                <SvgIcon Type="iconType" />
+                <div class="label">
+                    <div class="title">
+                        @item.Caption
+                    </div>
+                    <div class="path">
+                        @foreach (var segment in item.Segments)
+                        {
+                            <span>@segment</span>
+                        }
+                    </div>
                 </div>
-                <div class="path">
-                    <span>Examples</span>
-                    <span>UI</span>
-                </div>
-            </div>
-        </button>
+            </button>
+        }
 
     </div>
 
@@ -53,17 +50,25 @@
 
 @code
 {
+    [CascadingParameter]
+    protected NavigationHistory NavigationHistory { get; init; } = default!;
+
     [Parameter]
     public EventCallback OnClickExit { get; set; }
 
     private string? _LastHoveredId;
 
+    private bool IsSelected(string id) => this._LastHoveredId == id;
+
     private void OnHover(string id)
     {
-        _LastHoveredId = id;
+        this._LastHoveredId = id;
     }
 
-    private bool IsSelected(string id) => this._LastHoveredId == id;
+    private async Task OnClickHistoryItem(NavigationHistoryItem historyItem)
+    {
+        await this.OnClickExit.InvokeAsync();
+    }
 
     private async Task BackToComponents()
     {

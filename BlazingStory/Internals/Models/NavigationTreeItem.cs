@@ -8,6 +8,8 @@ public class NavigationTreeItem
 
     internal string NavigationPath { get; set; } = "";
 
+    internal IEnumerable<string> PathSegments { get; set; } = Enumerable.Empty<string>();
+
     internal bool Expanded { get; set; } = false;
 
     internal List<NavigationTreeItem> SubItems { get; } = new();
@@ -53,5 +55,16 @@ public class NavigationTreeItem
             }
         }
         return false;
+    }
+
+    internal NavigationTreeItem? FindParentOf(NavigationTreeItem item)
+    {
+        foreach (var subItem in this.SubItems)
+        {
+            if (subItem == item) return this;
+            var parent = subItem.FindParentOf(item);
+            if (parent != null) return parent;
+        }
+        return null;
     }
 }

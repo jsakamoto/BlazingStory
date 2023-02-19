@@ -25,6 +25,7 @@ internal class StoryContainerTypesDetectorTest
         storyContainers
             .Select(c => $"{c.Title},{c.ComponentType.FullName}")
             .Is("Examples/UI/Button,BlazingStoryApp1.Stories.Button_stories",
+                "Lorem/Ipsum/Header,BlazingStoryApp1.Stories.LoremIpsum_stories",
                 "Examples/UI/Rating,BlazingStoryApp1.Stories.Rating_stories",
                 "Examples/Select,BlazingStoryApp1.Stories.Select_stories",
                 "Examples/Card,BlazingStoryApp2.Stories.Card_stories");

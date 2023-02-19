@@ -1,5 +1,6 @@
 @implements IDisposable
 @inject NavigationManager NavigationManager
+@inject ILogger<NavigationTree> Logger
 
 <div class="explorer-menu">
     <NavigationTreeItemComponent Item="_NavigationRoot" SubHeading="true" GetNavigationUrl="this.GetNavigationUrl" />
@@ -14,6 +15,9 @@
 
     [CascadingParameter]
     protected IServiceProvider Services { get; init; } = default!;
+
+    [CascadingParameter]
+    protected NavigationHistory NavigationHistory { get; init; } = default!;
 
     private readonly NavigationTreeBuilder _NavigationTreeBuilder = new();
 
@@ -34,6 +38,8 @@
             commandService.Subscribe(CommandType.NextStory, OnNextStory),
             commandService.Subscribe(CommandType.CollapseAll, OnCollapseAll)
         );
+
+        this.NavigationManager.LocationChanged += NavigationManager_LocationChanged;
     }
 
     protected override void OnAfterRender(bool firstRender)
@@ -55,6 +61,24 @@
 
         this._NavigationRoot.EnsureExpandedTo(firstStory);
         this.NavigationManager.NavigateTo(this.GetNavigationUrl(firstStory));
+    }
+
+    private bool TryGetActiveNavigationItem([NotNullWhen(true)] out NavigationTreeItem? activeItem)
+    {
+        activeItem = null;
+
+        var navigationPath = this.RouteData?.Parameter;
+        Console.WriteLine($"A-1: navigationPath = {navigationPath}");
+        if (string.IsNullOrEmpty(navigationPath)) return false;
+
+        var storyItems = this._NavigationRoot.EnumAll()
+            .Where(item => item.Type == NavigationTreeItemType.Story)
+            .ToArray();
+        activeItem = storyItems.FirstOrDefault(item => item.NavigationPath == navigationPath);
+        Console.WriteLine($"A-2: activeItem = {activeItem}");
+        if (activeItem == null) return false;
+
+        return true;
     }
 
     private ValueTask OnPreviousComponent() => this.MoveComponent(delta: -1);
@@ -125,8 +149,17 @@
         return "./?path=/story/" + item.NavigationPath;
     }
 
+    private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs args)
+    {
+        Console.WriteLine("M-1: NavigationManager_LocationChanged");
+        if (!TryGetActiveNavigationItem(out var activeItem)) return;
+        Console.WriteLine("M-2: NavigationManager_LocationChanged");
+        this.NavigationHistory.AddAsync(this._NavigationRoot, activeItem).AndLogException(this.Logger);
+    }
+
     public void Dispose()
     {
+        this.NavigationManager.LocationChanged -= this.NavigationManager_LocationChanged;
         this._Subscriptions.Dispose();
     }
 }

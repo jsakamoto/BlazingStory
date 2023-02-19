@@ -219,4 +219,34 @@ internal class NavigationTreeItemTest
         item.SubItems[1].SubItems[0].Expanded.IsFalse();
         item.SubItems[1].SubItems[1].Expanded.IsFalse();
     }
+
+    [Test]
+    public void FindParentOf_Test()
+    {
+        // Given
+        var root = new NavigationTreeItem();
+        var headingA = new NavigationTreeItem { Caption = "Heading A" };
+        var componentA = new NavigationTreeItem { Caption = "Component A" };
+        var storyA1 = new NavigationTreeItem { Caption = "Story A-1" };
+        var storyA2 = new NavigationTreeItem { Caption = "Story A-2" };
+        var headingB = new NavigationTreeItem { Caption = "Heading B" };
+        var componentB = new NavigationTreeItem { Caption = "Component B" };
+        var storyB1 = new NavigationTreeItem { Caption = "Story B-1" };
+        var storyB2 = new NavigationTreeItem { Caption = "Story B-2" };
+        root.SubItems.AddRange(new[] { headingA, headingB });
+        headingA.SubItems.Add(componentA);
+        componentA.SubItems.AddRange(new[] { storyA1, storyA2 });
+        headingB.SubItems.Add(componentB);
+        componentB.SubItems.AddRange(new[] { storyB1, storyB2 });
+
+        // When
+        var parentOfComponentA = root.FindParentOf(componentA);
+        var parentOfStoryA1 = root.FindParentOf(storyA1);
+        var parentOfStoryB2 = root.FindParentOf(storyB2);
+
+        // Then
+        parentOfComponentA.IsNotNull().Caption.Is("Heading A");
+        parentOfStoryA1.IsNotNull().Caption.Is("Component A");
+        parentOfStoryB2.IsNotNull().Caption.Is("Component B");
+    }
 }

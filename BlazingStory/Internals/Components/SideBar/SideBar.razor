@@ -1,28 +1,44 @@
 ﻿@using BlazingStory.Internals.Components.SideBar.NavigationTree
 @using BlazingStory.Internals.Components.SideBar.SearchAndHistory
 
-<nav class="sidebar stack vertical">
+<CascadingValue Value="this._NavigationHistory">
 
-    <div class="sidebar-header">
+    <nav class="sidebar stack vertical">
 
-        <span class="sidebar-header-title">
-            @BlazingStoryApp.Title
-        </span>
+        <div class="sidebar-header">
 
-        <SettingsMenu />
+            <span class="sidebar-header-title">
+                @BlazingStoryApp.Title
+            </span>
 
-    </div>
+            <SettingsMenu />
 
-    <SearchAndHistory  @bind-SearchMode="this._SearchMode" />
+        </div>
 
-    @if (!_SearchMode)
-    {
-        <NavigationTree />
-    }
+        <SearchAndHistory @bind-SearchMode="this._SearchMode" />
 
-</nav>
+        @if (!_SearchMode)
+        {
+            <NavigationTree />
+        }
+
+    </nav>
+
+</CascadingValue>
 
 @code
 {
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
     private bool _SearchMode = false;
+
+    private NavigationHistory? _NavigationHistory;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var helperScript = Services.GetRequiredService<HelperScript>();
+        this._NavigationHistory = new(helperScript);
+        await this._NavigationHistory.InitializeAsync();
+    }
 }

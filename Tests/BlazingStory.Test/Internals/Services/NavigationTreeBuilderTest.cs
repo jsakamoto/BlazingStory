@@ -57,36 +57,42 @@ internal class NavigationTreeBuilderTest
         examplesNode.Caption.Is("Examples");
         examplesNode.SubItems.Count.Is(2);
         examplesNode.Expanded.IsTrue();
+        examplesNode.PathSegments.Count().Is(0);
 
         var buttonNode = examplesNode.SubItems[0];
         buttonNode.Type.Is(NavigationTreeItemType.StoryCollection);
         buttonNode.Caption.Is("Button");
         buttonNode.SubItems.Count.Is(2);
         buttonNode.Expanded.IsTrue();
+        buttonNode.PathSegments.Is("Examples");
 
         var defaultButtonNode = buttonNode.SubItems[0];
         defaultButtonNode.Type.Is(NavigationTreeItemType.Story);
         defaultButtonNode.Caption.Is("Default");
         defaultButtonNode.NavigationPath.Is("examples-button--default");
         defaultButtonNode.SubItems.Count.Is(0);
+        defaultButtonNode.PathSegments.Is("Examples", "Button");
 
         var primaryButtonNode = buttonNode.SubItems[1];
         primaryButtonNode.Type.Is(NavigationTreeItemType.Story);
         primaryButtonNode.Caption.Is("Primary");
         primaryButtonNode.NavigationPath.Is("examples-button--primary");
         primaryButtonNode.SubItems.Count.Is(0);
+        primaryButtonNode.PathSegments.Is("Examples", "Button");
 
         var selectNode = examplesNode.SubItems[1];
         selectNode.Type.Is(NavigationTreeItemType.StoryCollection);
         selectNode.Caption.Is("Select");
         selectNode.SubItems.Count.Is(1);
         selectNode.Expanded.IsFalse();
+        selectNode.PathSegments.Is("Examples");
 
         var selectSelectNode = selectNode.SubItems[0];
         selectSelectNode.Type.Is(NavigationTreeItemType.Story);
         selectSelectNode.Caption.Is("Select");
         selectSelectNode.NavigationPath.Is("examples-select--select");
         selectSelectNode.SubItems.Count.Is(0);
+        selectSelectNode.PathSegments.Is("Examples", "Select");
     }
 
     [Test]

@@ -10,14 +10,16 @@ internal class NavigationTreeBuilder
         foreach (var storyContainer in storyContainers)
         {
             var segments = storyContainer.Title.Split('/');
-            var item = this.CreateOrGetNavigationTreeItem(root, segments);
+            var item = this.CreateOrGetNavigationTreeItem(root, pathSegments: Enumerable.Empty<string>(), segments);
             item.Type = NavigationTreeItemType.StoryCollection;
+            var pathSegments = item.PathSegments.Append(item.Caption).ToArray();
             var subItems = storyContainer.Stories
                 .Select(story => new NavigationTreeItem
                 {
                     Type = NavigationTreeItemType.Story,
-                    Caption = story.Name,
                     NavigationPath = story.NavigationPath,
+                    PathSegments = pathSegments,
+                    Caption = story.Name
                 });
             item.SubItems.AddRange(subItems);
         }
@@ -36,7 +38,7 @@ internal class NavigationTreeBuilder
         return root;
     }
 
-    private NavigationTreeItem CreateOrGetNavigationTreeItem(NavigationTreeItem item, IEnumerable<string> segments)
+    private NavigationTreeItem CreateOrGetNavigationTreeItem(NavigationTreeItem item, IEnumerable<string> pathSegments, IEnumerable<string> segments)
     {
         var head = segments.First();
         var tails = segments.Skip(1);
@@ -47,6 +49,7 @@ internal class NavigationTreeBuilder
             subItem = new NavigationTreeItem
             {
                 Type = NavigationTreeItemType.Container,
+                PathSegments = pathSegments,
                 Caption = head
             };
             item.SubItems.Add(subItem);
@@ -54,7 +57,7 @@ internal class NavigationTreeBuilder
 
         if (!tails.Any()) return subItem;
 
-        return this.CreateOrGetNavigationTreeItem(subItem, tails);
+        return this.CreateOrGetNavigationTreeItem(subItem, pathSegments.Append(head).ToArray(), tails);
     }
 
     private static bool FindExpansionPathTo(Stack<NavigationTreeItem> expansionPath, NavigationTreeItem item, string expandedNavigationPath)
