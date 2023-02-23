@@ -1,10 +1,10 @@
 ﻿using BlazingStory.Internals.Models;
 
-namespace BlazingStory.Internals.Services;
+namespace BlazingStory.Internals.Services.Navigation;
 
 internal class NavigationTreeBuilder
 {
-    public NavigationTreeItem Build(IEnumerable<StoryContainer> storyContainers, string? expandedNavigationPath)
+    internal NavigationTreeItem Build(IEnumerable<StoryContainer> storyContainers, string? expandedNavigationPath)
     {
         var root = new NavigationTreeItem { Type = NavigationTreeItemType.Container };
         foreach (var storyContainer in storyContainers)

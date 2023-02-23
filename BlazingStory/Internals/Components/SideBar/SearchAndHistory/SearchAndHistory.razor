@@ -8,7 +8,7 @@
     {
         @if (string.IsNullOrEmpty(this._SearchText))
         {
-            <History OnClickExit="ExitSearchMode" />
+            <History ExitHistoryView="ExitSearchMode" />
         }
         else
         {
@@ -40,7 +40,7 @@
 
         this._HotKeysContext?.Dispose();
         var hotKeys = this.Services.GetRequiredService<HotKeys>();
-        this._HotKeysContext = hotKeys.CreateContext().Add(Code.Escape, OnEscape, exclude: Exclude.None);
+        this._HotKeysContext = hotKeys.CreateContext().Add(Code.Escape, OnEscapeKeyPressed, exclude: Exclude.None);
     }
 
     private async Task OnCleared()
@@ -48,7 +48,7 @@
         await this.ExitSearchMode();
     }
 
-    private async ValueTask OnEscape()
+    private async ValueTask OnEscapeKeyPressed()
     {
         if (!string.IsNullOrWhiteSpace(this._SearchText))
         {

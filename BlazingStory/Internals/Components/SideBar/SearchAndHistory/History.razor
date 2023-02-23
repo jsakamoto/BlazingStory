@@ -7,7 +7,7 @@
     <div class="recently-opened">
 
         <!-- Max 8 items -->
-        @foreach (var item in this.NavigationHistory.HistoryItems)
+        @foreach (var item in this._HistoryItems)
         {
             var title = string.Join(" / ", item.Segments.Append(item.Caption));
             var id = $"p:{item.Id}";
@@ -51,14 +51,24 @@
 @code
 {
     [CascadingParameter]
-    protected NavigationHistory NavigationHistory { get; init; } = default!;
+    protected IServiceProvider Services { get; init; } = default!;
 
     [Parameter]
-    public EventCallback OnClickExit { get; set; }
+    public EventCallback ExitHistoryView { get; set; }
+
+    private NavigationService? _NavigationService;
+
+    private IEnumerable<NavigationHistoryItem> _HistoryItems = Enumerable.Empty<NavigationHistoryItem>();
 
     private string? _LastHoveredId;
 
     private bool IsSelected(string id) => this._LastHoveredId == id;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this._NavigationService = this.Services.GetRequiredService<NavigationService>();
+        this._HistoryItems = await this._NavigationService.GetHistoryItemsAsync();
+    }
 
     private void OnHover(string id)
     {
@@ -67,15 +77,19 @@
 
     private async Task OnClickHistoryItem(NavigationHistoryItem historyItem)
     {
-        await this.OnClickExit.InvokeAsync();
+        this._NavigationService?.NavigateTo(historyItem);
+        await this.ExitHistoryView.InvokeAsync();
     }
 
     private async Task BackToComponents()
     {
-        await this.OnClickExit.InvokeAsync();
+        await this.ExitHistoryView.InvokeAsync();
     }
 
-    private void ClearHistory()
+    private async Task ClearHistory()
     {
+        if (this._NavigationService == null) return;
+        await this._NavigationService.ClearHistoryAsync();
+        await this.ExitHistoryView.InvokeAsync();
     }
 }

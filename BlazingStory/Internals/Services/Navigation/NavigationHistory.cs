@@ -1,7 +1,6 @@
 ﻿using BlazingStory.Internals.Models;
-using BlazingStory.Internals.Services;
 
-namespace BlazingStory.Internals.Components.SideBar;
+namespace BlazingStory.Internals.Services.Navigation;
 
 public class NavigationHistory
 {
@@ -13,21 +12,31 @@ public class NavigationHistory
 
     private const string StorageKey = "SideBar.NavigationHistory";
 
-    internal IEnumerable<NavigationHistoryItem> HistoryItems => this._HistoryItems;
+    private bool _Initialized = false;
 
     internal NavigationHistory(HelperScript helperScript)
     {
         this._HelperScript = helperScript;
     }
 
-    internal async ValueTask InitializeAsync()
+    private async ValueTask EnsureInitializeAsync()
     {
-        this._HistoryItems = await this._HelperScript.LoadObjectFromLocalStorageAsync(StorageKey, new LinkedList<NavigationHistoryItem>());
+        if (!this._Initialized)
+        {
+            this._Initialized = true;
+            this._HistoryItems = await this._HelperScript.LoadObjectFromLocalStorageAsync(StorageKey, new LinkedList<NavigationHistoryItem>());
+        }
+    }
+
+    internal async ValueTask<IEnumerable<NavigationHistoryItem>> GetItemsAsync()
+    {
+        await this.EnsureInitializeAsync();
+        return this._HistoryItems;
     }
 
     internal async ValueTask AddAsync(NavigationTreeItem root, NavigationTreeItem active)
     {
-        Console.WriteLine($"B-1: AddAsync - active.Type = {active.Type}");
+        await this.EnsureInitializeAsync();
 
         var historyItem = default(NavigationHistoryItem);
         var nextIds = Enumerable.Range(0, int.MaxValue).Where(n => this._HistoryItems.All(item => item.Id != n));
@@ -60,6 +69,14 @@ public class NavigationHistory
 
         while (this._HistoryItems.Count >= MAX_HISTORY_ITEMS) this._HistoryItems.RemoveLast();
         this._HistoryItems.AddFirst(historyItem);
+
+        await this._HelperScript.SaveObjectToLocalStorageAsync(StorageKey, this._HistoryItems);
+    }
+
+    internal async ValueTask ClearAsync()
+    {
+        await this.EnsureInitializeAsync();
+        this._HistoryItems.Clear();
         await this._HelperScript.SaveObjectToLocalStorageAsync(StorageKey, this._HistoryItems);
     }
 }

@@ -1,5 +1,5 @@
 ﻿using BlazingStory.Internals.Models;
-using BlazingStory.Internals.Services;
+using BlazingStory.Internals.Services.Navigation;
 using BlazingStory.Types;
 using BlazingStoryApp1.Stories;
 using Microsoft.AspNetCore.Components;

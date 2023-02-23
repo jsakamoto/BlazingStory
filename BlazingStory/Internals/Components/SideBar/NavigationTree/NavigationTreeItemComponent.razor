@@ -5,8 +5,7 @@
     {
         @foreach (var item in this.Item.SubItems)
         {
-            if (this.GetNavigationUrl == null) throw new InvalidOperationException($"The {nameof(GetNavigationUrl)} parameter is required.");
-            var href = this.GetNavigationUrl(item);
+            var href = this._NavigationService?.GetNavigationUrl(item);
             var style = $"padding-left: calc({this.IndentLevel} * var(--bs-sidebar-nav-indent-size));";
             var tabIndex = this.SubHeading ? "unset" : "-1";
             var active = (item.Type == NavigationTreeItemType.Story) && (this.RouteData?.RouteToStoryOrDocs == true) && (this.RouteData?.Parameter == item.NavigationPath);
@@ -40,7 +39,7 @@
                 </div>
 
                 <div class="sub-items">
-                    <NavigationTreeItemComponent Item="item" IndentLevel="@(this.SubHeading ? this.IndentLevel : this.IndentLevel + 1)" ExpansionChanged="(() => this.ExpansionChanged.InvokeAsync())" GetNavigationUrl="this.GetNavigationUrl" />
+                    <NavigationTreeItemComponent Item="item" IndentLevel="@(this.SubHeading ? this.IndentLevel : this.IndentLevel + 1)" ExpansionChanged="(() => this.ExpansionChanged.InvokeAsync())" />
                 </div>
             </div>
         }
@@ -55,11 +54,14 @@
             <SvgIcon Type="GetIconType(item)" />
         </span>
         @item.Caption
-        </text>
+    </text>
     ;
 
     [CascadingParameter]
     public QueryRouteData? RouteData { get; set; }
+
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
 
     [Parameter, EditorRequired]
     public NavigationTreeItem? Item { get; set; }
@@ -73,20 +75,22 @@
     [Parameter]
     public EventCallback ExpansionChanged { get; set; }
 
-    [Parameter, EditorRequired]
-    public Func<NavigationTreeItem, string>? GetNavigationUrl { get; set; }
+    private NavigationService? _NavigationService;
+
+    protected override void OnInitialized()
+    {
+        this._NavigationService = this.Services.GetRequiredService<NavigationService>();
+    }
 
     private async Task ToggleItemExpansion(NavigationTreeItem item)
     {
-        if (this.GetNavigationUrl == null) throw new InvalidOperationException($"The {nameof(GetNavigationUrl)} parameter is required.");
-
         item.Expanded = !item.Expanded;
         await ExpansionChanged.InvokeAsync();
 
         if (item.Type == NavigationTreeItemType.StoryCollection && item.Expanded && item.SubItems.Any())
         {
             var storyItemOf1st = item.SubItems.First();
-            this.NavigationManager.NavigateTo(this.GetNavigationUrl.Invoke(storyItemOf1st));
+            this._NavigationService?.NavigateTo(storyItemOf1st);
         }
     }
 

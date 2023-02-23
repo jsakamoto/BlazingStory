@@ -3,7 +3,7 @@
 @inject ILogger<NavigationTree> Logger
 
 <div class="explorer-menu">
-    <NavigationTreeItemComponent Item="_NavigationRoot" SubHeading="true" GetNavigationUrl="this.GetNavigationUrl" />
+    <NavigationTreeItemComponent Item="NavigationRoot" SubHeading="true" />
 </div>
 
 @code {
@@ -16,19 +16,17 @@
     [CascadingParameter]
     protected IServiceProvider Services { get; init; } = default!;
 
-    [CascadingParameter]
-    protected NavigationHistory NavigationHistory { get; init; } = default!;
+    private NavigationService? _NavigationService;
 
-    private readonly NavigationTreeBuilder _NavigationTreeBuilder = new();
-
-    private NavigationTreeItem _NavigationRoot = new();
+    [Parameter, EditorRequired]
+    public NavigationTreeItem NavigationRoot { get; set; } = new();
 
     private readonly Subscriptions _Subscriptions = new();
 
     protected override void OnInitialized()
     {
-        var expandedNavigationPath = this.RouteData.RouteToStoryOrDocs ? this.RouteData.Parameter : null;
-        this._NavigationRoot = _NavigationTreeBuilder.Build(this.StoriesStore.StoryContainers, expandedNavigationPath);
+        this._NavigationService = this.Services.GetRequiredService<NavigationService>();
+        this.NavigationManager.LocationChanged += NavigationManager_LocationChanged;
 
         var commandService = this.Services.GetRequiredService<CommandService>();
         this._Subscriptions.Add(
@@ -38,44 +36,41 @@
             commandService.Subscribe(CommandType.NextStory, OnNextStory),
             commandService.Subscribe(CommandType.CollapseAll, OnCollapseAll)
         );
-
-        this.NavigationManager.LocationChanged += NavigationManager_LocationChanged;
     }
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (!firstRender) return;
+        if (firstRender)
+        {
+            // Navigte to default story if the navigationPath is empty.
+            this.NavigateToDefaultStory();
 
-        // Navigte to default story if the navigationPath is empty.
-        var navigationPath = this.RouteData?.Parameter;
-        if (!string.IsNullOrEmpty(navigationPath)) return;
+            this.NavigationManager_LocationChanged(this, new(this.NavigationManager.Uri, isNavigationIntercepted: true));
+        }
+    }
 
-        var storyItems = this._NavigationRoot.EnumAll()
-            .Where(item => item.Type == NavigationTreeItemType.Story)
-            .ToArray();
-        var activeStory = storyItems.FirstOrDefault(item => item.NavigationPath == navigationPath);
-        if (activeStory != null) return;
+    private void NavigateToDefaultStory()
+    {
+        if (TryGetActiveNavigationItem(out var _, out var storyItems)) return;
 
         var firstStory = storyItems.FirstOrDefault();
         if (firstStory == null) return;
 
-        this._NavigationRoot.EnsureExpandedTo(firstStory);
-        this.NavigationManager.NavigateTo(this.GetNavigationUrl(firstStory));
+        this.NavigationRoot.EnsureExpandedTo(firstStory);
+        this._NavigationService?.NavigateTo(firstStory);
     }
 
-    private bool TryGetActiveNavigationItem([NotNullWhen(true)] out NavigationTreeItem? activeItem)
+    private bool TryGetActiveNavigationItem([NotNullWhen(true)] out NavigationTreeItem? activeItem, out IEnumerable<NavigationTreeItem> storyItems)
     {
         activeItem = null;
-
-        var navigationPath = this.RouteData?.Parameter;
-        Console.WriteLine($"A-1: navigationPath = {navigationPath}");
-        if (string.IsNullOrEmpty(navigationPath)) return false;
-
-        var storyItems = this._NavigationRoot.EnumAll()
+        storyItems = this.NavigationRoot.EnumAll()
             .Where(item => item.Type == NavigationTreeItemType.Story)
             .ToArray();
+
+        var navigationPath = this.RouteData?.Parameter;
+        if (string.IsNullOrEmpty(navigationPath)) return false;
+
         activeItem = storyItems.FirstOrDefault(item => item.NavigationPath == navigationPath);
-        Console.WriteLine($"A-2: activeItem = {activeItem}");
         if (activeItem == null) return false;
 
         return true;
@@ -90,14 +85,14 @@
         var navigationPath = this.RouteData?.Parameter;
 
         var currentComponent = default(NavigationTreeItem);
-        foreach (var item in this._NavigationRoot.EnumAll())
+        foreach (var item in this.NavigationRoot.EnumAll())
         {
             if (item.Type == NavigationTreeItemType.StoryCollection) currentComponent = item;
             if (item.NavigationPath == navigationPath) break;
         }
         if (currentComponent == null) return ValueTask.CompletedTask;
 
-        var componentItems = this._NavigationRoot.EnumAll()
+        var componentItems = this.NavigationRoot.EnumAll()
             .Where(item => item.Type == NavigationTreeItemType.StoryCollection)
             .ToArray();
 
@@ -109,9 +104,9 @@
         var itemMoveTo = componentMoveTo.SubItems.FirstOrDefault();
         if (itemMoveTo == null) return ValueTask.CompletedTask;
 
-        this._NavigationRoot.EnsureExpandedTo(itemMoveTo);
+        this.NavigationRoot.EnsureExpandedTo(itemMoveTo);
 
-        this.NavigationManager.NavigateTo(this.GetNavigationUrl(itemMoveTo));
+        this._NavigationService?.NavigateTo(itemMoveTo);
         return ValueTask.CompletedTask;
     }
 
@@ -121,7 +116,7 @@
 
     private ValueTask MoveStory(int delta)
     {
-        var storyItems = this._NavigationRoot.EnumAll()
+        var storyItems = this.NavigationRoot.EnumAll()
             .Where(item => item.Type == NavigationTreeItemType.Story)
             .ToArray();
         var index = Array.FindIndex<NavigationTreeItem>(storyItems, item => this.RouteData?.Parameter == item.NavigationPath);
@@ -129,32 +124,28 @@
         if (indexMoveTo < 0 || storyItems.Length <= indexMoveTo) return ValueTask.CompletedTask;
 
         var itemMoveTo = storyItems[index + delta];
-        this._NavigationRoot.EnsureExpandedTo(itemMoveTo);
+        this.NavigationRoot.EnsureExpandedTo(itemMoveTo);
 
-        this.NavigationManager.NavigateTo(this.GetNavigationUrl(itemMoveTo));
+        this._NavigationService?.NavigateTo(itemMoveTo);
         return ValueTask.CompletedTask;
     }
 
     private ValueTask OnCollapseAll()
     {
-        foreach (var item in this._NavigationRoot.SubItems.SelectMany(headerItem => headerItem.SubItems))
+        foreach (var item in this.NavigationRoot.SubItems.SelectMany(headerItem => headerItem.SubItems))
         {
             item.ApplyExpansionRecursively(false);
         }
         return ValueTask.CompletedTask;
     }
 
-    private string GetNavigationUrl(NavigationTreeItem item)
-    {
-        return "./?path=/story/" + item.NavigationPath;
-    }
-
     private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs args)
     {
-        Console.WriteLine("M-1: NavigationManager_LocationChanged");
-        if (!TryGetActiveNavigationItem(out var activeItem)) return;
-        Console.WriteLine("M-2: NavigationManager_LocationChanged");
-        this.NavigationHistory.AddAsync(this._NavigationRoot, activeItem).AndLogException(this.Logger);
+        if (!TryGetActiveNavigationItem(out var activeItem, out var _)) return;
+
+        this.NavigationRoot.EnsureExpandedTo(activeItem);
+        this.StateHasChanged();
+        this._NavigationService?.AddHistoryAsync(this.NavigationRoot, activeItem).AndLogException(this.Logger);
     }
 
     public void Dispose()

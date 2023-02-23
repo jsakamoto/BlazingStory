@@ -1,12 +1,12 @@
 namespace BlazingStory.Internals.Models;
 
-public class NavigationTreeItem
+public class NavigationTreeItem : INavigationPath
 {
     internal NavigationTreeItemType Type { get; set; }
 
     internal string Caption { get; set; } = "";
 
-    internal string NavigationPath { get; set; } = "";
+    public string NavigationPath { get; set; } = "";
 
     internal IEnumerable<string> PathSegments { get; set; } = Enumerable.Empty<string>();
 
