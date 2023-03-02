@@ -1,5 +1,33 @@
+@if (!this._Results.Any())
+{
+    <div class="no-components-found">
+        <strong>No components found</strong>
+        <small>Find components by name or path.</small>
+    </div>
+}
+
 @code
 {
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
     [Parameter, EditorRequired]
     public string? SearchText { get; set; }
+
+    private NavigationService? _NavigationService;
+
+    private IEnumerable<NavigationListItem> _Results = Enumerable.Empty<NavigationListItem>();
+
+    protected override void OnInitialized()
+    {
+        this._NavigationService = this.Services.GetRequiredService<NavigationService>();
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (this._NavigationService == null) return;
+        //this._Results = this._NavigationService.Search(this.SearchText);
+    }
 }

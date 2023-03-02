@@ -386,6 +386,20 @@ button {
   background-color: var(--bs-hover-light-back-color);
 }
 
+.no-components-found {
+  margin: 20px -20px 0 -20px;
+  text-align: center;
+}
+.no-components-found > strong {
+  display: block;
+  font-size: 13px;
+}
+.no-components-found > small {
+  display: block;
+  font-size: 12px;
+  margin-top: 1px;
+}
+
 .navigation-tree {
   /* ---- Chevron ---- */
   /* ---- Sub Items ---- */

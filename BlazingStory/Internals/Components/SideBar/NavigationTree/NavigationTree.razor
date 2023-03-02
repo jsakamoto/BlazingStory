@@ -145,7 +145,7 @@
 
         this.NavigationRoot.EnsureExpandedTo(activeItem);
         this.StateHasChanged();
-        this._NavigationService?.AddHistoryAsync(this.NavigationRoot, activeItem).AndLogException(this.Logger);
+        this._NavigationService?.AddHistoryAsync(activeItem).AndLogException(this.Logger);
     }
 
     public void Dispose()

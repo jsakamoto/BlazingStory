@@ -8,7 +8,7 @@ public class NavigationHistory
 
     private readonly HelperScript _HelperScript;
 
-    private LinkedList<NavigationHistoryItem> _HistoryItems = new();
+    private LinkedList<NavigationListItem> _HistoryItems = new();
 
     private const string StorageKey = "SideBar.NavigationHistory";
 
@@ -24,11 +24,11 @@ public class NavigationHistory
         if (!this._Initialized)
         {
             this._Initialized = true;
-            this._HistoryItems = await this._HelperScript.LoadObjectFromLocalStorageAsync(StorageKey, new LinkedList<NavigationHistoryItem>());
+            this._HistoryItems = await this._HelperScript.LoadObjectFromLocalStorageAsync(StorageKey, new LinkedList<NavigationListItem>());
         }
     }
 
-    internal async ValueTask<IEnumerable<NavigationHistoryItem>> GetItemsAsync()
+    internal async ValueTask<IEnumerable<NavigationListItem>> GetItemsAsync()
     {
         await this.EnsureInitializeAsync();
         return this._HistoryItems;
@@ -38,7 +38,7 @@ public class NavigationHistory
     {
         await this.EnsureInitializeAsync();
 
-        var historyItem = default(NavigationHistoryItem);
+        var historyItem = default(NavigationListItem);
         var nextIds = Enumerable.Range(0, int.MaxValue).Where(n => this._HistoryItems.All(item => item.Id != n));
 
         if (active.Type == NavigationTreeItemType.Story)

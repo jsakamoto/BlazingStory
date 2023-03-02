@@ -1,0 +1,15 @@
+.no-components-found {
+    margin: 20px -20px 0 -20px;
+    text-align: center;
+
+    & > strong {
+        display: block;
+        font-size: 13px;
+    }
+
+    & > small {
+        display: block;
+        font-size: 12px;
+        margin-top: 1px;
+    }
+}

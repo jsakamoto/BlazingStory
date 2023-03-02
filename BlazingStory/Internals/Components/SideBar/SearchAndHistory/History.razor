@@ -58,7 +58,7 @@
 
     private NavigationService? _NavigationService;
 
-    private IEnumerable<NavigationHistoryItem> _HistoryItems = Enumerable.Empty<NavigationHistoryItem>();
+    private IEnumerable<NavigationListItem> _HistoryItems = Enumerable.Empty<NavigationListItem>();
 
     private string? _LastHoveredId;
 
@@ -75,7 +75,7 @@
         this._LastHoveredId = id;
     }
 
-    private async Task OnClickHistoryItem(NavigationHistoryItem historyItem)
+    private async Task OnClickHistoryItem(NavigationListItem historyItem)
     {
         this._NavigationService?.NavigateTo(historyItem);
         await this.ExitHistoryView.InvokeAsync();
