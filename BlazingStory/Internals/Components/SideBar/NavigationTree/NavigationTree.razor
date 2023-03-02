@@ -87,13 +87,13 @@
         var currentComponent = default(NavigationTreeItem);
         foreach (var item in this.NavigationRoot.EnumAll())
         {
-            if (item.Type == NavigationItemType.StoryCollection) currentComponent = item;
+            if (item.Type == NavigationItemType.Component) currentComponent = item;
             if (item.NavigationPath == navigationPath) break;
         }
         if (currentComponent == null) return ValueTask.CompletedTask;
 
         var componentItems = this.NavigationRoot.EnumAll()
-            .Where(item => item.Type == NavigationItemType.StoryCollection)
+            .Where(item => item.Type == NavigationItemType.Component)
             .ToArray();
 
         var index = Array.IndexOf<NavigationTreeItem>(componentItems, currentComponent);

@@ -54,7 +54,7 @@ internal class NavigationTreeBuilderTest
         examplesNode.PathSegments.Count().Is(0);
 
         var buttonNode = examplesNode.SubItems[0];
-        buttonNode.Type.Is(NavigationItemType.StoryCollection);
+        buttonNode.Type.Is(NavigationItemType.Component);
         buttonNode.Caption.Is("Button");
         buttonNode.SubItems.Count.Is(2);
         buttonNode.Expanded.IsTrue();
@@ -75,7 +75,7 @@ internal class NavigationTreeBuilderTest
         primaryButtonNode.PathSegments.Is("Examples", "Button");
 
         var selectNode = examplesNode.SubItems[1];
-        selectNode.Type.Is(NavigationItemType.StoryCollection);
+        selectNode.Type.Is(NavigationItemType.Component);
         selectNode.Caption.Is("Select");
         selectNode.SubItems.Count.Is(1);
         selectNode.Expanded.IsFalse();

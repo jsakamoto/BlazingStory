@@ -87,7 +87,7 @@
         item.Expanded = !item.Expanded;
         await ExpansionChanged.InvokeAsync();
 
-        if (item.Type == NavigationItemType.StoryCollection && item.Expanded && item.SubItems.Any())
+        if (item.Type == NavigationItemType.Component && item.Expanded && item.SubItems.Any())
         {
             var storyItemOf1st = item.SubItems.First();
             this._NavigationService?.NavigateTo(storyItemOf1st);
@@ -98,7 +98,7 @@
     {
         return item.Type switch
         {
-            NavigationItemType.StoryCollection => SvgIconType.Component,
+            NavigationItemType.Component => SvgIconType.Component,
             NavigationItemType.Story => SvgIconType.BookmarkHollow,
             _ => SvgIconType.Folder
         };

@@ -11,7 +11,7 @@ internal class NavigationTreeBuilder
         {
             var segments = storyContainer.Title.Split('/');
             var item = this.CreateOrGetNavigationTreeItem(root, pathSegments: Enumerable.Empty<string>(), segments);
-            item.Type = NavigationItemType.StoryCollection;
+            item.Type = NavigationItemType.Component;
             var pathSegments = item.PathSegments.Append(item.Caption).ToArray();
             var subItems = storyContainer.Stories
                 .Select(story => new NavigationTreeItem

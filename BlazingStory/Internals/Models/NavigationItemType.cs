@@ -3,6 +3,6 @@
 internal enum NavigationItemType
 {
     Container,
-    StoryCollection,
+    Component,
     Story
 }
