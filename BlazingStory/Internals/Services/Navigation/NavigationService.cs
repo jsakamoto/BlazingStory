@@ -50,19 +50,25 @@ internal class NavigationService
     internal IEnumerable<NavigationListItem> Search(IEnumerable<string>? keywords)
     {
         if (keywords == null || keywords.Where(word => !string.IsNullOrEmpty(word)).Any() == false) return Enumerable.Empty<NavigationListItem>();
-
         var results = new List<NavigationListItem>();
+        this.SearchCore(this._Root, keywords, results);
+        return results;
+    }
 
-        foreach (var item in this._Root.EnumAll())
+    private void SearchCore(NavigationTreeItem item, IEnumerable<string> keywords, List<NavigationListItem> results)
+    {
+        if (item.Type is NavigationItemType.Component or NavigationItemType.Story)
         {
-            if (item.Type == NavigationItemType.Story && keywords.Any(word => item.Caption.Contains(word, StringComparison.InvariantCultureIgnoreCase)))
+            if (keywords.Any(word => item.Caption.Contains(word, StringComparison.InvariantCultureIgnoreCase)))
             {
                 results.Add(NavigationListItem.CreateFrom(this._SearchResultSequence++, item));
+                return;
             }
         }
 
-        // TODO: Re-oreder the search results
-
-        return results;
+        foreach (var subItem in item.SubItems)
+        {
+            this.SearchCore(subItem, keywords, results);
+        }
     }
 }

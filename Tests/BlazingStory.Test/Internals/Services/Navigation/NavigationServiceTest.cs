@@ -48,7 +48,21 @@ internal class NavigationServiceTest
         // Then
         searchResults.Dump().Is(
             "Story | Default Button | Examples/Button",
-            "Story | Select | Examples/Select");
+            "Component | Select | Examples");
     }
 
+    [Test]
+    public async Task Search_Hit_by_Caption_of_Component_Test()
+    {
+        // Given
+        await using var host = new TestHost();
+        var navService = host.Services.GetRequiredService<NavigationService>();
+        navService.BuildNavigationTree(TestHelper.ExampleStories1, null);
+
+        // When
+        var searchResults = navService.Search(new[] { "button" });
+
+        // Then
+        searchResults.Dump().Is("Component | Button | Examples");
+    }
 }
