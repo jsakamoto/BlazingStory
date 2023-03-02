@@ -2,7 +2,7 @@ namespace BlazingStory.Internals.Models;
 
 public class NavigationTreeItem : INavigationPath
 {
-    internal NavigationTreeItemType Type { get; set; }
+    internal NavigationItemType Type { get; set; }
 
     internal string Caption { get; set; } = "";
 

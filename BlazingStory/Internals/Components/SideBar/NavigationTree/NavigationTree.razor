@@ -64,7 +64,7 @@
     {
         activeItem = null;
         storyItems = this.NavigationRoot.EnumAll()
-            .Where(item => item.Type == NavigationTreeItemType.Story)
+            .Where(item => item.Type == NavigationItemType.Story)
             .ToArray();
 
         var navigationPath = this.RouteData?.Parameter;
@@ -87,13 +87,13 @@
         var currentComponent = default(NavigationTreeItem);
         foreach (var item in this.NavigationRoot.EnumAll())
         {
-            if (item.Type == NavigationTreeItemType.StoryCollection) currentComponent = item;
+            if (item.Type == NavigationItemType.StoryCollection) currentComponent = item;
             if (item.NavigationPath == navigationPath) break;
         }
         if (currentComponent == null) return ValueTask.CompletedTask;
 
         var componentItems = this.NavigationRoot.EnumAll()
-            .Where(item => item.Type == NavigationTreeItemType.StoryCollection)
+            .Where(item => item.Type == NavigationItemType.StoryCollection)
             .ToArray();
 
         var index = Array.IndexOf<NavigationTreeItem>(componentItems, currentComponent);
@@ -117,7 +117,7 @@
     private ValueTask MoveStory(int delta)
     {
         var storyItems = this.NavigationRoot.EnumAll()
-            .Where(item => item.Type == NavigationTreeItemType.Story)
+            .Where(item => item.Type == NavigationItemType.Story)
             .ToArray();
         var index = Array.FindIndex<NavigationTreeItem>(storyItems, item => this.RouteData?.Parameter == item.NavigationPath);
         var indexMoveTo = index + delta;

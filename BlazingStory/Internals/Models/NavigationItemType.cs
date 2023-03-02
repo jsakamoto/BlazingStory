@@ -1,6 +1,6 @@
 ﻿namespace BlazingStory.Internals.Models;
 
-internal enum NavigationTreeItemType
+internal enum NavigationItemType
 {
     Container,
     StoryCollection,

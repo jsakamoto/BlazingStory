@@ -11,8 +11,8 @@
         {
             var title = string.Join(" / ", item.Segments.Append(item.Caption));
             var id = $"p:{item.Id}";
-            var iconType = item.Type == NavigationTreeItemType.Story ? SvgIconType.Component : SvgIconType.Document;
-            var cssClass = item.Type == NavigationTreeItemType.Story ? "type-story-collection" : "type-docs";
+            var iconType = item.Type == NavigationItemType.Story ? SvgIconType.Component : SvgIconType.Document;
+            var cssClass = item.Type == NavigationItemType.Story ? "type-story-collection" : "type-docs";
 
             <button @key="id" title="@title" class="item @cssClass" @onclick="@(() => this.OnClickHistoryItem(item))" @onpointerenter="@(() => OnHover(id))" aria-selected="@IsSelected(id)">
                 <SvgIcon Type="iconType" />

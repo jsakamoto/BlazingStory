@@ -6,7 +6,7 @@ internal class NavigationListItem : INavigationPath
 
     public required string Caption;
 
-    public required NavigationTreeItemType Type;
+    public required NavigationItemType Type;
 
     public required string NavigationPath { get; init; }
 

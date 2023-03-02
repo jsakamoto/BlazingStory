@@ -41,19 +41,19 @@ public class NavigationHistory
         var historyItem = default(NavigationListItem);
         var nextIds = Enumerable.Range(0, int.MaxValue).Where(n => this._HistoryItems.All(item => item.Id != n));
 
-        if (active.Type == NavigationTreeItemType.Story)
+        if (active.Type == NavigationItemType.Story)
         {
             var componentItem = root.FindParentOf(active);
             if (componentItem == null) return;
 
-            var firstStory = componentItem.SubItems.FirstOrDefault(item => item.Type == NavigationTreeItemType.Story);
+            var firstStory = componentItem.SubItems.FirstOrDefault(item => item.Type == NavigationItemType.Story);
             if (firstStory == null) return;
 
             historyItem = new()
             {
                 Id = nextIds.First(),
                 Caption = componentItem.Caption,
-                Type = NavigationTreeItemType.Story,
+                Type = NavigationItemType.Story,
                 NavigationPath = firstStory.NavigationPath,
                 Segments = componentItem.PathSegments
             };

@@ -8,13 +8,13 @@
             var href = this._NavigationService?.GetNavigationUrl(item);
             var style = $"padding-left: calc({this.IndentLevel} * var(--bs-sidebar-nav-indent-size));";
             var tabIndex = this.SubHeading ? "unset" : "-1";
-            var active = (item.Type == NavigationTreeItemType.Story) && (this.RouteData?.RouteToStoryOrDocs == true) && (this.RouteData?.Parameter == item.NavigationPath);
+            var active = (item.Type == NavigationItemType.Story) && (this.RouteData?.RouteToStoryOrDocs == true) && (this.RouteData?.Parameter == item.NavigationPath);
 
             <div @key="item.Caption" class="navigation-tree-item @CssClass(new {item.Expanded, Type = item.Type.ToString(), active })">
 
                 @* .caption *@
                 <div class="@CssClass("caption", new {this.SubHeading})">
-                    @if (item.Type != NavigationTreeItemType.Story)
+                    @if (item.Type != NavigationItemType.Story)
                     {
                         @* .action *@
                         <button class="action" tabindex="@tabIndex" @onclick="(() => ToggleItemExpansion(item))" style="@style">
@@ -87,7 +87,7 @@
         item.Expanded = !item.Expanded;
         await ExpansionChanged.InvokeAsync();
 
-        if (item.Type == NavigationTreeItemType.StoryCollection && item.Expanded && item.SubItems.Any())
+        if (item.Type == NavigationItemType.StoryCollection && item.Expanded && item.SubItems.Any())
         {
             var storyItemOf1st = item.SubItems.First();
             this._NavigationService?.NavigateTo(storyItemOf1st);
@@ -98,8 +98,8 @@
     {
         return item.Type switch
         {
-            NavigationTreeItemType.StoryCollection => SvgIconType.Component,
-            NavigationTreeItemType.Story => SvgIconType.BookmarkHollow,
+            NavigationItemType.StoryCollection => SvgIconType.Component,
+            NavigationItemType.Story => SvgIconType.BookmarkHollow,
             _ => SvgIconType.Folder
         };
     }

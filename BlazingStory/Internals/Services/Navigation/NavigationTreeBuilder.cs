@@ -6,17 +6,17 @@ internal class NavigationTreeBuilder
 {
     internal NavigationTreeItem Build(IEnumerable<StoryContainer> storyContainers, string? expandedNavigationPath)
     {
-        var root = new NavigationTreeItem { Type = NavigationTreeItemType.Container };
+        var root = new NavigationTreeItem { Type = NavigationItemType.Container };
         foreach (var storyContainer in storyContainers)
         {
             var segments = storyContainer.Title.Split('/');
             var item = this.CreateOrGetNavigationTreeItem(root, pathSegments: Enumerable.Empty<string>(), segments);
-            item.Type = NavigationTreeItemType.StoryCollection;
+            item.Type = NavigationItemType.StoryCollection;
             var pathSegments = item.PathSegments.Append(item.Caption).ToArray();
             var subItems = storyContainer.Stories
                 .Select(story => new NavigationTreeItem
                 {
-                    Type = NavigationTreeItemType.Story,
+                    Type = NavigationItemType.Story,
                     NavigationPath = story.NavigationPath,
                     PathSegments = pathSegments,
                     Caption = story.Name
@@ -48,7 +48,7 @@ internal class NavigationTreeBuilder
         {
             subItem = new NavigationTreeItem
             {
-                Type = NavigationTreeItemType.Container,
+                Type = NavigationItemType.Container,
                 PathSegments = pathSegments,
                 Caption = head
             };

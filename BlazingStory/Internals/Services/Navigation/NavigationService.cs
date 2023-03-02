@@ -55,7 +55,7 @@ internal class NavigationService
 
         foreach (var item in this._Root.EnumAll())
         {
-            if (item.Type == NavigationTreeItemType.Story && keywords.Any(word => item.Caption.Contains(word, StringComparison.InvariantCultureIgnoreCase)))
+            if (item.Type == NavigationItemType.Story && keywords.Any(word => item.Caption.Contains(word, StringComparison.InvariantCultureIgnoreCase)))
             {
                 results.Add(NavigationListItem.CreateFrom(this._SearchResultSequence++, item));
             }
