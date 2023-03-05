@@ -1,10 +1,16 @@
-@if (!this._Results.Any())
-{
-    <div class="no-components-found">
-        <strong>No components found</strong>
-        <small>Find components by name or path.</small>
-    </div>
-}
+<div class="search-results">
+
+    <NavigationList Items="this._Results" OnClickItem="this.OnClickSearchResultItem" />
+
+    @if (!this._Results.Any())
+    {
+        <div class="no-components-found">
+            <strong>No components found</strong>
+            <small>Find components by name or path.</small>
+        </div>
+    }
+
+</div>
 
 @code
 {
@@ -14,7 +20,13 @@
     [Parameter, EditorRequired]
     public string? SearchText { get; set; }
 
+    [Parameter]
+    public EventCallback ExitSearchView { get; set; }
+
+
     private NavigationService? _NavigationService;
+
+    private IEnumerable<string> _SearchKeywords = Enumerable.Empty<string>();
 
     private IEnumerable<NavigationListItem> _Results = Enumerable.Empty<NavigationListItem>();
 
@@ -28,6 +40,18 @@
         base.OnParametersSet();
 
         if (this._NavigationService == null) return;
-        //this._Results = this._NavigationService.Search(this.SearchText);
+
+        var seachKeywords = (this.SearchText ?? "").Split(' ').Select(word => word.Trim()).Where(word => !string.IsNullOrEmpty(word)).ToArray();
+        if (this._SearchKeywords.SequenceEqual(seachKeywords)) return;
+
+        this._SearchKeywords = seachKeywords;
+        this._Results = this._NavigationService.Search(this._SearchKeywords);
     }
+
+    private async Task OnClickSearchResultItem(NavigationListItem item)
+    {
+        this._NavigationService?.NavigateTo(item);
+        await this.ExitSearchView.InvokeAsync();
+    }
+
 }

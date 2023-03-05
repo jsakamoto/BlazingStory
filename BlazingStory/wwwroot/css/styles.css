@@ -317,56 +317,77 @@ button {
   color: var(--bs-dimmed-text-color);
   letter-spacing: 3.85px;
 }
-.history .recently-opened {
+
+.search-results {
+  margin-top: var(--bs-sidebar-gap-size);
+}
+.search-results .no-components-found {
+  margin: 20px -20px 0 -20px;
+  text-align: center;
+}
+.search-results .no-components-found > strong {
+  display: block;
+  font-size: 13px;
+}
+.search-results .no-components-found > small {
+  display: block;
+  font-size: 12px;
+  margin-top: 1px;
+}
+
+.navigation-list .navigation-list-items {
   margin: 0 -20px;
 }
-.history .recently-opened .item {
+.navigation-list .navigation-list-items .item {
   padding: 3px 3px 3px 18px;
   width: 100%;
   display: flex;
   text-align: left;
 }
-.history .recently-opened .item.type-story-collection .svg-icon {
+.navigation-list .navigation-list-items .item.type-component .svg-icon {
   color: var(--bs-icon-story-container-color);
 }
-.history .recently-opened .item.type-docs .svg-icon {
+.navigation-list .navigation-list-items .item.type-story .svg-icon {
+  color: var(--bs-icon-story-color);
+}
+.navigation-list .navigation-list-items .item.type-docs .svg-icon {
   color: var(--bs-icon-document-color);
 }
-.history .recently-opened .item .label {
+.navigation-list .navigation-list-items .item .label {
   flex: 1;
   display: flex;
   flex-direction: column;
   font-size: 13px;
 }
-.history .recently-opened .item .label .title {
+.navigation-list .navigation-list-items .item .label .title {
   font-weight: 600;
 }
-.history .recently-opened .item .label .path {
+.navigation-list .navigation-list-items .item .label .path {
   font-size: 11px;
   color: var(--bs-dimmed-text-color);
   display: grid;
   justify-content: start;
   grid-auto-flow: column;
 }
-.history .recently-opened .item .label .path span {
+.navigation-list .navigation-list-items .item .label .path span {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.history .recently-opened .item .label .path span + span {
+.navigation-list .navigation-list-items .item .label .path span + span {
   position: relative;
   margin-left: 4px;
   padding-left: 7px;
 }
-.history .recently-opened .item .label .path span + span:before {
+.navigation-list .navigation-list-items .item .label .path span + span:before {
   content: "/";
   position: absolute;
   left: 0;
 }
-.history .actions {
+.navigation-list .navigation-list-actions {
   margin-top: 8px;
 }
-.history .actions .action {
+.navigation-list .navigation-list-actions .action {
   font-size: 12px;
   color: var(--bs-dimmed-text-color);
   min-height: 16px;
@@ -376,28 +397,14 @@ button {
   align-items: center;
   cursor: pointer;
 }
-.history .actions .action .svg-icon {
+.navigation-list .navigation-list-actions .action .svg-icon {
   margin: 0 5px 0 -1px;
 }
-.history .actions .action > .text {
+.navigation-list .navigation-list-actions .action > .text {
   flex: 1;
 }
-.history [aria-selected] {
+.navigation-list [aria-selected] {
   background-color: var(--bs-hover-light-back-color);
-}
-
-.no-components-found {
-  margin: 20px -20px 0 -20px;
-  text-align: center;
-}
-.no-components-found > strong {
-  display: block;
-  font-size: 13px;
-}
-.no-components-found > small {
-  display: block;
-  font-size: 12px;
-  margin-top: 1px;
 }
 
 .navigation-tree {
@@ -534,7 +541,7 @@ button {
 .navigation-tree .type-container > .caption .action svg {
   color: var(--bs-icon-folder-color);
 }
-.navigation-tree .type-story-collection > .caption .action svg {
+.navigation-tree .type-component > .caption .action svg {
   color: var(--bs-icon-story-container-color);
 }
 .navigation-tree .type-story > .caption .action svg {

@@ -1,6 +1,6 @@
 ﻿namespace BlazingStory.Internals.Models;
 
-internal class NavigationListItem : INavigationPath
+public class NavigationListItem : INavigationPath
 {
     public required int Id;
 

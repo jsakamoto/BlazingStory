@@ -1,0 +1,68 @@
+<div class="navigation-list">
+    <div class="navigation-list-items">
+        @if (this.Items != null)
+        {
+            @foreach (var item in this.Items)
+            {
+                var title = string.Join(" / ", item.Segments.Append(item.Caption));
+                var id = $"p:{item.Id}";
+                var iconType = this.GetIconType(item.Type);
+                var cssClass = this.GetCssClass(item.Type);
+
+                <button @key="id" title="@title" class="item @cssClass" @onclick="@(()=> this.OnClickItem.InvokeAsync(item))" @onpointerenter="@(() => OnHover(id))" aria-selected="@IsSelected(id)">
+                    <SvgIcon Type="iconType" />
+                    <div class="label">
+                        <div class="title">
+                            @item.Caption
+                        </div>
+                        <div class="path">
+                            @foreach (var segment in item.Segments)
+                            {
+                                <span>@segment</span>
+                            }
+                        </div>
+                    </div>
+                </button>
+            }
+        }
+    </div>
+
+    <div class="navigation-list-actions">
+        @this.Actions?.Invoke(this)
+    </div>
+
+</div>
+
+@code
+{
+    [Parameter]
+    public IEnumerable<NavigationListItem>? Items { get; set; }
+
+    [Parameter]
+    public EventCallback<NavigationListItem> OnClickItem { get; set; }
+
+    [Parameter]
+    public RenderFragment<NavigationList>? Actions { get; set; }
+
+    [Parameter]
+    public Func<NavigationItemType, SvgIconType> GetIconType { get; set; }
+
+    [Parameter]
+    public Func<NavigationItemType, string> GetCssClass { get; set; }
+
+    private string? _LastHoveredId;
+
+    public NavigationList()
+    {
+        this.GetIconType = itemType => itemType switch { NavigationItemType.Component => SvgIconType.Component, NavigationItemType.Story => SvgIconType.BookmarkHollow, _ => SvgIconType.Document };
+        this.GetCssClass = itemType => itemType switch { NavigationItemType.Component => "type-component", NavigationItemType.Story => "type-story", _ => "type-docs" };
+    }
+
+    public bool IsSelected(string id) => this._LastHoveredId == id;
+
+    public void OnHover(string id)
+    {
+        this._LastHoveredId = id;
+    }
+
+}

@@ -4,48 +4,22 @@
         Recently opened
     </div>
 
-    <div class="recently-opened">
+    <!-- Max 8 items -->
+    <NavigationList Items="this._HistoryItems" OnClickItem="this.OnClickHistoryItem" GetIconType="GetIconType" GetCssClass="GetCssClass">
+        <Actions>
+            <div class="action" @onclick="BackToComponents" @onpointerenter="@(() => context.OnHover("back-to-components"))" aria-selected="@context.IsSelected("back-to-components")">
+                <SvgIcon Type="SvgIconType.NavigationBack" />
+                <span class="text">Back to components</span>
+                <KeyMap Key="new (Code.Escape)" FreeSize="true" />
+            </div>
 
-        <!-- Max 8 items -->
-        @foreach (var item in this._HistoryItems)
-        {
-            var title = string.Join(" / ", item.Segments.Append(item.Caption));
-            var id = $"p:{item.Id}";
-            var iconType = item.Type == NavigationItemType.Story ? SvgIconType.Component : SvgIconType.Document;
-            var cssClass = item.Type == NavigationItemType.Story ? "type-story-collection" : "type-docs";
+            <div class="action" @onclick="ClearHistory" @onpointerenter="@(() => context.OnHover("clear-history"))" aria-selected="@context.IsSelected("clear-history")">
+                <SvgIcon Type="SvgIconType.TrashCan" />
+                <span class="text">Clear history</span>
+            </div>
+        </Actions>
+    </NavigationList>
 
-            <button @key="id" title="@title" class="item @cssClass" @onclick="@(() => this.OnClickHistoryItem(item))" @onpointerenter="@(() => OnHover(id))" aria-selected="@IsSelected(id)">
-                <SvgIcon Type="iconType" />
-                <div class="label">
-                    <div class="title">
-                        @item.Caption
-                    </div>
-                    <div class="path">
-                        @foreach (var segment in item.Segments)
-                        {
-                            <span>@segment</span>
-                        }
-                    </div>
-                </div>
-            </button>
-        }
-
-    </div>
-
-    <div class="actions">
-
-        <div class="action" @onclick="BackToComponents" @onpointerenter="@(() => OnHover("back-to-components"))" aria-selected="@IsSelected("back-to-components")">
-            <SvgIcon Type="SvgIconType.NavigationBack" />
-            <span class="text">Back to components</span>
-            <KeyMap Key="new (Code.Escape)" FreeSize="true" />
-        </div>
-
-        <div class="action" @onclick="ClearHistory" @onpointerenter="@(() => OnHover("clear-history"))" aria-selected="@IsSelected("clear-history")">
-            <SvgIcon Type="SvgIconType.TrashCan" />
-            <span class="text">Clear history</span>
-        </div>
-
-    </div>
 </div>
 
 @code
@@ -60,20 +34,15 @@
 
     private IEnumerable<NavigationListItem> _HistoryItems = Enumerable.Empty<NavigationListItem>();
 
-    private string? _LastHoveredId;
-
-    private bool IsSelected(string id) => this._LastHoveredId == id;
-
     protected override async Task OnInitializedAsync()
     {
         this._NavigationService = this.Services.GetRequiredService<NavigationService>();
         this._HistoryItems = await this._NavigationService.GetHistoryItemsAsync();
     }
 
-    private void OnHover(string id)
-    {
-        this._LastHoveredId = id;
-    }
+    private SvgIconType GetIconType(NavigationItemType itemType) => itemType switch { NavigationItemType.Component => SvgIconType.Component, NavigationItemType.Story => SvgIconType.Component, _ => SvgIconType.Document };
+
+    private string GetCssClass(NavigationItemType itemType) => itemType switch { NavigationItemType.Component => "type-component", NavigationItemType.Story => "type-component", _ => "type-docs" };
 
     private async Task OnClickHistoryItem(NavigationListItem historyItem)
     {
