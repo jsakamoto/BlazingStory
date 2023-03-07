@@ -2,6 +2,7 @@
 :root {
   --bs-back-color: #f5fbff;
   --bs-dimmed-back-color: #ecf4f9;
+  --bs-accent-color: #029cfd;
   --bs-hover-back-color: rgba(2,156,253,0.12);
   --bs-hover-light-back-color: rgba(30,167,253,0.07);
   --bs-text-size: 13px;
@@ -11,12 +12,12 @@
   --bs-sidebar-nav-color: var(---bs-text-color);
   --bs-sidebar-nav-active-color: #fff;
   --bs-sidebar-nav-active-back-color: #1ea7fd;
-  --bs-focused-color: #029cfd;
+  --bs-focused-color: var(--bs-accent-color);
   --bs-inputs-background: #fff;
   --bs-inputs-box-shadow: hsla(203, 50%, 30%, 0.2) 0 0 0 1px inset;
   --bs-square-button-box-shadow: #d9e8f2 0 0 0 1px inset;
   --bs-icon-folder-color: #2a0481;
-  --bs-icon-story-container-color: #029cfd;
+  --bs-icon-story-container-color: var(--bs-accent-color);
   --bs-icon-story-color: #37d5d3;
   --bs-icon-document-color: #ff8300;
   --bs-keymap-text-color: #5c6870;
@@ -363,7 +364,7 @@ button {
   font-weight: 600;
 }
 .navigation-list .navigation-list-items .item .label .title .match {
-  color: var(--bs-focused-color);
+  color: var(--bs-accent-color);
 }
 .navigation-list .navigation-list-items .item .label .path {
   font-size: 11px;
