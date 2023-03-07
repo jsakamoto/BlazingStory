@@ -28,6 +28,10 @@
 
                 .title {
                     font-weight: 600;
+
+                    .match {
+                        color: var(--bs-focused-color);
+                    }
                 }
 
                 .path {

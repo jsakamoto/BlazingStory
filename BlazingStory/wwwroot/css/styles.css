@@ -362,6 +362,9 @@ button {
 .navigation-list .navigation-list-items .item .label .title {
   font-weight: 600;
 }
+.navigation-list .navigation-list-items .item .label .title .match {
+  color: var(--bs-focused-color);
+}
 .navigation-list .navigation-list-items .item .label .path {
   font-size: 11px;
   color: var(--bs-dimmed-text-color);

@@ -1,6 +1,6 @@
 <div class="search-results">
 
-    <NavigationList Items="this._Results" OnClickItem="this.OnClickSearchResultItem" />
+    <NavigationList Items="this._Results" OnClickItem="this.OnClickSearchResultItem" Keywords="this._SearchKeywords" />
 
     @if (!this._Results.Any())
     {

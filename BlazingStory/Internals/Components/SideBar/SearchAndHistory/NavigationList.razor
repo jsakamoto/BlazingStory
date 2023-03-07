@@ -1,3 +1,4 @@
+@using BlazingStory.Internals.Utils.TextSearch;
 <div class="navigation-list">
     <div class="navigation-list-items">
         @if (this.Items != null)
@@ -8,12 +9,18 @@
                 var id = $"p:{item.Id}";
                 var iconType = this.GetIconType(item.Type);
                 var cssClass = this.GetCssClass(item.Type);
+                var captionFragments = TextSearchFragment.CreateFragments(item.Caption, this.Keywords ?? Array.Empty<string>());
 
                 <button @key="id" title="@title" class="item @cssClass" @onclick="@(()=> this.OnClickItem.InvokeAsync(item))" @onpointerenter="@(() => OnHover(id))" aria-selected="@IsSelected(id)">
                     <SvgIcon Type="iconType" />
                     <div class="label">
                         <div class="title">
-                            @item.Caption
+                            @foreach (var fragment in captionFragments)
+                            {
+                                <span class="@fragment.Type.ToString().ToLower()">
+                                    @fragment.Text
+                                </span>
+                            }
                         </div>
                         <div class="path">
                             @foreach (var segment in item.Segments)
@@ -49,6 +56,9 @@
 
     [Parameter]
     public Func<NavigationItemType, string> GetCssClass { get; set; }
+
+    [Parameter]
+    public IEnumerable<string>? Keywords { get; set; }
 
     private string? _LastHoveredId;
 
