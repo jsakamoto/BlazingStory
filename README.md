@@ -1,4 +1,4 @@
-﻿# Blazing Story [![NuGet Package](https://img.shields.io/nuget/v/BlazingStory.svg)](https://www.nuget.org/packages/BlazingStory/)
+﻿# <img src="https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/logo.svg" width="64" style="vertical-align:middle;" /> Blazing Story [![NuGet Package](https://img.shields.io/nuget/v/BlazingStory.svg)](https://www.nuget.org/packages/BlazingStory/)
 
 ## Summary
 
