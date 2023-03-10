@@ -1,0 +1,12 @@
+{
+  "name": "image-minifier",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MPL-2.0",
+  "scripts": {
+    "minify-svg": "svgo icon.svg -p 0 -o icon.min.svg"
+  },
+  "dependencies": {
+    "svgo": "^3.0.2"
+  }
+}

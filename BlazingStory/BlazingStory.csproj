@@ -22,7 +22,7 @@
     <Description>The clone of "Storybook" for Blazor, a frontend workshop for building UI components and pages in isolation.</Description>
     <PackageTags>blazor,storybook</PackageTags>
     <PackageReleaseNotes>(Please write the package release notes in "RELEASE NOTES.txt".)</PackageReleaseNotes>
-    <PackageIcon>nupkg-icon.png</PackageIcon>
+    <PackageIcon>icon-128x128.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
     <PackageOutputPath>..\_dist\</PackageOutputPath>
@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <!--<Content Update="**\*.json" Pack="false" />-->
-    <None Include="..\assets\nupkg-icon.png" Pack="true" Visible="false" PackagePath="" />
+    <None Include="..\assets\icon-128x128.png" Pack="true" Visible="false" PackagePath="" />
     <None Include="..\README.md" Visible="false" Pack="true" PackagePath="\" />
   </ItemGroup>
 
