@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>BlazingStory.ProjectTemplates</id>
+    <version>1.0.0-preview.1</version>
+    <description>
+      Templates for a Blazing Story project.
+    </description>
+    <authors>J.Sakamoto</authors>
+    <tags>blazor
+      storybook blazingstory</tags>
+    <license type="expression">MPL-2.0</license>
+    <projectUrl>https://github.com/jsakamoto/BlazingStory/</projectUrl>
+    <repository type="git" url="https://github.com/jsakamoto/BlazingStory/" />
+    <icon>nupkg-icon.png</icon>
+    <readme>
+      README.md</readme>
+    <packageTypes>
+      <packageType name="Template" />
+    </packageTypes>
+  </metadata>
+  <files>
+    <file src="..\assets\icon-128x128.png" target="nupkg-icon.png" />
+    <file src="Content\" target="Content" exclude="**\obj\**\*.*;**\bin\**\*.*;**\.vs\**\*.*;**\.vscode\**\*.*;**\*.suo;**\*.user" />
+    <file src="..\README.md" target="README.md" />
+  </files>
+</package>
