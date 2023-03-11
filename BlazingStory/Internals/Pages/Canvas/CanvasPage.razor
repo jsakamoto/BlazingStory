@@ -168,6 +168,11 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
+
+        // Navigte to default story if the navigationPath is empty.
+        var navService = this.Services.GetRequiredService<NavigationService>();
+        //navService.NavigateToDefaultStory(this.RouteData);
+
         this._AddonPanelLayout = await this.HelperScript.LoadObjectFromLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
         this.UpdateAddonPanelSize(this._AddonPanelLayout.SplitterOrientation);
         this.StateHasChanged();
@@ -179,7 +184,7 @@
         if (this._LastTitledParameter == this.RouteData.Parameter) return;
         if (this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story))
         {
-            this._PageTitle = string.Join(" / ", story.Title.Split('/')) + " - " + story.Name + " - " + BlazingStoryApp.Title;
+            this._PageTitle = string.Join(" / ", story.Title.Split('/')) + " - " + story.Name + " - " +  BlazingStoryApp.Title;
         }
         this._LastTitledParameter = this.RouteData.Parameter;
     }

@@ -42,38 +42,8 @@
     {
         if (firstRender)
         {
-            // Navigte to default story if the navigationPath is empty.
-            this.NavigateToDefaultStory();
-
             this.NavigationManager_LocationChanged(this, new(this.NavigationManager.Uri, isNavigationIntercepted: true));
         }
-    }
-
-    private void NavigateToDefaultStory()
-    {
-        if (TryGetActiveNavigationItem(out var _, out var storyItems)) return;
-
-        var firstStory = storyItems.FirstOrDefault();
-        if (firstStory == null) return;
-
-        this.NavigationRoot.EnsureExpandedTo(firstStory);
-        this._NavigationService?.NavigateTo(firstStory);
-    }
-
-    private bool TryGetActiveNavigationItem([NotNullWhen(true)] out NavigationTreeItem? activeItem, out IEnumerable<NavigationTreeItem> storyItems)
-    {
-        activeItem = null;
-        storyItems = this.NavigationRoot.EnumAll()
-            .Where(item => item.Type == NavigationItemType.Story)
-            .ToArray();
-
-        var navigationPath = this.RouteData?.Parameter;
-        if (string.IsNullOrEmpty(navigationPath)) return false;
-
-        activeItem = storyItems.FirstOrDefault(item => item.NavigationPath == navigationPath);
-        if (activeItem == null) return false;
-
-        return true;
     }
 
     private ValueTask OnPreviousComponent() => this.MoveComponent(delta: -1);
@@ -141,11 +111,12 @@
 
     private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs args)
     {
-        if (!TryGetActiveNavigationItem(out var activeItem, out var _)) return;
+        if (this._NavigationService == null) return;
+        if (!this._NavigationService.TryGetActiveNavigationItem(this.RouteData, out var activeItem, out var _)) return;
 
         this.NavigationRoot.EnsureExpandedTo(activeItem);
         this.StateHasChanged();
-        this._NavigationService?.AddHistoryAsync(activeItem).AndLogException(this.Logger);
+        this._NavigationService.AddHistoryAsync(activeItem).AndLogException(this.Logger);
     }
 
     public void Dispose()

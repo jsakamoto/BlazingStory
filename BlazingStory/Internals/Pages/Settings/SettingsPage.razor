@@ -1,0 +1,52 @@
+@using BlazingStory.Internals.Pages.Settings.Panels;
+@inject NavigationManager NavigationManager
+
+<ToolBar>
+    <TabButtonGroup>
+        @foreach (var panel in _SettingsPanels)
+        {
+            <TabButton @key="panel.Caption" OnClick="() => this.OnClickTabButton(panel.Route)" Active="this.IsActive(panel.Route)">
+                @panel.Caption
+            </TabButton>
+        }
+    </TabButtonGroup>
+
+    <Spacer />
+
+    <IconButton Icon="SvgIconType.CircleClose" OnClick="OnClickCloseButton" Title="Close settings page" />
+
+</ToolBar>
+
+<QueryRouteView Routes="_SettingsPanels.Select(r => r.Route)" />
+
+@code
+{
+    [CascadingParameter]
+    public QueryRouteData? RouteData { get; set; }
+
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
+    private static readonly (string Caption, QueryRoute Route)[] _SettingsPanels = new (string, QueryRoute)[]
+    {
+        ("About",              new("*", "about",         typeof(AboutPanel))),
+        ("Release notes",      new("*", "release-notes", typeof(ReleaseNotesPanel))),
+        ("Keyboard shortcuts", new("*", "shortcuts",     typeof(KeyboardShortcutsPanel))),
+    };
+
+    private void OnClickTabButton(QueryRoute route)
+    {
+        this.NavigationManager.NavigateTo($"./?path=/settings/{route.Parameter}");
+    }
+
+    private bool IsActive(QueryRoute route)
+    {
+        return route.Parameter == this.RouteData?.Parameter;    
+    }
+
+    private async Task OnClickCloseButton()
+    {
+        var navService = Services.GetRequiredService<NavigationService>();
+        await navService.BackToLastNavigatedAsync();
+    }
+}

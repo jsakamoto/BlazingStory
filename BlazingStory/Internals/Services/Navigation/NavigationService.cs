@@ -1,4 +1,5 @@
-﻿using BlazingStory.Internals.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using BlazingStory.Internals.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Internals.Services.Navigation;
@@ -31,6 +32,48 @@ internal class NavigationService
     {
         this._NavigationManager.NavigateTo(this.GetNavigationUrl(item));
     }
+
+    internal void NavigateToDefaultStory(QueryRouteData? routeData)
+    {
+        if (this.TryGetActiveNavigationItem(routeData, out var _, out var storyItems)) return;
+
+        var firstStory = storyItems.FirstOrDefault();
+        if (firstStory == null) return;
+
+        this._Root.EnsureExpandedTo(firstStory);
+        this.NavigateTo(firstStory);
+    }
+
+    internal bool TryGetActiveNavigationItem(QueryRouteData? routeData, [NotNullWhen(true)] out NavigationTreeItem? activeItem, out IEnumerable<NavigationTreeItem> storyItems)
+    {
+        activeItem = null;
+        storyItems = this._Root.EnumAll()
+            .Where(item => item.Type == NavigationItemType.Story)
+            .ToArray();
+
+        var navigationPath = routeData?.Parameter;
+        if (string.IsNullOrEmpty(navigationPath)) return false;
+
+        activeItem = storyItems.FirstOrDefault(item => item.NavigationPath == navigationPath);
+        if (activeItem == null) return false;
+
+        return true;
+    }
+
+    internal async ValueTask BackToLastNavigatedAsync()
+    {
+        var historyItems = await this.GetHistoryItemsAsync();
+        var lastNavigated = historyItems.FirstOrDefault();
+        if (lastNavigated == null)
+        {
+            this.NavigateToDefaultStory(null);
+        }
+        else
+        {
+            this.NavigateTo(lastNavigated);
+        }
+    }
+
 
     internal ValueTask<IEnumerable<NavigationListItem>> GetHistoryItemsAsync()
     {

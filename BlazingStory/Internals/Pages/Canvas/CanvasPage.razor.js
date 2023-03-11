@@ -1,17 +1,17 @@
 export const navigateCanvasFrameTo = (iframe, url) => {
-    if (iframe.contentWindow === null || iframe.contentDocument === null)
+    if (iframe === null || iframe.contentWindow === null || iframe.contentDocument === null)
         return;
     const event = new PopStateEvent("popstate", { state: {}, bubbles: true, cancelable: true });
     iframe.contentWindow.history.pushState({}, "", url);
     iframe.contentDocument.dispatchEvent(event);
 };
 export const reloadCanvasFrame = (iframe) => {
-    if (iframe.contentWindow === null)
+    if (iframe === null || iframe.contentWindow === null)
         return;
     iframe.contentWindow.postMessage({ action: "reload" });
 };
 const zoomCanvasFrame = (iframe, getNextZoomLevel) => {
-    if (iframe.contentDocument === null)
+    if (iframe === null || iframe.contentDocument === null)
         return;
     const style = iframe.contentDocument.body.style;
     const currentZoomLevel = parseFloat(style.zoom || '1');

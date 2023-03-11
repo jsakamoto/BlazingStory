@@ -1,9 +1,13 @@
 ﻿@page "/"
+@{
+    var routes = new QueryRoute[]
+    {
+        new("story",    "*", typeof(CanvasPage)),
+        new("settings", "*", typeof(SettingsPage)),
+        new("*",        "*", typeof(FallBackPage)),
+    };
+}
 
 <div class="fill body stack vertical">
-
-    <QueryRouteView View="story">
-        <CanvasPage />
-    </QueryRouteView>
-
+    <QueryRouteView Routes="routes" />
 </div>

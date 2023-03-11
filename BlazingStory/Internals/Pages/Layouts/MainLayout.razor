@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @using Toolbelt.Blazor.HotKeys2
+@inject NavigationManager NavigationManager
 
 <HeadContent>
     <link rel="stylesheet" href="_content/BlazingStory/css/styles.min.css" />
@@ -72,6 +73,9 @@
             this._GoFullScreenCommand = commandService[CommandType.GoFullScreen]!;
             this._Subscriptions.Add(this._SideBarVisibleCommand.Subscribe(this.OnToggleSideBarVisible));
             this._Subscriptions.Add(this._GoFullScreenCommand.Subscribe(this.OnToggleFullscreen));
+            this._Subscriptions.Add(commandService.Subscribe(CommandType.AboutYourBlazingStory, () => { this.NavigationManager.NavigateTo("./?path=/settings/about"); return ValueTask.CompletedTask; }));
+            this._Subscriptions.Add(commandService.Subscribe(CommandType.ReleaseNotes, () => { this.NavigationManager.NavigateTo("./?path=/settings/release-notes"); return ValueTask.CompletedTask; }));
+            this._Subscriptions.Add(commandService.Subscribe(CommandType.KeyboardShortcuts, () => { this.NavigationManager.NavigateTo("./?path=/settings/shortcuts"); return ValueTask.CompletedTask; }));
             this._SidBarVisibilityState = this.GetSidebarVisible() ? SidBarVisibilityStates.SidebarShown : SidBarVisibilityStates.SidebarHidden;
 
             this._Ready = true;

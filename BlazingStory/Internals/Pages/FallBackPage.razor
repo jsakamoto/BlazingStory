@@ -1,0 +1,17 @@
+@code
+{
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
+    [CascadingParameter]
+    protected QueryRouteData RouteData { get; init; } = default!;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var navService = this.Services?.GetRequiredService<NavigationService>();
+            navService?.NavigateToDefaultStory(this.RouteData);
+        }
+    }
+}
