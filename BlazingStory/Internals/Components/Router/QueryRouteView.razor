@@ -1,6 +1,12 @@
-@if (this.RouteData?.View == this.View)
+@{
+    var route = this.Routes?
+        .Where(r => r.ViewName == this.RouteData?.View || r.ViewName == "*")
+        .Where(r => r.Parameter == this.RouteData?.Parameter || r.Parameter == "*")
+        .FirstOrDefault();
+}
+@if (route != null)
 {
-    @ChildContent
+    <DynamicComponent @key="@(route.ViewName+ "|" + route.Parameter)" Type="route.ViewComponent" />
 }
 
 @code {
@@ -8,8 +14,5 @@
     public QueryRouteData? RouteData { get; set; }
 
     [Parameter, EditorRequired]
-    public string? View { get; set; }
-
-    [Parameter]
-    public RenderFragment? ChildContent { get; set; }
+    public IEnumerable<QueryRoute>? Routes { get; set; }
 }
