@@ -10,6 +10,7 @@
     --bs-text-size: 13px;
     --bs-text-color: #333333;
     --bs-dimmed-text-color: #73828c;
+    --bs-caption-text-color: #2e3438;
     --bs-control-caption-size: 12px;
     --bs-sidebar-nav-color: var(---bs-text-color);
     --bs-sidebar-nav-active-color: #fff;
@@ -30,7 +31,7 @@
     --bs-button-flagged-back-color: rgba(2,156,253,0.07);
     // popup menu
     --bs-popup-back-color: rgba(255,255,255,0.95);
-    --bs-popup-text-color: #2e3438;
+    --bs-popup-text-color: var(--bs-caption-text-color);
     --bs-popup-hover-back-color: rgba(2,156,253,0.07);
     --bs-popup-active-text-color: #ff4785;
     // scroll bar

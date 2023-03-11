@@ -8,6 +8,7 @@
   --bs-text-size: 13px;
   --bs-text-color: #333333;
   --bs-dimmed-text-color: #73828c;
+  --bs-caption-text-color: #2e3438;
   --bs-control-caption-size: 12px;
   --bs-sidebar-nav-color: var(---bs-text-color);
   --bs-sidebar-nav-active-color: #fff;
@@ -24,7 +25,7 @@
   --bs-keymap-back-color: rgba(0,0,0,0.05);
   --bs-button-flagged-back-color: rgba(2,156,253,0.07);
   --bs-popup-back-color: rgba(255,255,255,0.95);
-  --bs-popup-text-color: #2e3438;
+  --bs-popup-text-color: var(--bs-caption-text-color);
   --bs-popup-hover-back-color: rgba(2,156,253,0.07);
   --bs-popup-active-text-color: #ff4785;
   --bs-scrollbar-thumb-color: #ccc;
@@ -215,20 +216,6 @@ button {
   padding: 20px;
 }
 
-.sidebar {
-  /*    .sub-heading-style {
-          display:inline-block !important;
-          height: unset !important;
-          line-height: 16px;
-          margin-top: var(--bs-sidebar-gap-size) !important;
-          margin-bottom: 4px;
-          font-size: 11px !important;
-          font-weight: 600 !important;
-          text-transform: uppercase;
-          color: var(--bs-dimmed-text-color) !important;
-          letter-spacing: 3.85px;
-      }*/
-}
 .sidebar .sidebar-header {
   display: flex;
   height: 28px;
@@ -236,9 +223,20 @@ button {
   margin-bottom: var(--bs-sidebar-gap-size);
 }
 .sidebar .sidebar-header .sidebar-header-title {
-  font-size: 18px;
-  font-weight: bold;
   flex: 1;
+  height: 24px;
+  line-height: 24px;
+  padding-left: 26px;
+  font-size: 16px;
+  font-weight: 900;
+  text-decoration: none;
+  color: var(--bs-caption-text-color);
+  text-shadow: 0.5px 0 0 var(--bs-caption-text-color);
+  background-image: url(../images/icon.min.svg);
+  background-size: 24px;
+  background-repeat: no-repeat;
+  background-position: -2px center;
+  white-space: nowrap;
 }
 .sidebar .sidebar-header .settings-popup-menu .popup-menu-holder {
   min-width: 180px;
