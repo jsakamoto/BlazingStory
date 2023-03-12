@@ -112,7 +112,11 @@
     private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs args)
     {
         if (this._NavigationService == null) return;
-        if (!this._NavigationService.TryGetActiveNavigationItem(this.RouteData, out var activeItem, out var _)) return;
+        if (!this._NavigationService.TryGetActiveNavigationItem(this.RouteData, out var activeItem, out var _))
+        {
+            if (this.RouteData.View == "story") this._NavigationService.NotifyLastVisitedWasUnknown();
+            return;
+        }
 
         this.NavigationRoot.EnsureExpandedTo(activeItem);
         this.StateHasChanged();

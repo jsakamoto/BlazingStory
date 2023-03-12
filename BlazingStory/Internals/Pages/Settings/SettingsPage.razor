@@ -44,9 +44,9 @@
         return route.Parameter == this.RouteData?.Parameter;    
     }
 
-    private async Task OnClickCloseButton()
+    private void OnClickCloseButton()
     {
         var navService = Services.GetRequiredService<NavigationService>();
-        await navService.BackToLastNavigatedAsync();
+        navService.BackToLastNavigated();
     }
 }

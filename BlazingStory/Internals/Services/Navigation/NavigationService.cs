@@ -12,6 +12,10 @@ internal class NavigationService
 
     private NavigationTreeItem _Root = new();
 
+    private NavigationTreeItem? _LastNavigated = null;
+
+    private bool _LastNavigatedWasunknown = false;
+
     private int _SearchResultSequence = 0;
 
     public NavigationService(NavigationManager navigationManager, HelperScript helperScript)
@@ -60,20 +64,25 @@ internal class NavigationService
         return true;
     }
 
-    internal async ValueTask BackToLastNavigatedAsync()
+    internal void NotifyLastVisitedWasUnknown()
     {
-        var historyItems = await this.GetHistoryItemsAsync();
-        var lastNavigated = historyItems.FirstOrDefault();
-        if (lastNavigated == null)
-        {
-            this.NavigateToDefaultStory(null);
-        }
-        else
-        {
-            this.NavigateTo(lastNavigated);
-        }
+        this._LastNavigatedWasunknown = true;
     }
 
+    internal void BackToLastNavigated()
+    {
+        if (!this._LastNavigatedWasunknown)
+        {
+            if (this._LastNavigated != null)
+            {
+                this.NavigateTo(this._LastNavigated);
+            }
+            else
+            {
+                this.NavigateToDefaultStory(null);
+            }
+        }
+    }
 
     internal ValueTask<IEnumerable<NavigationListItem>> GetHistoryItemsAsync()
     {
@@ -82,6 +91,7 @@ internal class NavigationService
 
     internal async ValueTask AddHistoryAsync(NavigationTreeItem active)
     {
+        this._LastNavigated = active;
         await this._NavigationHistory.AddAsync(this._Root, active);
     }
 
