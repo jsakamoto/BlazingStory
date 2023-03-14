@@ -6,9 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(Framework)' == 'net6.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.14" />
-  </ItemGroup>
   <ItemGroup Condition=" '$(Framework)' == 'net7.0' ">
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="7.0.3" />
   </ItemGroup>
