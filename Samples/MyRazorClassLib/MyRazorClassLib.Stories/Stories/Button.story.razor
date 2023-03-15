@@ -1,0 +1,36 @@
+﻿@using MyRazorClassLib.Components
+@attribute [Stories("Components/Button")]
+
+<Stories TComponent="Button">
+    <ArgType For="_=>_!.BackgroundColor" Control="ControlType.Color" />
+    <ArgType For="_=>_!.Size" Control="ControlType.Select" />
+
+    <Story Name="Primary">
+        <Template>
+            <Button Label="Button" Primary="true" @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Secondary">
+        <Arguments>
+            <Arg For="_ => _!.Primary" Value="false" />
+        </Arguments>
+        <Template>
+            <Button Label="Button" @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Large">
+        <Template>
+            <Button Label="Button" Size="ButtonSize.Large" @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Small">
+        <Template>
+            <Button Label="Button" Size="ButtonSize.Small" @attributes="context.Args" />
+        </Template>
+    </Story>
+
+</Stories>
+
