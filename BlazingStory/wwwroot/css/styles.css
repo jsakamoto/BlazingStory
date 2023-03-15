@@ -1,4 +1,4 @@
-﻿@import "/_content/Toolbelt.Blazor.SplitContainer/Toolbelt.Blazor.SplitContainer.bundle.scp.css";
+﻿@import "../../../_content/Toolbelt.Blazor.SplitContainer/Toolbelt.Blazor.SplitContainer.bundle.scp.css";
 :root {
   --bs-back-color: #f5fbff;
   --bs-dimmed-back-color: #ecf4f9;

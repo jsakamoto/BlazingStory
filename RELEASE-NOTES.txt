@@ -1,2 +1,5 @@
+v.1.0.0-preview.1.1
+- Fix: 3rd party libraries CSS file importing failed if the app deployed under subpath.
+
 v.1.0.0-preview.1
 - 1st release.
