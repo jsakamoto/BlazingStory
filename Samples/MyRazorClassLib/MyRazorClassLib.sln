@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyRazorClassLib", "MyRazorClassLib\MyRazorClassLib.csproj", "{F4899446-1A30-48B5-BD79-67B20654BDB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyRazorClassLib.Stories", "MyRazorClassLib.Stories\MyRazorClassLib.Stories.csproj", "{3EF89490-F40D-455D-9C49-C2D20470930E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyRazorClassLib.Stories", "MyRazorClassLib.Stories\MyRazorClassLib.Stories.csproj", "{3EF89490-F40D-455D-9C49-C2D20470930E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
