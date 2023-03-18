@@ -2,13 +2,13 @@
     <span style="color: @(this.Color ?? _DefaultColor)">
         @for (var i = 0; i < Math.Min(this.Value, this.Max); i++)
         {
-            <span @key="@("star-" + i)">Åö</span>
+            <span @key="@("star-" + i)">‚òÖ</span>
         }
     </span>
     <span>
         @for (var i = 0; i < Math.Max(0, this.Max - this.Value); i++)
         {
-            <span @key="@("nostar-"+i)">Åô</span>
+            <span @key="@("nostar-"+i)">‚òÜ</span>
         }
     </span>
 </span>
