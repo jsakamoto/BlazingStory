@@ -20,4 +20,4 @@ jobs:
 
       # Invoke tests
       - name: Invoke tests
-        run: dotnet test
+        run: dotnet test -p:TypeScriptCompileBlocked=true
