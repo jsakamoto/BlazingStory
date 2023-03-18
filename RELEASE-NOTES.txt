@@ -1,3 +1,6 @@
+v.1.0.0-preview.1.2
+- Improve the README and the project template to explain how to add custom css and js files for stories.
+
 v.1.0.0-preview.1.1
 - Fix: 3rd party libraries CSS file importing failed if the app deployed under subpath.
 

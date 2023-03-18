@@ -193,6 +193,10 @@ You can specify the initial value of the component parameter by using the `<Arg>
 
 ![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/configure-arguments-arg.png)
 
+## Include custom CSS or JavaScript files for your stories
+
+If you need to add `<link>` or `<script>` elements to include CSS or JavaScript files for canvas views of your stories, you should do that in the **`iframe.html`** file, not in the `index.html` file.
+
 ## System Requirements
 
 .NET SDK ver.7 or later
