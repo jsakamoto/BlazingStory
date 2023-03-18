@@ -1,0 +1,247 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "J.Sakamoto",
+  "classifications": [
+    "Web",
+    "Blazor",
+    "WebAssembly"
+  ],
+  "groupIdentity": "BlazingStory.Wasm",
+  "identity": "BlazingStory.Wasm.CSharp.1.0",
+  "precedence": "7000",
+  "name": "Blazing Story (WebAssembly App)",
+  "shortName": "blazingstorywasm",
+  "description": "A project template for creating a Blazing Story WebAssembly application that is a clone of the Storybook for Blazor.",
+  "thirdPartyNotices": "https://github.com/jsakamoto/BlazingStory/blob/main/THIRD-PARTY-NOTICES.txt",
+  "defaultName": "BlazingStoryApp",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "symbols": {
+    "HostIdentifier": {
+      "type": "bind",
+      "binding": "HostIdentifier"
+    },
+    "skipRestore": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "If specified, skips the automatic restore of the project on create.",
+      "defaultValue": "false"
+    },
+    "Framework": {
+      "type": "parameter",
+      "description": "The target framework for the project.",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "net7.0",
+          "description": "Target net70"
+        }
+      ],
+      "replaces": "net7.0",
+      "defaultValue": "net7.0"
+    },
+    "kestrelHttpPort": {
+      "type": "parameter",
+      "datatype": "integer",
+      "description": "Port number to use for the HTTP endpoint in launchSettings.json."
+    },
+    "kestrelHttpPortGenerated": {
+      "type": "generated",
+      "generator": "port",
+      "parameters": {
+        "low": 5000,
+        "high": 5300
+      }
+    },
+    "kestrelHttpPortReplacer": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "kestrelHttpPort",
+        "fallbackVariableName": "kestrelHttpPortGenerated"
+      },
+      "replaces": "5000"
+    },
+    "kestrelHttpsPort": {
+      "type": "parameter",
+      "datatype": "integer",
+      "description": "Port number to use for the HTTPS endpoint in launchSettings.json. This option is only applicable when the parameter no-https is not used (no-https will be ignored if either IndividualAuth or OrganizationalAuth is used)."
+    },
+    "kestrelHttpsPortGenerated": {
+      "type": "generated",
+      "generator": "port",
+      "parameters": {
+        "low": 7000,
+        "high": 7300
+      }
+    },
+    "kestrelHttpsPortReplacer": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "kestrelHttpsPort",
+        "fallbackVariableName": "kestrelHttpsPortGenerated"
+      },
+      "replaces": "5001"
+    },
+    "iisHttpPort": {
+      "type": "parameter",
+      "datatype": "integer",
+      "description": "Port number to use for the IIS Express HTTP endpoint in launchSettings.json."
+    },
+    "iisHttpPortGenerated": {
+      "type": "generated",
+      "generator": "port"
+    },
+    "iisHttpPortReplacer": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "iisHttpPort",
+        "fallbackVariableName": "iisHttpPortGenerated"
+      },
+      "replaces": "8080"
+    },
+    "iisHttpsPort": {
+      "type": "parameter",
+      "datatype": "integer",
+      "description": "Port number to use for the IIS Express HTTPS endpoint in launchSettings.json. This option is only applicable when the parameter no-https is not used (no-https will be ignored if either IndividualAuth or OrganizationalAuth is used)."
+    },
+    "iisHttpsPortGenerated": {
+      "type": "generated",
+      "generator": "port",
+      "parameters": {
+        "low": 44300,
+        "high": 44399
+      }
+    },
+    "iisHttpsPortReplacer": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "iisHttpsPort",
+        "fallbackVariableName": "iisHttpsPortGenerated"
+      },
+      "replaces": "44300"
+    },
+    "NoHttps": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Whether to turn off HTTPS."
+    },
+    "Hosted": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "If specified, includes an ASP.NET Core host for the Blazor WebAssembly app."
+    },
+    "Solution": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "If specified, adds a solution file for the standalone Blazor WebAssembly app."
+    }
+  },
+  "guids": [
+    "6E1E976D-315B-461F-8A47-DC6C0D69FEA8",
+    "E4F5C735-BB90-4C44-8B6D-B7723A985B38",
+    "0341B023-80E5-4FEA-B58E-CD70D1D432EC",
+    "12616DCF-E921-48CA-A211-A262FA10D5E9"
+  ],
+  "sourceName": "BlazingStoryWasm",
+  "sources": [
+    {
+      "source": "./",
+      "target": "./",
+      "exclude": [
+        ".template.config/**"
+      ],
+      "copyOnly": [
+      ],
+      "modifiers": [
+        {
+          "condition": "(!Hosted)",
+          "exclude": [
+            "Server/**",
+            "Shared/**",
+            "BlazingStoryWasm.sln"
+          ],
+          "rename": {
+            ".Client.csproj": ".csproj",
+            ".Client.sln": ".sln",
+            "Client": "."
+          }
+        },
+        {
+          "condition": "(!Hosted && !Solution)",
+          "exclude": [
+            "Client/BlazingStoryWasm.Client.sln"
+          ]
+        },
+        {
+          "condition": "(Hosted)",
+          "exclude": [
+            "Client/BlazingStoryWasm.Client.sln"
+          ]
+        },
+        {
+          "condition": "(Hosted && HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+          "exclude": [
+            "*.sln"
+          ]
+        }
+      ]
+    }
+  ],
+  "primaryOutputs": [
+    {
+      "condition": "(Hosted && (HostIdentifier == \"dotnetcli\" || HostIdentifier == \"dotnetcli-preview\"))",
+      "path": "BlazingStoryWasm.sln"
+    },
+    {
+      "condition": "(Hosted && HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+      "path": "Server/BlazingStoryWasm.Server.csproj"
+    },
+    {
+      "condition": "(!Hosted)",
+      "path": "BlazingStoryWasm.Client.csproj"
+    },
+    {
+      "condition": "(Hosted && HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+      "path": "Client/BlazingStoryWasm.Client.csproj"
+    }
+  ],
+  "postActions": [
+    {
+      "condition": "(!skipRestore && Hosted)",
+      "description": "Restore NuGet packages required by this project.",
+      "manualInstructions": [
+        {
+          "text": "Run 'dotnet restore'"
+        }
+      ],
+      "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
+      "continueOnError": true
+    },
+    {
+      "condition": "(!skipRestore && !Hosted)",
+      "description": "Restore NuGet packages required by this project.",
+      "manualInstructions": [
+        {
+          "text": "Run 'dotnet restore'"
+        }
+      ],
+      "args": {
+        "files": [
+          "BlazingStoryWasm.Client.csproj"
+        ]
+      },
+      "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
+      "continueOnError": true
+    }
+  ]
+}

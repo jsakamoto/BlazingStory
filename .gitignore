@@ -1,4 +1,5 @@
-.*/
+.vs/
+
 bin/
 obj/
 _dist/*.nupkg
