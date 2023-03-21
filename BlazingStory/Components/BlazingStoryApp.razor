@@ -1,5 +1,6 @@
 @using System.Reflection
 @using Toolbelt.Blazor.Extensions.DependencyInjection
+@implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 @inject ILoggerFactory LoggerFactory
 @inject NavigationManager NavigationManager
@@ -50,6 +51,13 @@
 
     private IServiceProvider? _ServiceProvider;
 
+    private readonly JSModule _JSModule;
+
+    public BlazingStoryApp()
+    {
+        this._JSModule = new(() => this.JSRuntime, "Components/BlazingStoryApp.razor.js");
+    }
+
     private readonly IEnumerable<Type> _AddonsTypes = new Type[]
     {
         typeof(BlazingStory.Internals.Pages.Canvas.Addons.Background.BackgroundAddon),
@@ -83,12 +91,17 @@
     {
         if (!firstRender) return;
 
-        await Task.Delay(50);
+        await this._JSModule.InvokeVoidAsync("waitForAllStyleAndFontsAreLoaded");
         this._InitLevel++;
         this.StateHasChanged();
 
         await Task.Delay(50);
         this._InitLevel++;
         this.StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _JSModule.DisposeAsync();
     }
 }
