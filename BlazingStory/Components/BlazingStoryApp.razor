@@ -17,7 +17,7 @@
             }
         </div>
 
-        <div style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >=2 ? 1 : 0); display: @(this._InitLevel >= 1 ? "block" : "none");">
+        <div class="preferes-color-scheme-@this._PreferesColorScheme" style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >=2 ? 1 : 0); display: @(this._InitLevel >= 1 ? "block" : "none");">
             <CascadingValue Value="this._StoriesStore">
                 <Router AppAssembly="@typeof(BlazingStoryApp).Assembly">
                     <Found Context="routeData">
@@ -53,9 +53,16 @@
 
     private readonly JSModule _JSModule;
 
+    private DotNetObjectReference<BlazingStoryApp> _RefThis;
+
+    private string _PreferesColorScheme = "light";
+
+    private int _PreferesColorSchemeChangeSubscribeId = 0;
+
     public BlazingStoryApp()
     {
         this._JSModule = new(() => this.JSRuntime, "Components/BlazingStoryApp.razor.js");
+        this._RefThis = DotNetObjectReference.Create(this);
     }
 
     private readonly IEnumerable<Type> _AddonsTypes = new Type[]
@@ -91,6 +98,9 @@
     {
         if (!firstRender) return;
 
+        this._PreferesColorScheme = await this._JSModule.InvokeAsync<string>("getPrefersColorScheme");
+        this._PreferesColorSchemeChangeSubscribeId = await this._JSModule.InvokeAsync<int>("subscribePreferesColorSchemeChanged", this._RefThis, nameof(OnPreferesColorSchemeChanged));
+
         await this._JSModule.InvokeVoidAsync("waitForAllStyleAndFontsAreLoaded");
         this._InitLevel++;
         this.StateHasChanged();
@@ -100,8 +110,21 @@
         this.StateHasChanged();
     }
 
+    [JSInvokable, EditorBrowsable(EditorBrowsableState.Never)]
+    public void OnPreferesColorSchemeChanged(string preferesColorScheme)
+    {
+        this._PreferesColorScheme = preferesColorScheme;
+        this.StateHasChanged();
+    }
+
     public async ValueTask DisposeAsync()
     {
+        if (this._PreferesColorSchemeChangeSubscribeId != 0)
+        {
+            await this._JSModule.InvokeVoidAsync("unsubscribePreferesColorSchemeChanged", this._PreferesColorSchemeChangeSubscribeId);
+            this._PreferesColorSchemeChangeSubscribeId = 0;
+        }
+        this._RefThis.Dispose();
         await _JSModule.DisposeAsync();
     }
 }
