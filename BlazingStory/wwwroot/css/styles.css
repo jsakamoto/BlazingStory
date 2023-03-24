@@ -9,17 +9,24 @@
   --bs-back-color: #f5fbff;
   --bs-dimmed-back-color: #ecf4f9;
   --bs-accent-color: #029cfd;
+  --bs-border-shadow: rgb(0 0 0 / 10%) 0 -1px 0 0 inset;
+  --bs-layout-border-shadow: 0 1px 3px 1px rgb(0 0 0 / 5%), 0px 0 0px 1px rgb(0 0 0 / 5%);
   --bs-hover-back-color: rgba(2,156,253,0.12);
   --bs-hover-light-back-color: rgba(30,167,253,0.07);
   --bs-text-color: #333333;
   --bs-dimmed-text-color: #73828c;
   --bs-caption-text-color: #2e3438;
   --bs-dimmed-hover-text-color: #5c6870;
+  --bs-sidebar-header-title-color: #2e3438;
   --bs-sidebar-nav-color: var(---bs-text-color);
   --bs-sidebar-nav-active-color: #fff;
   --bs-sidebar-nav-active-back-color: #1ea7fd;
   --bs-focused-color: var(--bs-accent-color);
+  --bs-toolbar-back-color: #fff;
+  --bs-add-on-panel-back-color: #fff;
+  --bs-add-on-panel-border-color: #e6e6e6;
   --bs-inputs-background: #fff;
+  --bs-inputs-text-color: var(--bs-text-color);
   --bs-inputs-box-shadow: hsla(203, 50%, 30%, 0.2) 0 0 0 1px inset;
   --bs-square-button-box-shadow: #d9e8f2 0 0 0 1px inset;
   --bs-icon-folder-color: #2a0481;
@@ -38,23 +45,30 @@
 }
 
 .preferes-color-scheme-dark {
-  --bs-back-color: #f5fbff;
-  --bs-dimmed-back-color: #ecf4f9;
+  --bs-back-color: #222425;
+  --bs-dimmed-back-color: #222425;
   --bs-accent-color: #029cfd;
+  --bs-border-shadow: rgb(255 255 255 / 10%) 0 -1px 0 0 inset;
+  --bs-layout-border-shadow: 0px 0 0px 1px rgba(255,255,255,.1);
   --bs-hover-back-color: rgba(2,156,253,0.12);
   --bs-hover-light-back-color: rgba(30,167,253,0.07);
-  --bs-text-color: #333333;
+  --bs-text-color: #c9cdcf;
   --bs-dimmed-text-color: #73828c;
-  --bs-caption-text-color: #2e3438;
+  --bs-caption-text-color: #c9cdcf;
   --bs-dimmed-hover-text-color: #5c6870;
+  --bs-sidebar-header-title-color: #fff;
   --bs-sidebar-nav-color: var(---bs-text-color);
   --bs-sidebar-nav-active-color: #fff;
   --bs-sidebar-nav-active-back-color: #1ea7fd;
   --bs-focused-color: var(--bs-accent-color);
-  --bs-inputs-background: #fff;
+  --bs-toolbar-back-color: #292c2e;
+  --bs-add-on-panel-back-color: #1b1c1d;
+  --bs-add-on-panel-border-color: #27292a;
+  --bs-inputs-background: #1b1c1d;
+  --bs-inputs-text-color: #fff;
   --bs-inputs-box-shadow: hsla(203, 50%, 30%, 0.2) 0 0 0 1px inset;
-  --bs-square-button-box-shadow: #d9e8f2 0 0 0 1px inset;
-  --bs-icon-folder-color: #2a0481;
+  --bs-square-button-box-shadow: rgba(255,255,255,.1) 0 0 0 1px inset;
+  --bs-icon-folder-color: #ff4785;
   --bs-icon-story-container-color: var(--bs-accent-color);
   --bs-icon-story-color: #37d5d3;
   --bs-icon-document-color: #ff8300;
@@ -139,7 +153,7 @@ button {
   width: 100%;
   font-size: var(--bs-text-size);
   background: var(--bs-inputs-background);
-  color: var(--bs-text-color);
+  color: var(--bs-inputs-text-color);
   box-shadow: var(--bs-inputs-box-shadow);
   border-radius: 4px;
   line-height: 20px;
@@ -223,6 +237,7 @@ button {
   overflow: hidden;
   width: 100vw;
   height: 100vh;
+  background-color: var(--bs-back-color);
 }
 .main-layout > .pane-of-split-container:first-of-type {
   transition: all linear 0.1s;
@@ -231,7 +246,7 @@ button {
   display: none;
 }
 .main-layout > .pane-of-split-container:last-of-type {
-  box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.05), 0px 0 0px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--bs-layout-border-shadow);
 }
 .main-layout.sidebar-shown > .pane-of-split-container:first-of-type {
   transition: none;
@@ -249,6 +264,7 @@ button {
 
 .sidebar-container {
   padding: 20px;
+  background-color: var(--bs-back-color);
 }
 
 .sidebar .sidebar-header {
@@ -265,8 +281,8 @@ button {
   font-size: 16px;
   font-weight: 900;
   text-decoration: none;
-  color: var(--bs-caption-text-color);
-  text-shadow: 0.5px 0 0 var(--bs-caption-text-color);
+  color: var(--bs-sidebar-header-title-color);
+  text-shadow: 0.5px 0 0 var(--bs-sidebar-header-title-color);
   background-image: url(../images/icon.min.svg);
   background-size: 24px;
   background-repeat: no-repeat;
@@ -395,6 +411,7 @@ button {
 }
 .navigation-list .navigation-list-items .item .label .title {
   font-weight: 600;
+  color: var(--bs-text-color);
 }
 .navigation-list .navigation-list-items .item .label .title .match {
   color: var(--bs-accent-color);
@@ -588,11 +605,12 @@ button {
 .toolbar-viewport {
   --bs-toolbar-height: 40px;
   --bs-toolbar-content-gap: 4px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0 -1px 0 0 inset;
+  box-shadow: var(--bs-border-shadow);
   height: 0;
   overflow-y: hidden;
   display: flex;
   transition: height linear 0.1s;
+  background-color: var(--bs-toolbar-back-color);
 }
 .toolbar-viewport .toolbar-content {
   flex: 1;
@@ -724,7 +742,7 @@ a.icon-button {
 
 .square-button {
   background: var(--bs-back-color);
-  color: var(--bs-text-color);
+  color: var(--bs-inputs-text-color);
   font-weight: bold;
   box-shadow: var(--bs-square-button-box-shadow);
   border-radius: 4px;
@@ -959,7 +977,7 @@ a.icon-button {
 }
 
 .body {
-  background-color: #fff;
+  background-color: var(--bs-back-color);
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.1);
@@ -1004,6 +1022,7 @@ a.icon-button {
 
 .add-on-container {
   overflow: hidden;
+  background-color: var(--bs-add-on-panel-back-color);
 }
 
 .add-on-panel {
@@ -1030,7 +1049,7 @@ a.icon-button {
 .controls-panel table tbody tr {
   border-top-width: 1px;
   border-top-style: solid;
-  border-top-color: #e6e6e6;
+  border-top-color: var(--bs-add-on-panel-border-color);
 }
 .controls-panel table th {
   color: rgba(51, 51, 51, 0.75);

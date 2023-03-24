@@ -1,27 +1,37 @@
 .preferes-color-scheme-dark {
     // basic colors
-    --bs-back-color: #f5fbff;
-    --bs-dimmed-back-color: #ecf4f9;
+    --bs-back-color: #222425;
+    --bs-dimmed-back-color: #222425;
     --bs-accent-color: #029cfd;
+    --bs-border-shadow: rgb(255 255 255 / 10%) 0 -1px 0 0 inset;
+    --bs-layout-border-shadow: 0px 0 0px 1px rgba(255,255,255,.1);
     //
     // --bs-hover-back-color: #ebf7ff;
     --bs-hover-back-color: rgba(2,156,253,0.12);
     --bs-hover-light-back-color: rgba(30,167,253,0.07);
     //
-    --bs-text-color: #333333;
+    --bs-text-color: #c9cdcf;
     --bs-dimmed-text-color: #73828c;
-    --bs-caption-text-color: #2e3438;
+    --bs-caption-text-color: #c9cdcf;
     --bs-dimmed-hover-text-color: #5c6870;
+    // side bar
+    --bs-sidebar-header-title-color: #fff;
     --bs-sidebar-nav-color: var(---bs-text-color);
     --bs-sidebar-nav-active-color: #fff;
     --bs-sidebar-nav-active-back-color: #1ea7fd;
     --bs-focused-color: var(--bs-accent-color);
+    // tool bar
+    --bs-toolbar-back-color: #292c2e;
+    // add-on panel
+    --bs-add-on-panel-back-color: #1b1c1d;
+    --bs-add-on-panel-border-color: #27292a;
     // inputs
-    --bs-inputs-background: #fff;
+    --bs-inputs-background: #1b1c1d;
+    --bs-inputs-text-color: #fff;
     --bs-inputs-box-shadow: hsla(203, 50%, 30%, 0.2) 0 0 0 1px inset;
-    --bs-square-button-box-shadow: #d9e8f2 0 0 0 1px inset;
+    --bs-square-button-box-shadow: rgba(255,255,255,.1) 0 0 0 1px inset;
     // icons
-    --bs-icon-folder-color: #2a0481;
+    --bs-icon-folder-color: #ff4785;
     --bs-icon-story-container-color: var(--bs-accent-color);
     --bs-icon-story-color: #37d5d3;
     --bs-icon-document-color: #ff8300;

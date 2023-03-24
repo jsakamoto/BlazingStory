@@ -2,6 +2,7 @@
     overflow: hidden;
     width: 100vw;
     height: 100vh;
+    background-color: var(--bs-back-color);
 
     & > .pane-of-split-container:first-of-type {
         transition: all linear 0.1s;
@@ -15,7 +16,7 @@
     }
 
     & > .pane-of-split-container:last-of-type {
-        box-shadow: 0 1px 3px 1px rgb(0 0 0 / 5%), 0px 0 0px 1px rgb(0 0 0 / 5%);
+        box-shadow: var(--bs-layout-border-shadow);
     }
 
     &.sidebar-shown {
@@ -43,4 +44,5 @@
 
 .sidebar-container {
     padding: 20px;
+    background-color: var(--bs-back-color);
 }

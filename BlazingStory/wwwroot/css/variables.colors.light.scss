@@ -3,6 +3,8 @@
     --bs-back-color: #f5fbff;
     --bs-dimmed-back-color: #ecf4f9;
     --bs-accent-color: #029cfd;
+    --bs-border-shadow: rgb(0 0 0 / 10%) 0 -1px 0 0 inset;
+    --bs-layout-border-shadow: 0 1px 3px 1px rgb(0 0 0 / 5%), 0px 0 0px 1px rgb(0 0 0 / 5%);
     //
     // --bs-hover-back-color: #ebf7ff;
     --bs-hover-back-color: rgba(2,156,253,0.12);
@@ -12,12 +14,20 @@
     --bs-dimmed-text-color: #73828c;
     --bs-caption-text-color: #2e3438;
     --bs-dimmed-hover-text-color: #5c6870;
+    // side bar
+    --bs-sidebar-header-title-color: #2e3438;
     --bs-sidebar-nav-color: var(---bs-text-color);
     --bs-sidebar-nav-active-color: #fff;
     --bs-sidebar-nav-active-back-color: #1ea7fd;
     --bs-focused-color: var(--bs-accent-color);
+    // tool bar
+    --bs-toolbar-back-color: #fff;
+    // add-on panel
+    --bs-add-on-panel-back-color: #fff;
+    --bs-add-on-panel-border-color: #e6e6e6;
     // inputs
     --bs-inputs-background: #fff;
+    --bs-inputs-text-color: var(--bs-text-color);
     --bs-inputs-box-shadow: hsla(203, 50%, 30%, 0.2) 0 0 0 1px inset;
     --bs-square-button-box-shadow: #d9e8f2 0 0 0 1px inset;
     // icons

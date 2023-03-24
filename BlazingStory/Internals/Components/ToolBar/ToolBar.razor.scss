@@ -1,11 +1,12 @@
 ﻿.toolbar-viewport {
     --bs-toolbar-height: 40px;
     --bs-toolbar-content-gap: 4px;
-    box-shadow: rgb(0 0 0 / 10%) 0 -1px 0 0 inset;
+    box-shadow: var(--bs-border-shadow);
     height: 0;
     overflow-y: hidden;
     display: flex;
     transition: height linear 0.1s;
+    background-color: var(--bs-toolbar-back-color);
 
     .toolbar-content {
         flex: 1;
