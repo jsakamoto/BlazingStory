@@ -42,7 +42,7 @@
         transition: all 100ms ease-out;
         user-select: none;
         border-radius: 3em;
-        color: rgba(51,51,51,0.6);
+        color: var(--bs-caption-text-half-color2);
         background: transparent;
 
         &:first-of-type {
@@ -56,9 +56,9 @@
 
     input:checked ~ span:last-of-type,
     input:not(:checked) ~ span:first-of-type {
-        background: var(--bs-inputs-background);
-        box-shadow: rgb(0 0 0 / 20%) 0 0 2px;
-        color: var(--bs-text-color);
+        background: var(--bs-toggle-button-back-color);
+        box-shadow: var(--bs-toggle-button-shadow);
+        color: var(--bs-caption-text-color);
         padding: 7px 15px;
     }
 }

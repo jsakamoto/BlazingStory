@@ -1,13 +1,18 @@
 .menu-item.command-menu-item {
     padding: 0 15px 0 8px;
+    overflow-y: hidden;
 
     &.has-hotkey {
-        height: 33px;
+        //height: 33px;
     }
 
     .check-mark-area {
         color: var(--bs-focused-color);
-        width: 17px;
+        width: 25px;
+
+        svg.svg-icon {
+            --bs-svg-icon-size: 16px;
+        }
     }
 
     .command-title {

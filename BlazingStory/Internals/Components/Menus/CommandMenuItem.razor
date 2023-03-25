@@ -6,7 +6,7 @@
     var hotKey = this.Command.HotKey;
     var hasHotkey = hotKey != null && hotKey.Code != "";
 
-    <div class="menu-item command-menu-item @(hasHotkey ? "has-hotkey" : "")" @onclick="OnClickMenuItem">
+    <div class="menu-item command-menu-item @CssClass(new{ Active = this.Command.Flag == true, hasHotkey})" @onclick="OnClickMenuItem">
         <span class="check-mark-area">
             @if (this.Command.Flag == true)
             {

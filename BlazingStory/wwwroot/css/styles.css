@@ -14,8 +14,10 @@
   --bs-hover-back-color: rgba(2,156,253,0.12);
   --bs-hover-light-back-color: rgba(30,167,253,0.07);
   --bs-text-color: #333333;
-  --bs-dimmed-text-color: #73828c;
   --bs-caption-text-color: #2e3438;
+  --bs-caption-text-half-color1: rgba(46, 52, 56, 0.75);
+  --bs-caption-text-half-color2: rgba(46, 52, 56, 0.5);
+  --bs-dimmed-text-color: #73828c;
   --bs-dimmed-hover-text-color: #5c6870;
   --bs-sidebar-header-title-color: #2e3438;
   --bs-sidebar-nav-color: var(---bs-text-color);
@@ -36,10 +38,12 @@
   --bs-keymap-text-color: #5c6870;
   --bs-keymap-back-color: rgba(0,0,0,0.05);
   --bs-button-flagged-back-color: rgba(2,156,253,0.07);
+  --bs-toggle-button-back-color: var(--bs-inputs-background);
+  --bs-toggle-button-shadow: rgba(38,85,115,0.3) 0 0 2px;
   --bs-popup-back-color: rgba(255,255,255,0.95);
   --bs-popup-text-color: var(--bs-caption-text-color);
   --bs-popup-hover-back-color: rgba(2,156,253,0.07);
-  --bs-popup-active-text-color: #ff4785;
+  --bs-popup-active-text-color: var(--bs-accent-color);
   --bs-scrollbar-thumb-color: #ccc;
   --bs-scrollbar-back-color: #e0e0e0;
 }
@@ -53,8 +57,10 @@
   --bs-hover-back-color: rgba(2,156,253,0.12);
   --bs-hover-light-back-color: rgba(30,167,253,0.07);
   --bs-text-color: #c9cdcf;
-  --bs-dimmed-text-color: #73828c;
   --bs-caption-text-color: #c9cdcf;
+  --bs-caption-text-half-color1: rgba(201, 205, 207, 0.75);
+  --bs-caption-text-half-color2: rgba(201, 205, 207, 0.5);
+  --bs-dimmed-text-color: #73828c;
   --bs-dimmed-hover-text-color: #5c6870;
   --bs-sidebar-header-title-color: #fff;
   --bs-sidebar-nav-color: var(---bs-text-color);
@@ -75,10 +81,12 @@
   --bs-keymap-text-color: #5c6870;
   --bs-keymap-back-color: rgba(0,0,0,0.05);
   --bs-button-flagged-back-color: rgba(2,156,253,0.07);
-  --bs-popup-back-color: rgba(255,255,255,0.95);
+  --bs-toggle-button-back-color: #2e3438;
+  --bs-toggle-button-shadow: rgba(255,255,255,.1) 0 0 0 1px;
+  --bs-popup-back-color: var(--bs-back-color);
   --bs-popup-text-color: var(--bs-caption-text-color);
   --bs-popup-hover-back-color: rgba(2,156,253,0.07);
-  --bs-popup-active-text-color: #ff4785;
+  --bs-popup-active-text-color: var(--bs-accent-color);
   --bs-scrollbar-thumb-color: #ccc;
   --bs-scrollbar-back-color: #e0e0e0;
 }
@@ -295,6 +303,10 @@ button {
 .sidebar .explorer-menu {
   margin-left: -20px;
   margin-right: -20px;
+}
+
+.settings-popup-menu .popup-menu-body {
+  margin-left: 19px;
 }
 
 .search-field {
@@ -799,7 +811,7 @@ a.icon-button {
   transition: all 100ms ease-out;
   user-select: none;
   border-radius: 3em;
-  color: rgba(51, 51, 51, 0.6);
+  color: var(--bs-caption-text-half-color2);
   background: transparent;
 }
 .toggle-button span:first-of-type {
@@ -810,9 +822,9 @@ a.icon-button {
 }
 .toggle-button input:checked ~ span:last-of-type,
 .toggle-button input:not(:checked) ~ span:first-of-type {
-  background: var(--bs-inputs-background);
-  box-shadow: rgba(0, 0, 0, 0.2) 0 0 2px;
-  color: var(--bs-text-color);
+  background: var(--bs-toggle-button-back-color);
+  box-shadow: var(--bs-toggle-button-shadow);
+  color: var(--bs-caption-text-color);
   padding: 7px 15px;
 }
 
@@ -929,7 +941,7 @@ a.icon-button {
 .popup-menu-body {
   background-color: var(--bs-popup-back-color);
   margin-left: 16px;
-  border-radius: 8px;
+  border-radius: 4px;
   overflow: hidden;
   pointer-events: all;
 }
@@ -940,7 +952,7 @@ a.icon-button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 15px 0 15px;
+  padding: 0 10px 0 10px;
   transition: all 150ms ease-out;
   cursor: pointer;
   font-size: 12px;
@@ -961,13 +973,14 @@ a.icon-button {
 
 .menu-item.command-menu-item {
   padding: 0 15px 0 8px;
-}
-.menu-item.command-menu-item.has-hotkey {
-  height: 33px;
+  overflow-y: hidden;
 }
 .menu-item.command-menu-item .check-mark-area {
   color: var(--bs-focused-color);
-  width: 17px;
+  width: 25px;
+}
+.menu-item.command-menu-item .check-mark-area svg.svg-icon {
+  --bs-svg-icon-size: 16px;
 }
 .menu-item.command-menu-item .command-title {
   flex: 1;
@@ -1036,7 +1049,7 @@ a.icon-button {
 .controls-panel table {
   border-collapse: collapse;
   border-spacing: 0;
-  color: var(--bs-text-color);
+  color: var(--bs-caption-text-color);
   font-size: 13px;
   line-height: 20px;
   text-align: left;
@@ -1052,7 +1065,7 @@ a.icon-button {
   border-top-color: var(--bs-add-on-panel-border-color);
 }
 .controls-panel table th {
-  color: rgba(51, 51, 51, 0.75);
+  color: var(--bs-caption-text-half-color1);
 }
 .controls-panel table th.name {
   padding: 10px 15px 10px 20px;
