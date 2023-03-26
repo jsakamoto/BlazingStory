@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(Framework)' == 'net7.0' ">
-    <PackageReference Include="BlazingStory" Version="1.0.0-preview.1.3" />
+    <PackageReference Include="BlazingStory" Version="1.0.0-preview.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.4" PrivateAssets="all" />
   </ItemGroup>

@@ -2,11 +2,12 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>BlazingStory.ProjectTemplates</id>
-    <version>1.0.0-preview.1.3</version>
+    <version>1.0.0-preview.2</version>
     <description>
       Templates for a Blazing Story project.
     </description>
     <authors>J.Sakamoto</authors>
+    <copyright>Copyright © 2023 J.Sakamoto, Mozilla Public License 2.0</copyright>
     <tags>blazor
       storybook blazingstory</tags>
     <license type="expression">MPL-2.0</license>
@@ -18,6 +19,11 @@
     <packageTypes>
       <packageType name="Template" />
     </packageTypes>
+    <releaseNotes>v.1.0.0-preview.2
+      - Added Dark Theme support
+
+      To see all the change logs, please visit the following URL.
+      - https://github.com/jsakamoto/BlazingStory/blob/main/RELEASE-NOTES.txt</releaseNotes>
   </metadata>
   <files>
     <file src="..\assets\icon-128x128.png" target="nupkg-icon.png" />
