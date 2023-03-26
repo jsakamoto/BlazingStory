@@ -3,7 +3,8 @@
     $back-color: #222425;
     --bs-back-color: #{$back-color};
     --bs-dimmed-back-color: #{$back-color};
-    --bs-accent-color: #029cfd;
+    $accent-color: #029cfd; // rgb(2, 156, 253)
+    --bs-accent-color: #{$accent-color};
     --bs-border-color: rgb(255 255 255 / 10%);
     --bs-border-shadow: var(--bs-border-color) 0 -1px 0 0 inset;
     --bs-layout-border-shadow: 0px 0 0px 1px rgba(255,255,255,.1);
@@ -20,10 +21,11 @@
     --bs-dimmed-hover-text-color: #5c6870;
     // side bar
     --bs-sidebar-header-title-color: #fff;
-    --bs-sidebar-nav-color: var(---bs-text-color);
+    --bs-sidebar-nav-color: var(--bs-text-color);
     --bs-sidebar-nav-active-color: #fff;
     --bs-sidebar-nav-active-back-color: #1ea7fd;
     --bs-focused-color: var(--bs-accent-color);
+    --bs-focused-half-color: #{rgba($accent-color, 0.15)};
     // tool bar
     --bs-toolbar-back-color: #292c2e;
     // add-on panel
@@ -42,14 +44,14 @@
     --bs-keymap-text-color: #798186;
     --bs-keymap-back-color: rgba(255,255,255,0.05);
     // buttons
-    --bs-button-flagged-back-color: rgba(2,156,253,0.07);
+    --bs-button-flagged-back-color: #{rgba($accent-color, 0.07)};
     // toggle button
     --bs-toggle-button-back-color: #2e3438;
     --bs-toggle-button-shadow: rgba(255,255,255,.1) 0 0 0 1px;
     // popup menu
     --bs-popup-back-color: var(--bs-back-color);
     --bs-popup-text-color: var(--bs-caption-text-color);
-    --bs-popup-hover-back-color: rgba(2,156,253,0.07);
+    --bs-popup-hover-back-color: #{rgba($accent-color, 0.07)};
     --bs-popup-active-text-color: var(--bs-accent-color);
     --bs-popup-divider-color: rgba(255, 255, 255, 0.1);
     // scroll bar

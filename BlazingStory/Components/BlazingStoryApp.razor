@@ -5,6 +5,25 @@
 @inject ILoggerFactory LoggerFactory
 @inject NavigationManager NavigationManager
 
+<style>
+    .default-background {
+        position: fixed;
+        inset: 0;
+        background-color: #f6f9fc;
+    }
+
+    @@media (prefers-color-scheme: dark) {
+        .default-background {
+            background-color: #222425;
+        }
+    }
+
+    .default-background.init-level-3 {
+        display: none;
+    }
+</style>
+<div class="default-background init-level-@(this._InitLevel)"></div>
+
 <StoriesDetector Assemblies="this.Assemblies" StoriesStore="this._StoriesStore" />
 
 <CascadingValue Value="this._ServiceProvider">
@@ -106,6 +125,10 @@
         this.StateHasChanged();
 
         await Task.Delay(50);
+        this._InitLevel++;
+        this.StateHasChanged();
+
+        await Task.Delay(200);
         this._InitLevel++;
         this.StateHasChanged();
     }

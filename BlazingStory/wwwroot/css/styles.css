@@ -21,10 +21,11 @@
   --bs-dimmed-text-color: #73828c;
   --bs-dimmed-hover-text-color: #5c6870;
   --bs-sidebar-header-title-color: #2e3438;
-  --bs-sidebar-nav-color: var(---bs-text-color);
+  --bs-sidebar-nav-color: var(--bs-text-color);
   --bs-sidebar-nav-active-color: #fff;
   --bs-sidebar-nav-active-back-color: #1ea7fd;
   --bs-focused-color: var(--bs-accent-color);
+  --bs-focused-half-color: rgba(2, 156, 253, 0.15);
   --bs-toolbar-back-color: #fff;
   --bs-add-on-panel-back-color: #fff;
   --bs-add-on-panel-border-color: #e6e6e6;
@@ -38,12 +39,12 @@
   --bs-icon-document-color: #ff8300;
   --bs-keymap-text-color: #5c6870;
   --bs-keymap-back-color: rgba(0,0,0,0.05);
-  --bs-button-flagged-back-color: rgba(2,156,253,0.07);
+  --bs-button-flagged-back-color: rgba(2, 156, 253, 0.07);
   --bs-toggle-button-back-color: var(--bs-inputs-background);
   --bs-toggle-button-shadow: rgba(38,85,115,0.3) 0 0 2px;
   --bs-popup-back-color: rgba(255,255,255,0.95);
   --bs-popup-text-color: var(--bs-caption-text-color);
-  --bs-popup-hover-back-color: rgba(2,156,253,0.07);
+  --bs-popup-hover-back-color: rgba(2, 156, 253, 0.07);
   --bs-popup-active-text-color: var(--bs-accent-color);
   --bs-popup-divider-color: rgba(38, 85, 115, 0.2);
   --bs-scrollbar-thumb-color: #ccc;
@@ -66,10 +67,11 @@
   --bs-dimmed-text-color: #73828c;
   --bs-dimmed-hover-text-color: #5c6870;
   --bs-sidebar-header-title-color: #fff;
-  --bs-sidebar-nav-color: var(---bs-text-color);
+  --bs-sidebar-nav-color: var(--bs-text-color);
   --bs-sidebar-nav-active-color: #fff;
   --bs-sidebar-nav-active-back-color: #1ea7fd;
   --bs-focused-color: var(--bs-accent-color);
+  --bs-focused-half-color: rgba(2, 156, 253, 0.15);
   --bs-toolbar-back-color: #292c2e;
   --bs-add-on-panel-back-color: #1b1c1d;
   --bs-add-on-panel-border-color: #27292a;
@@ -83,12 +85,12 @@
   --bs-icon-document-color: #ff8300;
   --bs-keymap-text-color: #798186;
   --bs-keymap-back-color: rgba(255,255,255,0.05);
-  --bs-button-flagged-back-color: rgba(2,156,253,0.07);
+  --bs-button-flagged-back-color: rgba(2, 156, 253, 0.07);
   --bs-toggle-button-back-color: #2e3438;
   --bs-toggle-button-shadow: rgba(255,255,255,.1) 0 0 0 1px;
   --bs-popup-back-color: var(--bs-back-color);
   --bs-popup-text-color: var(--bs-caption-text-color);
-  --bs-popup-hover-back-color: rgba(2,156,253,0.07);
+  --bs-popup-hover-back-color: rgba(2, 156, 253, 0.07);
   --bs-popup-active-text-color: var(--bs-accent-color);
   --bs-popup-divider-color: rgba(255, 255, 255, 0.1);
   --bs-scrollbar-thumb-color: #ccc;
@@ -515,7 +517,7 @@ button {
   background-color: var(--bs-hover-light-back-color);
 }
 .navigation-tree .caption button.action:focus {
-  background-color: #d5edfc;
+  background-color: var(--bs-focused-half-color);
 }
 .navigation-tree .type-story.active > .caption a {
   color: var(--bs-sidebar-nav-active-color);

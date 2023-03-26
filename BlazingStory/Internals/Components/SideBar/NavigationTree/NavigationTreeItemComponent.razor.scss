@@ -36,7 +36,7 @@
         }
 
         button.action:focus {
-            background-color: #d5edfc;
+            background-color: var(--bs-focused-half-color);
         }
     }
 

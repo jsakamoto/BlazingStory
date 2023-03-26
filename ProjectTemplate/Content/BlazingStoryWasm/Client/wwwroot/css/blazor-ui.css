@@ -26,9 +26,14 @@
 .blazor-error-boundary::after {
     content: "An error has occurred."
 }
-/*#if (Framework == "net7.0")
 
 .loading-progress {
+    position: fixed;
+    inset: 0;
+    background: #f6f9fc;
+}
+
+.loading-progress svg {
     position: relative;
     display: block;
     width: 8rem;
@@ -36,7 +41,7 @@
     margin: 20vh auto 1rem auto;
 }
 
-.loading-progress circle {
+.loading-progress svg circle {
     fill: none;
     stroke: #e0e0e0;
     stroke-width: 0.6rem;
@@ -44,20 +49,41 @@
     transform: rotate(-90deg);
 }
 
-.loading-progress circle:last-child {
-    stroke: #1b6ec2;
+.loading-progress svg circle:last-child {
+    stroke: #542fd4;
     stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
     transition: stroke-dasharray 0.05s ease-in-out;
 }
 
-.loading-progress-text {
+.loading-progress img {
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    margin: auto;
+    inset: calc(20vh + 3.2rem - 22px) 0 auto 0;
+}
+
+.loading-progress .text {
     position: absolute;
     text-align: center;
     font-weight: bold;
-    inset: calc(20vh + 3.25rem) 0 auto 0.2rem;
+    inset: calc(20vh + 4.8rem) 0 auto 0.2rem;
 }
 
-.loading-progress-text:after {
+.loading-progress .text:after {
     content: var(--blazor-load-percentage-text, "Loading");
 }
-#endif*/
+
+@media (prefers-color-scheme: dark) {
+    .loading-progress {
+        background-color: #222425;
+    }
+
+    .loading-progress svg circle {
+        stroke: #393a3b;
+    }
+
+    .loading-progress .text {
+        color: #c9cdcf;
+    }
+}
