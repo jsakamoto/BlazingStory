@@ -1,3 +1,5 @@
+import { DotNetObjectReference } from "../Scripts/types";
+
 export const waitForAllStyleAndFontsAreLoaded = (): Promise<void> => new Promise<void>((resolve) => {
 
     if (location.pathname !== "/") { resolve(); return; }
@@ -17,3 +19,28 @@ export const waitForAllStyleAndFontsAreLoaded = (): Promise<void> => new Promise
         resolve();
     }, 10);
 });
+
+const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+export const getPrefersColorScheme = (): string => darkModeMediaQuery.matches ? "dark" : "light";
+
+let subscriberIndex = 0;
+const subscribers = new Map<number, (e: MediaQueryListEvent) => void>();
+
+export const subscribePreferesColorSchemeChanged = (dotnetObjRef: DotNetObjectReference, methodName: string): number => {
+    const subscriber = (e: MediaQueryListEvent) => {
+        dotnetObjRef.invokeMethodAsync(methodName, getPrefersColorScheme());
+    };
+    darkModeMediaQuery.addEventListener("change", subscriber);
+
+    subscriberIndex++;
+    subscribers.set(subscriberIndex, subscriber);
+    return subscriberIndex;
+}
+
+export const unsubscribePreferesColorSchemeChanged = (subscriberIndex: number): void => {
+    const subscriber = subscribers.get(subscriberIndex);
+    if (typeof (subscriber) === "undefined") return;
+    darkModeMediaQuery.removeEventListener("change", subscriber);
+    subscribers.delete(subscriberIndex);
+}

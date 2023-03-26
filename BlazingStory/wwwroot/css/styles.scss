@@ -1,4 +1,7 @@
 ﻿@import "variables.scss";
+@import "variables.colors.light.scss";
+@import "variables.colors.dark.scss";
+
 @import "basic-styles.scss";
 @import "basic-styles-inputs.scss";
 @import "basic-styles-splitcontainer.scss";
@@ -42,3 +45,4 @@
 @import "../../Internals/Pages/Canvas/AddOnPanel.razor.scss";
 @import "../../Internals/Pages/Canvas/ControlsPanel.razor.scss";
 @import "../../Internals/Pages/Settings/SettingsPage.razor.scss";
+@import "../../Internals/Pages/Settings/Panels/AboutPanel.razor.scss";

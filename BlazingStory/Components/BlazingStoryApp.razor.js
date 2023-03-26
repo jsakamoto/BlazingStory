@@ -16,3 +16,23 @@ export const waitForAllStyleAndFontsAreLoaded = () => new Promise((resolve) => {
         resolve();
     }, 10);
 });
+const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+export const getPrefersColorScheme = () => darkModeMediaQuery.matches ? "dark" : "light";
+let subscriberIndex = 0;
+const subscribers = new Map();
+export const subscribePreferesColorSchemeChanged = (dotnetObjRef, methodName) => {
+    const subscriber = (e) => {
+        dotnetObjRef.invokeMethodAsync(methodName, getPrefersColorScheme());
+    };
+    darkModeMediaQuery.addEventListener("change", subscriber);
+    subscriberIndex++;
+    subscribers.set(subscriberIndex, subscriber);
+    return subscriberIndex;
+};
+export const unsubscribePreferesColorSchemeChanged = (subscriberIndex) => {
+    const subscriber = subscribers.get(subscriberIndex);
+    if (typeof (subscriber) === "undefined")
+        return;
+    darkModeMediaQuery.removeEventListener("change", subscriber);
+    subscribers.delete(subscriberIndex);
+};

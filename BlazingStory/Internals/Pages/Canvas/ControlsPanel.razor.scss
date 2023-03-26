@@ -2,7 +2,7 @@
     table {
         border-collapse: collapse;
         border-spacing: 0;
-        color: var(--bs-text-color);
+        color: var(--bs-caption-text-color);
         font-size: 13px;
         line-height: 20px;
         text-align: left;
@@ -17,12 +17,12 @@
             tr {
                 border-top-width: 1px;
                 border-top-style: solid;
-                border-top-color: #e6e6e6;
+                border-top-color: var(--bs-add-on-panel-border-color);
             }
         }
 
         th {
-            color: rgba(51,51,51,0.75);
+            color: var(--bs-caption-text-half-color1);
 
             &.name {
                 padding: 10px 15px 10px 20px;
