@@ -2,10 +2,6 @@
     padding: 0 10px 0 8px;
     overflow-y: hidden;
 
-    &.has-hotkey {
-        //height: 33px;
-    }
-
     .check-mark-area {
         color: var(--bs-focused-color);
         width: 25px;
@@ -21,5 +17,6 @@
 
     .hotkey-area {
         padding-left: 10px;
+        margin-bottom: 2px;
     }
 }

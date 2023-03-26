@@ -4,11 +4,10 @@
     --bs-back-color: #{$back-color};
     --bs-dimmed-back-color: #{$back-color};
     --bs-accent-color: #029cfd;
-    --bs-border-shadow: rgb(255 255 255 / 10%) 0 -1px 0 0 inset;
+    --bs-border-color: rgb(255 255 255 / 10%);
+    --bs-border-shadow: var(--bs-border-color) 0 -1px 0 0 inset;
     --bs-layout-border-shadow: 0px 0 0px 1px rgba(255,255,255,.1);
-    //box-shadow      : rgba(255,255,255,.1) 0 0 0 1px;
     //
-    // --bs-hover-back-color: #ebf7ff;
     --bs-hover-back-color: rgba(2,156,253,0.12);
     --bs-hover-light-back-color: rgba(30,167,253,0.07);
     //
@@ -40,8 +39,8 @@
     --bs-icon-story-container-color: var(--bs-accent-color);
     --bs-icon-story-color: #37d5d3;
     --bs-icon-document-color: #ff8300;
-    --bs-keymap-text-color: #5c6870;
-    --bs-keymap-back-color: rgba(0,0,0,0.05);
+    --bs-keymap-text-color: #798186;
+    --bs-keymap-back-color: rgba(255,255,255,0.05);
     // buttons
     --bs-button-flagged-back-color: rgba(2,156,253,0.07);
     // toggle button
@@ -52,6 +51,7 @@
     --bs-popup-text-color: var(--bs-caption-text-color);
     --bs-popup-hover-back-color: rgba(2,156,253,0.07);
     --bs-popup-active-text-color: var(--bs-accent-color);
+    --bs-popup-divider-color: rgba(255, 255, 255, 0.1);
     // scroll bar
     --bs-scrollbar-thumb-color: #ccc;
     --bs-scrollbar-back-color: #e0e0e0;

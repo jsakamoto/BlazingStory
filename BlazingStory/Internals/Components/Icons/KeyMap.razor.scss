@@ -2,7 +2,6 @@
     display: inline-flex;
     gap: 6px;
     padding: 0px 6px;
-    margin-bottom: 2px;
     border-radius: 2px;
     background: var(--bs-keymap-back-color);
     color: var(--bs-keymap-text-color);
@@ -22,8 +21,6 @@
     }
 
     &.free-size {
-        code {
-            width: unset;
-        }
+        padding: 0 2px;
     }
 }
