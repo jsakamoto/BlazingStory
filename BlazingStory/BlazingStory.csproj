@@ -11,9 +11,8 @@
     <!--<IsTrimmable>true</IsTrimmable>-->
   </PropertyGroup>
 
-
   <PropertyGroup>
-    <Version>1.0.0-preview.2.1</Version>
+    <Version>1.0.0-preview.2.2</Version>
     <Copyright>Copyright © 2023 J.Sakamoto, Mozilla Public License 2.0</Copyright>
     <Authors>J.Sakamoto</Authors>
     <RepositoryType>git</RepositoryType>
@@ -29,27 +28,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!--<Content Update="**\*.json" Pack="false" />-->
-    <None Include="..\assets\icon-128x128.png" Pack="true" Visible="false" PackagePath="" />
-    <None Include="..\README.md" Visible="false" Pack="true" PackagePath="\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <SupportedPlatform Include="browser" />
-    <InternalsVisibleTo Include="BlazingStory.Test" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="tsconfig.json" CopyToOutputDirectory="Never" Pack="false" />
-    <Content Remove="bundleconfig.json" />
-    <Content Remove="compilerconfig.json" />
-    <_ContentIncludedByDefault Remove="compilerconfig.json" />
-    <None Include="bundleconfig.json" />
-    <None Include="compilerconfig.json" />
-    <EmbeddedResource Include="Resources\KeyCodeMap.csv" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="1.0.0" />
     <PackageReference Include="Toolbelt.Web.CssClassInlineBuilder" Version="2.0.0" />
@@ -58,6 +36,22 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+    <InternalsVisibleTo Include="BlazingStory.Test" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="**\*.json" Pack="false" CopyToOutputDirectory="Never"/>
+    <None Include="..\assets\icon-128x128.png" Pack="true" Visible="false" PackagePath="" />
+    <None Include="..\README.md" Visible="false" Pack="true" PackagePath="\" />
+    <None Include="Build\BlazingStory.targets" Pack="true" PackagePath="build\BlazingStory.targets" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\KeyCodeMap.csv" />
   </ItemGroup>
 
   <PropertyGroup>

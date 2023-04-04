@@ -1,0 +1,50 @@
+<Project>
+
+  <Target Name="_AddXmlDocCommentToBlazorWasmStaticWebAssets" BeforeTargets="_AddBlazorWasmStaticWebAssets" AfterTargets="_ResolveBlazorWasmOutputs">
+
+    <ItemGroup>
+
+      <!-- Include the XML Doc Comment files of the Referenced Assemblies -->
+      <_XmlDocComment Include="@(_ReferenceRelatedPaths)" Condition=" '%(Extension)' == '.xml' " RemoveMetadata="OriginalItemSpec">
+        <AssetTraitValue>symbol</AssetTraitValue>
+        <AssetTraitName>BlazorWebAssemblyResource</AssetTraitName>
+        <RelativePath>_framework/%(Filename).xml</RelativePath>
+      </_XmlDocComment>
+
+      <!-- Include the XML Doc Comment file of this project -->
+      <_XmlDocComment Include="@(DocumentationProjectOutputGroupOutput)">
+        <AssetTraitValue>symbol</AssetTraitValue>
+        <AssetTraitName>BlazorWebAssemblyResource</AssetTraitName>
+        <RelativePath>_framework/%(Filename).xml</RelativePath>
+      </_XmlDocComment>
+
+    </ItemGroup>
+
+    <DefineStaticWebAssets
+      CandidateAssets="@(_XmlDocComment)"
+      SourceId="$(PackageId)"
+      SourceType="Computed"
+      AssetKind="Build"
+      AssetRole="Primary"
+      CopyToOutputDirectory="PreserveNewest"
+      CopyToPublishDirectory="Never"
+      ContentRoot="$(OutputPath)wwwroot"
+      BasePath="$(StaticWebAssetBasePath)"
+    >
+      <Output TaskParameter="Assets" ItemName="_BlazorStaticWebAsset" />
+    </DefineStaticWebAssets>
+  </Target>
+
+  <Target Name="_AddXmlDocCommentToPublishContents"
+          BeforeTargets="_ComputeResolvedFilesToPublishTypes"
+          AfterTargets="ProcessPublishFilesForBlazor,ComputeReferencedProjectsPublishAssets"
+          Condition="'$(WasmBuildingForNestedPublish)' != 'true'">
+    <ItemGroup>
+      <ResolvedFileToPublish Include="@(_XmlDocComment)">
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <RelativePath>wwwroot/_framework/%(Filename).xml</RelativePath>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+  
+</Project>

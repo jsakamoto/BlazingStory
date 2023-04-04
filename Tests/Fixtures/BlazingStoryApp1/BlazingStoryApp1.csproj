@@ -16,4 +16,5 @@
     <ProjectReference Include="..\RazorClassLib1\RazorClassLib1.csproj" />
   </ItemGroup>
 
+  <Import Project="..\..\..\BlazingStory\build\BlazingStory.targets"/>
 </Project>
