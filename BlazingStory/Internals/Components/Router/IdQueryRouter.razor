@@ -10,7 +10,7 @@
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
-    private QueryRouteData _RouteData = new(path: "");
+    private QueryRouteData _RouteData = new(view: "", parameter: "");
 
     protected override void OnInitialized()
     {
@@ -24,7 +24,7 @@
         var viewMode = queryStrings["viewMode"] ?? "";
         var id = queryStrings["id"] ?? "";
 
-        var newRouteData = new QueryRouteData(viewMode, id);
+        var newRouteData = new QueryRouteData(view: viewMode, parameter: id);
         if (this._RouteData != newRouteData)
         {
             this._RouteData = newRouteData;
