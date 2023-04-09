@@ -16,7 +16,7 @@ public class NavigationListItem : INavigationPath
 
     public required IEnumerable<string> Segments;
 
-    public static NavigationListItem CreateFrom(int id, NavigationTreeItem treeItem)
+    internal static NavigationListItem CreateFrom(int id, NavigationTreeItem treeItem)
     {
         return new NavigationListItem
         {
@@ -26,5 +26,15 @@ public class NavigationListItem : INavigationPath
             NavigationPath = treeItem.NavigationPath,
             Segments = treeItem.PathSegments
         };
+    }
+
+    /// <summary>
+    /// Compares the equality of two <see cref="NavigationListItem"/>, except the <see cref="Id"/> field.
+    /// </summary>
+    /// <param name="other">The other <see cref="NavigationListItem"/> to compare.</param>
+    internal bool Equals(NavigationListItem? other)
+    {
+        if (other == null) return false;
+        return this.NavigationPath == other.NavigationPath && this.Caption == other.Caption && this.Type == other.Type;
     }
 }
