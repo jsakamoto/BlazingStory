@@ -28,19 +28,17 @@ internal class NavigationTreeBuilderTest
         // Given
         var builder = new NavigationTreeBuilder();
         var storyContainers = new StoryContainer[] {
-            new(typeof(Button_stories), "Examples/Button"){ Stories = {
+            new(typeof(Button_stories), "Examples/Button") { Stories = {
                 new("Examples/Button", "Default", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
                 new("Examples/Button", "Primary", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
             }},
-            new(typeof(Select_stories), "Examples/Select")
-            {
-                Stories = {
+            new(typeof(Select_stories), "Examples/Select") { Stories = {
                 new("Examples/Select", "Select", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
             }}
         };
 
         // When
-        var root = builder.Build(storyContainers, "examples-button--primary");
+        var root = builder.Build(storyContainers, expandedNavigationPath: "/story/examples-button--primary");
 
         // Then
         root.Type.Is(NavigationItemType.Container);
@@ -56,35 +54,49 @@ internal class NavigationTreeBuilderTest
         var buttonNode = examplesNode.SubItems[0];
         buttonNode.Type.Is(NavigationItemType.Component);
         buttonNode.Caption.Is("Button");
-        buttonNode.SubItems.Count.Is(2);
+        buttonNode.SubItems.Count.Is(3);
         buttonNode.Expanded.IsTrue();
         buttonNode.PathSegments.Is("Examples");
 
-        var defaultButtonNode = buttonNode.SubItems[0];
+        var docsOfButtonNode = buttonNode.SubItems[0];
+        docsOfButtonNode.Type.Is(NavigationItemType.Docs);
+        docsOfButtonNode.Caption.Is("Docs");
+        docsOfButtonNode.NavigationPath.Is("/docs/examples-button--docs");
+        docsOfButtonNode.SubItems.Count.Is(0);
+        docsOfButtonNode.PathSegments.Is("Examples", "Button");
+
+        var defaultButtonNode = buttonNode.SubItems[1];
         defaultButtonNode.Type.Is(NavigationItemType.Story);
         defaultButtonNode.Caption.Is("Default");
-        defaultButtonNode.NavigationPath.Is("examples-button--default");
+        defaultButtonNode.NavigationPath.Is("/story/examples-button--default");
         defaultButtonNode.SubItems.Count.Is(0);
         defaultButtonNode.PathSegments.Is("Examples", "Button");
 
-        var primaryButtonNode = buttonNode.SubItems[1];
+        var primaryButtonNode = buttonNode.SubItems[2];
         primaryButtonNode.Type.Is(NavigationItemType.Story);
         primaryButtonNode.Caption.Is("Primary");
-        primaryButtonNode.NavigationPath.Is("examples-button--primary");
+        primaryButtonNode.NavigationPath.Is("/story/examples-button--primary");
         primaryButtonNode.SubItems.Count.Is(0);
         primaryButtonNode.PathSegments.Is("Examples", "Button");
 
         var selectNode = examplesNode.SubItems[1];
         selectNode.Type.Is(NavigationItemType.Component);
         selectNode.Caption.Is("Select");
-        selectNode.SubItems.Count.Is(1);
+        selectNode.SubItems.Count.Is(2);
         selectNode.Expanded.IsFalse();
         selectNode.PathSegments.Is("Examples");
 
-        var selectSelectNode = selectNode.SubItems[0];
+        var docsOfSelectNode = selectNode.SubItems[0];
+        docsOfSelectNode.Type.Is(NavigationItemType.Docs);
+        docsOfSelectNode.Caption.Is("Docs");
+        docsOfSelectNode.NavigationPath.Is("/docs/examples-select--docs");
+        docsOfSelectNode.SubItems.Count.Is(0);
+        docsOfSelectNode.PathSegments.Is("Examples", "Select");
+
+        var selectSelectNode = selectNode.SubItems[1];
         selectSelectNode.Type.Is(NavigationItemType.Story);
         selectSelectNode.Caption.Is("Select");
-        selectSelectNode.NavigationPath.Is("examples-select--select");
+        selectSelectNode.NavigationPath.Is("/story/examples-select--select");
         selectSelectNode.SubItems.Count.Is(0);
         selectSelectNode.PathSegments.Is("Examples", "Select");
     }

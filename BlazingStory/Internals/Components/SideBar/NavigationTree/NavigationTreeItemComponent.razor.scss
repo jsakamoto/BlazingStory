@@ -39,15 +39,19 @@
             background-color: var(--bs-focused-half-color);
         }
     }
+    /* for Active Story or Docs */
+    .type-story, .type-docs {
+        &.active > .caption {
+            a {
+                color: var(--bs-sidebar-nav-active-color);
+                background-color: var(--bs-sidebar-nav-active-back-color);
+                font-weight: bold;
+            }
 
-    .type-story.active > .caption a {
-        color: var(--bs-sidebar-nav-active-color);
-        background-color: var(--bs-sidebar-nav-active-back-color);
-        font-weight: bold;
-    }
-
-    .type-story.active > .caption .action svg {
-        fill: #fff;
+            .action svg {
+                fill: #fff;
+            }
+        }
     }
     //
     /* ---- Chevron ---- */
@@ -72,8 +76,10 @@
         transform: rotateZ(90deg);
     }
 
-    .type-story > .caption .chevron {
-        visibility: hidden;
+    .type-story, .type-docs {
+        & > .caption .chevron {
+            visibility: hidden;
+        }
     }
     //
     /* ---- Sub Items ---- */
@@ -162,6 +168,10 @@
 
     .type-component > .caption .action svg {
         color: var(--bs-icon-story-container-color);
+    }
+
+    .type-docs > .caption .action svg {
+        color: var(--bs-icon-document-color);
     }
 
     .type-story > .caption .action svg {

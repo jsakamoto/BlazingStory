@@ -8,6 +8,10 @@ public class NavigationListItem : INavigationPath
 
     public required NavigationItemType Type;
 
+    /// <summary>
+    /// Gets a navigation path string for the item.<br/>
+    /// (ex. "/story/example-button--primary", "/docs/example-button--docs")
+    /// </summary>
     public required string NavigationPath { get; init; }
 
     public required IEnumerable<string> Segments;

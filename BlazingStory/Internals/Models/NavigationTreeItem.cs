@@ -6,7 +6,11 @@ public class NavigationTreeItem : INavigationPath
 
     internal string Caption { get; set; } = "";
 
-    public string NavigationPath { get; set; } = "";
+    /// <summary>
+    /// Gets a navigation path string for the item.<br/>
+    /// (ex. "/story/example-button--primary", "/docs/example-button--docs")
+    /// </summary>
+    public string NavigationPath { get; init; } = "";
 
     internal IEnumerable<string> PathSegments { get; set; } = Enumerable.Empty<string>();
 

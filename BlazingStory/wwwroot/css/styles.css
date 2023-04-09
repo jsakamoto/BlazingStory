@@ -36,7 +36,7 @@
   --bs-icon-folder-color: #2a0481;
   --bs-icon-story-container-color: var(--bs-accent-color);
   --bs-icon-story-color: #37d5d3;
-  --bs-icon-document-color: #ff8300;
+  --bs-icon-document-color: #ffae00;
   --bs-keymap-text-color: #5c6870;
   --bs-keymap-back-color: rgba(0,0,0,0.05);
   --bs-button-flagged-back-color: rgba(2, 156, 253, 0.07);
@@ -480,6 +480,7 @@ button {
 }
 
 .navigation-tree {
+  /* for Active Story or Docs */
   /* ---- Chevron ---- */
   /* ---- Sub Items ---- */
   /* ---- Sub Heading ---- */
@@ -519,12 +520,12 @@ button {
 .navigation-tree .caption button.action:focus {
   background-color: var(--bs-focused-half-color);
 }
-.navigation-tree .type-story.active > .caption a {
+.navigation-tree .type-story.active > .caption a, .navigation-tree .type-docs.active > .caption a {
   color: var(--bs-sidebar-nav-active-color);
   background-color: var(--bs-sidebar-nav-active-back-color);
   font-weight: bold;
 }
-.navigation-tree .type-story.active > .caption .action svg {
+.navigation-tree .type-story.active > .caption .action svg, .navigation-tree .type-docs.active > .caption .action svg {
   fill: #fff;
 }
 .navigation-tree .chevron {
@@ -546,7 +547,7 @@ button {
 .navigation-tree .expanded > .caption .chevron {
   transform: rotateZ(90deg);
 }
-.navigation-tree .type-story > .caption .chevron {
+.navigation-tree .type-story > .caption .chevron, .navigation-tree .type-docs > .caption .chevron {
   visibility: hidden;
 }
 .navigation-tree .sub-items {
@@ -615,6 +616,9 @@ button {
 }
 .navigation-tree .type-component > .caption .action svg {
   color: var(--bs-icon-story-container-color);
+}
+.navigation-tree .type-docs > .caption .action svg {
+  color: var(--bs-icon-document-color);
 }
 .navigation-tree .type-story > .caption .action svg {
   color: var(--bs-icon-story-color);
@@ -1101,6 +1105,15 @@ a.icon-button {
 }
 .controls-panel table th.control, .controls-panel table td.control {
   padding: 10px 20px 10px 15px;
+}
+
+.docs-page {
+  padding: 20px;
+}
+.docs-page h1 {
+  margin: 0;
+  padding: 0;
+  color: var(--bs-text-color);
 }
 
 .settings-page-panel {

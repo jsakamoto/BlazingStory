@@ -9,6 +9,7 @@ public class QueryRouteData : IEquatable<QueryRouteData?>
 {
     /// <summary>
     /// Gets the "path" query string that is source of this <see cref="QueryRouteData"/> instance.<br/>
+    /// If a URL like "http://.../?path=/story/example-button--primary" is given, this field will return "/story/example-button--primary".
     /// </summary>
     internal readonly string Path;
 
