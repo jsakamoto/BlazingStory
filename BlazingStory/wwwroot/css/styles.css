@@ -396,11 +396,13 @@ button {
 .search-results .no-components-found > strong {
   display: block;
   font-size: 13px;
+  color: var(--bs-text-color);
 }
 .search-results .no-components-found > small {
   display: block;
   font-size: 12px;
   margin-top: 1px;
+  color: var(--bs-dimmed-text-color);
 }
 
 .navigation-list .navigation-list-items {

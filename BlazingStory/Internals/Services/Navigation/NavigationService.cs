@@ -110,7 +110,7 @@ internal class NavigationService
 
     private void SearchCore(NavigationTreeItem item, IEnumerable<string> keywords, List<NavigationListItem> results)
     {
-        if (item.Type is NavigationItemType.Component or NavigationItemType.Story)
+        if (item.Type is NavigationItemType.Component or NavigationItemType.Docs or NavigationItemType.Story)
         {
             if (keywords.Any(word => item.Caption.Contains(word, StringComparison.InvariantCultureIgnoreCase)))
             {
