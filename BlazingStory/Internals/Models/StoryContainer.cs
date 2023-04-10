@@ -3,22 +3,37 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Internals.Models;
 
+/// <summary>
+/// Represents a "component", container for stories.
+/// </summary>
 internal class StoryContainer
 {
-    public Type ComponentType { get; }
+    internal readonly Type ComponentType;
 
-    public string Title { get; }
+    internal readonly string Title;
 
-    public List<Story> Stories { get; } = new();
+    internal readonly List<Story> Stories = new();
 
+    /// <summary>
+    /// Gets a navigation path string for this story container (component).<br/>
+    /// (ex. "examples-ui-button")
+    /// </summary>
+    internal readonly string NavigationPath;
+
+    /// <summary>
+    /// Initialize a new instance of <see cref="StoryContainer"/>.
+    /// </summary>
+    /// <param name="componentType">A type of Razor component</param>
+    /// <param name="title">A title of this container ("component")</param>
     public StoryContainer(Type componentType, string? title)
     {
         if (title == null) throw new ArgumentNullException(nameof(title));
         this.ComponentType = componentType;
         this.Title = title;
+        this.NavigationPath = Services.Navigation.NavigationPath.Create(this.Title);
     }
 
-    public void RegisterStory(string name, StoryContext storyContext, RenderFragment<StoryContext> renderFragment)
+    internal void RegisterStory(string name, StoryContext storyContext, RenderFragment<StoryContext> renderFragment)
     {
         var newStory = new Story(this.Title, name, storyContext, renderFragment);
         var index = this.Stories.FindIndex(story => story.Name == name);

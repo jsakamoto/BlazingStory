@@ -1,3 +1,31 @@
+@using System.Text.RegularExpressions;
+
+<PageTitle>@this._PageTitle</PageTitle>
+
 <div class="docs-page">
     <h1>Docs</h1>
+
+    <p>
+        @this.RouteData.Parameter
+    </p>
 </div>
+
+@code
+{
+    [CascadingParameter]
+    public required StoriesStore StoriesStore { get; init; }
+
+    [CascadingParameter]
+    public required QueryRouteData RouteData { get; init; }
+
+    private string _PageTitle = "";
+
+    protected override void OnInitialized()
+    {
+        var navigationPath = Regex.Replace(this.RouteData.Parameter, "--docs$", "");
+        if (this.StoriesStore.TryGetComponentByPath(navigationPath, out var component))
+        {
+            this._PageTitle = string.Join(" / ", component.Title.Split('/')) + " - Docs - " + BlazingStoryApp.Title;
+        }
+    }
+}

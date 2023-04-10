@@ -169,10 +169,6 @@
     {
         if (!firstRender) return;
 
-        // Navigte to default story if the navigationPath is empty.
-        var navService = this.Services.GetRequiredService<NavigationService>();
-        //navService.NavigateToDefaultStory(this.RouteData);
-
         this._AddonPanelLayout = await this.HelperScript.LoadObjectFromLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
         this.UpdateAddonPanelSize(this._AddonPanelLayout.SplitterOrientation);
         this.StateHasChanged();

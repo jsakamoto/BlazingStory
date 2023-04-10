@@ -35,11 +35,20 @@ public class StoriesStore
     }
 
     /// <summary>
-    /// Try to find story by navigationn path, such as "examples-ui-button--default".
+    /// Try to find a story by navigationn path, such as "examples-ui-button--default".
     /// </summary>
     internal bool TryGetStoryByPath(string navigationPath, [NotNullWhen(true)] out Story? story)
     {
         story = this.EnumAllStories().FirstOrDefault(s => s.NavigationPath == navigationPath);
         return story != null;
+    }
+
+    /// <summary>
+    /// Try to find a component by navigationn path, such as "examples-ui-button".
+    /// </summary>
+    internal bool TryGetComponentByPath(string navigationPath, [NotNullWhen(true)] out StoryContainer? component)
+    {
+        component = this._StoryContainers.FirstOrDefault(c => c.NavigationPath == navigationPath);
+        return component != null;
     }
 }

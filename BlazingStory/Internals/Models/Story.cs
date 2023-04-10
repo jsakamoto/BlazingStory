@@ -9,6 +9,10 @@ public class Story
 
     internal readonly string Name;
 
+    /// <summary>
+    /// Gets a navigation path string for this story.<br/>
+    /// (ex. "examples-ui-button--primary")
+    /// </summary>
     internal readonly string NavigationPath;
 
     internal readonly StoryContext Context;
