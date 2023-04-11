@@ -913,10 +913,7 @@ a.icon-button {
 }
 .text-area-container textarea {
   position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
+  inset: 0;
 }
 .text-area-container .text-area-shadow {
   visibility: hidden;
@@ -1018,10 +1015,7 @@ a.icon-button {
 }
 .canvas-container .canvas-frame-viewport .canvas-frame-content {
   position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
+  inset: 0;
   overflow: auto;
   display: grid;
   justify-items: center;
