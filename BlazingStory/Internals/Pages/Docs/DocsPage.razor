@@ -2,12 +2,26 @@
 
 <PageTitle>@this._PageTitle</PageTitle>
 
-<div class="docs-page">
-    <h1>Docs</h1>
+<div class="docs-page stack vertical">
 
-    <p>
-        @this.RouteData.Parameter
-    </p>
+    <ToolBar>
+        <IconButton Icon="SvgIconType.Grid" Title="Apply a grid to the preview" />
+        <IconButton Icon="SvgIconType.Outlines" Title="Apply outlines to the preview" />
+    </ToolBar>
+
+    <div class="docs-main fill">
+        @if (this._StoryComponent != null)
+        {
+            <h1>@this._StoryComponent.Title.Split('/').Last()</h1>
+
+            <h2>Stories</h2>
+
+            foreach (var story in this._StoryComponent.Stories)
+            {
+                <h3>@story.Name</h3>
+            }
+        }
+    </div>
 </div>
 
 @code
@@ -18,13 +32,23 @@
     [CascadingParameter]
     public required QueryRouteData RouteData { get; init; }
 
+    private string? _CurrentNavigationPath;
+
     private string _PageTitle = "";
 
-    protected override void OnInitialized()
+    private StoryContainer? _StoryComponent;
+
+    protected override void OnParametersSet()
     {
-        var navigationPath = Regex.Replace(this.RouteData.Parameter, "--docs$", "");
-        if (this.StoriesStore.TryGetComponentByPath(navigationPath, out var component))
+        base.OnParametersSet();
+
+        if (this._CurrentNavigationPath != this.RouteData.Parameter)
         {
+            this._CurrentNavigationPath = this.RouteData.Parameter;
+            var navigationPath = Regex.Replace(this.RouteData.Parameter, "--docs$", "");
+            if (!this.StoriesStore.TryGetComponentByPath(navigationPath, out var component)) return;
+
+            this._StoryComponent = component;
             this._PageTitle = string.Join(" / ", component.Title.Split('/')) + " - Docs - " + BlazingStoryApp.Title;
         }
     }

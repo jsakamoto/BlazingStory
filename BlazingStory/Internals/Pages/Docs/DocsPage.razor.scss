@@ -1,9 +1,35 @@
 .docs-page {
-    padding: 20px;
+    position: absolute;
+    inset: 0;
     color: var(--bs-text-color);
 
-    h1 {
-        margin: 0;
-        padding: 0;
+    .docs-main {
+        padding: 4rem 20px;
+        overflow: auto;
+
+        h1 {
+            font-size: 32px;
+            line-height: 36px;
+            padding: 0;
+            margin: 0 0 16px 0;
+        }
+
+        h2 {
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 16px;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--bs-dimmed-text-color);
+            padding: 0 0 4px 0;
+            margin: 56px 0 12px 0;
+        }
+
+        h3 {
+            margin: 0 0 8px 0;
+            font-size: 20px;
+            color: var(--bs-caption-text-color);
+            font-weight: 700;
+        }
     }
 }
