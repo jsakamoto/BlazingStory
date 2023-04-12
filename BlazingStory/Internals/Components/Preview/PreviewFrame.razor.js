@@ -1,16 +1,16 @@
-export const navigateCanvasFrameTo = (iframe, url) => {
+export const navigatePreviewFrameTo = (iframe, url) => {
     if (iframe === null || iframe.contentWindow === null || iframe.contentDocument === null)
         return;
     const event = new PopStateEvent("popstate", { state: {}, bubbles: true, cancelable: true });
     iframe.contentWindow.history.pushState({}, "", url);
     iframe.contentDocument.dispatchEvent(event);
 };
-export const reloadCanvasFrame = (iframe) => {
+export const reloadPreviewFrame = (iframe) => {
     if (iframe === null || iframe.contentWindow === null)
         return;
     iframe.contentWindow.postMessage({ action: "reload" });
 };
-const zoomCanvasFrame = (iframe, getNextZoomLevel) => {
+const zoomPreviewFrame = (iframe, getNextZoomLevel) => {
     if (iframe === null || iframe.contentDocument === null)
         return;
     const style = iframe.contentDocument.body.style;
@@ -18,6 +18,6 @@ const zoomCanvasFrame = (iframe, getNextZoomLevel) => {
     const nextZoomLevel = getNextZoomLevel(currentZoomLevel);
     style.zoom = '' + nextZoomLevel;
 };
-export const zoomInCanvasFrame = (iframe) => zoomCanvasFrame(iframe, zoom => zoom * 1.25);
-export const zoomOutCanvasFrame = (iframe) => zoomCanvasFrame(iframe, zoom => zoom / 1.25);
-export const resetZoomCanvasFrame = (iframe) => zoomCanvasFrame(iframe, _ => 1);
+export const zoomInPreviewFrame = (iframe) => zoomPreviewFrame(iframe, zoom => zoom * 1.25);
+export const zoomOutPreviewFrame = (iframe) => zoomPreviewFrame(iframe, zoom => zoom / 1.25);
+export const resetZoomPreviewFrame = (iframe) => zoomPreviewFrame(iframe, _ => 1);

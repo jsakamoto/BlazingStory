@@ -1,0 +1,16 @@
+.preview-frame {
+    position: absolute;
+    inset: 0;
+    overflow: auto;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+
+    iframe {
+        transition: width .3s,height .3s;
+        box-sizing: content-box;
+        border: none;
+        width: 100%;
+        height: 100%;
+    }
+}

@@ -1,15 +1,12 @@
-@implements IAsyncDisposable
-@inject IJSRuntime JSRuntime
-@inject ILogger<CanvasPage> Logger
-@inject NavigationManager NavigationManager
+@implements IDisposable
 
 <PageTitle>@_PageTitle</PageTitle>
 
 <div class="fill stack vertical addon-pane-@(this.AddonPanelVisible ? "visible" : "hidden")">
 
     <SplitContainer Class="canvas-page-container fill" Orientation="this._AddonPanelLayout.SplitterOrientation" SecondPaneMinSize="80"
-                    @bind-SecondPaneSize="_AddonPanelSize"
-                    @bind-SecondPaneSize:after="OnAddonPanelSizeChanged">
+    @bind-SecondPaneSize="_AddonPanelSize"
+    @bind-SecondPaneSize:after="OnAddonPanelSizeChanged">
 
         <FirstPane>
             <div class="canvas-container fill stack vertical">
@@ -48,15 +45,17 @@
                     {
                         <IconButton Icon="SvgIconType.FullScreen" Command="this._GoFullscreenCommand" />
                     }
-                    <IconButton Icon="SvgIconType.OpenNewTab" Href="@this._CurrentCanvasFrameUrl" Target="_blank" Title="Open canvas in new tab" />
+                    <IconButton Icon="SvgIconType.OpenNewTab" Href="@this._PreviewFrame?.CurrentPreviewFrameUrl" Target="_blank" Title="Open canvas in new tab" />
                     <IconButton Icon="SvgIconType.Link" Title="Copy canvas link" OnClick="this.OnClickCopyCanvasLink" />
                 </ToolBar>
 
                 @* -- IFrame -- *@
                 <div class="canvas-frame-viewport fill">
-                    <div class="canvas-frame-content">
-                        <iframe @ref="_Iframe" src="@_InitialCanvasFrameUrl" class="canvas-frame"></iframe>
-                    </div>
+                    <PreviewFrame @ref="_PreviewFrame"
+                                  ViewMode="story"
+                                  Id="@this.RouteData.Parameter"
+                                  Args="this._CurrentStory?.Context.Args"
+                                  Globals="this.AddonsStore.CanvasFrameArguments" />
                 </div>
             </div>
         </FirstPane>
@@ -89,6 +88,8 @@
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
 
+    private PreviewFrame? _PreviewFrame;
+
     private HelperScript HelperScript = default!;
 
     private CommandService _Commands = default!;
@@ -111,33 +112,15 @@
 
     private string _LastTitledParameter = "";
 
-    private string _InitialCanvasFrameUrl = "";
-
-    private string _CurrentCanvasFrameUrl = "";
-
     private Story? _CurrentStory = null;
 
-    private readonly JSModule _JSModule;
-
-    private ElementReference _Iframe;
-
     private string AddonPanelLayoutKeyName => this.GetType().Name + "." + nameof(_AddonPanelLayout);
-
-    private bool _AfterFirstRenderd = false;
 
     private SvgIconType ToggleOrientationButtonIcon => this._AddonPanelLayout.SplitterOrientation switch
     {
         SplitterOrientation.Horizontal => SvgIconType.BottomSidePane,
         _ => SvgIconType.RightSidePane
     };
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public CanvasPage()
-    {
-        this._JSModule = new(() => this.JSRuntime, "Internals/Pages/Canvas/CanvasPage.razor.js");
-    }
 
     protected override void OnInitialized()
     {
@@ -154,15 +137,12 @@
             this._ToolbarVisibleCommand.Subscribe(this.OnToggleToolbarVisible),
             this._AddonPanelVisibleCommand.Subscribe(this.OnToggleAddonPanelVisible)
         );
-
-        this._InitialCanvasFrameUrl = this._CurrentCanvasFrameUrl = this.GetCanvasFrameUrl();
     }
 
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
         this.UpdateCurrentStory();
         this.UpdatePageTitle();
-        await this.UpdateCanvasFrameUrlAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -172,7 +152,6 @@
         this._AddonPanelLayout = await this.HelperScript.LoadObjectFromLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
         this.UpdateAddonPanelSize(this._AddonPanelLayout.SplitterOrientation);
         this.StateHasChanged();
-        this._AfterFirstRenderd = true;
     }
 
     private void UpdatePageTitle()
@@ -180,37 +159,14 @@
         if (this._LastTitledParameter == this.RouteData.Parameter) return;
         if (this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story))
         {
-            this._PageTitle = string.Join(" / ", story.Title.Split('/')) + " - " + story.Name + " - " +  BlazingStoryApp.Title;
+            this._PageTitle = string.Join(" / ", story.Title.Split('/')) + " - " + story.Name + " - " + BlazingStoryApp.Title;
         }
         this._LastTitledParameter = this.RouteData.Parameter;
-    }
-
-    private async ValueTask UpdateCanvasFrameUrlAsync()
-    {
-        if (!this._AfterFirstRenderd) return;
-        var nextCanvasFrameUrl = this.GetCanvasFrameUrl();
-        if (this._CurrentCanvasFrameUrl == nextCanvasFrameUrl) return;
-        this._CurrentCanvasFrameUrl = nextCanvasFrameUrl;
-        await _JSModule.InvokeVoidAsync("navigateCanvasFrameTo", this._Iframe, nextCanvasFrameUrl);
-    }
-
-    private string GetCanvasFrameUrl()
-    {
-        return UriParameterKit.GetUri(
-            uri: "./iframe.html",
-            parameters: new Dictionary<string, object?>
-                {
-                    ["viewMode"] = this.RouteData.View,
-                    ["id"] = this.RouteData.Parameter,
-                    ["args"] = UriParameterKit.EncodeKeyValues(this._CurrentStory?.Context.Args),
-                    ["globals"] = UriParameterKit.EncodeKeyValues(this.AddonsStore.CanvasFrameArguments)
-                });
     }
 
     private void AddonsStore_OnSetCanvasFrameArguments(object? sender, CanvasFrameArgumentsEventArgs args)
     {
         this.StateHasChanged();
-        this.UpdateCanvasFrameUrlAsync().AndLogException(this.Logger);
     }
 
     private void UpdateCurrentStory()
@@ -227,10 +183,10 @@
         if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged += Context_ArgumentChanged;
     }
 
-    private async ValueTask Context_ArgumentChanged()
+    private ValueTask Context_ArgumentChanged()
     {
-        await this.UpdateCanvasFrameUrlAsync();
         this.StateHasChanged();
+        return ValueTask.CompletedTask;
     }
 
     private async Task OnAddonPanelSizeChanged()
@@ -280,28 +236,29 @@
 
     private async Task OnClickCopyCanvasLink()
     {
-        var canvalLinkUrl = this._CurrentCanvasFrameUrl.TrimStart('.', '/');
+        if (this._PreviewFrame == null) return;
+        var canvalLinkUrl = this._PreviewFrame.CurrentPreviewFrameUrl.TrimStart('.', '/');
         await this.HelperScript.CopyTextToClipboardAsync(canvalLinkUrl);
     }
 
     private async Task OnClickReload()
     {
-        await this._JSModule.InvokeVoidAsync("reloadCanvasFrame", this._Iframe);
+        if (this._PreviewFrame != null) await this._PreviewFrame.ReloadAsync();
     }
 
     private async Task OnClickZoomIn()
     {
-        await this._JSModule.InvokeVoidAsync("zoomInCanvasFrame", this._Iframe);
+        if (this._PreviewFrame != null) await this._PreviewFrame.ZoomInAsync();
     }
 
     private async Task OnClickZoomOut()
     {
-        await this._JSModule.InvokeVoidAsync("zoomOutCanvasFrame", this._Iframe);
+        if (this._PreviewFrame != null) await this._PreviewFrame.ZoomOutAsync();
     }
 
     private async Task OnClickResetZoom()
     {
-        await this._JSModule.InvokeVoidAsync("resetZoomCanvasFrame", this._Iframe);
+        if (this._PreviewFrame != null) await this._PreviewFrame.ResetZoomAsync();
     }
 
     private async ValueTask SaveAddonPanelLayoutAsync()
@@ -309,10 +266,9 @@
         await this.HelperScript.SaveObjectToLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
     }
 
-    public async ValueTask DisposeAsync()
+    public void Dispose()
     {
         this._Subscriptions.Dispose();
         if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
-        await _JSModule.DisposeAsync();
     }
 }

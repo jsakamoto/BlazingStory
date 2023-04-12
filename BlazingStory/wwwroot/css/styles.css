@@ -1000,6 +1000,22 @@ a.icon-button {
   margin-bottom: 2px;
 }
 
+.preview-frame {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+}
+.preview-frame iframe {
+  transition: width 0.3s, height 0.3s;
+  box-sizing: content-box;
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+
 .body {
   background-color: var(--bs-add-on-panel-back-color);
   border-radius: 4px;
@@ -1012,21 +1028,23 @@ a.icon-button {
 }
 .canvas-container .canvas-frame-viewport {
   position: relative;
-}
-.canvas-container .canvas-frame-viewport .canvas-frame-content {
-  position: absolute;
-  inset: 0;
-  overflow: auto;
-  display: grid;
-  justify-items: center;
-  align-items: center;
-}
-.canvas-container .canvas-frame-viewport .canvas-frame-content .canvas-frame {
-  transition: width 0.3s, height 0.3s;
-  box-sizing: content-box;
-  border: none;
-  width: 100%;
-  height: 100%;
+  /*        .canvas-frame-content {
+              position: absolute;
+              inset: 0;
+              overflow: auto;
+              display: grid;
+              justify-items: center;
+              align-items: center;
+
+              .canvas-frame {
+                  transition: width .3s,height .3s;
+                  box-sizing: content-box;
+                  border: none;
+                  width: 100%;
+                  height: 100%;
+              }
+          }
+  */
 }
 
 .canvas-page-container.splitter-orientation-vertical .add-on-container {
