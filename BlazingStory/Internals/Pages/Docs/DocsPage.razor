@@ -18,7 +18,12 @@
 
             foreach (var story in this._StoryComponent.Stories)
             {
-                <h3>@story.Name</h3>
+                <div @key="story.NavigationPath">
+
+                    <h3>@story.Name</h3>
+
+                    <StoryPreview Story="story" />
+                </div>
             }
         }
     </div>

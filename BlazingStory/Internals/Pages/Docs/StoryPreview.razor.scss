@@ -1,0 +1,12 @@
+.story-preview {
+
+    .preview-frame-viewport {
+        border: solid 1px #ccc;
+        position: relative;
+        min-height: 150px;
+
+        iframe {
+            position: absolute; // NOTICE: this is needed to make the iframe fill the viewport!
+        }
+    }
+}

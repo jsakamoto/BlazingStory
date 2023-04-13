@@ -1153,6 +1153,15 @@ a.icon-button {
   font-weight: 700;
 }
 
+.story-preview .preview-frame-viewport {
+  border: solid 1px #ccc;
+  position: relative;
+  min-height: 150px;
+}
+.story-preview .preview-frame-viewport iframe {
+  position: absolute;
+}
+
 .settings-page-panel {
   max-width: 600px;
   width: 100%;
