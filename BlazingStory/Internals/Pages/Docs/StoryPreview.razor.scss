@@ -1,12 +1,31 @@
 .story-preview {
+    position: relative;
+    margin: 16px 0 40px 0;
+    border: solid 1px var(--bs-border-color);
+    border-radius: 4px;
+    box-shadow: var(--bs-border-color) 0 1px 3px 0;
 
     .preview-frame-viewport {
-        border: solid 1px #ccc;
         position: relative;
-        min-height: 150px;
+        min-height: 95px;
 
         iframe {
             position: absolute; // NOTICE: this is needed to make the iframe fill the viewport!
         }
+    }
+
+    .show-code-button {
+        background-color: var(--bs-inputs-background);
+        font-size: 12px;
+        font-weight: 700;
+        padding: 4px 10px;
+        line-height: 16px;
+        border: solid 1px var(--bs-border-color);
+        border-radius: 4px 0 0 0;
+        border-bottom: none;
+        border-right: none;
+        position: absolute;
+        bottom: 0;
+        right: 0;
     }
 }

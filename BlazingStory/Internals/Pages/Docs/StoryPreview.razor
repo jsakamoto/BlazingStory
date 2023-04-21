@@ -2,10 +2,14 @@
 {
     <div class="story-preview">
 
-        <ToolBar>
-            <IconButton Icon="SvgIconType.ZoomIn" Title="Zoom In" OnClick="OnClickZoomIn" />
-            <IconButton Icon="SvgIconType.ZoomOut" Title="Zoom Out" OnClick="OnClickZoomOut" />
-        </ToolBar>
+        @if (this.EnableZoom)
+        {
+            <ToolBar>
+                <IconButton Icon="SvgIconType.ZoomIn" Title="Zoom In" OnClick="OnClickZoomIn" />
+                <IconButton Icon="SvgIconType.ZoomOut" Title="Zoom Out" OnClick="OnClickZoomOut" />
+                <IconButton Icon="SvgIconType.ZoomReset" Title="Reset Zoom" OnClick="OnClickResetZoom" />
+            </ToolBar>
+        }
 
         <div class="preview-frame-viewport">
             <PreviewFrame @ref="_PreviewFrame"
@@ -14,6 +18,11 @@
                           Args="this.Story.Context.Args"
                           Globals="null" />
         </div>
+
+        <button class="show-code-button">
+            Show code
+        </button>
+
     </div>
 }
 
@@ -21,6 +30,9 @@
 {
     [Parameter]
     public Story? Story { get; set; }
+
+    [Parameter]
+    public bool EnableZoom { get; set; }
 
     private PreviewFrame? _PreviewFrame;
 
@@ -32,5 +44,10 @@
     private async void OnClickZoomOut()
     {
         if (this._PreviewFrame != null) await this._PreviewFrame.ZoomOutAsync();
+    }
+
+    private async void OnClickResetZoom()
+    {
+        if (this._PreviewFrame != null) await this._PreviewFrame.ResetZoomAsync();
     }
 }

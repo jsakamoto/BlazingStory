@@ -1153,13 +1153,33 @@ a.icon-button {
   font-weight: 700;
 }
 
-.story-preview .preview-frame-viewport {
-  border: solid 1px #ccc;
+.story-preview {
   position: relative;
-  min-height: 150px;
+  margin: 16px 0 40px 0;
+  border: solid 1px var(--bs-border-color);
+  border-radius: 4px;
+  box-shadow: var(--bs-border-color) 0 1px 3px 0;
+}
+.story-preview .preview-frame-viewport {
+  position: relative;
+  min-height: 95px;
 }
 .story-preview .preview-frame-viewport iframe {
   position: absolute;
+}
+.story-preview .show-code-button {
+  background-color: var(--bs-inputs-background);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  line-height: 16px;
+  border: solid 1px var(--bs-border-color);
+  border-radius: 4px 0 0 0;
+  border-bottom: none;
+  border-right: none;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 .settings-page-panel {
