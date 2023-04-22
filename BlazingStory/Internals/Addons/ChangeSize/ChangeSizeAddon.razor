@@ -1,4 +1,6 @@
-<CanvasToolbarRegistrar ToolbuttonOrder="300">
+@implements IAddonComponent
+
+<AddonToobarContents @ref="_ToobarContentsRef">
     @{
         var orientationInitial = this._CurrentState.Orientation.ToString().Substring(0, 1);
         var sizes = this.GetSizes();
@@ -36,13 +38,13 @@
         </div>
     }
 
-</CanvasToolbarRegistrar>
+</AddonToobarContents>
 
 @if (this.Active)
 {
     var sizes = this.GetSizes();
     <style>
-        .preview-frame iframe {
+        .canvas-container .preview-frame iframe {
             box-shadow: 0 0 100px 100vw rgb(0 0 0 / 50%);
             border: 1px solid black !important;
             margin: 10px;
@@ -59,6 +61,16 @@
 
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
+
+    private AddonToobarContents? _ToobarContentsRef;
+
+    public AddonType AddonType { get; } = AddonType.CanvasPage;
+
+    public int ToolbuttonOrder { get; } = 300;
+
+    public RenderFragment? ToolbarContents => this._ToobarContentsRef?.ChildContent;
+
+    public IReadOnlyDictionary<string, object?> FrameArguments { get; } = new Dictionary<string, object?>();
 
     private HelperScript HelperScript = default!;
 
@@ -84,6 +96,7 @@
 
     private string DisplayName => this.SizeTypeToDetail[this._CurrentState.Size].DisplayName;
 
+
     private (int Size1, int Size2) GetSizes()
     {
         var sizeDetail = this.SizeTypeToDetail[this._CurrentState.Size];
@@ -98,6 +111,7 @@
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
         this._CurrentState = await this.HelperScript.LoadObjectFromLocalStorageAsync(StorageKey, this._CurrentState);
+        this.AddonsStore.RegisterAddon(this);
     }
 
     private async Task OnClickSize(SizeType size)
@@ -116,6 +130,6 @@
     private async ValueTask UpdateSize()
     {
         await this.HelperScript.SaveObjectToLocalStorageAsync(StorageKey, this._CurrentState);
-        this.AddonsStore.SetCanvasFrameArguments(("dummy", null));
+        this.AddonsStore.FrameArgumentsHasChanged();
     }
 }

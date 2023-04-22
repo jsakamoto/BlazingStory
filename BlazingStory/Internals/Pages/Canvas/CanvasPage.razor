@@ -26,9 +26,9 @@
                     <Separator />
 
                     @* -- Render Add-On's Toolbar Contents -- *@
-                    @foreach (var renderer in this.AddonsStore.CanvasToolbarRenderers)
+                    @foreach (var addon in this.AddonsStore.GetAddons(AddonType.CanvasPage))
                     {
-                        <text>@renderer</text>
+                        <text>@addon.ToolbarContents</text>
                     }
 
                     <Spacer />
@@ -55,7 +55,7 @@
                                   ViewMode="story"
                                   Id="@this.RouteData.Parameter"
                                   Args="this._CurrentStory?.Context.Args"
-                                  Globals="this.AddonsStore.CanvasFrameArguments" />
+                                  Globals="this.AddonsStore.GetFrameArguments(AddonType.CanvasPage)" />
                 </div>
             </div>
         </FirstPane>
@@ -125,7 +125,7 @@
     protected override void OnInitialized()
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
-        this.AddonsStore.OnSetCanvasFrameArguments += AddonsStore_OnSetCanvasFrameArguments;
+        this.AddonsStore.OnFrameArgumentsChanged += AddonsStore_OnFrameArgumentsChanged;
 
         this._Commands = this.Services.GetRequiredService<CommandService>();
         this._ToolbarVisibleCommand = this._Commands[CommandType.ToolBarVisible]!;
@@ -164,7 +164,7 @@
         this._LastTitledParameter = this.RouteData.Parameter;
     }
 
-    private void AddonsStore_OnSetCanvasFrameArguments(object? sender, CanvasFrameArgumentsEventArgs args)
+    private void AddonsStore_OnFrameArgumentsChanged(object? sender, EventArgs args)
     {
         this.StateHasChanged();
     }
@@ -268,6 +268,7 @@
 
     public void Dispose()
     {
+        this.AddonsStore.OnFrameArgumentsChanged -= AddonsStore_OnFrameArgumentsChanged;
         this._Subscriptions.Dispose();
         if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
     }

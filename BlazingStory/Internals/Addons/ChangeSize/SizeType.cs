@@ -1,4 +1,4 @@
-﻿namespace BlazingStory.Internals.Pages.Canvas.Addons.ChangeSize;
+﻿namespace BlazingStory.Internals.Addons.ChangeSize;
 
 internal enum SizeType
 {

@@ -1,38 +1,34 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BlazingStory.Internals.Addons;
 
 namespace BlazingStory.Internals.Services.Addons;
 
 public class AddonsStore
 {
-    private class CanvasToolbarRenderer { public int Order; public required RenderFragment Fragment; }
+    private readonly List<IAddonComponent> _Addons = new();
 
-    private IEnumerable<CanvasToolbarRenderer> _CanvasToolbarRenderers = Enumerable.Empty<CanvasToolbarRenderer>();
+    internal event EventHandler? OnFrameArgumentsChanged;
 
-    internal IEnumerable<RenderFragment> CanvasToolbarRenderers => this._CanvasToolbarRenderers.Select(r => r.Fragment);
-
-    internal event EventHandler<CanvasFrameArgumentsEventArgs>? OnSetCanvasFrameArguments;
-
-    private readonly Dictionary<string, object?> _CanvasFrameArguments = new();
-
-    internal IReadOnlyDictionary<string, object?> CanvasFrameArguments => this._CanvasFrameArguments;
-
-    internal void RegisterCanvasToolbarRenderer(int toolButtonOrder, RenderFragment renderer)
+    internal void RegisterAddon(IAddonComponent addon)
     {
-        this._CanvasToolbarRenderers = this._CanvasToolbarRenderers
-            .Append(new() { Order = toolButtonOrder, Fragment = renderer })
-            .OrderBy(r => r.Order)
-            .ToArray();
-
+        this._Addons.Add(addon);
     }
 
-    internal void SetCanvasFrameArguments(params (string Key, object? Value)[] args)
+    internal IEnumerable<IAddonComponent> GetAddons(AddonType addonType)
     {
-        foreach (var (Key, Value) in args)
-        {
-            if (Value == null) this._CanvasFrameArguments.Remove(Key);
-            else this._CanvasFrameArguments[Key] = Value;
-        }
+        return this._Addons.Where(a => a.AddonType.HasFlag(addonType)).OrderBy(a => a.ToolbuttonOrder);
+    }
 
-        this.OnSetCanvasFrameArguments?.Invoke(this, new(args));
+    internal IReadOnlyDictionary<string, object?> GetFrameArguments(AddonType addonType)
+    {
+        return this._Addons
+            .Where(a => a.AddonType.HasFlag(addonType))
+            .SelectMany(a => a.FrameArguments)
+            .Where(item => item.Value != null)
+            .ToDictionary(item => item.Key, item => item.Value);
+    }
+
+    internal void FrameArgumentsHasChanged()
+    {
+        this.OnFrameArgumentsChanged?.Invoke(this, EventArgs.Empty);
     }
 }

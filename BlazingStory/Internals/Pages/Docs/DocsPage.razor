@@ -1,12 +1,18 @@
+@implements IDisposable
 @using System.Text.RegularExpressions;
-
+@{
+    var frameArguments = this.AddonsStore.GetFrameArguments(AddonType.DocsPage);
+}
 <PageTitle>@this._PageTitle</PageTitle>
 
 <div class="docs-page stack vertical">
 
     <ToolBar>
-        <IconButton Icon="SvgIconType.Grid" Title="Apply a grid to the preview" />
-        <IconButton Icon="SvgIconType.Outlines" Title="Apply outlines to the preview" />
+        @* -- Render Add-On's Toolbar Contents -- *@
+        @foreach (var addon in this.AddonsStore.GetAddons(AddonType.DocsPage))
+        {
+            <text>@addon.ToolbarContents</text>
+        }
     </ToolBar>
 
     <div class="docs-main fill">
@@ -20,7 +26,7 @@
 
             @if (firstStory != null)
             {
-                <StoryPreview Story="firstStory" EnableZoom="true" />
+                <StoryPreview Story="firstStory" EnableZoom="true" Globals="frameArguments" />
             }
 
             <h2>Stories</h2>
@@ -31,7 +37,7 @@
 
                     <h3>@story.Name</h3>
 
-                    <StoryPreview Story="story" EnableZoom="false" />
+                    <StoryPreview Story="story" EnableZoom="false" Globals="frameArguments" />
                 </div>
             }
         }
@@ -40,6 +46,9 @@
 
 @code
 {
+    [CascadingParameter]
+    public required AddonsStore AddonsStore { get; init; }
+
     [CascadingParameter]
     public required StoriesStore StoriesStore { get; init; }
 
@@ -65,5 +74,20 @@
             this._StoryComponent = component;
             this._PageTitle = string.Join(" / ", component.Title.Split('/')) + " - Docs - " + BlazingStoryApp.Title;
         }
+    }
+
+    protected override void OnInitialized()
+    {
+        this.AddonsStore.OnFrameArgumentsChanged += AddonsStore_OnFrameArgumentsChanged;
+    }
+
+    private void AddonsStore_OnFrameArgumentsChanged(object? sender, EventArgs args)
+    {
+        this.StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        this.AddonsStore.OnFrameArgumentsChanged -= AddonsStore_OnFrameArgumentsChanged;
     }
 }

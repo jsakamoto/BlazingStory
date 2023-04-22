@@ -16,7 +16,7 @@
                           ViewMode="story"
                           Id="@this.Story.NavigationPath"
                           Args="this.Story.Context.Args"
-                          Globals="null" />
+                          Globals="this.Globals" />
         </div>
 
         <button class="show-code-button">
@@ -33,6 +33,9 @@
 
     [Parameter]
     public bool EnableZoom { get; set; }
+
+    [Parameter]
+    public IReadOnlyDictionary<string, object?>? Globals { get; set; }
 
     private PreviewFrame? _PreviewFrame;
 

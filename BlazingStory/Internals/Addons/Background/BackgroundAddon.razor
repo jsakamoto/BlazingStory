@@ -1,5 +1,6 @@
-<CanvasToolbarRegistrar ToolbuttonOrder="100">
+@implements IAddonComponent
 
+<AddonToobarContents @ref="_ToobarContentsRef">
     <PopupMenu MarginTop="6">
         <Trigger>
             <IconButton Icon="SvgIconType.Background" Title="Change the background of the preview" Active="@(this._BackgroundMode != BackgroundMode.None)" />
@@ -22,7 +23,7 @@
         </MenuItems>
     </PopupMenu>
 
-</CanvasToolbarRegistrar>
+</AddonToobarContents>
 
 @code
 {
@@ -31,6 +32,18 @@
 
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
+
+    private AddonToobarContents? _ToobarContentsRef;
+
+    public AddonType AddonType { get; } = AddonType.CanvasPage;
+
+    public int ToolbuttonOrder { get; } = 100;
+
+    public RenderFragment? ToolbarContents => this._ToobarContentsRef?.ChildContent;
+
+    public readonly Dictionary<string, object?> _FrameArguments = new();
+
+    public IReadOnlyDictionary<string, object?> FrameArguments => this._FrameArguments;
 
     private HelperScript HelperScript = default!;
 
@@ -53,8 +66,8 @@
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
         var backgroudnModeStr = await this.HelperScript.GetLocalStorageItemAsync(StorageKeys.BackgroundMode);
         this._BackgroundMode = Enum.TryParse<BackgroundMode>(backgroudnModeStr, out var backgroundMode) ? backgroundMode : BackgroundMode.None;
-
-        this.SetCanvasFrameArguments();
+        this.AddonsStore.RegisterAddon(this);
+        this.SetFrameArguments();
     }
 
     private async Task OnClickBackground(BackgroundMode backgroundMode)
@@ -63,11 +76,12 @@
         this._BackgroundMode = backgroundMode;
         await this.HelperScript.SetLocalStorageItemAsync(StorageKeys.BackgroundMode, this._BackgroundMode.ToString());
 
-        this.SetCanvasFrameArguments();
+        this.SetFrameArguments();
     }
 
-    private void SetCanvasFrameArguments()
+    private void SetFrameArguments()
     {
-        this.AddonsStore.SetCanvasFrameArguments(("backgrounds.value", this._BackgroundMode switch { BackgroundMode.Light => "#F8F8F8", BackgroundMode.Dark => "#333333", _ => "transparent" }));
+        this._FrameArguments["backgrounds.value"] = this._BackgroundMode switch { BackgroundMode.Light => "#F8F8F8", BackgroundMode.Dark => "#333333", _ => "transparent" };
+        this.AddonsStore.FrameArgumentsHasChanged();
     }
 }
