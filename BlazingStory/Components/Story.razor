@@ -11,6 +11,9 @@
 @code
 {
     [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
+    [CascadingParameter]
     internal StoryContainer? StoryContainer { get; set; }
 
     [CascadingParameter]
@@ -32,7 +35,8 @@
         if (this.StoryContainer == null) throw new InvalidOperationException($"The StoryContainer cascading parameter is required.");
         if (this.Template == null) throw new InvalidOperationException($"The Template parameter is required.");
 
-        this._StoryContext = new(this.ComponentParameters ?? ParameterExtractor.GetParametersFromComponentType(typeof(TComponent)));
+        var xmlDocComment = this.Services.GetRequiredService<IXmlDocComment>();
+        this._StoryContext = new(this.ComponentParameters ?? ParameterExtractor.GetParametersFromComponentType(typeof(TComponent), xmlDocComment));
 
         this.StoryContainer.RegisterStory(this.Name, this._StoryContext, this.Template);
     }

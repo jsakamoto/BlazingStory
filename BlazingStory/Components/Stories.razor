@@ -10,9 +10,17 @@
 
 @code
 {
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
-    private readonly IEnumerable<ComponentParameter> _ComponentParameters = ParameterExtractor.GetParametersFromComponentType(typeof(TComponent));
+    private IEnumerable<ComponentParameter> _ComponentParameters = Enumerable.Empty<ComponentParameter>();
 
+    protected override void OnInitialized()
+    {
+        var xmlDocComment = this.Services.GetRequiredService<IXmlDocComment>();
+        this._ComponentParameters = ParameterExtractor.GetParametersFromComponentType(typeof(TComponent), xmlDocComment);
+    }
 }

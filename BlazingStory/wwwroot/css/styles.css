@@ -1085,6 +1085,9 @@ a.icon-button {
   margin-left: 0;
   margin-right: 0;
 }
+.controls-panel table tbody {
+  background-color: var(--bs-add-on-panel-back-color);
+}
 .controls-panel table tbody tr {
   border-top-width: 1px;
   border-top-style: solid;
@@ -1111,6 +1114,14 @@ a.icon-button {
   font-weight: bold;
   vertical-align: top;
 }
+.controls-panel table td.description > .parameter-type-holder > .parameter-type {
+  display: inline-block;
+  font-family: ui-monospace, Menlo, Monaco, "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Droid Sans Mono", "Courier New", monospace;
+  font-size: 12px;
+  color: var(--bs-dimmed-text-color);
+  background-color: var(--bs-back-color);
+  padding: 2px 5px;
+}
 .controls-panel table td .required {
   color: #FF4400;
   font-weight: normal;
@@ -1130,13 +1141,17 @@ a.icon-button {
   padding: 4rem 20px;
   overflow: auto;
 }
-.docs-page .docs-main h1 {
+.docs-page .docs-main .docs-contents {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.docs-page .docs-main .docs-contents h1 {
   font-size: 32px;
   line-height: 36px;
   padding: 0;
   margin: 0 0 16px 0;
 }
-.docs-page .docs-main h2 {
+.docs-page .docs-main .docs-contents h2 {
   font-size: 13px;
   font-weight: 700;
   line-height: 16px;
@@ -1146,11 +1161,27 @@ a.icon-button {
   padding: 0 0 4px 0;
   margin: 56px 0 12px 0;
 }
-.docs-page .docs-main h3 {
+.docs-page .docs-main .docs-contents h3 {
   margin: 0 0 8px 0;
   font-size: 20px;
   color: var(--bs-caption-text-color);
   font-weight: 700;
+}
+.docs-page .docs-main .docs-contents .controls-panel tbody {
+  border: solid 1px var(--bs-add-on-panel-border-color);
+  filter: drop-shadow(0px 1px 3px var(--bs-border-color));
+}
+.docs-page .docs-main .docs-contents .controls-panel tbody tr:first-of-type td:first-of-type {
+  border-top-left-radius: 4px;
+}
+.docs-page .docs-main .docs-contents .controls-panel tbody tr:first-of-type td:last-of-type {
+  border-top-right-radius: 4px;
+}
+.docs-page .docs-main .docs-contents .controls-panel tbody tr:last-of-type td:first-of-type {
+  border-bottom-left-radius: 4px;
+}
+.docs-page .docs-main .docs-contents .controls-panel tbody tr:last-of-type td:last-of-type {
+  border-bottom-right-radius: 4px;
 }
 
 .story-preview {

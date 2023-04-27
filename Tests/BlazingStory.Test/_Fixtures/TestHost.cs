@@ -1,7 +1,11 @@
 ﻿using BlazingStory.Internals.Services;
 using BlazingStory.Internals.Services.Navigation;
+using BlazingStory.Internals.Services.XmlDocComment;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.JSInterop;
 using Moq;
 
@@ -16,11 +20,13 @@ internal class TestHost : IAsyncDisposable
     public TestHost(Action<IServiceCollection>? configureServices = null)
     {
         var services = new ServiceCollection();
-        services.AddScoped<IJSRuntime>(_ => new Mock<IJSRuntime>().Object);
-        services.AddScoped<NavigationManager>(_ => new Mock<NavigationManager>().Object);
+        services.AddScoped(_ => Mock.Of<IJSRuntime>());
+        services.AddScoped(_ => Mock.Of<NavigationManager>());
         services.AddScoped<HelperScript>();
         services.AddScoped<NavigationService>();
+        services.AddScoped(typeof(ILogger<>), typeof(NullLogger<>));
         configureServices?.Invoke(services);
+        services.TryAddScoped(_ => Mock.Of<IXmlDocComment>());
 
         this._Scope = services.BuildServiceProvider().CreateScope();
         this.Services = this._Scope.ServiceProvider;

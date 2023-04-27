@@ -19,27 +19,30 @@
         @if (this._StoryComponent != null)
         {
             var firstStory = this._StoryComponent.Stories.FirstOrDefault();
+            <div class="docs-contents">
 
-            <h1>@this._StoryComponent.Title.Split('/').Last()</h1>
+                <h1>@this._StoryComponent.Title.Split('/').Last()</h1>
 
-            <!-- TODO: Summary from the XML document comment -->
+                <!-- TODO: Summary from the XML document comment -->
+                @if (firstStory != null)
+                {
+                    <StoryPreview Story="firstStory" EnableZoom="true" Globals="frameArguments" />
 
-            @if (firstStory != null)
-            {
-                <StoryPreview Story="firstStory" EnableZoom="true" Globals="frameArguments" />
-            }
+                    <ControlsPanel Story="firstStory" ShowDetails="true" />
+                }
 
-            <h2>Stories</h2>
+                <h2>Stories</h2>
 
-            foreach (var story in this._StoryComponent.Stories)
-            {
-                <div @key="story.NavigationPath">
+                @foreach (var story in this._StoryComponent.Stories)
+                {
+                    <div @key="story.NavigationPath">
 
-                    <h3>@story.Name</h3>
+                        <h3>@story.Name</h3>
 
-                    <StoryPreview Story="story" EnableZoom="false" Globals="frameArguments" />
-                </div>
-            }
+                        <StoryPreview Story="story" EnableZoom="false" Globals="frameArguments" />
+                    </div>
+                }
+            </div>
         }
     </div>
 </div>
@@ -67,18 +70,32 @@
 
         if (this._CurrentNavigationPath != this.RouteData.Parameter)
         {
+            if (this._StoryComponent != null)
+            {
+                foreach (var story in this._StoryComponent.Stories) story.Context.ArgumentChanged -= this.Context_ArgumentChanged;
+                this._StoryComponent = null;
+            }
+
             this._CurrentNavigationPath = this.RouteData.Parameter;
             var navigationPath = Regex.Replace(this.RouteData.Parameter, "--docs$", "");
             if (!this.StoriesStore.TryGetComponentByPath(navigationPath, out var component)) return;
 
             this._StoryComponent = component;
             this._PageTitle = string.Join(" / ", component.Title.Split('/')) + " - Docs - " + BlazingStoryApp.Title;
+
+            foreach (var story in this._StoryComponent.Stories) story.Context.ArgumentChanged += this.Context_ArgumentChanged;
         }
     }
 
     protected override void OnInitialized()
     {
         this.AddonsStore.OnFrameArgumentsChanged += AddonsStore_OnFrameArgumentsChanged;
+    }
+
+    private ValueTask Context_ArgumentChanged()
+    {
+        this.StateHasChanged();
+        return ValueTask.CompletedTask;
     }
 
     private void AddonsStore_OnFrameArgumentsChanged(object? sender, EventArgs args)
@@ -89,5 +106,9 @@
     public void Dispose()
     {
         this.AddonsStore.OnFrameArgumentsChanged -= AddonsStore_OnFrameArgumentsChanged;
+        if (this._StoryComponent != null)
+        {
+            foreach (var story in this._StoryComponent.Stories) story.Context.ArgumentChanged -= this.Context_ArgumentChanged;
+        }
     }
 }

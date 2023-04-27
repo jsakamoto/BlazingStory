@@ -13,6 +13,7 @@
         margin-right: 0;
 
         tbody {
+            background-color: var(--bs-add-on-panel-back-color);
 
             tr {
                 border-top-width: 1px;
@@ -47,6 +48,19 @@
                 padding: 10px 0 10px 20px;
                 font-weight: bold;
                 vertical-align: top;
+            }
+
+            &.description {
+                & > .parameter-type-holder {
+                    & > .parameter-type {
+                        display: inline-block;
+                        font-family: ui-monospace,Menlo,Monaco,"Roboto Mono","Oxygen Mono","Ubuntu Monospace","Source Code Pro","Droid Sans Mono","Courier New",monospace;
+                        font-size: 12px;
+                        color: var(--bs-dimmed-text-color);
+                        background-color: var(--bs-back-color);
+                        padding: 2px 5px;
+                    }
+                }
             }
 
             .required {

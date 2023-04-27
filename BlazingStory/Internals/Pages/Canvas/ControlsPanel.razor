@@ -3,6 +3,11 @@
         <thead>
             <tr>
                 <th class="name">Name</th>
+                @if (this.ShowDetails)
+                {
+                    <th class="description">Description</th>
+                    <th class="default">Default</th>
+                }
                 <th class="control">
                     <span>Control</span>
                     <IconButton Icon="SvgIconType.Reset" Class="reset-button" Title="Reset controls" OnClick="ResetControls" />
@@ -16,6 +21,7 @@
                 var argumentValue = GetArgumentValue(parameter.Name);
                 var key = this.GetKey(parameter);
                 <tr @key="key">
+
                     <td class="name">
                         <span>@parameter.Name</span>
                         @if (parameter.Required)
@@ -23,6 +29,26 @@
                             <span class="required" title="Required">*</span>
                         }
                     </td>
+
+                    @if (this.ShowDetails)
+                    {
+                        <td class="description">
+                            <!-- TODO: Description -->
+                            <div class="parameter-summary">
+                                @parameter.Summary
+                            </div>
+
+                            <div class="parameter-type-holder">
+                                <span class="parameter-type">
+                                    @parameter.Type.Name
+                                </span>
+                            </div>
+                        </td>
+                        <td class="default">
+                            <!-- TODO: Default -->
+                        </td>
+                    }
+
                     <td class="control">
 
                         @if (parameter.Type == typeof(string))
@@ -94,6 +120,14 @@
 {
     [Parameter, EditorRequired]
     public Story? Story { get; set; }
+
+    [Parameter]
+    public bool ShowDetails { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        foreach (var param in this.GetParameters()) { await param.EnsureReadyAsync(); }
+    }
 
     private IEnumerable<ComponentParameter> GetParameters()
     {
