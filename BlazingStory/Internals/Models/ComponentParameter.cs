@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using BlazingStory.Internals.Services.XmlDocComment;
+using BlazingStory.Internals.Utils;
 using BlazingStory.Types;
 using Microsoft.AspNetCore.Components;
 
@@ -41,25 +42,7 @@ internal class ComponentParameter
         this.Summary = await this._XmlDocComment.GetSummaryOfPropertyAsync(this._ComponentType, this.Name);
     }
 
-    internal IEnumerable<string> GetParameterStrings()
-    {
-        if (this.Type.IsEnum)
-        {
-            yield return this.Type.Name;
-            foreach (var enumValue in Enum.GetValues(this.Type))
-            {
-                yield return $"\"{enumValue}\"";
-            }
-        }
-        else if (this.Type.IsGenericType)
-        {
-            yield return this.Type.UnderlyingSystemType.Name;
-        }
-        else
-        {
-            yield return this.Type.Name;
-        }
-    }
+    internal IEnumerable<string> GetParameterStrings() => TypeUtility.GetTypeDisplayText(this.Type);
 }
 
 internal static class ComponentParameterExtensoins

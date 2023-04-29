@@ -39,9 +39,12 @@
                             </div>
 
                             <div class="parameter-type-holder">
-                                <span class="parameter-type">
-                                    @parameter.Type.Name
-                                </span>
+                                @foreach (var typeString in parameter.GetParameterStrings())
+                                {
+                                    <span class="parameter-type">
+                                        @typeString
+                                    </span>
+                                }
                             </div>
                         </td>
                         <td class="default">

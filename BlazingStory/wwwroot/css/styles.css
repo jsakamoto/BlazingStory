@@ -1113,6 +1113,16 @@ a.icon-button {
   padding: 10px 0 10px 20px;
   font-weight: bold;
   vertical-align: top;
+  width: 25%;
+}
+.controls-panel table td.description {
+  padding: 10px 15px;
+  width: 35%;
+}
+.controls-panel table td.description > .parameter-type-holder {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
 }
 .controls-panel table td.description > .parameter-type-holder > .parameter-type {
   display: inline-block;
@@ -1121,6 +1131,10 @@ a.icon-button {
   color: var(--bs-dimmed-text-color);
   background-color: var(--bs-back-color);
   padding: 2px 5px;
+  line-height: 13px;
+  margin-bottom: 4px;
+  border-radius: 3px;
+  border: 1px solid var(--bs-dimmed-back-color);
 }
 .controls-panel table td .required {
   color: #FF4400;

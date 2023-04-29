@@ -48,10 +48,18 @@
                 padding: 10px 0 10px 20px;
                 font-weight: bold;
                 vertical-align: top;
+                width: 25%;
             }
 
             &.description {
+                padding: 10px 15px;
+                width: 35%;
+
                 & > .parameter-type-holder {
+                    display: flex;
+                    gap: 4px;
+                    margin-top: 4px;
+
                     & > .parameter-type {
                         display: inline-block;
                         font-family: ui-monospace,Menlo,Monaco,"Roboto Mono","Oxygen Mono","Ubuntu Monospace","Source Code Pro","Droid Sans Mono","Courier New",monospace;
@@ -59,6 +67,10 @@
                         color: var(--bs-dimmed-text-color);
                         background-color: var(--bs-back-color);
                         padding: 2px 5px;
+                        line-height: 13px;
+                        margin-bottom: 4px;
+                        border-radius: 3px;
+                        border: 1px solid var(--bs-dimmed-back-color);
                     }
                 }
             }
