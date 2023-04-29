@@ -16,7 +16,7 @@
     public string? Text { get; set; }
 
     /// <summary>
-    /// Set a color of the button.
+    /// Set a color of the button. <see cref="ButtonColor.Default"/> is default.
     /// </summary>
     [Parameter]
     public ButtonColor Color { get; set; } = ButtonColor.Default;
@@ -27,4 +27,10 @@
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+    /// <summary>
+    /// Initialize a new instance of <see cref="Button"/> class.
+    /// </summary>
+    public Button()
+    {
+    }
 }

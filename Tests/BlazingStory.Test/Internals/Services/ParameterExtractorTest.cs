@@ -24,14 +24,14 @@ internal class ParameterExtractorTest
         var parameters = ParameterExtractor.GetParametersFromComponentType(typeof(Button), xmlDocComment);
         foreach (var item in parameters)
         {
-            await item.EnsureReadyAsync();
+            await item.UpdateSummaryFromXmlDocCommentAsync();
         }
 
         parameters
             .Select(p => $"{p.Name}, {p.Type.Name}, {p.Required}, {p.Summary}")
             .Is("Bold, Boolean, False, ",
                 "Text, String, True, Set a text that is button caption.",
-                "Color, ButtonColor, False, Set a color of the button.",
+                "Color, ButtonColor, False, Set a color of the button. \"ButtonColor.Default\" is default.",
                 "OnClick, EventCallback`1, False, Set a callback method that will be invoked when users click the button.");
     }
 }

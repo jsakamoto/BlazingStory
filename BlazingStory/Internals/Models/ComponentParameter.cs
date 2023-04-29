@@ -12,8 +12,6 @@ internal class ComponentParameter
 
     private readonly IXmlDocComment _XmlDocComment;
 
-    private bool _Ready = false;
-
     internal readonly string Name;
 
     internal readonly Type Type;
@@ -35,12 +33,12 @@ internal class ComponentParameter
         this.Required = propertyInfo.GetCustomAttribute<EditorRequiredAttribute>() != null;
     }
 
-    internal async ValueTask EnsureReadyAsync()
+    /// <summary>
+    /// Update summary property text of this parameter by reading a XML document comment file.
+    /// </summary>
+    internal async ValueTask UpdateSummaryFromXmlDocCommentAsync()
     {
-        Console.WriteLine("EnsureReadyAsync");
-        if (this._Ready) return;
         this.Summary = await this._XmlDocComment.GetSummaryOfPropertyAsync(this._ComponentType, this.Name);
-        this._Ready = true;
     }
 
     internal IEnumerable<string> GetParameterStrings()

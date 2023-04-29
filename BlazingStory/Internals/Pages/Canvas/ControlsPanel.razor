@@ -126,7 +126,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        foreach (var param in this.GetParameters()) { await param.EnsureReadyAsync(); }
+        foreach (var param in this.GetParameters())
+        {
+            await param.UpdateSummaryFromXmlDocCommentAsync();
+        }
     }
 
     private IEnumerable<ComponentParameter> GetParameters()
