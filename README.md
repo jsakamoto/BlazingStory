@@ -262,7 +262,6 @@ public partial class Button
 {
 }
 ```
-```
 
 ## Include custom CSS or JavaScript files for your stories
 
