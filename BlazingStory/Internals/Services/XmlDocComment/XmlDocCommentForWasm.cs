@@ -13,6 +13,8 @@ internal class XmlDocCommentForWasm : IXmlDocComment
 
     private readonly ILogger<XmlDocCommentForWasm> _Logger;
 
+    private readonly SemaphoreSlim _Syncer = new SemaphoreSlim(1);
+
     private class XmlDocCommentCacheEntity
     {
         public DateTime TimestampUTC = DateTime.UtcNow;
@@ -65,7 +67,6 @@ internal class XmlDocCommentForWasm : IXmlDocComment
     /// <param name="componentType">Type for getting summary text.</param>
     public async ValueTask<string> GetSummaryOfTypeAsync(Type componentType)
     {
-        Console.WriteLine($"GetSummaryOfTypeAsync: {componentType.FullName}");
         var xdocComment = await this.GetXmlDocCommentXDocAsync(componentType);
         if (xdocComment == null) return "";
 
@@ -80,31 +81,36 @@ internal class XmlDocCommentForWasm : IXmlDocComment
 
     private async ValueTask<XDocument?> GetXmlDocCommentXDocAsync(Type type)
     {
-        var assemblyName = type.Assembly.GetName().Name;
-        if (string.IsNullOrEmpty(assemblyName)) return null;
+        await this._Syncer.WaitAsync();
+        try
+        {
+            var assemblyName = type.Assembly.GetName().Name;
+            if (string.IsNullOrEmpty(assemblyName)) return null;
 
-        var xdocComment = default(XDocument);
-        if (this._XmlDocCommentCache.TryGetValue(assemblyName, out var cacheEntity) && (DateTime.UtcNow - cacheEntity.TimestampUTC).TotalSeconds < CachePeriodSec)
-        {
-            cacheEntity.TimestampUTC = DateTime.UtcNow;
-            xdocComment = cacheEntity.XmlDoc;
-        }
-        else
-        {
-            var xdocUrl = $"./_framework/{assemblyName}.xml";
-            var xdocContent = "";
-            try { xdocContent = await this._HttpClient.GetStringAsync(xdocUrl); }
-            catch (Exception ex)
+            var xdocComment = default(XDocument);
+            if (this._XmlDocCommentCache.TryGetValue(assemblyName, out var cacheEntity) && (DateTime.UtcNow - cacheEntity.TimestampUTC).TotalSeconds < CachePeriodSec)
             {
-                this._Logger.LogError(ex, ex.Message);
-                return null;
+                cacheEntity.TimestampUTC = DateTime.UtcNow;
+                xdocComment = cacheEntity.XmlDoc;
             }
+            else
+            {
+                var xdocUrl = $"./_framework/{assemblyName}.xml";
+                var xdocContent = "";
+                try { xdocContent = await this._HttpClient.GetStringAsync(xdocUrl); }
+                catch (Exception ex)
+                {
+                    this._Logger.LogError(ex, ex.Message);
+                    return null;
+                }
 
-            xdocComment = XDocument.Parse(xdocContent);
+                xdocComment = XDocument.Parse(xdocContent);
 
-            this._XmlDocCommentCache[assemblyName] = new(xdocComment);
+                this._XmlDocCommentCache[assemblyName] = new(xdocComment);
+            }
+            return xdocComment;
         }
-        return xdocComment;
+        finally { this._Syncer.Release(); }
     }
 
 

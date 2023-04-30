@@ -127,11 +127,18 @@
     [Parameter]
     public bool ShowDetails { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    private Story? _LastShownStory;
+
+    protected override async Task OnParametersSetAsync()
     {
-        foreach (var param in this.GetParameters())
+        await base.OnParametersSetAsync();
+        if (this._LastShownStory != this.Story)
         {
-            await param.UpdateSummaryFromXmlDocCommentAsync();
+            foreach (var param in this.GetParameters())
+            {
+                await param.UpdateSummaryFromXmlDocCommentAsync();
+            }
+            this._LastShownStory = this.Story;
         }
     }
 
