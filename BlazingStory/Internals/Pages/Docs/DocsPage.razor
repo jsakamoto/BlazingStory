@@ -8,6 +8,12 @@
 <div class="docs-page stack vertical">
 
     <ToolBar>
+        @if (this._Commands[CommandType.SideBarVisible]?.Flag == false)
+        {
+            <IconButton Icon="SvgIconType.Sidebar" Command="this._Commands[CommandType.SideBarVisible]" />
+            <Separator />
+        }
+
         @* -- Render Add-On's Toolbar Contents -- *@
         @foreach (var addon in this.AddonsStore.GetAddons(AddonType.DocsPage))
         {
@@ -56,19 +62,24 @@
 @code
 {
     [CascadingParameter]
-    public required AddonsStore AddonsStore { get; init; }
+    internal AddonsStore AddonsStore { get; init; } = default!;
 
     [CascadingParameter]
-    public required StoriesStore StoriesStore { get; init; }
+    internal StoriesStore StoriesStore { get; init; } = default!;
 
     [CascadingParameter]
-    public required QueryRouteData RouteData { get; init; }
+    internal QueryRouteData RouteData { get; init; } = default!;
+
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
 
     private string? _CurrentNavigationPath;
 
     private string _PageTitle = "";
 
     private StoryContainer? _StoryComponent;
+
+    private CommandService _Commands = default!;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -97,6 +108,7 @@
 
     protected override void OnInitialized()
     {
+        this._Commands = this.Services.GetRequiredService<CommandService>();
         this.AddonsStore.OnFrameArgumentsChanged += AddonsStore_OnFrameArgumentsChanged;
     }
 
