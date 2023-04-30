@@ -2,28 +2,26 @@
 
 namespace BlazingStory.Test.Internals.Services;
 
-internal class StoryContainerTypesDetectorTest
+internal class StoriesRazorDetectorTest
 {
     [Test]
     public void Detect_from_Null_Test()
     {
-        var detector = new StoryContainerTypesDetector();
-        var storyContainers = detector.DetectContainers(null);
+        var typeOfStoriesRazors = StoriesRazorDetector.Detect(null);
 
-        storyContainers.Count().Is(0);
+        typeOfStoriesRazors.Count().Is(0);
     }
 
     [Test]
     public void Detect_Test()
     {
-        var detector = new StoryContainerTypesDetector();
-        var storyContainers = detector.DetectContainers(new[] {
+        var typeOfStoriesRazors = StoriesRazorDetector.Detect(new[] {
             typeof(BlazingStoryApp1.App).Assembly,
             typeof(BlazingStoryApp2.App).Assembly,
         });
 
-        storyContainers
-            .Select(c => $"{c.Title},{c.ComponentType.FullName}")
+        typeOfStoriesRazors
+            .Select(c => $"{c.StoriesAttribute.Title},{c.TypeOfStoriesRazor.FullName}")
             .Is("Examples/UI/Button,BlazingStoryApp1.Stories.Button_stories",
                 "Lorem/Ipsum/Header,BlazingStoryApp1.Stories.LoremIpsum_stories",
                 "Examples/UI/Rating,BlazingStoryApp1.Stories.Rating_stories",

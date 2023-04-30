@@ -36,36 +36,36 @@ public class NavigationHistory
 
     internal async ValueTask AddAsync(NavigationTreeItem root, NavigationTreeItem active)
     {
+        if (active.Type is not NavigationItemType.Docs and not NavigationItemType.Story) return;
+
+        var componentItem = root.FindParentOf(active);
+        if (componentItem == null) return;
+
         await this.EnsureInitializeAsync();
-
-        var historyItem = default(NavigationListItem);
-        var nextIds = Enumerable.Range(0, int.MaxValue).Where(n => this._HistoryItems.All(item => item.Id != n));
-
-        if (active.Type == NavigationItemType.Story)
+        var nextId = Enumerable.Range(0, int.MaxValue).Where(n => this._HistoryItems.All(item => item.Id != n)).First();
+        var historyItem = active.Type switch
         {
-            var componentItem = root.FindParentOf(active);
-            if (componentItem == null) return;
-
-            var firstStory = componentItem.SubItems.FirstOrDefault(item => item.Type == NavigationItemType.Story);
-            if (firstStory == null) return;
-
-            historyItem = new()
+            NavigationItemType.Story => new NavigationListItem()
             {
-                Id = nextIds.First(),
+                Id = nextId,
                 Caption = componentItem.Caption,
-                Type = NavigationItemType.Story,
-                NavigationPath = firstStory.NavigationPath,
+                Type = active.Type,
+                NavigationPath = componentItem.SubItems.First(item => item.Type is NavigationItemType.Docs or NavigationItemType.Story).NavigationPath,
                 Segments = componentItem.PathSegments
-            };
-        }
-        else
-        {
-            return;
-        }
+            },
+            NavigationItemType.Docs => new NavigationListItem()
+            {
+                Id = nextId,
+                Caption = active.Caption,
+                Type = active.Type,
+                NavigationPath = active.NavigationPath,
+                Segments = active.PathSegments
+            },
+            _ => throw new NotImplementedException()
+        };
 
-        if (historyItem == null) return;
         var latestHistoryItem = this._HistoryItems.FirstOrDefault();
-        if (latestHistoryItem != null && latestHistoryItem.NavigationPath == historyItem.NavigationPath) return;
+        if (historyItem.Equals(latestHistoryItem)) return;
 
         while (this._HistoryItems.Count >= MAX_HISTORY_ITEMS) this._HistoryItems.RemoveLast();
         this._HistoryItems.AddFirst(historyItem);

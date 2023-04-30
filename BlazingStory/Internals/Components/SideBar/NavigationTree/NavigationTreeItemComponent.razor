@@ -5,16 +5,17 @@
     {
         @foreach (var item in this.Item.SubItems)
         {
+            var key = item.Type + "/" + string.Join('/', item.PathSegments) + "/" + item.Caption;
             var href = this._NavigationService?.GetNavigationUrl(item);
             var style = $"padding-left: calc({this.IndentLevel} * var(--bs-sidebar-nav-indent-size));";
             var tabIndex = this.SubHeading ? "unset" : "-1";
-            var active = (item.Type == NavigationItemType.Story) && (this.RouteData?.RouteToStoryOrDocs == true) && (this.RouteData?.Parameter == item.NavigationPath);
+            var active = (item.Type is NavigationItemType.Docs or NavigationItemType.Story) && (this.RouteData?.RouteToStoryOrDocs == true) && (this.RouteData?.Path == item.NavigationPath);
 
-            <div @key="item.Caption" class="navigation-tree-item @CssClass(new {item.Expanded, Type = item.Type.ToString(), active })">
+            <div @key="key" class="navigation-tree-item @CssClass(new {item.Expanded, Type = item.Type.ToString(), active })">
 
                 @* .caption *@
                 <div class="@CssClass("caption", new {this.SubHeading})">
-                    @if (item.Type != NavigationItemType.Story)
+                    @if (item.Type is NavigationItemType.Container or NavigationItemType.Component)
                     {
                         @* .action *@
                         <button class="action" tabindex="@tabIndex" @onclick="(() => ToggleItemExpansion(item))" style="@style">
@@ -24,10 +25,11 @@
                     else
                     {
                         @* .action *@
-                        <a href="@href" class="action" tabindex="@tabIndex" @onclick="(() => ToggleItemExpansion(item))" style="@style">
+                        <a href="@href" class="action" tabindex="@tabIndex" style="@style">
                             @NavigationTreeItemContent(item)
                         </a>
                     }
+
                     @if (this.SubHeading)
                     {
                         @* .sub-heading-action *@
@@ -94,11 +96,12 @@
         }
     }
 
-    private SvgIconType GetIconType(NavigationTreeItem item)
+    private static SvgIconType GetIconType(NavigationTreeItem item)
     {
         return item.Type switch
         {
             NavigationItemType.Component => SvgIconType.Component,
+            NavigationItemType.Docs => SvgIconType.Document,
             NavigationItemType.Story => SvgIconType.BookmarkHollow,
             _ => SvgIconType.Folder
         };

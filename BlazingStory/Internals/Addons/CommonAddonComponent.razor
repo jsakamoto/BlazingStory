@@ -1,0 +1,66 @@
+@implements IAddonComponent
+
+<AddonToobarContents @ref="_ToobarContentsRef">
+    <IconButton Icon="this.Icon" OnClick="OnClickButton" Active="this._Enable" Title="@this.Title" />
+</AddonToobarContents>
+
+@code
+{
+    [CascadingParameter]
+    public required AddonsStore AddonsStore { get; init; }
+
+    [CascadingParameter]
+    public required IServiceProvider Services { get; init; }
+
+    [Parameter, EditorRequired]
+    public SvgIconType Icon { get; set; }
+
+    [Parameter, EditorRequired]
+    public string? Title { get; set; }
+
+    [Parameter, EditorRequired]
+    public string StorageKey { get; set; } = default!;
+
+    [Parameter, EditorRequired]
+    public string FrameArgumentName { get; set; } = default!;
+
+    [Parameter, EditorRequired]
+    public int ToolbuttonOrder { get; set; }
+
+    [Parameter, EditorRequired]
+    public AddonType AddonType { get; set; }
+
+    private HelperScript HelperScript = default!;
+
+    private bool _Enable = false;
+
+    private AddonToobarContents? _ToobarContentsRef;
+
+    public RenderFragment? ToolbarContents => this._ToobarContentsRef?.ChildContent;
+
+    private readonly Dictionary<string, object?> _FrameArguments = new();
+
+    public IReadOnlyDictionary<string, object?> FrameArguments => _FrameArguments;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.HelperScript = this.Services.GetRequiredService<HelperScript>();
+        var enableStr = await this.HelperScript.GetLocalStorageItemAsync(StorageKey);
+        this._Enable = bool.TryParse(enableStr, out var enable) ? enable : this._Enable;
+        this.AddonsStore.RegisterAddon(this);
+        this.SetFrameArguments();
+    }
+
+    private async Task OnClickButton()
+    {
+        this._Enable = !this._Enable;
+        this.SetFrameArguments();
+        await this.HelperScript.SetLocalStorageItemAsync(StorageKey, this._Enable);
+    }
+
+    private void SetFrameArguments()
+    {
+        this._FrameArguments[this.FrameArgumentName] = this._Enable ? "true" : null;
+        this.AddonsStore.FrameArgumentsHasChanged();
+    }
+}

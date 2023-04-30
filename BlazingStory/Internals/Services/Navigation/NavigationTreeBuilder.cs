@@ -2,26 +2,48 @@
 
 namespace BlazingStory.Internals.Services.Navigation;
 
+/// <summary>
+/// NavigationTreeBuilder builds a tree of <see cref="NavigationTreeItem"/> from a collection of <see cref="StoryContainer"/>.
+/// </summary>
 internal class NavigationTreeBuilder
 {
-    internal NavigationTreeItem Build(IEnumerable<StoryContainer> storyContainers, string? expandedNavigationPath)
+    /// <summary>
+    /// Build a tree of <see cref="NavigationTreeItem"/> from a collection of <see cref="StoryContainer"/>.
+    /// </summary>
+    /// <param name="components">A collection of <see cref="StoryContainer"/> that is the source of the navigation item tree</param>
+    /// <param name="expandedNavigationPath">A navigation path string to specify the tree item node that should be expanded (ex."/story/examples-button--primary")</param>
+    /// <returns></returns>
+    internal NavigationTreeItem Build(IEnumerable<StoryContainer> components, string? expandedNavigationPath)
     {
         var root = new NavigationTreeItem { Type = NavigationItemType.Container };
-        foreach (var storyContainer in storyContainers)
+        foreach (var component in components)
         {
-            var segments = storyContainer.Title.Split('/');
-            var item = this.CreateOrGetNavigationTreeItem(root, pathSegments: Enumerable.Empty<string>(), segments);
-            item.Type = NavigationItemType.Component;
-            var pathSegments = item.PathSegments.Append(item.Caption).ToArray();
-            var subItems = storyContainer.Stories
+            var segments = component.Title.Split('/');
+            var componentNode = this.CreateOrGetNavigationTreeItem(root, pathSegments: Enumerable.Empty<string>(), segments);
+            componentNode.Type = NavigationItemType.Component;
+
+            var pathSegments = componentNode.PathSegments.Append(componentNode.Caption).ToArray();
+
+            // Add a "Docs" node for the component
+            var docsNode = new NavigationTreeItem
+            {
+                Type = NavigationItemType.Docs,
+                NavigationPath = "/docs/" + NavigationPath.Create(component.Title, "Docs"),
+                PathSegments = pathSegments,
+                Caption = "Docs"
+            };
+            componentNode.SubItems.Add(docsNode);
+
+            // Add "Story" nodes that live in the component
+            var storyNodes = component.Stories
                 .Select(story => new NavigationTreeItem
                 {
                     Type = NavigationItemType.Story,
-                    NavigationPath = story.NavigationPath,
+                    NavigationPath = "/story/" + story.NavigationPath,
                     PathSegments = pathSegments,
                     Caption = story.Name
                 });
-            item.SubItems.AddRange(subItems);
+            componentNode.SubItems.AddRange(storyNodes);
         }
 
         if (!string.IsNullOrEmpty(expandedNavigationPath))

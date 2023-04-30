@@ -1,0 +1,27 @@
+﻿@using System.Reflection;
+
+<div style="display:none;">
+    <CascadingValue Value="this.StoriesStore">
+        @foreach (var storiesRazor in this._StoriesRazors)
+        {
+            <CascadingValue @key="storiesRazor.TypeOfStoriesRazor.FullName" Value="storiesRazor">
+                <DynamicComponent Type="storiesRazor.TypeOfStoriesRazor" />
+            </CascadingValue>
+        }
+    </CascadingValue>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public IEnumerable<Assembly>? Assemblies { get; set; }
+
+    [Parameter, EditorRequired]
+    public StoriesStore? StoriesStore { get; set; }
+
+    private IEnumerable<StoriesRazorDescriptor> _StoriesRazors = Enumerable.Empty<StoriesRazorDescriptor>();
+
+    protected override void OnInitialized()
+    {
+        this._StoriesRazors = Services.StoriesRazorDetector.Detect(this.Assemblies);
+    }
+}

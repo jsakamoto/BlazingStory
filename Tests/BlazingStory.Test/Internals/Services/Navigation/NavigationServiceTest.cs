@@ -12,7 +12,7 @@ internal class NavigationServiceTest
         // Given
         await using var host = new TestHost();
         var navService = host.Services.GetRequiredService<NavigationService>();
-        navService.BuildNavigationTree(TestHelper.ExampleStories1, null);
+        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), null);
 
         // When / Then
         navService.Search(null).Any().IsFalse();
@@ -25,7 +25,7 @@ internal class NavigationServiceTest
         // Given
         await using var host = new TestHost();
         var navService = host.Services.GetRequiredService<NavigationService>();
-        navService.BuildNavigationTree(TestHelper.ExampleStories1, null);
+        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), null);
 
         // When
         var searchResults = navService.Search(new[] { "Def" });
@@ -40,7 +40,7 @@ internal class NavigationServiceTest
         // Given
         await using var host = new TestHost();
         var navService = host.Services.GetRequiredService<NavigationService>();
-        navService.BuildNavigationTree(TestHelper.ExampleStories1, null);
+        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), null);
 
         // When
         var searchResults = navService.Search(new[] { "lec", "def" }); // NOTE: "def" should match "Default" (ignore case).
@@ -57,7 +57,7 @@ internal class NavigationServiceTest
         // Given
         await using var host = new TestHost();
         var navService = host.Services.GetRequiredService<NavigationService>();
-        navService.BuildNavigationTree(TestHelper.ExampleStories1, null);
+        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), null);
 
         // When
         var searchResults = navService.Search(new[] { "button" });

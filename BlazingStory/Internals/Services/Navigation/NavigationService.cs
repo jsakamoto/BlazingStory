@@ -30,7 +30,7 @@ internal class NavigationService
         return this._Root;
     }
 
-    internal string GetNavigationUrl(INavigationPath item) => "./?path=/story/" + item.NavigationPath;
+    internal string GetNavigationUrl(INavigationPath item) => "./?path=" + item.NavigationPath;
 
     internal void NavigateTo(INavigationPath item)
     {
@@ -48,17 +48,17 @@ internal class NavigationService
         this.NavigateTo(firstStory);
     }
 
-    internal bool TryGetActiveNavigationItem(QueryRouteData? routeData, [NotNullWhen(true)] out NavigationTreeItem? activeItem, out IEnumerable<NavigationTreeItem> storyItems)
+    internal bool TryGetActiveNavigationItem(QueryRouteData? routeData, [NotNullWhen(true)] out NavigationTreeItem? activeItem, out IEnumerable<NavigationTreeItem> navigatableItems)
     {
         activeItem = null;
-        storyItems = this._Root.EnumAll()
-            .Where(item => item.Type == NavigationItemType.Story)
+        navigatableItems = this._Root.EnumAll()
+            .Where(item => item.Type is NavigationItemType.Story or NavigationItemType.Docs)
             .ToArray();
 
-        var navigationPath = routeData?.Parameter;
+        var navigationPath = routeData?.Path;
         if (string.IsNullOrEmpty(navigationPath)) return false;
 
-        activeItem = storyItems.FirstOrDefault(item => item.NavigationPath == navigationPath);
+        activeItem = navigatableItems.FirstOrDefault(item => item.NavigationPath == navigationPath);
         if (activeItem == null) return false;
 
         return true;
@@ -110,7 +110,7 @@ internal class NavigationService
 
     private void SearchCore(NavigationTreeItem item, IEnumerable<string> keywords, List<NavigationListItem> results)
     {
-        if (item.Type is NavigationItemType.Component or NavigationItemType.Story)
+        if (item.Type is NavigationItemType.Component or NavigationItemType.Docs or NavigationItemType.Story)
         {
             if (keywords.Any(word => item.Caption.Contains(word, StringComparison.InvariantCultureIgnoreCase)))
             {

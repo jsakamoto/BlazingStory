@@ -1,9 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName).xml</DocumentationFile>
+    <BlazorEnableCompression>true</BlazorEnableCompression>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.4" />
   </ItemGroup>
 
 </Project>

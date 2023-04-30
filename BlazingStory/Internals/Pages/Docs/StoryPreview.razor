@@ -1,0 +1,59 @@
+@if (this.Story != null)
+{
+    <div class="story-preview">
+
+        @if (this.EnableZoom)
+        {
+            <ToolBar>
+                <IconButton Icon="SvgIconType.ZoomIn" Title="Zoom In" OnClick="OnClickZoomIn" />
+                <IconButton Icon="SvgIconType.ZoomOut" Title="Zoom Out" OnClick="OnClickZoomOut" />
+                <IconButton Icon="SvgIconType.ZoomReset" Title="Reset Zoom" OnClick="OnClickResetZoom" />
+            </ToolBar>
+        }
+
+        <div class="preview-frame-viewport">
+            <PreviewFrame @ref="_PreviewFrame"
+                          ViewMode="story"
+                          Id="@this.Story.NavigationPath"
+                          Args="this.Story.Context.Args"
+                          Globals="this.Globals" />
+        </div>
+
+        <!-- TODO: Implement "Show Code" -->
+        <!--
+        <button class="show-code-button">
+            Show code
+        </button>
+        -->
+
+    </div>
+}
+
+@code
+{
+    [Parameter]
+    public Story? Story { get; set; }
+
+    [Parameter]
+    public bool EnableZoom { get; set; }
+
+    [Parameter]
+    public IReadOnlyDictionary<string, object?>? Globals { get; set; }
+
+    private PreviewFrame? _PreviewFrame;
+
+    private async void OnClickZoomIn()
+    {
+        if (this._PreviewFrame != null) await this._PreviewFrame.ZoomInAsync();
+    }
+
+    private async void OnClickZoomOut()
+    {
+        if (this._PreviewFrame != null) await this._PreviewFrame.ZoomOutAsync();
+    }
+
+    private async void OnClickResetZoom()
+    {
+        if (this._PreviewFrame != null) await this._PreviewFrame.ResetZoomAsync();
+    }
+}

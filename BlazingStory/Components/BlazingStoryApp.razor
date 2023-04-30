@@ -1,6 +1,8 @@
 @using System.Reflection
+@using BlazingStory.Internals.Services.XmlDocComment;
 @using Toolbelt.Blazor.Extensions.DependencyInjection
 @implements IAsyncDisposable
+@inject HttpClient HttpClient
 @inject IJSRuntime JSRuntime
 @inject ILoggerFactory LoggerFactory
 @inject NavigationManager NavigationManager
@@ -24,9 +26,10 @@
 </style>
 <div class="default-background init-level-@(this._InitLevel)"></div>
 
-<StoriesDetector Assemblies="this.Assemblies" StoriesStore="this._StoriesStore" />
-
 <CascadingValue Value="this._ServiceProvider">
+
+    <StoriesRazorDetector Assemblies="this.Assemblies" StoriesStore="this._StoriesStore" />
+
     <CascadingValue Value="this._AddonsStore">
 
         <div style="display:none;">
@@ -86,11 +89,11 @@
 
     private readonly IEnumerable<Type> _AddonsTypes = new Type[]
     {
-        typeof(BlazingStory.Internals.Pages.Canvas.Addons.Background.BackgroundAddon),
-        typeof(BlazingStory.Internals.Pages.Canvas.Addons.Grid.GridAddon),
-        typeof(BlazingStory.Internals.Pages.Canvas.Addons.ChangeSize.ChangeSizeAddon),
-        typeof(BlazingStory.Internals.Pages.Canvas.Addons.Measure.MeasureAddon),
-        typeof(BlazingStory.Internals.Pages.Canvas.Addons.Outlines.OutlinesAddon),
+        typeof(BlazingStory.Internals.Addons.Background.BackgroundAddon),
+        typeof(BlazingStory.Internals.Addons.Grid.GridAddon),
+        typeof(BlazingStory.Internals.Addons.ChangeSize.ChangeSizeAddon),
+        typeof(BlazingStory.Internals.Addons.Measure.MeasureAddon),
+        typeof(BlazingStory.Internals.Addons.Outlines.OutlinesAddon),
     };
 
     protected override void OnInitialized()
@@ -104,12 +107,14 @@
             .AddSingleton<IJSRuntime>(_ => this.JSRuntime)
             .AddSingleton<ILoggerFactory>(_ => LoggerFactory)
             .AddSingleton(typeof(ILogger<>), typeof(Logger<>))
+            .AddSingleton<HttpClient>(_ => this.HttpClient)
             .AddSingleton<NavigationManager>(_ => this.NavigationManager)
             .AddHotKeys2()
             .AddSingleton<HelperScript>()
             .AddSingleton<CommandService>()
             .AddSingleton<NavigationService>()
             .AddSingleton<AddonsStore>(_ => this._AddonsStore)
+            .AddSingleton<IXmlDocComment, XmlDocCommentForWasm>()
             .BuildServiceProvider();
     }
 

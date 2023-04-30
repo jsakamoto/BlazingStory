@@ -1,0 +1,109 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+
+<div class="preview-frame">
+    <iframe @ref="_Iframe" src="@_InitialPreviewFrameUrl"></iframe>
+</div>
+
+@code
+{
+    [Parameter]
+    public string? ViewMode { get; set; }
+
+    [Parameter]
+    public string? Id { get; set; }
+
+    [Parameter]
+    public IReadOnlyDictionary<string, object?>? Args { get; set; }
+
+    [Parameter]
+    public IReadOnlyDictionary<string, object?>? Globals { get; set; }
+
+    /// <summary>
+    /// Gets the initial preview frame URL.
+    /// </summary>
+    public string CurrentPreviewFrameUrl => this._CurrentPreviewFrameUrl;
+
+    private ElementReference _Iframe;
+
+    private string _InitialPreviewFrameUrl = "";
+
+    private string _CurrentPreviewFrameUrl = "";
+
+    private readonly JSModule _JSModule;
+
+    private bool _AfterFirstRenderd = false;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PreviewFrame"/> class.
+    /// </summary>
+    public PreviewFrame()
+    {
+        this._JSModule = new(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
+    }
+
+    protected override void OnInitialized()
+    {
+        this._InitialPreviewFrameUrl = this._CurrentPreviewFrameUrl = this.GetPreviewFrameUrl();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await this.UpdatePreviewFrameUrlAsync();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender) return;
+        this.StateHasChanged();
+        this._AfterFirstRenderd = true;
+    }
+
+    private async ValueTask UpdatePreviewFrameUrlAsync()
+    {
+        if (!this._AfterFirstRenderd) return;
+        var nextPreviewFrameUrl = this.GetPreviewFrameUrl();
+        if (this._CurrentPreviewFrameUrl == nextPreviewFrameUrl) return;
+        this._CurrentPreviewFrameUrl = nextPreviewFrameUrl;
+        await _JSModule.InvokeVoidAsync("navigatePreviewFrameTo", this._Iframe, nextPreviewFrameUrl);
+    }
+
+    private string GetPreviewFrameUrl()
+    {
+        return UriParameterKit.GetUri(
+            uri: "./iframe.html",
+            parameters: new Dictionary<string, object?>
+                {
+                    ["viewMode"] = this.ViewMode,
+                    ["id"] = this.Id,
+                    ["args"] = UriParameterKit.EncodeKeyValues(this.Args),
+                    ["globals"] = UriParameterKit.EncodeKeyValues(this.Globals)
+                });
+    }
+
+
+    internal async ValueTask ReloadAsync()
+    {
+        await this._JSModule.InvokeVoidAsync("reloadPreviewFrame", this._Iframe);
+    }
+
+    internal async ValueTask ZoomInAsync()
+    {
+        await this._JSModule.InvokeVoidAsync("zoomInPreviewFrame", this._Iframe);
+    }
+
+    internal async ValueTask ZoomOutAsync()
+    {
+        await this._JSModule.InvokeVoidAsync("zoomOutPreviewFrame", this._Iframe);
+    }
+
+    internal async ValueTask ResetZoomAsync()
+    {
+        await this._JSModule.InvokeVoidAsync("resetZoomPreviewFrame", this._Iframe);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _JSModule.DisposeAsync();
+    }
+}

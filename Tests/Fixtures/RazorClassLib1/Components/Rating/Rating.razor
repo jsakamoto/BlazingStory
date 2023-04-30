@@ -15,6 +15,9 @@
 
 @code
 {
+    /// <summary>
+    /// Gets or sets the score of rating.
+    /// </summary>
     [Parameter]
     public int Rate { get; set; }
 
@@ -22,6 +25,9 @@
 
     private const string _DefaultColor = "goldenrod";
 
+    /// <summary>
+    /// Gets or sets the color of the rating mark.
+    /// </summary>
     [Parameter]
     public string? Color { get; set; } = _DefaultColor;
 }

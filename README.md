@@ -193,6 +193,77 @@ You can specify the initial value of the component parameter by using the `<Arg>
 
 ![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/configure-arguments-arg.png)
 
+### Documentation Enhancement
+
+By default, no detailed descriptions are in the "Docs" pages on "Blazing Story".
+
+![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/docs-page-with-no-description.png)
+
+To add more detailed descriptions to "Docs" pages, first of all, write down a summary of component parameters into your UI component's .razor file with an ["XML document comment"](https://learn.microsoft.com/dotnet/csharp/language-reference/xmldoc/) format, like below.
+
+```csharp
+@code {
+    ...
+    // 👇 Add these triple slash comments.
+    //    See also: https://learn.microsoft.com/dotnet/csharp/language-reference/xmldoc/
+
+    /// <summary>
+    /// Set a text that is button caption.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public string? Text { get; set; }
+
+    /// <summary>
+    /// Set a color of the button. <see cref="ButtonColor.Default"/> is default.
+    /// </summary>
+    [Parameter]
+    public ButtonColor Color { get; set; } = ButtonColor.Default;
+    ...
+```
+
+And next, enable generating an XML documentation file in your UI component library's project file (.csproj).
+
+If you are working on Visual Studio, you can do that by turning on the option `Documentation file - Generate a file containing API documentation" from the property GUI window of the project (You can find that option in the "Build" > "Output" category. You can also find it more easily by searching with the "Documentation file" keyword inside the project property GUI window).
+
+![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/configure-xml-doc-comment.png)
+
+Or, you can also do that by adding the `<GenerateDocumentationFile>` MSBuild property with `true` in a project file (.csproj) of your UI component library, like below.
+
+```xml
+<!-- 📄 This is a project file (.csproj) of your UI component library -->
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <PropertyGroup>
+    ...
+    <!-- 👇 Add this entry. -->
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    ...
+```
+
+After doing that, you will see those added XML document comments are appeared in the "Docs" pages.
+
+![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/docs-page-with-description.png)
+
+#### Note
+
+Currently, to add the description for the component itself, not for each parameter's descriptions, you will have to add a partial class file of the .razor file.
+
+For example, if you have the "Button.razor" Razor component file, then you will have to add the "Button.razor.cs" file to the project and write down the summary of the component in the "...razor.cs" file, like below.
+
+```csharp
+// 📄 This is a partial class file "Button.razor.cs" 
+//     of the "Button.razor" Razor component file.
+
+// 👇 Add the triple slash comments to the component class.
+
+/// <summary>
+/// This is basic button component.
+/// </summary>
+public partial class Button
+{
+}
+```
+```
+
 ## Include custom CSS or JavaScript files for your stories
 
 If you need to add `<link>` or `<script>` elements to include CSS or JavaScript files for canvas views of your stories, you should do that in the **`iframe.html`** file, not in the `index.html` file.
@@ -220,8 +291,8 @@ However, on the "Blazing Story" side, Blazor application developers can get a St
 **Q2:** Can I add a project reference of a Blazor application project, not a Razor Class Library project, to a Blazing Story app project?  
 **A2:** Currently, you can't. I'm considering making it be able to do it in the future.
 
-**Q3:** Where are "Docs" nodes?  
-**A3:** The "Docs" feature is not implemented yet. I'll implement it in the future version.
+**Q3:** How can I see the markup code of each preview on the "Docs" page?  
+**A3:** Unfortunately, the "Show code" feature of the preview on the "Docs" pages is not implemented yet. I'll implement it in the future version..
 
 **Q4:** How can I write or configure addons?  
 **A4:** You can't do that for now because the addon architecture is not completed yet. I'll finish it in the future version.

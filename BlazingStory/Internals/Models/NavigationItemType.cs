@@ -4,5 +4,6 @@ public enum NavigationItemType
 {
     Container,
     Component,
-    Story
+    Story,
+    Docs
 }

@@ -4,12 +4,9 @@
     .canvas-frame-viewport {
         position: relative;
 
-        .canvas-frame-content {
+/*        .canvas-frame-content {
             position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
+            inset: 0;
             overflow: auto;
             display: grid;
             justify-items: center;
@@ -23,7 +20,7 @@
                 height: 100%;
             }
         }
-    }
+*/    }
 }
 
 .canvas-page-container.splitter-orientation-vertical .add-on-container {

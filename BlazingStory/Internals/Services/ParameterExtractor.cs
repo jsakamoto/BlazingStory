@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using BlazingStory.Internals.Models;
+using BlazingStory.Internals.Services.XmlDocComment;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Internals.Services;
@@ -15,11 +16,11 @@ internal class ParameterExtractor
         return body.Member.Name;
     }
 
-    public static IEnumerable<ComponentParameter> GetParametersFromComponentType(Type componentType)
+    public static IEnumerable<ComponentParameter> GetParametersFromComponentType(Type componentType, IXmlDocComment xmlDocComment)
     {
         return componentType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(prop => prop.GetCustomAttribute<ParameterAttribute>() != null)
-            .Select(prop => new ComponentParameter(prop, XmlDocComment.GetSummaryOfProperty(componentType, prop.Name)))
+            .Select(prop => new ComponentParameter(componentType, prop, xmlDocComment))
             .ToArray();
     }
 }

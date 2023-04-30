@@ -1,0 +1,122 @@
+@implements IDisposable
+@using System.Text.RegularExpressions;
+@{
+    var frameArguments = this.AddonsStore.GetFrameArguments(AddonType.DocsPage);
+}
+<PageTitle>@this._PageTitle</PageTitle>
+
+<div class="docs-page stack vertical">
+
+    <ToolBar>
+        @* -- Render Add-On's Toolbar Contents -- *@
+        @foreach (var addon in this.AddonsStore.GetAddons(AddonType.DocsPage))
+        {
+            <text>@addon.ToolbarContents</text>
+        }
+    </ToolBar>
+
+    <div class="docs-main fill">
+        @if (this._StoryComponent != null)
+        {
+            var firstStory = this._StoryComponent.Stories.FirstOrDefault();
+            <div class="docs-contents">
+
+                <h1>@this._StoryComponent.Title.Split('/').Last()</h1>
+
+                <!-- Summary from the XML document comment -->
+                <p class="summary">
+                    @this._StoryComponent.Summary
+                </p>
+
+                @if (firstStory != null)
+                {
+                    <div class="first-story">
+                        <StoryPreview Story="firstStory" EnableZoom="true" Globals="frameArguments" />
+
+                        <ControlsPanel Story="firstStory" ShowDetails="true" />
+                    </div>
+                }
+
+                <h2>Stories</h2>
+
+                @foreach (var story in this._StoryComponent.Stories)
+                {
+                    <div @key="story.NavigationPath">
+
+                        <h3>@story.Name</h3>
+
+                        <StoryPreview Story="story" EnableZoom="false" Globals="frameArguments" />
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code
+{
+    [CascadingParameter]
+    public required AddonsStore AddonsStore { get; init; }
+
+    [CascadingParameter]
+    public required StoriesStore StoriesStore { get; init; }
+
+    [CascadingParameter]
+    public required QueryRouteData RouteData { get; init; }
+
+    private string? _CurrentNavigationPath;
+
+    private string _PageTitle = "";
+
+    private StoryContainer? _StoryComponent;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (this._CurrentNavigationPath != this.RouteData.Parameter)
+        {
+            if (this._StoryComponent != null)
+            {
+                foreach (var story in this._StoryComponent.Stories) story.Context.ArgumentChanged -= this.Context_ArgumentChanged;
+                this._StoryComponent = null;
+            }
+
+            this._CurrentNavigationPath = this.RouteData.Parameter;
+            var navigationPath = Regex.Replace(this.RouteData.Parameter, "--docs$", "");
+            if (!this.StoriesStore.TryGetComponentByPath(navigationPath, out var component)) return;
+
+            this._StoryComponent = component;
+            this._PageTitle = string.Join(" / ", component.Title.Split('/')) + " - Docs - " + BlazingStoryApp.Title;
+
+            foreach (var story in this._StoryComponent.Stories) story.Context.ArgumentChanged += this.Context_ArgumentChanged;
+
+            await this._StoryComponent.UpdateSummaryFromXmlDocCommentAsync();
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        this.AddonsStore.OnFrameArgumentsChanged += AddonsStore_OnFrameArgumentsChanged;
+    }
+
+    private ValueTask Context_ArgumentChanged()
+    {
+        this.StateHasChanged();
+        return ValueTask.CompletedTask;
+    }
+
+    private void AddonsStore_OnFrameArgumentsChanged(object? sender, EventArgs args)
+    {
+        this.StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        this.AddonsStore.OnFrameArgumentsChanged -= AddonsStore_OnFrameArgumentsChanged;
+        if (this._StoryComponent != null)
+        {
+            foreach (var story in this._StoryComponent.Stories) story.Context.ArgumentChanged -= this.Context_ArgumentChanged;
+        }
+    }
+}
