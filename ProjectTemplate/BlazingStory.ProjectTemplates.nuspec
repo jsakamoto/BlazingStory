@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>BlazingStory.ProjectTemplates</id>
-    <version>1.0.0-preview.2.1</version>
+    <version>1.0.0-preview.3</version>
     <description>
       Templates for a Blazing Story project.
     </description>
@@ -19,7 +19,11 @@
     <packageTypes>
       <packageType name="Template" />
     </packageTypes>
-    <releaseNotes>v.1.0.0-preview.2.1
+    <releaseNotes>
+      v.1.0.0-preview.3
+      - Implemented the "Docs" pages
+      
+      v.1.0.0-preview.2.1
       - Improved Dark Theme support
 
       v.1.0.0-preview.2
