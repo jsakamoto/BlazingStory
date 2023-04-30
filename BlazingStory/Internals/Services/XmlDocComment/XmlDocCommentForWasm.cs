@@ -47,8 +47,41 @@ internal class XmlDocCommentForWasm : IXmlDocComment
     /// <param name="propertyName">Name of the property.</param>
     public async ValueTask<string> GetSummaryOfPropertyAsync(Type ownerType, string propertyName)
     {
-        var assemblyName = ownerType.Assembly.GetName().Name;
-        if (string.IsNullOrEmpty(assemblyName)) return "";
+        var xdocComment = await this.GetXmlDocCommentXDocAsync(ownerType);
+        if (xdocComment == null) return "";
+
+        var memberName = $"P:{ownerType.FullName}.{propertyName}";
+        return xdocComment
+            .Descendants("member")
+            .Where(member => member.Attribute("name")?.Value == memberName)
+            .SelectMany(member => member.Descendants("summary"))
+            .Select(summary => GetInnerText(summary))
+            .FirstOrDefault() ?? "";
+    }
+
+    /// <summary>
+    /// Get summary text of a type from XML document comment file.
+    /// </summary>
+    /// <param name="componentType">Type for getting summary text.</param>
+    public async ValueTask<string> GetSummaryOfTypeAsync(Type componentType)
+    {
+        Console.WriteLine($"GetSummaryOfTypeAsync: {componentType.FullName}");
+        var xdocComment = await this.GetXmlDocCommentXDocAsync(componentType);
+        if (xdocComment == null) return "";
+
+        var memberName = $"T:{componentType.FullName}";
+        return xdocComment
+            .Descendants("member")
+            .Where(member => member.Attribute("name")?.Value == memberName)
+            .SelectMany(member => member.Descendants("summary"))
+            .Select(summary => GetInnerText(summary))
+            .FirstOrDefault() ?? "";
+    }
+
+    private async ValueTask<XDocument?> GetXmlDocCommentXDocAsync(Type type)
+    {
+        var assemblyName = type.Assembly.GetName().Name;
+        if (string.IsNullOrEmpty(assemblyName)) return null;
 
         var xdocComment = default(XDocument);
         if (this._XmlDocCommentCache.TryGetValue(assemblyName, out var cacheEntity) && (DateTime.UtcNow - cacheEntity.TimestampUTC).TotalSeconds < CachePeriodSec)
@@ -64,22 +97,16 @@ internal class XmlDocCommentForWasm : IXmlDocComment
             catch (Exception ex)
             {
                 this._Logger.LogError(ex, ex.Message);
-                return "";
+                return null;
             }
 
             xdocComment = XDocument.Parse(xdocContent);
 
             this._XmlDocCommentCache[assemblyName] = new(xdocComment);
         }
-
-        var memberName = $"P:{ownerType.FullName}.{propertyName}";
-        return xdocComment
-            .Descendants("member")
-            .Where(member => member.Attribute("name")?.Value == memberName)
-            .SelectMany(member => member.Descendants("summary"))
-            .Select(summary => GetInnerText(summary))
-            .FirstOrDefault() ?? "";
+        return xdocComment;
     }
+
 
     /// <summary>
     /// Get inner text of a XML document comment element.<br/>
@@ -112,6 +139,7 @@ internal class XmlDocCommentForWasm : IXmlDocComment
             })
         ).Trim();
     }
+
 
     //public static string GetSummaryOfProperty(Type ownerType, string propertyName)
     //{

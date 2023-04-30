@@ -23,12 +23,18 @@
 
                 <h1>@this._StoryComponent.Title.Split('/').Last()</h1>
 
-                <!-- TODO: Summary from the XML document comment -->
+                <!-- Summary from the XML document comment -->
+                <p class="summary">
+                    @this._StoryComponent.Summary
+                </p>
+
                 @if (firstStory != null)
                 {
-                    <StoryPreview Story="firstStory" EnableZoom="true" Globals="frameArguments" />
+                    <div class="first-story">
+                        <StoryPreview Story="firstStory" EnableZoom="true" Globals="frameArguments" />
 
-                    <ControlsPanel Story="firstStory" ShowDetails="true" />
+                        <ControlsPanel Story="firstStory" ShowDetails="true" />
+                    </div>
                 }
 
                 <h2>Stories</h2>
@@ -64,9 +70,9 @@
 
     private StoryContainer? _StoryComponent;
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        base.OnParametersSet();
+        await base.OnParametersSetAsync();
 
         if (this._CurrentNavigationPath != this.RouteData.Parameter)
         {
@@ -84,6 +90,8 @@
             this._PageTitle = string.Join(" / ", component.Title.Split('/')) + " - Docs - " + BlazingStoryApp.Title;
 
             foreach (var story in this._StoryComponent.Stories) story.Context.ArgumentChanged += this.Context_ArgumentChanged;
+
+            await this._StoryComponent.UpdateSummaryFromXmlDocCommentAsync();
         }
     }
 

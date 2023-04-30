@@ -1164,6 +1164,7 @@ a.icon-button {
   line-height: 36px;
   padding: 0;
   margin: 0 0 16px 0;
+  display: inline-block;
 }
 .docs-page .docs-main .docs-contents h2 {
   font-size: 13px;
@@ -1180,6 +1181,14 @@ a.icon-button {
   font-size: 20px;
   color: var(--bs-caption-text-color);
   font-weight: 700;
+}
+.docs-page .docs-main .docs-contents > .summary {
+  margin: 16px 0;
+  font-size: 14px;
+  line-height: 24px;
+}
+.docs-page .docs-main .docs-contents > .first-story {
+  margin: 25px 0 40px 0;
 }
 .docs-page .docs-main .docs-contents .controls-panel tbody {
   border: solid 1px var(--bs-add-on-panel-border-color);

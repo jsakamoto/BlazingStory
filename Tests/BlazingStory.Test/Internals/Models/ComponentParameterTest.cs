@@ -31,29 +31,29 @@ internal class ComponentParameterTest
     }
 
     [Test]
-    public void GetParameterStrings_For_BasicTypes_Test()
+    public void GetParameterTypeStrings_For_BasicTypes_Test()
     {
         var number1 = SampleClass.CreateComponentParameter(nameof(SampleClass.Number1));
-        number1.GetParameterStrings().Is("int");
+        number1.GetParameterTypeStrings().Is("int");
     }
 
     [Test]
-    public void GetParameterStrings_For_EventCallback_Test()
+    public void GetParameterTypeStrings_For_EventCallback_Test()
     {
         var callback1 = SampleClass.CreateComponentParameter(nameof(SampleClass.Calback1));
-        callback1.GetParameterStrings().Is("EventCallback");
+        callback1.GetParameterTypeStrings().Is("EventCallback");
 
         var callback2 = SampleClass.CreateComponentParameter(nameof(SampleClass.Calback2));
-        callback2.GetParameterStrings().Is("EventCallback<string>");
+        callback2.GetParameterTypeStrings().Is("EventCallback<string>");
     }
 
     [Test]
-    public void GetParameterStrings_For_Enum_Test()
+    public void GetParameterTypeStrings_For_Enum_Test()
     {
         var enum1 = SampleClass.CreateComponentParameter(nameof(SampleClass.Enum1));
-        enum1.GetParameterStrings().Is("SampleEnum", "\"Lorem\"", "\"Ipsum\"");
+        enum1.GetParameterTypeStrings().Is("SampleEnum", "\"Lorem\"", "\"Ipsum\"");
 
         var enum2 = SampleClass.CreateComponentParameter(nameof(SampleClass.Enum2));
-        enum2.GetParameterStrings().Is("SampleEnum?", "\"Lorem\"", "\"Ipsum\"");
+        enum2.GetParameterTypeStrings().Is("SampleEnum?", "\"Lorem\"", "\"Ipsum\"");
     }
 }

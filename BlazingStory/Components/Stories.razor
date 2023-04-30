@@ -3,8 +3,10 @@
 @attribute [CascadingTypeParameter(nameof(TComponent))]
 
 <div class="display:none;">
-    <CascadingValue Value="this._ComponentParameters">
-        @ChildContent
+    <CascadingValue Value="this._StoryContainer">
+        <CascadingValue Value="this._ComponentParameters">
+            @ChildContent
+        </CascadingValue>
     </CascadingValue>
 </div>
 
@@ -13,13 +15,24 @@
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
 
+    [CascadingParameter]
+    internal StoriesStore StoriesStore { get; init; } = default!;
+
+    [CascadingParameter]
+    internal StoriesRazorDescriptor StoriesRazorDescriptor { get; init; } = default!;
+
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
+
+    private StoryContainer? _StoryContainer;
 
     private IEnumerable<ComponentParameter> _ComponentParameters = Enumerable.Empty<ComponentParameter>();
 
     protected override void OnInitialized()
     {
+        this._StoryContainer = new StoryContainer(typeof(TComponent), this.StoriesRazorDescriptor, this.Services);
+        this.StoriesStore.RegisterStoryContainer(this._StoryContainer);
+
         var xmlDocComment = this.Services.GetRequiredService<IXmlDocComment>();
         this._ComponentParameters = ParameterExtractor.GetParametersFromComponentType(typeof(TComponent), xmlDocComment);
     }

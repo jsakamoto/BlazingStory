@@ -42,7 +42,7 @@ internal class ComponentParameter
         this.Summary = await this._XmlDocComment.GetSummaryOfPropertyAsync(this._ComponentType, this.Name);
     }
 
-    internal IEnumerable<string> GetParameterStrings() => TypeUtility.GetTypeDisplayText(this.Type);
+    internal IEnumerable<string> GetParameterTypeStrings() => TypeUtility.GetTypeDisplayText(this.Type);
 }
 
 internal static class ComponentParameterExtensoins

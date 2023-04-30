@@ -17,6 +17,7 @@
                 line-height: 36px;
                 padding: 0;
                 margin: 0 0 16px 0;
+                display: inline-block;
             }
 
             h2 {
@@ -35,6 +36,16 @@
                 font-size: 20px;
                 color: var(--bs-caption-text-color);
                 font-weight: 700;
+            }
+
+            & > .summary {
+                margin: 16px 0;
+                font-size: 14px;
+                line-height: 24px;
+            }
+
+            & > .first-story {
+                margin: 25px 0 40px 0;
             }
 
             .controls-panel {

@@ -33,13 +33,13 @@
                     @if (this.ShowDetails)
                     {
                         <td class="description">
-                            <!-- TODO: Description -->
+
                             <div class="parameter-summary">
                                 @parameter.Summary
                             </div>
 
                             <div class="parameter-type-holder">
-                                @foreach (var typeString in parameter.GetParameterStrings())
+                                @foreach (var typeString in parameter.GetParameterTypeStrings())
                                 {
                                     <span class="parameter-type">
                                         @typeString

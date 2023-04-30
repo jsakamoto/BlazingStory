@@ -14,7 +14,13 @@
     internal IServiceProvider Services { get; init; } = default!;
 
     [CascadingParameter]
+    internal StoriesStore StoriesStore { get; init; } = default!;
+
+    [CascadingParameter]
     internal StoryContainer? StoryContainer { get; set; }
+
+    [CascadingParameter]
+    internal StoriesRazorDescriptor StoriesRazorDescriptor { get; init; } = default!;
 
     [CascadingParameter]
     internal IEnumerable<ComponentParameter>? ComponentParameters { get; set; }
@@ -32,12 +38,16 @@
 
     protected override void OnInitialized()
     {
-        if (this.StoryContainer == null) throw new InvalidOperationException($"The StoryContainer cascading parameter is required.");
         if (this.Template == null) throw new InvalidOperationException($"The Template parameter is required.");
 
         var xmlDocComment = this.Services.GetRequiredService<IXmlDocComment>();
         this._StoryContext = new(this.ComponentParameters ?? ParameterExtractor.GetParametersFromComponentType(typeof(TComponent), xmlDocComment));
 
+        if (this.StoryContainer == null)
+        {
+            this.StoryContainer = new StoryContainer(typeof(TComponent), this.StoriesRazorDescriptor, this.Services);
+            this.StoriesStore.RegisterStoryContainer(this.StoryContainer);
+        }
         this.StoryContainer.RegisterStory(this.Name, this._StoryContext, this.Template);
     }
 }

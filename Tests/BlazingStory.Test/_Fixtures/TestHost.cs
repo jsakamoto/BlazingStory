@@ -13,7 +13,7 @@ namespace BlazingStory.Test._Fixtures;
 
 internal class TestHost : IAsyncDisposable
 {
-    private IServiceScope _Scope;
+    private readonly IServiceScope _Scope;
 
     internal IServiceProvider Services { get; }
 
@@ -34,7 +34,6 @@ internal class TestHost : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        var scope = this._Scope as IAsyncDisposable;
-        if (scope != null) await scope.DisposeAsync();
+        if (this._Scope is IAsyncDisposable scope) await scope.DisposeAsync();
     }
 }
