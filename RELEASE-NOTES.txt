@@ -1,3 +1,6 @@
+v.1.0.0-preview.3
+- Implemented the "Docs" pages
+
 v.1.0.0-preview.2.1
 - Improved Dark Theme support
 
