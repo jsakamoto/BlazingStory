@@ -1,8 +1,12 @@
 .settings-page-panel {
-    max-width: 600px;
-    width: 100%;
-    margin: 0 auto 0 auto;
-    padding: 48px 20px;
+    flex: 1;
+    overflow: auto;
+
+    & > .viewport {
+        padding: 48px 20px;
+        margin: 0 auto 0 auto;
+        max-width: 600px;
+    }
 
     header {
         display: flex;

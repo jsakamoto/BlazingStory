@@ -1239,10 +1239,13 @@ a.icon-button {
 }
 
 .settings-page-panel {
-  max-width: 600px;
-  width: 100%;
-  margin: 0 auto 0 auto;
+  flex: 1;
+  overflow: auto;
+}
+.settings-page-panel > .viewport {
   padding: 48px 20px;
+  margin: 0 auto 0 auto;
+  max-width: 600px;
 }
 .settings-page-panel header {
   display: flex;

@@ -18,14 +18,15 @@
 </ToolBar>
 
 <div class="settings-page-panel">
+    <div class="viewport">
+        <div>
+            <QueryRouteView Routes="_SettingsPanels.Select(r => r.Route)" />
+        </div>
 
-    <div>
-        <QueryRouteView Routes="_SettingsPanels.Select(r => r.Route)" />
+        <footer>
+            <a href="https://github.com/jsakamoto/BlazingStory" target="_blank">GitHub</a>
+        </footer>
     </div>
-
-    <footer>
-        <a href="https://github.com/jsakamoto/BlazingStory" target="_blank">GitHub</a>
-    </footer>
 </div>
 
 @code
