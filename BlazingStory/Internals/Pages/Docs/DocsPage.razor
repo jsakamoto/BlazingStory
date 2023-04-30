@@ -8,9 +8,9 @@
 <div class="docs-page stack vertical">
 
     <ToolBar>
-        @if (this._Commands[CommandType.SideBarVisible]?.Flag == false)
+        @if (this._Commands.ShowSidebar?.Flag == false)
         {
-            <IconButton Icon="SvgIconType.Sidebar" Command="this._Commands[CommandType.SideBarVisible]" />
+            <IconButton Icon="SvgIconType.Sidebar" Command="this._Commands.ShowSidebar" />
             <Separator />
         }
 
@@ -19,6 +19,18 @@
         {
             <text>@addon.ToolbarContents</text>
         }
+
+        <Spacer />
+
+        @if ((this._Commands.Fullscreen?.Flag ?? true) == true)
+        {
+            <IconButton Icon="SvgIconType.CircleClose" Command="this._Commands.Fullscreen" Title="Exit full screen [{0}]" />
+        }
+        else
+        {
+            <IconButton Icon="SvgIconType.FullScreen" Command="this._Commands.Fullscreen" />
+        }
+
     </ToolBar>
 
     <div class="docs-main fill">
@@ -79,7 +91,7 @@
 
     private StoryContainer? _StoryComponent;
 
-    private CommandService _Commands = default!;
+    private (Command? ShowSidebar, Command? Fullscreen) _Commands = default;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -108,7 +120,10 @@
 
     protected override void OnInitialized()
     {
-        this._Commands = this.Services.GetRequiredService<CommandService>();
+        var commands = this.Services.GetRequiredService<CommandService>();
+        this._Commands = (
+            ShowSidebar: commands[CommandType.SideBarVisible],
+            Fullscreen: commands[CommandType.GoFullScreen]);
         this.AddonsStore.OnFrameArgumentsChanged += AddonsStore_OnFrameArgumentsChanged;
     }
 
