@@ -7,7 +7,7 @@
 
 <div class="docs-page stack vertical">
 
-    <ToolBar>
+    <ToolBar Visible="this._Commands.ToolbarVisible?.Flag == true">
         @if (this._Commands.ShowSidebar?.Flag == false)
         {
             <IconButton Icon="SvgIconType.Sidebar" Command="this._Commands.ShowSidebar" />
@@ -91,7 +91,9 @@
 
     private StoryContainer? _StoryComponent;
 
-    private (Command? ShowSidebar, Command? Fullscreen) _Commands = default;
+    private (Command? ToolbarVisible, Command? ShowSidebar, Command? Fullscreen) _Commands = default;
+
+    private readonly Subscriptions _Subscriptions = new();
 
     protected override async Task OnParametersSetAsync()
     {
@@ -120,11 +122,14 @@
 
     protected override void OnInitialized()
     {
+        this.AddonsStore.OnFrameArgumentsChanged += AddonsStore_OnFrameArgumentsChanged;
+
         var commands = this.Services.GetRequiredService<CommandService>();
         this._Commands = (
+            ToolbarVisible: commands[CommandType.ToolBarVisible],
             ShowSidebar: commands[CommandType.SideBarVisible],
             Fullscreen: commands[CommandType.GoFullScreen]);
-        this.AddonsStore.OnFrameArgumentsChanged += AddonsStore_OnFrameArgumentsChanged;
+        this._Subscriptions.Add(this._Commands.ToolbarVisible!.Subscribe(this.OnToggleToolbarVisible));
     }
 
     private ValueTask Context_ArgumentChanged()
@@ -138,9 +143,16 @@
         this.StateHasChanged();
     }
 
+    private async ValueTask OnToggleToolbarVisible()
+    {
+        this._Commands.ToolbarVisible?.ToggleFlag();
+        await ValueTask.CompletedTask;
+    }
+
     public void Dispose()
     {
         this.AddonsStore.OnFrameArgumentsChanged -= AddonsStore_OnFrameArgumentsChanged;
+        this._Subscriptions.Dispose();
         if (this._StoryComponent != null)
         {
             foreach (var story in this._StoryComponent.Stories) story.Context.ArgumentChanged -= this.Context_ArgumentChanged;
