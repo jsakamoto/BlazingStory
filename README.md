@@ -43,9 +43,12 @@ Open the solution file (.sln) with Visual Studio, and add a new "Blazing Story" 
 
 If you are working on dotnet CLI, you can do that with the following commands in a terminal.
 
+> **Note**  
+> Please remind again that this example scenario assumes that there is already a solution file (.sln) in the current directory with an existing Razor component library.
+
 ```shell
 # Create a new Blazing Story app
-dotnet new blazingstory -n MyRazorClassLib.Stories
+dotnet new blazingstorywasm -n MyRazorClassLib.Stories
 # Add the Blazing Story app project to the solution
 dotnet sln add ./MyRazorClassLib.Stories/
 ```
