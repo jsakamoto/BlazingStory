@@ -1,3 +1,12 @@
+v.1.0.0-preview.3.1
+- Fix: README - typo in the creating a new Blazing Story app command
+- Fix: Settings pages - The toolbar was hidden in some cases
+- Fix: Default color scheme values were not applied correctly
+- Docs page - Enabled toggling the toolbar visibility
+- Docs page - Added "Go fullscreen" button on the toolbar
+- Docs page - Added the "Show sidebar" button on the toolbar
+- Docs page - Enabled the "Background" Add-on
+
 v.1.0.0-preview.3
 - Implemented the "Docs" pages
 
