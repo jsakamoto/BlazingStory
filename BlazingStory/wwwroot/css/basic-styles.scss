@@ -15,9 +15,12 @@ body {
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     -webkit-overflow-scrolling: touch;
-    color: var(--bs-text-color);
-    background: var(--bs-back-color);
     overflow: hidden;
+
+    .color-scheme-container {
+        color: var(--bs-text-color);
+        background: var(--bs-back-color);
+    }
 }
 
 button, input, textarea, select {

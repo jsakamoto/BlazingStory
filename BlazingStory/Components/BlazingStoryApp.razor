@@ -39,7 +39,7 @@
             }
         </div>
 
-        <div class="preferes-color-scheme-@this._PreferesColorScheme" style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >=2 ? 1 : 0); display: @(this._InitLevel >= 1 ? "block" : "none");">
+        <div class="color-scheme-container preferes-color-scheme-@this._PreferesColorScheme" style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >=2 ? 1 : 0); display: @(this._InitLevel >= 1 ? "block" : "none");">
             <CascadingValue Value="this._StoriesStore">
                 <Router AppAssembly="@typeof(BlazingStoryApp).Assembly">
                     <Found Context="routeData">

@@ -114,9 +114,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-overflow-scrolling: touch;
+  overflow: hidden;
+}
+body .color-scheme-container {
   color: var(--bs-text-color);
   background: var(--bs-back-color);
-  overflow: hidden;
 }
 
 button, input, textarea, select {
