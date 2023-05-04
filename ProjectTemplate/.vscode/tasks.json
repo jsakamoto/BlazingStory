@@ -10,7 +10,11 @@
             },
             "label": "build package",
             "type": "shell",
-            "command": "${workspaceFolder}\\build.bat"
+            "command": "dotnet",
+            "args": ["pack", "BlazingStory.ProjectTemplates.msbuild"],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
         }
     ]
 }
