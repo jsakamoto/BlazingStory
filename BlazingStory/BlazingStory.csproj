@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>nullable</WarningsAsErrors>
@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>1.0.0-preview.3.1</Version>
+    <Version>1.0.0-preview.3.2</Version>
     <Copyright>Copyright © 2023 J.Sakamoto, Mozilla Public License 2.0</Copyright>
     <Authors>J.Sakamoto</Authors>
     <RepositoryType>git</RepositoryType>
@@ -27,8 +27,15 @@
     <PackageOutputPath>..\_dist\</PackageOutputPath>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '7.0')) ">
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '8.0')) ">
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0-preview.3.*" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="1.0.0" />
     <PackageReference Include="Toolbelt.Web.CssClassInlineBuilder" Version="2.0.0" />
     <PackageReference Include="Toolbelt.Blazor.SplitContainer" Version="1.1.2" />

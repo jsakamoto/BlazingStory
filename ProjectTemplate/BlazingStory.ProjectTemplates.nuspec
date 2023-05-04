@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>BlazingStory.ProjectTemplates</id>
-    <version>1.0.0-preview.3.1</version>
+    <version>1.0.0-preview.3.2</version>
     <description>
       Templates for a Blazing Story project.
     </description>
@@ -20,6 +20,9 @@
       <packageType name="Template" />
     </packageTypes>
     <releaseNotes>
+      v.1.0.0-preview.3.2
+      - Add support for .NET 8 (Preview)
+
       v.1.0.0-preview.3.1
       - Fix: README - typo in the creating a new Blazing Story app command
       - Fix: Settings pages - The toolbar was hidden in some cases
