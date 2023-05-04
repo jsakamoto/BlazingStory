@@ -4,9 +4,11 @@
 
 The clone of ["Storybook"](https://storybook.js.org/) for Blazor, a frontend workshop for building UI components and pages in isolation.
 
-![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/social-preview.png)
+[![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/social-preview.png)](https://jsakamoto.github.io/BlazingStory/)
 
 The "Blazing Story" is built on **almost 100% Blazor native** (except only a few JavaScript helper codes), so you don't have to care about `npm`, `package.json`, `webpack`, and any JavaScript/TypeScript code. You can create a UI catalog application **on the Blazor way!**
+
+You can try it out from the live demonstration site at the following link: https://jsakamoto.github.io/BlazingStory/
 
 ## Getting Started
 
