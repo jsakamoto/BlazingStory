@@ -1,6 +1,6 @@
 ﻿# ![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/icon.min.64x64.svg) Blazing Story [![tests](https://github.com/jsakamoto/BlazingStory/actions/workflows/tests.yml/badge.svg)](https://github.com/jsakamoto/BlazingStory/actions/workflows/tests.yml) [![NuGet Package](https://img.shields.io/nuget/v/BlazingStory.svg)](https://www.nuget.org/packages/BlazingStory/)
 
-## Summary
+## 📝 Summary
 
 The clone of ["Storybook"](https://storybook.js.org/) for Blazor, a frontend workshop for building UI components and pages in isolation.
 
@@ -10,7 +10,7 @@ The "Blazing Story" is built on **almost 100% Blazor native** (except only a few
 
 You can try it out from the live demonstration site at the following link: https://jsakamoto.github.io/BlazingStory/
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Example scenario
 
@@ -141,7 +141,7 @@ Then you will see the clone of the "Storybook" built on Blazor! 🎉
 
 ![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/first-run-of-blazingstory.gif)
 
-## Structure of "story"
+## 📂 Structure of "story"
 
 - The `[Stories]` attribute on a Razor component indicates to the Blazing Story runtime that the Razor component will include stories.
 - The slash-separated title string of the parameter of the `[Stories]` attribute configures the navigation tree and represents the title of the stories container (we called it "Component").
@@ -152,7 +152,7 @@ Then you will see the clone of the "Storybook" built on Blazor! 🎉
 
 ![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/structure-of-story.png)
 
-## Configure arguments 
+## ⚙️ Configure arguments 
 
 ### Configure the control type
 
@@ -198,7 +198,7 @@ You can specify the initial value of the component parameter by using the `<Arg>
 
 ![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/configure-arguments-arg.png)
 
-### Documentation Enhancement
+## ✍️ Documentation Enhancement
 
 By default, no detailed descriptions are in the "Docs" pages on "Blazing Story".
 
@@ -248,7 +248,7 @@ After doing that, you will see those added XML document comments are appeared in
 
 ![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/docs-page-with-description.png)
 
-#### Note
+### Note
 
 Currently, to add the description for the component itself, not for each parameter's descriptions, you will have to add a partial class file of the .razor file.
 
@@ -268,15 +268,15 @@ public partial class Button
 }
 ```
 
-## Include custom CSS or JavaScript files for your stories
+## 🪄 Include custom CSS or JavaScript files for your stories
 
 If you need to add `<link>` or `<script>` elements to include CSS or JavaScript files for canvas views of your stories, you should do that in the **`iframe.html`** file, not in the `index.html` file.
 
-## System Requirements
+## 📌 System Requirements
 
 .NET SDK ver.7 or later
 
-## Disclaimer
+## 🙇 Disclaimer
 
 The "Blazing Story" is just my hobby work and a personal technical exhibition, so it is not an officially derived product from the "Storybook". I'd like to keep improving this product for now, but it might be abandoned if I cannot spend enough time on this product in the future. I welcome that somebody forks this product and organizes the maintainers for it.
 
@@ -287,7 +287,7 @@ Therefore, the combination of Blazor's WebComponents custom element and Storyboo
 However, on the "Blazing Story" side, Blazor application developers can get a Storybook-like UI component catalog solution under the familiar .NET ecosystem without being annoyed by a complex JavaScript front-end development toolchain. This is the most important point I wanted to illustrate through the development of Blazing Story.
 
 
-## Frequently Asked Questions
+## 🤔 Frequently Asked Questions
 
 **Q1:** Hot reloading and `dotnet watch` doesn't work.  
 **A1:** Sorry for that. I want to manage to be available for hot reloading eventually.
@@ -301,8 +301,11 @@ However, on the "Blazing Story" side, Blazor application developers can get a St
 **Q4:** How can I write or configure addons?  
 **A4:** You can't do that for now because the addon architecture is not completed yet. I'll finish it in the future version.
 
+## 🎉 Release Notes
 
-## License
+Release notes are [here](https://github.com/jsakamoto/BlazingStory/blob/main/RELEASE-NOTES.txt).
+
+## 📢 License & Third Party Notice
 
 [Mozilla Public License Version 2.0](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/LICENSE)
 
