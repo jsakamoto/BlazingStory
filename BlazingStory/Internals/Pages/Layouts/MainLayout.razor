@@ -1,13 +1,17 @@
 ﻿@inherits LayoutComponentBase
 @using Toolbelt.Blazor.HotKeys2
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
 <HeadContent>
-    <link rel="stylesheet" href="_content/Toolbelt.Blazor.SplitContainer/Toolbelt.Blazor.SplitContainer.bundle.scp.css" />
-    <link rel="preload" href="_content/BlazingStory/fonts/nunito-sans-regular.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="_content/BlazingStory/fonts/nunito-sans-bold.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="stylesheet" href="_content/BlazingStory/fonts/fonts.css" />
-    <link rel="stylesheet" href="_content/BlazingStory/css/styles.min.css" />
+    @{
+        var updateToken = UriParameterKit.GetUpdateToken(this.JSRuntime);
+    }
+    <link rel="stylesheet" href="_content/Toolbelt.Blazor.SplitContainer/Toolbelt.Blazor.SplitContainer.bundle.scp.css@(updateToken)" />
+    <link rel="preload" href="_content/BlazingStory/fonts/nunito-sans-regular.woff2@(updateToken)" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="_content/BlazingStory/fonts/nunito-sans-bold.woff2@(updateToken)" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="_content/BlazingStory/fonts/fonts.css@(updateToken)" />
+    <link rel="stylesheet" href="_content/BlazingStory/css/styles.min.css@(updateToken)" />
 </HeadContent>
 
 <SvgIcons />

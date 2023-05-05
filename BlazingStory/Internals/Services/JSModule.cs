@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using BlazingStory.Internals.Utils;
+using Microsoft.JSInterop;
 
 namespace BlazingStory.Internals.Services;
 
@@ -23,7 +24,8 @@ internal class JSModule : IAsyncDisposable
         if (this._Module == null)
         {
             var jsRuntime = this._GetJSRuntime();
-            this._Module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", _DefayltBasePath + this._ModulePath);
+            var updateToken = UriParameterKit.GetUpdateToken(jsRuntime);
+            this._Module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", _DefayltBasePath + this._ModulePath + updateToken);
         }
         return this._Module;
     }

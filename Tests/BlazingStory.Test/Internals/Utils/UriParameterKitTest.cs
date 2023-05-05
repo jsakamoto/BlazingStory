@@ -1,5 +1,8 @@
-﻿using System.Web;
+﻿using System.Text.RegularExpressions;
+using System.Web;
 using BlazingStory.Internals.Utils;
+using Microsoft.JSInterop;
+using Moq;
 
 namespace BlazingStory.Test.Internals.Utils;
 
@@ -66,5 +69,44 @@ internal class UriParameterKitTest
         args["Flag"].Is("True");
         args["Text"].Is("Date: 2023/02/01");
         args["Width"].Is("640");
+    }
+
+    [Test]
+    public void GetUpdateToken_on_ServerSide_Test()
+    {
+        var token = UriParameterKit.GetUpdateToken(Mock.Of<IJSRuntime>());
+        token.Is("");
+    }
+
+    [Test]
+    public void GetUpdateToken_when_OnLine_Test()
+    {
+        // Given
+        var jsInProcRuntime = new Mock<IJSInProcessRuntime>();
+        jsInProcRuntime
+            .Setup(js => js.Invoke<bool>(It.Is<string>(arg => arg == "BlazingStory.isOnLine")))
+            .Returns(true);
+
+        // When
+        var token = UriParameterKit.GetUpdateToken(jsInProcRuntime.Object);
+
+        // Then
+        Regex.IsMatch(token, @"^\?v=.+$").IsTrue();
+    }
+
+    [Test]
+    public void GetUpdateToken_when_OffLine_Test()
+    {
+        // Given
+        var jsInProcRuntime = new Mock<IJSInProcessRuntime>();
+        jsInProcRuntime
+            .Setup(js => js.Invoke<bool>(It.Is<string>(arg => arg == "BlazingStory.isOnLine")))
+            .Returns(false);
+
+        // When
+        var token = UriParameterKit.GetUpdateToken(jsInProcRuntime.Object);
+
+        // Then
+        token.Is("");
     }
 }
