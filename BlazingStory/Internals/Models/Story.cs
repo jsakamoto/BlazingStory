@@ -5,6 +5,8 @@ namespace BlazingStory.Internals.Models;
 
 public class Story
 {
+    internal readonly StoriesRazorDescriptor StoriesRazorDescriptor;
+
     internal readonly string Title;
 
     internal readonly string Name;
@@ -19,9 +21,10 @@ public class Story
 
     internal readonly RenderFragment<StoryContext> RenderFragment;
 
-    internal Story(string title, string name, StoryContext context, RenderFragment<StoryContext> renderFragment)
+    internal Story(StoriesRazorDescriptor storiesRazorDescriptor, string name, StoryContext context, RenderFragment<StoryContext> renderFragment)
     {
-        this.Title = title;
+        this.StoriesRazorDescriptor = storiesRazorDescriptor ?? throw new ArgumentNullException(nameof(storiesRazorDescriptor));
+        this.Title = this.StoriesRazorDescriptor.StoriesAttribute.Title ?? throw new ArgumentNullException(nameof(storiesRazorDescriptor));
         this.Name = name;
         this.Context = context;
         this.RenderFragment = renderFragment;

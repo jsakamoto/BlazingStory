@@ -4,6 +4,9 @@ using BlazingStory.Types;
 
 namespace BlazingStory.Internals.Services;
 
+/// <summary>
+/// This class detects types of Stories Razor component (..stories.razor) and its <see cref="StoriesAttribute"/> from assemblies.
+/// </summary>
 internal static class StoriesRazorDetector
 {
     /// <summary>

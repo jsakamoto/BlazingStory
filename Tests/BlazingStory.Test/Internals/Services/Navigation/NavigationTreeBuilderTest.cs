@@ -31,11 +31,11 @@ internal class NavigationTreeBuilderTest
         var builder = new NavigationTreeBuilder();
         var storyContainers = new StoryContainer[] {
             new(typeof(Button),new(typeof(Button_stories), new("Examples/Button")), host.Services) { Stories = {
-                new("Examples/Button", "Default", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
-                new("Examples/Button", "Primary", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
+                new(TestHelper.Descriptor("Examples/Button"), "Default", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
+                new(TestHelper.Descriptor("Examples/Button"), "Primary", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
             }},
             new(typeof(Button), new(typeof(Select_stories), new("Examples/Select")), host.Services) { Stories = {
-                new("Examples/Select", "Select", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
+                new(TestHelper.Descriptor("Examples/Select"), "Select", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
             }}
         };
 
@@ -111,12 +111,12 @@ internal class NavigationTreeBuilderTest
         var builder = new NavigationTreeBuilder();
         var storyContainers = new StoryContainer[] {
             new(typeof(Button), new(typeof(Button_stories), new("Components/Button")), host.Services){ Stories = {
-                new("Components/Button", "Default", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
-                new("Components/Button", "Primary", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
+                new(TestHelper.Descriptor("Components/Button"), "Default", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
+                new(TestHelper.Descriptor("Components/Button"), "Primary", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
             }},
             new(typeof(Button), new(typeof(Select_stories), new("Pages/Authentication")), host.Services){ Stories = {
-                new("Pages/Authentication", "Sign In", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
-                new("Pages/Authentication", "Sign Out", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
+                new(TestHelper.Descriptor("Pages/Authentication"), "Sign In", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
+                new(TestHelper.Descriptor("Pages/Authentication"), "Sign Out", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
             }},
         };
 
