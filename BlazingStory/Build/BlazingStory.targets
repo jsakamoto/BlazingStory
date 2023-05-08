@@ -1,5 +1,40 @@
 <Project>
 
+  <!--
+  This target is used to generate the BlazingStoryAssemblyInfo.cs file wihch contains project meta data such as project directory, root namespace.
+  This is required to the "Show Code" feature in the "Docs" pages.
+  -->
+  <Target Name="_GenerateBlazingStoryAssemblyInfo" BeforeTargets="BeforeCompile;CoreCompile">
+
+    <PropertyGroup>
+      <BlazingStoryAssemblyInfoFile>$(IntermediateOutputPath)$(MSBuildProjectName).BlazingStoryAssemblyInfo.cs</BlazingStoryAssemblyInfoFile>
+    </PropertyGroup>
+    
+    <ItemGroup>
+      <BlazingStoryAssemblyAttribute Include="BlazingStory.Internals.Types.ProjectMetaDataAttribute">
+        <_Parameter1>$(MSBuildProjectDirectory)</_Parameter1>
+        <_Parameter2>$(RootNamespace)</_Parameter2>
+      </BlazingStoryAssemblyAttribute>
+    </ItemGroup>
+
+    <WriteCodeFragment AssemblyAttributes="@(BlazingStoryAssemblyAttribute)" Language="$(Language)" OutputFile="$(BlazingStoryAssemblyInfoFile)">
+      <Output TaskParameter="OutputFile" ItemName="Compile" />
+    </WriteCodeFragment>
+  </Target>
+
+  <!--
+  This item group is used to embedd the ".stories.razor" story component files to the assembly resources.
+  This is required to the "Show Code" feature in the "Docs" pages.
+  -->
+  <ItemGroup>
+    <EmbeddedResource Include="**\*.story.razor" />
+    <EmbeddedResource Include="**\*.stories.razor" />
+  </ItemGroup>
+
+  <!--
+  This target is used to add the XML Doc Comment files to the Blazor WebAssembly Static Web Assets.
+  This is required to support the "Details" descriptions in the "Docs" pages.
+  -->
   <Target Name="_AddXmlDocCommentToBlazorWasmStaticWebAssets" BeforeTargets="_AddBlazorWasmStaticWebAssets" AfterTargets="_ResolveBlazorWasmOutputs">
 
     <ItemGroup>
@@ -46,5 +81,5 @@
       </ResolvedFileToPublish>
     </ItemGroup>
   </Target>
-  
+
 </Project>

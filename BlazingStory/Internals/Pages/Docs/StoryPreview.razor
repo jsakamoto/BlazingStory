@@ -2,35 +2,51 @@
 {
     <div class="story-preview">
 
-        @if (this.EnableZoom)
-        {
-            <ToolBar>
-                <IconButton Icon="SvgIconType.ZoomIn" Title="Zoom In" OnClick="OnClickZoomIn" />
-                <IconButton Icon="SvgIconType.ZoomOut" Title="Zoom Out" OnClick="OnClickZoomOut" />
-                <IconButton Icon="SvgIconType.ZoomReset" Title="Reset Zoom" OnClick="OnClickResetZoom" />
-            </ToolBar>
-        }
+        <div class="preview-part">
 
-        <div class="preview-frame-viewport">
-            <PreviewFrame @ref="_PreviewFrame"
-                          ViewMode="story"
-                          Id="@this.Story.NavigationPath"
-                          Args="this.Story.Context.Args"
-                          Globals="this.Globals" />
+            @if (this.EnableZoom)
+            {
+                <ToolBar>
+                    <IconButton Icon="SvgIconType.ZoomIn" Title="Zoom In" OnClick="OnClickZoomIn" />
+                    <IconButton Icon="SvgIconType.ZoomOut" Title="Zoom Out" OnClick="OnClickZoomOut" />
+                    <IconButton Icon="SvgIconType.ZoomReset" Title="Reset Zoom" OnClick="OnClickResetZoom" />
+                </ToolBar>
+            }
+
+            <div class="preview-frame-viewport">
+                <PreviewFrame @ref="_PreviewFrame"
+                              ViewMode="story"
+                              Id="@this.Story.NavigationPath"
+                              Args="this.Story.Context.Args"
+                              Globals="this.Globals" />
+            </div>
+
+            <!-- "Show Code" -->
+            <button class="show-code-button" @onclick="OnClickedShowCodeButton">
+                @(this._ShowCode ? "Hide code" : "Show code")
+            </button>
+
         </div>
 
-        <!-- TODO: Implement "Show Code" -->
-        <!--
-        <button class="show-code-button">
-            Show code
-        </button>
-        -->
+        @if (_ShowCode)
+        {
+            <div class="code-part">
 
+                <pre>@this._CodeText</pre>
+
+                <button class="copy-button" @onclick="OnClickCopyButton">
+                    @(this._Copied ? "Copied" : "Copy")
+                </button>
+            </div>
+        }
     </div>
 }
 
 @code
 {
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
     [Parameter]
     public Story? Story { get; set; }
 
@@ -41,6 +57,12 @@
     public IReadOnlyDictionary<string, object?>? Globals { get; set; }
 
     private PreviewFrame? _PreviewFrame;
+
+    private bool _ShowCode = false;
+
+    private string? _CodeText = null;
+
+    private bool _Copied = false;
 
     private async void OnClickZoomIn()
     {
@@ -55,5 +77,26 @@
     private async void OnClickResetZoom()
     {
         if (this._PreviewFrame != null) await this._PreviewFrame.ResetZoomAsync();
+    }
+
+    private async Task OnClickedShowCodeButton()
+    {
+        if (this._ShowCode == false && this._CodeText == null && this.Story != null)
+        {
+            this._CodeText = await StoriesRazorSource.GetSourceCodeAsync(this.Story);
+        }
+        this._ShowCode = !this._ShowCode;
+    }
+
+    private async Task OnClickCopyButton()
+    {
+        if (this._CodeText == null) return;
+
+        await Services.GetRequiredService<HelperScript>().CopyTextToClipboardAsync(this._CodeText);
+        this._Copied = true;
+        this.StateHasChanged();
+
+        await Task.Delay(1500);
+        this._Copied = false;
     }
 }

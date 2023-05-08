@@ -62,7 +62,7 @@
 
                     & > .parameter-type {
                         display: inline-block;
-                        font-family: ui-monospace,Menlo,Monaco,"Roboto Mono","Oxygen Mono","Ubuntu Monospace","Source Code Pro","Droid Sans Mono","Courier New",monospace;
+                        font-family: var(--bs-monospace-font-family);
                         font-size: 12px;
                         color: var(--bs-dimmed-text-color);
                         background-color: var(--bs-back-color);
@@ -78,7 +78,7 @@
             .required {
                 color: #FF4400;
                 font-weight: normal;
-                font-family: ui-monospace,Menlo,Monaco,"Roboto Mono","Oxygen Mono","Ubuntu Monospace","Source Code Pro","Droid Sans Mono","Courier New",monospace;
+                font-family: var(--bs-monospace-font-family);
                 cursor: help;
             }
         }

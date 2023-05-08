@@ -1,4 +1,5 @@
 ﻿using BlazingStory.Internals.Models;
+using BlazingStory.Test._Fixtures;
 using BlazingStory.Types;
 
 namespace BlazingStory.Test.Internals.Models;
@@ -9,7 +10,7 @@ internal class StoryTest
     public void NavigationPath_Test()
     {
         var storyContext = new StoryContext(Enumerable.Empty<ComponentParameter>());
-        var story = new Story("Pages/Authentication and Authorization", "Sign In", storyContext, null!);
+        var story = new Story(TestHelper.Descriptor("Pages/Authentication and Authorization"), "Sign In", storyContext, null!);
         story.NavigationPath.Is("pages-authentication-and-authorization--sign-in");
     }
 }

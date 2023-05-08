@@ -5,16 +5,33 @@
     border-radius: 4px;
     box-shadow: var(--bs-border-color) 0 1px 3px 0;
 
-    .preview-frame-viewport {
+    & > .preview-part {
         position: relative;
-        min-height: 95px;
 
-        iframe {
-            position: absolute; // NOTICE: this is needed to make the iframe fill the viewport!
+        .preview-frame-viewport {
+            position: relative;
+            min-height: 95px;
+
+            iframe {
+                position: absolute; // NOTICE: this is needed to make the iframe fill the viewport!
+            }
         }
     }
 
-    .show-code-button {
+    & > .code-part {
+        overflow-x: auto;
+        background-color: var(--bs-code-back-color);
+
+        pre {
+            font-family: var(--bs-monospace-font-family);
+            font-size: 13px;
+            padding: 20px;
+            color: var(--bs-code-text-color);
+        }
+    }
+
+    .show-code-button, .copy-button {
+        color: var(--bs-caption-text-color);
         background-color: var(--bs-inputs-background);
         font-size: 12px;
         font-weight: 700;
@@ -27,5 +44,14 @@
         position: absolute;
         bottom: 0;
         right: 0;
+
+        &:focus {
+            box-shadow: var(--bs-focused-color) 0 -3px 0 0 inset;
+        }
+    }
+
+    .copy-button {
+        color: var(--bs-code-copy-text-color);
+        background-color: var(--bs-code-copy-back-color);
     }
 }

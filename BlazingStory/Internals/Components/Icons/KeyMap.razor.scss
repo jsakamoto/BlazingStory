@@ -10,7 +10,7 @@
 
     code {
         --bs-keymap-size: 16px;
-        font-family: ui-monospace,Menlo,Monaco,"Roboto Mono","Oxygen Mono","Ubuntu Monospace","Source Code Pro","Droid Sans Mono","Courier New",monospace;
+        font-family: var(--bs-monospace-font-family);
         font-size: 11px;
         display: inline-block;
         height: var(--bs-keymap-size);

@@ -3,6 +3,7 @@
   --bs-control-caption-size: 12px;
   --bs-sidebar-gap-size: 16px;
   --bs-sidebar-nav-indent-size: 16px;
+  --bs-monospace-font-family: ui-monospace,Menlo,Monaco,"Roboto Mono","Oxygen Mono","Ubuntu Monospace","Source Code Pro","Droid Sans Mono","Courier New",monospace;
 }
 
 .preferes-color-scheme-light {
@@ -49,6 +50,10 @@
   --bs-popup-divider-color: rgba(38, 85, 115, 0.2);
   --bs-scrollbar-thumb-color: #ccc;
   --bs-scrollbar-back-color: #e0e0e0;
+  --bs-code-text-color: #ededed;
+  --bs-code-back-color: #262626;
+  --bs-code-copy-text-color: #c9cdcf;
+  --bs-code-copy-back-color: #1b1c1d;
 }
 
 .preferes-color-scheme-dark {
@@ -95,6 +100,10 @@
   --bs-popup-divider-color: rgba(255, 255, 255, 0.1);
   --bs-scrollbar-thumb-color: #ccc;
   --bs-scrollbar-back-color: #e0e0e0;
+  --bs-code-text-color: #ededed;
+  --bs-code-back-color: #262626;
+  --bs-code-copy-text-color: #c9cdcf;
+  --bs-code-copy-back-color: #1b1c1d;
 }
 
 * {
@@ -718,7 +727,7 @@ svg.svg-icon {
 }
 .key-map code {
   --bs-keymap-size: 16px;
-  font-family: ui-monospace, Menlo, Monaco, "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Droid Sans Mono", "Courier New", monospace;
+  font-family: var(--bs-monospace-font-family);
   font-size: 11px;
   display: inline-block;
   height: var(--bs-keymap-size);
@@ -1129,7 +1138,7 @@ a.icon-button {
 }
 .controls-panel table td.description > .parameter-type-holder > .parameter-type {
   display: inline-block;
-  font-family: ui-monospace, Menlo, Monaco, "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Droid Sans Mono", "Courier New", monospace;
+  font-family: var(--bs-monospace-font-family);
   font-size: 12px;
   color: var(--bs-dimmed-text-color);
   background-color: var(--bs-back-color);
@@ -1142,7 +1151,7 @@ a.icon-button {
 .controls-panel table td .required {
   color: #FF4400;
   font-weight: normal;
-  font-family: ui-monospace, Menlo, Monaco, "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Droid Sans Mono", "Courier New", monospace;
+  font-family: var(--bs-monospace-font-family);
   cursor: help;
 }
 .controls-panel table th.control, .controls-panel table td.control {
@@ -1218,14 +1227,28 @@ a.icon-button {
   border-radius: 4px;
   box-shadow: var(--bs-border-color) 0 1px 3px 0;
 }
-.story-preview .preview-frame-viewport {
+.story-preview > .preview-part {
+  position: relative;
+}
+.story-preview > .preview-part .preview-frame-viewport {
   position: relative;
   min-height: 95px;
 }
-.story-preview .preview-frame-viewport iframe {
+.story-preview > .preview-part .preview-frame-viewport iframe {
   position: absolute;
 }
-.story-preview .show-code-button {
+.story-preview > .code-part {
+  overflow-x: auto;
+  background-color: var(--bs-code-back-color);
+}
+.story-preview > .code-part pre {
+  font-family: var(--bs-monospace-font-family);
+  font-size: 13px;
+  padding: 20px;
+  color: var(--bs-code-text-color);
+}
+.story-preview .show-code-button, .story-preview .copy-button {
+  color: var(--bs-caption-text-color);
   background-color: var(--bs-inputs-background);
   font-size: 12px;
   font-weight: 700;
@@ -1238,6 +1261,13 @@ a.icon-button {
   position: absolute;
   bottom: 0;
   right: 0;
+}
+.story-preview .show-code-button:focus, .story-preview .copy-button:focus {
+  box-shadow: var(--bs-focused-color) 0 -3px 0 0 inset;
+}
+.story-preview .copy-button {
+  color: var(--bs-code-copy-text-color);
+  background-color: var(--bs-code-copy-back-color);
 }
 
 .settings-page-panel {
