@@ -19,7 +19,7 @@ internal static class StoriesRazorSource
         var projectMetadata = assemblyOfStoriesRazor.GetCustomAttribute<ProjectMetaDataAttribute>();
         if (projectMetadata == null) return ValueTask.FromResult("");
 
-        var relativePathOfRazor = Path.GetRelativePath(projectMetadata.ProjectDir, story.StoriesRazorDescriptor.StoriesAttribute.FilePath);
+        var relativePathOfRazor = story.StoriesRazorDescriptor.StoriesAttribute.FilePath.Substring(projectMetadata.ProjectDir.Length).TrimStart('/', '\\');
         var resName = string.Join('.', relativePathOfRazor.Split('/', '\\').Prepend(projectMetadata.RootNamespace));
 
         using var resStream = assemblyOfStoriesRazor.GetManifestResourceStream(resName);
@@ -71,7 +71,7 @@ internal static class StoriesRazorSource
     /// </summary>
     private static string Deindent(string text)
     {
-        // Split the text into lines, trim the lines, and remove empty lines at the beginning and the end
+        // Split the text into lines with triming
         var lines = text.Split('\n').Select(s => s.TrimEnd('\r')).ToList();
 
         // Remove empty lines at the beginning and the end
