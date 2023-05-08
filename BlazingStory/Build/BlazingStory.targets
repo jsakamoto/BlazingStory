@@ -27,6 +27,7 @@
   This is required to the "Show Code" feature in the "Docs" pages.
   -->
   <ItemGroup>
+    <EmbeddedResource Include="**\*.story.razor" />
     <EmbeddedResource Include="**\*.stories.razor" />
   </ItemGroup>
 
