@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlazingStory" Version="1.0.0-preview.3.2" />
+    <PackageReference Include="BlazingStory" Version="1.0.0-preview.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.5" PrivateAssets="all" />
     <PackageReference Include="PublishSPAforGitHubPages.Build" Version="2.0.2" />
@@ -18,6 +18,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MyRazorClassLib\MyRazorClassLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Stories\Rating.stories.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Stories\Button.stories.razor" />
   </ItemGroup>
 
 </Project>

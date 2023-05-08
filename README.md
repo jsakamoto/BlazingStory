@@ -87,13 +87,16 @@ dotnet add ./MyRazorClassLib.Stories reference ./MyRazorClassLib
         + ...
 ```
 
-#### Step 3 - Add a "story" file
+#### Step 3 - Add a "stories" file
 
-Add a new "story" file to the Blazing Story App project "MyRazorClassLib.Stories".
+Add a new "stories" file to the Blazing Story App project "MyRazorClassLib.Stories".
 
-A "story" file is a normal Razor Component file (.razor), but it is annotated with the `[Stories]` attribute and includes a markup of the `<Stories>` component. There is no restriction on file layout and naming of "story" files, but usually, we place it in the "Stories" subfolder and add the ".story" suffix to its file name.
+A "stories" file is a normal Razor Component file (.razor), but it is annotated with the `[Stories]` attribute and includes a markup of the `<Stories>` component. There is no restriction on file layout of "stories" files, but usually, we place it in the "Stories" subfolder.
 
-In this example scenario, we are going to write a "story" for the `Button` component lived in the "MyRazorClassLib" project, so we would add a new story file named "Button.story.razor" in the "Stories" subfolder where is under the "MyRazorClassLib.Stories" project.
+> **Warning**  
+> Currently, The file name of the "stories" files must end with ".stories.razor". This is a requirement of the naming convention for available the "Show code" feature in the "Docs" pages.
+
+In this example scenario, we are going to write a "stories" for the `Button` component lived in the "MyRazorClassLib" project, so we would add a new story file named "Button.stories.razor" in the "Stories" subfolder where is under the "MyRazorClassLib.Stories" project.
 
 ```
 📂 (working directory)
@@ -103,14 +106,14 @@ In this example scenario, we are going to write a "story" for the `Button` compo
     + 📂 MyRazorClassLib.Stories
         + 📄 MyRazorClassLib.Stories.csproj
         + 📂 Stories
-            + 📄 Button.story.razor✨ 👈 Add this
+            + 📄 Button.stories.razor✨ 👈 Add this
 ```
 
-### Step 4 - Implement the "story"
+### Step 4 - Implement the "stories"
 
-Implement a story.
+Implement a stories.
 
-The "Button.story.razor" would be like the below.
+The "Button.stories.razor" would be like the below.
 
 ```html
 @using MyRazorClassLib.Components
@@ -141,7 +144,7 @@ Then you will see the clone of the "Storybook" built on Blazor! 🎉
 
 ![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/first-run-of-blazingstory.gif)
 
-## 📂 Structure of "story"
+## 📂 Structure of "stories"
 
 - The `[Stories]` attribute on a Razor component indicates to the Blazing Story runtime that the Razor component will include stories.
 - The slash-separated title string of the parameter of the `[Stories]` attribute configures the navigation tree and represents the title of the stories container (we called it "Component").
@@ -295,15 +298,20 @@ However, on the "Blazing Story" side, Blazor application developers can get a St
 **Q2:** Can I add a project reference of a Blazor application project, not a Razor Class Library project, to a Blazing Story app project?  
 **A2:** Currently, you can't. I'm considering making it be able to do it in the future.
 
-**Q3:** How can I see the markup code of each preview on the "Docs" page?  
-**A3:** Unfortunately, the "Show code" feature of the preview on the "Docs" pages is not implemented yet. I'll implement it in the future version..
-
-**Q4:** How can I write or configure addons?  
-**A4:** You can't do that for now because the addon architecture is not completed yet. I'll finish it in the future version.
+**Q3:** How can I write or configure addons?  
+**A3:** You can't do that for now because the addon architecture is not completed yet. I'll finish it in the future version.
 
 ## 🎉 Release Notes
 
 Release notes are [here](https://github.com/jsakamoto/BlazingStory/blob/main/RELEASE-NOTES.txt).
+
+## ⚠️ Attention
+
+Assembly files of the Blazing Story app include the project file path string that the app was built as its metadata.
+
+![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/project-dir-in-assembly-metadata.png)
+
+If you need the path to the project should be secret, you may have to avoid using Blazing Story.
 
 ## 📢 License & Third Party Notice
 
