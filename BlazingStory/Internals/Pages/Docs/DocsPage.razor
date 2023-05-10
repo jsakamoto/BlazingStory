@@ -48,7 +48,7 @@
 
                 @if (firstStory != null)
                 {
-                    <div class="first-story">
+                    <div @key="@(firstStory.NavigationPath + ":first-story")" class="first-story">
                         <StoryPreview Story="firstStory" EnableZoom="true" Globals="frameArguments" />
 
                         <ControlsPanel Story="firstStory" ShowDetails="true" />
