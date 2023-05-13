@@ -44,6 +44,7 @@ internal class StoriesRazorSourceTest
                     This is Button
                 </span>
             </h1>
+
             <Button @attributes="context.Args" />
             """.Split('\n').Select(s => s.TrimEnd('\r')));
         sourceCode.Is(expected);

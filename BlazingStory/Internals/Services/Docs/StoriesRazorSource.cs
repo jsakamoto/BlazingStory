@@ -83,9 +83,11 @@ internal static class StoriesRazorSource
         }
 
         // Find the minimum indent of all lines
-        var indentToTrim = lines.Aggregate(int.MaxValue, (indent, line) => Math.Min(indent, Regex.Match(line, @"^[ \t]*").Length));
+        var indentToTrim = lines
+            .Where(line => !Regex.IsMatch(line, @"^[ \t]*$"))
+            .Aggregate(int.MaxValue, (indent, line) => Math.Min(indent, Regex.Match(line, @"^[ \t]*").Length));
 
         // Remove the minimum indent from all lines
-        return string.Join('\n', lines.Select(line => line.Substring(indentToTrim)));
+        return string.Join('\n', lines.Select(line => line.Substring(Math.Min(line.Length, indentToTrim))));
     }
 }
