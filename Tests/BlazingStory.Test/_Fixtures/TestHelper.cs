@@ -21,12 +21,12 @@ internal static class TestHelper
     }
 
     internal static IEnumerable<StoryContainer> GetExampleStories1(IServiceProvider services) => new StoryContainer[] {
-            new(typeof(Button), new(typeof(Button_stories), new("Examples/Button")), services) { Stories = {
-                new(Descriptor("Examples/Button"), "Default Button", StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
-                new(Descriptor("Examples/Button"), "Primary Button", StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
+            new(typeof(Button), null, new(typeof(Button_stories), new("Examples/Button")), services) { Stories = {
+                new(Descriptor("Examples/Button"), "Default Button", StoryContext.CreateEmpty(), null, null, TestHelper.EmptyFragment),
+                new(Descriptor("Examples/Button"), "Primary Button", StoryContext.CreateEmpty(), null, null, TestHelper.EmptyFragment),
             }},
-            new(typeof(Button), new(typeof(Select_stories), new("Examples/Select")), services) { Stories = {
-                new(Descriptor("Examples/Select"), "Select", StoryContext.CreateEmpty(), TestHelper.EmptyFragment),
+            new(typeof(Button), null, new(typeof(Select_stories), new("Examples/Select")), services) { Stories = {
+                new(Descriptor("Examples/Select"), "Select", StoryContext.CreateEmpty(), null, null, TestHelper.EmptyFragment),
             }}
         };
 }

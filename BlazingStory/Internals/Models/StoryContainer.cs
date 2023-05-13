@@ -24,6 +24,11 @@ internal class StoryContainer
     /// </summary>
     internal readonly string NavigationPath;
 
+    /// <summary>
+    /// The type of the layout component to use when displaying these stories.
+    /// </summary>
+    internal readonly Type? Layout;
+
     private readonly StoriesRazorDescriptor _StoriesRazorDescriptor;
 
     private readonly IXmlDocComment _XmlDocComment;
@@ -32,20 +37,22 @@ internal class StoryContainer
     /// Initialize a new instance of <see cref="StoryContainer"/>.
     /// </summary>
     /// <param name="componentType">A type of target UI component in this stories</param>
+    /// <param name="layout">A type of the layout component to use when displaying these stories.</param>
     /// <param name="storiesRazorDescriptor">A descriptor of a type of Stories Razor component (..stories.razor) and its <see cref="StoriesAttribute"/>.</param>
     /// <param name="services">A service provider for getting a <see cref="IXmlDocComment"/> service.</param>
-    public StoryContainer(Type componentType, StoriesRazorDescriptor storiesRazorDescriptor, IServiceProvider services)
+    public StoryContainer(Type componentType, Type? layout, StoriesRazorDescriptor storiesRazorDescriptor, IServiceProvider services)
     {
         this._StoriesRazorDescriptor = storiesRazorDescriptor ?? throw new ArgumentNullException(nameof(storiesRazorDescriptor));
         this.TargetComponentType = componentType;
+        this.Layout = layout;
         this.Title = this._StoriesRazorDescriptor.StoriesAttribute.Title ?? throw new ArgumentNullException(nameof(storiesRazorDescriptor)); ;
         this.NavigationPath = Services.Navigation.NavigationPath.Create(this.Title);
         this._XmlDocComment = services.GetRequiredService<IXmlDocComment>();
     }
 
-    internal void RegisterStory(string name, StoryContext storyContext, RenderFragment<StoryContext> renderFragment)
+    internal void RegisterStory(string name, StoryContext storyContext, Type? storiesLayout, Type? storyLayout, RenderFragment<StoryContext> renderFragment)
     {
-        var newStory = new Story(this._StoriesRazorDescriptor, name, storyContext, renderFragment);
+        var newStory = new Story(this._StoriesRazorDescriptor, name, storyContext, storiesLayout, storyLayout, renderFragment);
         var index = this.Stories.FindIndex(story => story.Name == name);
         if (index == -1)
         {

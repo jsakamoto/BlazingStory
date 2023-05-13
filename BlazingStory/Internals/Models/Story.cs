@@ -19,14 +19,20 @@ public class Story
 
     internal readonly StoryContext Context;
 
+    internal readonly Type? StoriesLayout;
+
+    internal readonly Type? StoryLayout;
+
     internal readonly RenderFragment<StoryContext> RenderFragment;
 
-    internal Story(StoriesRazorDescriptor storiesRazorDescriptor, string name, StoryContext context, RenderFragment<StoryContext> renderFragment)
+    internal Story(StoriesRazorDescriptor storiesRazorDescriptor, string name, StoryContext context, Type? storiesLayout, Type? storyLayout, RenderFragment<StoryContext> renderFragment)
     {
         this.StoriesRazorDescriptor = storiesRazorDescriptor ?? throw new ArgumentNullException(nameof(storiesRazorDescriptor));
         this.Title = this.StoriesRazorDescriptor.StoriesAttribute.Title ?? throw new ArgumentNullException(nameof(storiesRazorDescriptor));
         this.Name = name;
         this.Context = context;
+        this.StoriesLayout = storiesLayout;
+        this.StoryLayout = storyLayout;
         this.RenderFragment = renderFragment;
         this.NavigationPath = Services.Navigation.NavigationPath.Create(this.Title, this.Name);
     }

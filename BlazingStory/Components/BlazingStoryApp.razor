@@ -41,17 +41,21 @@
 
         <div class="color-scheme-container preferes-color-scheme-@this._PreferesColorScheme" style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >=2 ? 1 : 0); display: @(this._InitLevel >= 1 ? "block" : "none");">
             <CascadingValue Value="this._StoriesStore">
-                <Router AppAssembly="@typeof(BlazingStoryApp).Assembly">
-                    <Found Context="routeData">
-                        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-                    </Found>
-                    <NotFound>
-                        <PageTitle>Not found</PageTitle>
-                        <LayoutView Layout="@typeof(MainLayout)">
-                            <p role="alert" style="padding:12px 32px;">Sorry, there's nothing at this address.</p>
-                        </LayoutView>
-                    </NotFound>
-                </Router>
+                <CascadingValue Value="this.DefaultLayout" Name="DefaultLayout">
+
+                    <Router AppAssembly="@typeof(BlazingStoryApp).Assembly">
+                        <Found Context="routeData">
+                            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                        </Found>
+                        <NotFound>
+                            <PageTitle>Not found</PageTitle>
+                            <LayoutView Layout="@typeof(MainLayout)">
+                                <p role="alert" style="padding:12px 32px;">Sorry, there's nothing at this address.</p>
+                            </LayoutView>
+                        </NotFound>
+                    </Router>
+
+                </CascadingValue>
             </CascadingValue>
         </div>
 
@@ -64,6 +68,12 @@
 
     [Parameter, EditorRequired]
     public IEnumerable<Assembly>? Assemblies { get; set; }
+
+    /// <summary>
+    /// A type of the default layout component to use when displaying a story.
+    /// </summary>
+    [Parameter]
+    public Type? DefaultLayout { get; set; }
 
     private readonly StoriesStore _StoriesStore = new();
 

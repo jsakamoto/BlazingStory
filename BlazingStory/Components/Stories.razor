@@ -21,6 +21,12 @@
     [CascadingParameter]
     internal StoriesRazorDescriptor StoriesRazorDescriptor { get; init; } = default!;
 
+    /// <summary>
+    /// A type of the layout component to use when displaying these stories.
+    /// </summary>
+    [Parameter]
+    public Type? Layout { get; set; }
+
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
@@ -30,7 +36,7 @@
 
     protected override void OnInitialized()
     {
-        this._StoryContainer = new StoryContainer(typeof(TComponent), this.StoriesRazorDescriptor, this.Services);
+        this._StoryContainer = new StoryContainer(typeof(TComponent), this.Layout, this.StoriesRazorDescriptor, this.Services);
         this.StoriesStore.RegisterStoryContainer(this._StoryContainer);
 
         var xmlDocComment = this.Services.GetRequiredService<IXmlDocComment>();

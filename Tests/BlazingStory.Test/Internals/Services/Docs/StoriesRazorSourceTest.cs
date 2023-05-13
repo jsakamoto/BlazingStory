@@ -16,7 +16,7 @@ internal class StoriesRazorSourceTest
         var typeofStoriesRazor = typeof(Rating_stories);
         var storyAttribute = typeofStoriesRazor.GetAttribute<StoriesAttribute>();
         var descriptor = new StoriesRazorDescriptor(typeofStoriesRazor, storyAttribute);
-        var story = new Story(descriptor, "Rate Control", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment);
+        var story = new Story(descriptor, "Rate Control", TestHelper.StoryContext.CreateEmpty(), null, null, TestHelper.EmptyFragment);
 
         // When
         var sourceCode = await StoriesRazorSource.GetSourceCodeAsync(story);
@@ -32,7 +32,7 @@ internal class StoriesRazorSourceTest
         var typeofStoriesRazor = typeof(Button_stories);
         var storyAttribute = typeofStoriesRazor.GetAttribute<StoriesAttribute>();
         var descriptor = new StoriesRazorDescriptor(typeofStoriesRazor, storyAttribute);
-        var story = new Story(descriptor, "Danger", TestHelper.StoryContext.CreateEmpty(), TestHelper.EmptyFragment);
+        var story = new Story(descriptor, "Danger", TestHelper.StoryContext.CreateEmpty(), null, null, TestHelper.EmptyFragment);
 
         // When
         var sourceCode = await StoriesRazorSource.GetSourceCodeAsync(story);

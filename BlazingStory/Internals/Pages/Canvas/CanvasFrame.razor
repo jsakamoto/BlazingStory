@@ -11,7 +11,15 @@
 }
 else
 {
-    @this._Story.RenderFragment(this._Story.Context)
+    <LayoutView Layout="@(this.DefaultLayout ?? typeof(NullLayout))">
+        <LayoutView Layout="@(this._Story.StoriesLayout ?? typeof(NullLayout))">
+            <LayoutView Layout="@(this._Story.StoryLayout ?? typeof(NullLayout))">
+
+                @this._Story.RenderFragment(this._Story.Context)
+
+            </LayoutView>
+        </LayoutView>
+    </LayoutView>
 }
 
 @if (this._EnableMeasure)
@@ -26,6 +34,9 @@ else
 
     [CascadingParameter]
     public required QueryRouteData RouteData { get; set; }
+
+    [CascadingParameter(Name = "DefaultLayout")]
+    internal Type? DefaultLayout { get; set; }
 
     private readonly JSModule _JSModule;
 

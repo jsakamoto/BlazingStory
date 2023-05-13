@@ -28,6 +28,12 @@
     [Parameter, EditorRequired]
     public string Name { get; set; } = "";
 
+    /// <summary>
+    /// A type of the layout component to use when displaying this story.
+    /// </summary>
+    [Parameter]
+    public Type? Layout { get; set; }
+
     [Parameter]
     public RenderFragment? Arguments { get; set; }
 
@@ -45,9 +51,10 @@
 
         if (this.StoryContainer == null)
         {
-            this.StoryContainer = new StoryContainer(typeof(TComponent), this.StoriesRazorDescriptor, this.Services);
+            this.StoryContainer = new StoryContainer(typeof(TComponent), null, this.StoriesRazorDescriptor, this.Services);
             this.StoriesStore.RegisterStoryContainer(this.StoryContainer);
         }
-        this.StoryContainer.RegisterStory(this.Name, this._StoryContext, this.Template);
+
+        this.StoryContainer.RegisterStory(this.Name, this._StoryContext, this.StoryContainer.Layout, this.Layout, this.Template);
     }
 }

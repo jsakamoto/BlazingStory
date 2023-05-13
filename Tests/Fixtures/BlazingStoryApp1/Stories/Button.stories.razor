@@ -1,6 +1,6 @@
 ﻿@attribute [Stories("Examples/UI/Button")]
 
-<Stories TComponent="Button">
+<Stories TComponent="Button" Layout="typeof(ButtonStoriesLayout)">
 
     <ArgType For="_ => _!.Color" Control="ControlType.Select" />
 
@@ -13,7 +13,7 @@
         </Template>
     </Story>
 
-    <Story Name="Primary">
+    <Story Name="Primary" Layout="typeof(PrimaryButtonLayout)">
         <Template>
             <Button Text="Primary" Color="ButtonColor.Primary" @attributes="context.Args" />
         </Template>

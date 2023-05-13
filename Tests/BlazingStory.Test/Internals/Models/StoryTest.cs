@@ -10,7 +10,7 @@ internal class StoryTest
     public void NavigationPath_Test()
     {
         var storyContext = new StoryContext(Enumerable.Empty<ComponentParameter>());
-        var story = new Story(TestHelper.Descriptor("Pages/Authentication and Authorization"), "Sign In", storyContext, null!);
+        var story = new Story(TestHelper.Descriptor("Pages/Authentication and Authorization"), "Sign In", storyContext, null, null, null!);
         story.NavigationPath.Is("pages-authentication-and-authorization--sign-in");
     }
 }
