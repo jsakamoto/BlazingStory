@@ -1,4 +1,6 @@
-﻿namespace BlazingStory.Internals.Services.Navigation;
+﻿using System.Text.RegularExpressions;
+
+namespace BlazingStory.Internals.Services.Navigation;
 
 internal class NavigationPath
 {
@@ -12,6 +14,7 @@ internal class NavigationPath
     /// <returns></returns>
     internal static string Create(string title, string name = "")
     {
-        return (title.Replace("/", "-") + (string.IsNullOrEmpty(name) ? "" : ("--" + name))).ToLower().Replace(' ', '-');
+        static string normalize(string value) => Regex.Replace(value, @"[^\w\p{IsCJKUnifiedIdeographs}]+", "-");
+        return (normalize(title) + (string.IsNullOrEmpty(name) ? "" : ("--" + normalize(name)))).ToLower();
     }
 }
