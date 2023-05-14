@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>BlazingStory.ProjectTemplates</id>
-    <version>1.0.0-preview.4</version>
+    <version>1.0.0-preview.5</version>
     <description>
       Templates for a Blazing Story project.
     </description>
@@ -20,7 +20,13 @@
       <packageType name="Template" />
     </packageTypes>
     <releaseNotes>
-      v.1.0.0-preview.4
+      v.1.0.0-preview.5
+      - Improvement: Stories now can have shared layouts
+      - Fix: deindentation of the code in the "Show code" window is sometimes incorrect
+      - Fix: Navigation will be corrupted when the name of the story includes some symbol
+      - Fix: the first story on the "Docs" pages shearing a state of showing code with other pages unexpectedly
+      
+       v.1.0.0-preview.4
       - Docs page - Added the "Show code" feature
 
       v.1.0.0-preview.3.2

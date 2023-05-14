@@ -1,0 +1,30 @@
+<button style="font-size: 14px;
+    padding: 10px;
+    border: 0;
+    border-radius: 1em;
+    cursor: pointer;
+    display: inline-block;
+    color: #fff;
+    background-color: @(this.Color);" >
+    <span>@this.Text</span>
+</button>
+
+@code {
+
+    /// <summary>
+    /// Set a text that is button caption.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public string? Text { get; set; }
+
+    /// <summary>
+    /// Set a color of the button.
+    /// </summary>
+    [Parameter]
+    public string Color { get; set; } = "#007bff";
+
+    /// <summary>
+    /// This is basic button component.
+    /// </summary>
+    public Button() { }
+}
