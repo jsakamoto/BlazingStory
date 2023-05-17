@@ -74,16 +74,19 @@
 @code
 {
     [CascadingParameter]
-    internal AddonsStore AddonsStore { get; init; } = default!;
+    protected AddonsStore AddonsStore { get; init; } = default!;
 
     [CascadingParameter]
-    internal StoriesStore StoriesStore { get; init; } = default!;
+    protected StoriesStore StoriesStore { get; init; } = default!;
 
     [CascadingParameter]
-    internal QueryRouteData RouteData { get; init; } = default!;
+    protected QueryRouteData RouteData { get; init; } = default!;
 
     [CascadingParameter]
-    internal IServiceProvider Services { get; init; } = default!;
+    protected IServiceProvider Services { get; init; } = default!;
+
+    [CascadingParameter]
+    protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
 
     private string? _CurrentNavigationPath;
 
@@ -112,7 +115,7 @@
             if (!this.StoriesStore.TryGetComponentByPath(navigationPath, out var component)) return;
 
             this._StoryComponent = component;
-            this._PageTitle = string.Join(" / ", component.Title.Split('/')) + " - Docs - " + BlazingStoryApp.Title;
+            this._PageTitle = string.Join(" / ", component.Title.Split('/')) + " - Docs - " + this.BlazingStoryApp.Title;
 
             foreach (var story in this._StoryComponent.Stories) story.Context.ArgumentChanged += this.Context_ArgumentChanged;
 

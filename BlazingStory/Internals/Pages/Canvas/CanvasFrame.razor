@@ -11,7 +11,7 @@
 }
 else
 {
-    <LayoutView Layout="@(this.DefaultLayout ?? typeof(NullLayout))">
+    <LayoutView Layout="@(this.BlazingStoryApp.DefaultLayout ?? typeof(NullLayout))">
         <LayoutView Layout="@(this._Story.StoriesLayout ?? typeof(NullLayout))">
             <LayoutView Layout="@(this._Story.StoryLayout ?? typeof(NullLayout))">
 
@@ -30,13 +30,13 @@ else
 @code
 {
     [CascadingParameter]
-    public required StoriesStore StoriesStore { get; set; }
+    protected StoriesStore StoriesStore { get; init; } = default!;
 
     [CascadingParameter]
-    public required QueryRouteData RouteData { get; set; }
+    protected QueryRouteData RouteData { get; init; } = default!;
 
-    [CascadingParameter(Name = "DefaultLayout")]
-    internal Type? DefaultLayout { get; set; }
+    [CascadingParameter]
+    protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
 
     private readonly JSModule _JSModule;
 

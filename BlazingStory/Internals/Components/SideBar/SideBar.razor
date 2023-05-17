@@ -4,10 +4,17 @@
 <nav class="sidebar stack vertical">
 
     <div class="sidebar-header">
-
-        <a href="./" target="_top" class="sidebar-header-title" title="@BlazingStoryApp.Title">
-            @BlazingStoryApp.Title
-        </a>
+        
+        <div class="sidebar-header-title">
+            @if (this.BlazingStoryApp?.BrandLogoArea != null)
+            {
+                <text>@this.BlazingStoryApp.BrandLogoArea(this.BlazingStoryApp)</text>
+            }
+            else
+            {
+                <BrandLogo />
+            }
+        </div>
 
         <SettingsMenu />
 
@@ -32,6 +39,9 @@
 
     [CascadingParameter]
     protected IServiceProvider Services { get; init; } = default!;
+
+    [CascadingParameter]
+    protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
 
     private bool _SearchMode = false;
 

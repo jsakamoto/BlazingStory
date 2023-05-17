@@ -259,6 +259,14 @@ button {
   background: var(--bs-scrollbar-thumb-color);
 }
 
+.brand-logo {
+  padding-left: 26px;
+  background-size: inherit;
+  background-repeat: inherit;
+  background-position: inherit;
+  background-image: var(--bs-brand-logo-icon-url);
+}
+
 .main-layout {
   overflow: hidden;
   width: 100vw;
@@ -303,17 +311,18 @@ button {
   flex: 1;
   height: 24px;
   line-height: 24px;
-  padding-left: 26px;
   font-size: 16px;
   font-weight: 900;
-  text-decoration: none;
   color: var(--bs-sidebar-header-title-color);
   text-shadow: 0.5px 0 0 var(--bs-sidebar-header-title-color);
-  background-image: url(../images/icon.min.svg);
   background-size: 24px;
   background-repeat: no-repeat;
   background-position: -2px center;
   white-space: nowrap;
+}
+.sidebar .sidebar-header .sidebar-header-title a {
+  text-decoration: none;
+  color: inherit;
 }
 .sidebar .sidebar-header .settings-popup-menu .popup-menu-holder {
   min-width: 180px;

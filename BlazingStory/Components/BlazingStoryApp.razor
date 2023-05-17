@@ -41,7 +41,7 @@
 
         <div class="color-scheme-container preferes-color-scheme-@this._PreferesColorScheme" style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >=2 ? 1 : 0); display: @(this._InitLevel >= 1 ? "block" : "none");">
             <CascadingValue Value="this._StoriesStore">
-                <CascadingValue Value="this.DefaultLayout" Name="DefaultLayout">
+                <CascadingValue Value="this">
 
                     <Router AppAssembly="@typeof(BlazingStoryApp).Assembly">
                         <Found Context="routeData">
@@ -64,16 +64,31 @@
 
 @code
 {
-    internal readonly static string Title = "Blazing Story";
-
+    /// <summary>
+    /// A collection of assemblies to search for stories.
+    /// </summary>
     [Parameter, EditorRequired]
     public IEnumerable<Assembly>? Assemblies { get; set; }
+
+    /// <summary>
+    /// A title string of this Blazing Story app. (The default value is "Blazing Story")<br/>
+    /// This is used for the title of every HTML document. And also, this is used for the brand logo unless you customize the logo contents using <see cref="BrandLogoArea"/> render fragment parameter.
+    /// </summary>
+    [Parameter]
+    public string? Title { get; set; } = "Blazing Story";
 
     /// <summary>
     /// A type of the default layout component to use when displaying a story.
     /// </summary>
     [Parameter]
     public Type? DefaultLayout { get; set; }
+
+    /// <summary>
+    /// Content for the brand logo area at the top of the sidebar.<br/>
+    /// You can refer to the instance of the <see cref="BlazingStoryApp"/> component via <c>context</c> argument in the rendered fragment.
+    /// </summary>
+    [Parameter]
+    public RenderFragment<BlazingStoryApp>? BrandLogoArea { get; set; }
 
     private readonly StoriesStore _StoriesStore = new();
 

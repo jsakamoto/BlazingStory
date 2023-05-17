@@ -78,16 +78,19 @@
 @code
 {
     [CascadingParameter]
-    public required StoriesStore StoriesStore { get; init; }
+    protected StoriesStore StoriesStore { get; init; } = default!;
 
     [CascadingParameter]
-    public required QueryRouteData RouteData { get; init; }
+    protected QueryRouteData RouteData { get; init; } = default!;
 
     [CascadingParameter]
-    public required AddonsStore AddonsStore { get; init; }
+    protected AddonsStore AddonsStore { get; init; } = default!;
 
     [CascadingParameter]
-    internal IServiceProvider Services { get; init; } = default!;
+    protected IServiceProvider Services { get; init; } = default!;
+
+    [CascadingParameter]
+    protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
 
     private PreviewFrame? _PreviewFrame;
 
@@ -160,7 +163,7 @@
         if (this._LastTitledParameter == this.RouteData.Parameter) return;
         if (this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story))
         {
-            this._PageTitle = string.Join(" / ", story.Title.Split('/')) + " - " + story.Name + " - " + BlazingStoryApp.Title;
+            this._PageTitle = string.Join(" / ", story.Title.Split('/')) + " - " + story.Name + " - " + this.BlazingStoryApp.Title;
         }
         this._LastTitledParameter = this.RouteData.Parameter;
     }

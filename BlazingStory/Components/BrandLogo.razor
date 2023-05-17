@@ -1,0 +1,27 @@
+<a href="@this.Url" target="_top" class="brand-logo" title="@(this.Title ?? this.BlazingStoryApp.Title)" style='--bs-brand-logo-icon-url: url("@this.IconUrl");'>
+    @(this.Title ?? this.BlazingStoryApp.Title)
+</a>
+
+@code
+{
+    /// <summary>
+    /// The title of the branding logo.
+    /// </summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>
+    /// The URL of the link applied to the branding logo title text.
+    /// </summary>
+    [Parameter]
+    public string? Url { get; set; } = "./";
+
+    /// <summary>
+    /// The icon URL of the branding logo.
+    /// </summary>
+    [Parameter]
+    public string? IconUrl { get; set; } = "../images/icon.min.svg";
+
+    [CascadingParameter]
+    protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
+}
