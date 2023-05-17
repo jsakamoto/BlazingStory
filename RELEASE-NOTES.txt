@@ -1,3 +1,6 @@
+v.1.0.0-preview.6
+- Improvement: The branding logo area to be customizable
+
 v.1.0.0-preview.5
 - Improvement: Stories now can have shared layouts
 - Fix: deindentation of the code in the "Show code" window is sometimes incorrect

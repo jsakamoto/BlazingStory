@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>1.0.0-preview.5</Version>
+    <Version>1.0.0-preview.6</Version>
     <Copyright>Copyright © 2023 J.Sakamoto, Mozilla Public License 2.0</Copyright>
     <Authors>J.Sakamoto</Authors>
     <RepositoryType>git</RepositoryType>
@@ -25,6 +25,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
     <PackageOutputPath>..\_dist\</PackageOutputPath>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
   <ItemGroup Condition=" $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '7.0')) ">
@@ -32,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '8.0')) ">
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0-preview.3.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0-preview.4.*" />
   </ItemGroup>
 
   <ItemGroup>
