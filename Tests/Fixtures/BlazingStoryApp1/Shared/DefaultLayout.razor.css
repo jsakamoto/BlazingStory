@@ -5,21 +5,3 @@
     .frame::after {
         content: '<BlazingStoryApp DefaultLayout="...">';
     }
-
-::deep .frame {
-    border: solid 2px var(--color);
-    position: relative;
-    padding: 12px 0 0 0;
-    margin: 12px;
-}
-
-    ::deep .frame::after {
-        font-family: monospace;
-        font-size: 11px;
-        color: white;
-        background-color: var(--color);
-        padding: 4px 8px;
-        position: absolute;
-        top: 0;
-        right: 0;
-    }
