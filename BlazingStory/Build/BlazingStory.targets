@@ -9,7 +9,7 @@
     <PropertyGroup>
       <BlazingStoryAssemblyInfoFile>$(IntermediateOutputPath)$(MSBuildProjectName).BlazingStoryAssemblyInfo.cs</BlazingStoryAssemblyInfoFile>
     </PropertyGroup>
-    
+
     <ItemGroup>
       <BlazingStoryAssemblyAttribute Include="BlazingStory.Internals.Types.ProjectMetaDataAttribute">
         <_Parameter1>$(MSBuildProjectDirectory)</_Parameter1>
@@ -26,10 +26,12 @@
   This item group is used to embedd the ".stories.razor" story component files to the assembly resources.
   This is required to the "Show Code" feature in the "Docs" pages.
   -->
-  <ItemGroup>
-    <EmbeddedResource Include="**\*.story.razor" />
-    <EmbeddedResource Include="**\*.stories.razor" />
-  </ItemGroup>
+  <Target Name="_EmbeddStoriesFilesAsResources" BeforeTargets="BeforeBuild">
+    <ItemGroup>
+      <EmbeddedResource Include="**\*.story.razor" />
+      <EmbeddedResource Include="**\*.stories.razor" />
+    </ItemGroup>
+  </Target>
 
   <!--
   This target is used to add the XML Doc Comment files to the Blazor WebAssembly Static Web Assets.

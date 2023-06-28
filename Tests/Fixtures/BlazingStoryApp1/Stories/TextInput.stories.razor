@@ -1,0 +1,14 @@
+﻿@attribute [Stories("Examples/UI/TextInput")]
+
+<Stories TComponent="TextInput">
+
+    <Story Name="Default">
+        <Arguments>
+            <Arg For="_ => _!.Value" Value='"Hello, World!"' />
+        </Arguments>
+        <Template>
+            <TextInput @attributes="context.Args" />
+        </Template>
+    </Story>
+
+</Stories>

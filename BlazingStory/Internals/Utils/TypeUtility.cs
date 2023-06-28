@@ -1,8 +1,5 @@
 ﻿namespace BlazingStory.Internals.Utils;
 
-/// <summary>
-/// Provides utility methods for <see cref="Type"/>.
-/// </summary>
 internal static class TypeUtility
 {
     /// <summary>
