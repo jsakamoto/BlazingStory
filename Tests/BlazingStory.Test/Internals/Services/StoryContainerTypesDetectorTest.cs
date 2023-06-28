@@ -26,6 +26,7 @@ internal class StoriesRazorDetectorTest
                 "Lorem/Ipsum/Header,BlazingStoryApp1.Stories.LoremIpsum_stories",
                 "Examples/UI/Rating,BlazingStoryApp1.Stories.Rating_stories",
                 "Examples/Select,BlazingStoryApp1.Stories.Select_stories",
+                "Examples/UI/TextInput,BlazingStoryApp1.Stories.TextInput_stories",
                 "Examples/Card,BlazingStoryApp2.Stories.Card_stories");
     }
 }
