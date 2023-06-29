@@ -32,6 +32,7 @@ internal class ParameterExtractorTest
             .Is("Bold, Boolean, False, ",
                 "Text, String, True, Set a text that is button caption.",
                 "Color, ButtonColor, False, Set a color of the button. \"ButtonColor.Default\" is default.",
+                "Size, ButtonSize, False, Set a size of the button. \"ButtonSize.Medium\" is default.",
                 "OnClick, EventCallback`1, False, Set a callback method that will be invoked when users click the button.");
     }
 }

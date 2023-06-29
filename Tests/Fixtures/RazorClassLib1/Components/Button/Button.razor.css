@@ -23,3 +23,15 @@ button {
 .bold {
     font-weight: bold;
 }
+
+.small {
+    font-size: 8px;
+}
+
+.medium {
+    font-size: 14px;
+}
+
+.large {
+    font-size: 22px;
+}
