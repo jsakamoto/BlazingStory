@@ -2,27 +2,34 @@
 
 <Stories TComponent="Button" Layout="typeof(ButtonStoriesLayout)">
 
-    <ArgType For="_ => _!.Color" Control="ControlType.Select" />
+    <ArgType For="_ => _.Color" Control="ControlType.Select" />
+    <ArgType For="_ => _.Size" Control="ControlType.Select" />
 
+    @* -- Default -- *@
     <Story Name="Default">
         <Arguments>
-            <Arg For="_ => _!.Bold" Value="true" />
+            <Arg For="_ => _.Bold" Value="true" />
+            <Arg For="_ => _.Color" Value="ButtonColor.Default" />
+            <Arg For="_ => _.Size" Value="ButtonSize.Medium" />
         </Arguments>
         <Template>
             <Button Text="Default" Color="ButtonColor.Default" @attributes="context.Args" />
         </Template>
     </Story>
-
+    
+    @* -- Primary -- *@
     <Story Name="Primary" Layout="typeof(PrimaryButtonLayout)">
         <Template>
             <Button Text="Primary" Color="ButtonColor.Primary" @attributes="context.Args" />
         </Template>
     </Story>
 
+    @* -- Danger -- *@
     <Story Name="Danger">
         <Arguments>
-            <Arg For="_ => _!.Text" Value='"Danger!"' />
-            <Arg For="_ => _!.Color" Value="ButtonColor.Danger" />
+            <Arg For="_ => _.Text" Value='"Danger!"' />
+            <Arg For="_ => _.Color" Value="ButtonColor.Danger" />
+            <Arg For="_ => _.Size" Value="ButtonSize.Medium" />
         </Arguments>
         <Template>
             <h1>

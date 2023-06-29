@@ -102,7 +102,7 @@
                             }
                             else
                             {
-                                <RadioGroup Name="key" Value="argumentValue" Items="enumValues" OnChange="@((arg) => Enum.TryParse(parameter.Type,arg.Value as string, out var enumValue)? OnInputAsync(enumValue, parameter) : Task.CompletedTask)" />
+                                <RadioGroup Name="@key" Value="argumentValue" Items="enumValues" OnChange="@((arg) => Enum.TryParse(parameter.Type,arg.Value as string, out var enumValue)? OnInputAsync(enumValue, parameter) : Task.CompletedTask)" />
                             }
                         }
 
@@ -142,6 +142,9 @@
         }
     }
 
+    /// <summary>
+    /// Get parameters of the component from the current story.
+    /// </summary>
     private IEnumerable<ComponentParameter> GetParameters()
     {
         return this.Story?.Context.Parameters ?? Enumerable.Empty<ComponentParameter>();
