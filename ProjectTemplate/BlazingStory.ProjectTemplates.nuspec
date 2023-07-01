@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>BlazingStory.ProjectTemplates</id>
-    <version>1.0.0-preview.8</version>
+    <version>1.0.0-preview.9</version>
     <description>
       Templates for a Blazing Story project.
     </description>
@@ -20,6 +20,9 @@
       <packageType name="Template" />
     </packageTypes>
     <releaseNotes>
+      v.1.0.0-preview.9
+      - Improve: Sorts sub items recursively by its caption, except stories.
+
       v.1.0.0-preview.8
       - Fix: radio button groups for a component parameter are not isolated.
 

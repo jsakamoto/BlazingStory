@@ -1,3 +1,6 @@
+v.1.0.0-preview.9
+- Improve: Sorts sub items recursively by its caption, except stories.
+
 v.1.0.0-preview.8
 - Fix: radio button groups for a component parameter are not isolated.
 
