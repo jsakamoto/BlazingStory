@@ -3,6 +3,8 @@ using BlazingStory.Internals.Services.Navigation;
 using BlazingStory.Test._Fixtures;
 using BlazingStoryApp1.Stories;
 using RazorClassLib1.Components.Button;
+using RazorClassLib1.Components.Rating;
+using RazorClassLib1.Components.Select;
 using static BlazingStory.Test._Fixtures.TestHelper;
 
 namespace BlazingStory.Test.Internals.Services.Navigation;
@@ -134,5 +136,36 @@ internal class NavigationTreeBuilderTest
         pagesNode.Expanded.IsTrue();
         var authNode = pagesNode.SubItems[0];
         authNode.Expanded.IsFalse();
+    }
+
+    [Test]
+    public async Task Build_and_its_Ordering_Test()
+    {
+        // Given
+        await using var host = new TestHost();
+        var storyContainers = new StoryContainer[] {
+            new(typeof(Rating), null, new(typeof(Select_stories), new("UI Components/Atoms/Rating")), host.Services) { Stories = {
+                new(Descriptor("UI Components/Atoms/Rating"), "Default", StoryContext.CreateEmpty(), null, null, EmptyFragment),
+            }},
+            new(typeof(Select), null, new(typeof(Select_stories), new("Examples/Select")), host.Services) { Stories = {
+                new(Descriptor("Examples/Select"), "Single Select", StoryContext.CreateEmpty(), null, null, EmptyFragment),
+                new(Descriptor("Examples/Select"), "Multiple Select", StoryContext.CreateEmpty(), null, null, EmptyFragment),
+            }},
+            new(typeof(Button), null, new(typeof(Button_stories), new("Examples/Button")), host.Services) { Stories = {
+                new(Descriptor("Examples/Button"), "Default", StoryContext.CreateEmpty(), null, null, EmptyFragment),
+                new(Descriptor("Examples/Button"), "Primary", StoryContext.CreateEmpty(), null, null, EmptyFragment),
+                new(Descriptor("Examples/Button"), "Danger", StoryContext.CreateEmpty(), null, null, EmptyFragment),
+            }},
+        };
+
+        // When
+        var builder = new NavigationTreeBuilder();
+        var root = builder.Build(storyContainers, expandedNavigationPath: null);
+
+        // Then
+        root.SubItems.Select(node => node.Caption).Is("Examples", "UI Components"); // The 1st level nodes were sorted.
+        root.SubItems[0].SubItems.Select(node => node.Caption).Is("Button", "Select"); // The 2nd level nodes were also sorted.
+        root.SubItems[0].SubItems[0].SubItems.Select(node => node.Caption).Is("Docs", "Default", "Primary", "Danger"); // Stories were kept in the original order.
+        root.SubItems[0].SubItems[1].SubItems.Select(node => node.Caption).Is("Docs", "Single Select", "Multiple Select");
     }
 }

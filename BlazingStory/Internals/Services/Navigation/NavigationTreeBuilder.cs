@@ -46,6 +46,8 @@ internal class NavigationTreeBuilder
             componentNode.SubItems.AddRange(storyNodes);
         }
 
+        root.SortSubItemsRecurse();
+
         if (!string.IsNullOrEmpty(expandedNavigationPath))
         {
             var expansionPath = new Stack<NavigationTreeItem>();

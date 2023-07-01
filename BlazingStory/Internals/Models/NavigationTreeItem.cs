@@ -22,6 +22,18 @@ public class NavigationTreeItem : INavigationPath
     {
     }
 
+    /// <summary>
+    /// Sorts sub items recursively by its caption, except stories.
+    /// </summary>
+    internal void SortSubItemsRecurse()
+    {
+        if (this.SubItems.Count == 0) return;
+        if (this.SubItems.First().Type is not NavigationItemType.Container and not NavigationItemType.Component) return;
+
+        this.SubItems.Sort((a, b) => a.Caption.CompareTo(b.Caption));
+        this.SubItems.ForEach(item => item.SortSubItemsRecurse());
+    }
+
     internal IEnumerable<NavigationTreeItem> EnumAll()
     {
         yield return this;
