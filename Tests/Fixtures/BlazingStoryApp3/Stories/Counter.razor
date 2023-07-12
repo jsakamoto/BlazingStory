@@ -1,0 +1,11 @@
+﻿<button @onclick="OnClickButton">Click me: @_count</button>
+
+@code
+{
+    private int _count = 0;
+
+    private void OnClickButton()
+    {
+        _count++;
+    }
+}
