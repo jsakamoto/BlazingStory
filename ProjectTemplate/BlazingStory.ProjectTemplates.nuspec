@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>BlazingStory.ProjectTemplates</id>
-    <version>1.0.0-preview.9</version>
+    <version>1.0.0-preview.10</version>
     <description>
       Templates for a Blazing Story project.
     </description>
@@ -20,6 +20,9 @@
       <packageType name="Template" />
     </packageTypes>
     <releaseNotes>
+      v.1.0.0-preview.10
+      - Fix: A canvas frame (preview frame) was not re-rendered when a state of a story has been changed.
+
       v.1.0.0-preview.9
       - Improve: Sorts sub items recursively by its caption, except stories.
 
@@ -37,9 +40,6 @@
       - Fix: deindentation of the code in the "Show code" window is sometimes incorrect
       - Fix: Navigation will be corrupted when the name of the story includes some symbol
       - Fix: the first story on the "Docs" pages shearing a state of showing code with other pages unexpectedly
-
-      v.1.0.0-preview.4
-      - Docs page - Added the "Show code" feature
 
       To see all the change logs, please visit the following URL.
       - https://github.com/jsakamoto/BlazingStory/blob/main/RELEASE-NOTES.txt</releaseNotes>
