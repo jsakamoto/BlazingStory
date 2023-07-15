@@ -30,6 +30,13 @@ export const initializeCanvasFrame = () => {
 
     // Transfer the keydown event to parent window.
     document.addEventListener(keydown, event => {
+
+        // Do not transfer the keydown event to the BlazingStory app when the target element is an input or editable element.
+        // (Otherwise, keyboard shortcuts will be fired when the user is typing in the input element.)
+        const targetElement = event.target as HTMLElement;
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(targetElement.tagName)) return;
+        if (targetElement.contentEditable === "true") return;
+
         window.parent.postMessage({
             action: keydown,
             eventArgs: {

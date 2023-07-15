@@ -1,0 +1,19 @@
+﻿@attribute [Stories("Components/InputText")]
+
+<Stories TComponent="InputText">
+
+    <Story Name="Default">
+
+        <Template>
+            <InputText @bind-Value="_text1">
+            </InputText>
+        </Template>
+
+    </Story>
+
+</Stories>
+
+@code
+{
+    private string _text1 = "Default";
+}

@@ -15,6 +15,11 @@ export const initializeCanvasFrame = () => {
         location.reload();
     }, false);
     document.addEventListener(keydown, event => {
+        const targetElement = event.target;
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(targetElement.tagName))
+            return;
+        if (targetElement.contentEditable === "true")
+            return;
         window.parent.postMessage({
             action: keydown,
             eventArgs: {
