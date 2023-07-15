@@ -19,15 +19,15 @@ internal class XmlDocCommentForWasm : IXmlDocComment
     {
         public DateTime TimestampUTC = DateTime.UtcNow;
 
-        public readonly XDocument XmlDoc;
+        public readonly XDocument? XmlDoc;
 
-        public XmlDocCommentCacheEntity(XDocument xmlDoc) { this.XmlDoc = xmlDoc; }
+        public XmlDocCommentCacheEntity(XDocument? xmlDoc) { this.XmlDoc = xmlDoc; }
     }
 
     /// <summary>
     /// Cache period in seconds.
     /// </summary>
-    private const double CachePeriodSec = 1.0;
+    private const double CachePeriodSec = 180.0;
 
     private readonly Dictionary<string, XmlDocCommentCacheEntity> _XmlDocCommentCache = new();
 
@@ -95,16 +95,17 @@ internal class XmlDocCommentForWasm : IXmlDocComment
             }
             else
             {
-                var xdocUrl = $"./_framework/{assemblyName}.xml";
-                var xdocContent = "";
-                try { xdocContent = await this._HttpClient.GetStringAsync(xdocUrl); }
+                try
+                {
+                    var xdocUrl = $"./_framework/{assemblyName}.xml";
+                    var xdocContent = await this._HttpClient.GetStringAsync(xdocUrl);
+                    xdocComment = XDocument.Parse(xdocContent);
+                }
                 catch (Exception ex)
                 {
                     this._Logger.LogError(ex, ex.Message);
-                    return null;
+                    xdocComment = null;
                 }
-
-                xdocComment = XDocument.Parse(xdocContent);
 
                 this._XmlDocCommentCache[assemblyName] = new(xdocComment);
             }
