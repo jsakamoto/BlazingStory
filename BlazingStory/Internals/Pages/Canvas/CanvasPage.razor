@@ -1,4 +1,5 @@
 @implements IDisposable
+@inject NavigationManager NavigationManager
 
 <PageTitle>@_PageTitle</PageTitle>
 
@@ -242,7 +243,8 @@
     {
         if (this._PreviewFrame == null) return;
         var canvalLinkUrl = this._PreviewFrame.CurrentPreviewFrameUrl.TrimStart('.', '/');
-        await this.HelperScript.CopyTextToClipboardAsync(canvalLinkUrl);
+        var absoluteCanvalLinkUrl = this.NavigationManager.ToAbsoluteUri(canvalLinkUrl);
+        await this.HelperScript.CopyTextToClipboardAsync(absoluteCanvalLinkUrl.AbsoluteUri);
     }
 
     private async Task OnClickReload()
