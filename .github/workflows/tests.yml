@@ -16,8 +16,9 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-           dotnet-version: '8.0.x'
-           dotnet-quality: 'preview'
+           dotnet-version: |
+             7.0.x
+             8.0.100-preview.6.23330.14
 
       # Invoke tests
       - name: Invoke tests

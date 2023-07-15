@@ -27,7 +27,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "README", "README", "{A55DF8
 		THIRD-PARTY-NOTICES.txt = THIRD-PARTY-NOTICES.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazingStoryApp3", "Tests\Fixtures\BlazingStoryApp3\BlazingStoryApp3.csproj", "{29EA6AF2-00E2-439B-87AE-6DB18D4BF0B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazingStoryApp3", "Tests\Fixtures\BlazingStoryApp3\BlazingStoryApp3.csproj", "{29EA6AF2-00E2-439B-87AE-6DB18D4BF0B9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmptyBlazorWasmApp1", "Tests\Fixtures\EmptyBlazorWasmApp1\EmptyBlazorWasmApp1.csproj", "{89631B61-D42A-4224-B84C-7A5C9E8E1431}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{29EA6AF2-00E2-439B-87AE-6DB18D4BF0B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29EA6AF2-00E2-439B-87AE-6DB18D4BF0B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29EA6AF2-00E2-439B-87AE-6DB18D4BF0B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89631B61-D42A-4224-B84C-7A5C9E8E1431}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89631B61-D42A-4224-B84C-7A5C9E8E1431}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89631B61-D42A-4224-B84C-7A5C9E8E1431}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89631B61-D42A-4224-B84C-7A5C9E8E1431}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,6 +81,7 @@ Global
 		{D2BACEAA-B2C1-4122-B9E6-9D535EAE9FB0} = {4CAC84D7-AE05-4C6F-8992-0BADC1C5B37E}
 		{57938105-1FFA-4EAA-A1BE-63F08AA9CE5D} = {23FEEDEF-BA29-4B5B-8EC5-E1BDAAF4A4E8}
 		{29EA6AF2-00E2-439B-87AE-6DB18D4BF0B9} = {4CAC84D7-AE05-4C6F-8992-0BADC1C5B37E}
+		{89631B61-D42A-4224-B84C-7A5C9E8E1431} = {4CAC84D7-AE05-4C6F-8992-0BADC1C5B37E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {20FA05A1-802E-4D83-AF96-889FA312BA00}

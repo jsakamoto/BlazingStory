@@ -57,19 +57,36 @@
 
     </ItemGroup>
 
+    <!-- 
+    [.NET 8.0 SDK Support]
+    Before .NET 8.0 SDK, the Blazor WebAssembly Static Web Assets are defined by the "BlazorWebAssemblyResource" trait and by the "_BlazorStaticWebAsset" item name.
+    But .NET 8.0 or later, those are defined by the "WasmResource" trait and by the "WasmStaticWebAsset" item name.
+    -->
+    <PropertyGroup>
+      <_XmlDocCommentAssetTraitName>BlazorWebAssemblyResource</_XmlDocCommentAssetTraitName>
+      <_XmlDocCommentAssetItemName>_BlazorStaticWebAsset</_XmlDocCommentAssetItemName>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" $(NETCoreSdkVersion.StartsWith('8.0')) " >
+      <_XmlDocCommentAssetTraitName>WasmResource</_XmlDocCommentAssetTraitName>
+      <_XmlDocCommentAssetItemName>WasmStaticWebAsset</_XmlDocCommentAssetItemName>
+    </PropertyGroup>
+
     <DefineStaticWebAssets
       CandidateAssets="@(_XmlDocComment)"
       SourceId="$(PackageId)"
       SourceType="Computed"
       AssetKind="Build"
       AssetRole="Primary"
+      AssetTraitName="$(_XmlDocCommentAssetTraitName)"
       CopyToOutputDirectory="PreserveNewest"
       CopyToPublishDirectory="Never"
       ContentRoot="$(OutputPath)wwwroot"
       BasePath="$(StaticWebAssetBasePath)"
     >
-      <Output TaskParameter="Assets" ItemName="_BlazorStaticWebAsset" />
+      <Output TaskParameter="Assets" ItemName="$(_XmlDocCommentAssetItemName)" />
     </DefineStaticWebAssets>
+  
   </Target>
 
   <Target Name="_AddXmlDocCommentToPublishContents"

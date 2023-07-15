@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -26,6 +26,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="bunit" Version="1.19.14" />
+    <PackageReference Include="Toolbelt.WorkDirectory" Version="1.0.0" />
+    <PackageReference Include="XProcess" Version="1.3.0" />
   </ItemGroup>
  
   <ItemGroup>
