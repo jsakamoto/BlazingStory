@@ -17,4 +17,6 @@
     <ProjectReference Include="..\..\..\BlazingStory\BlazingStory.csproj" />
   </ItemGroup>
 
+  <Import Project="..\..\..\BlazingStory\Build\BlazingStory.targets"/>
+
 </Project>
