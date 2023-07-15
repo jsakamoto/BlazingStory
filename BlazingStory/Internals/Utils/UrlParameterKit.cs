@@ -37,7 +37,7 @@ internal static class UriParameterKit
     /// <summary>
     /// Get the query string that ensures the loading of the latest static assets.<br/>
     /// This method will return a string like "?v=1.0.0-preview.2.3" if the browser is online. Otherwise, "".<br/>
-    /// (This method depends on the "BlazingStory.isOnLine" JavaScript function, which is defined in the "/wwwroot/BlazingStory.lib.module.js")
+    /// (This method depends on the "Toolbelt.Blazor.getProperty" JavaScript function, which is provided by Toolbelt.Blazor.GetProperty.Script NuGet package)
     /// </summary>
     /// <param name="jSRuntime">The <see cref="IJSRuntime"/> instance to retrieve browser's on-line status</param>
     internal static string GetUpdateToken(IJSRuntime jSRuntime)
@@ -45,7 +45,7 @@ internal static class UriParameterKit
         var jsInProcRuntime = jSRuntime as IJSInProcessRuntime;
         if (jsInProcRuntime == null) return "";
 
-        var isOnLine = jsInProcRuntime.Invoke<bool>("BlazingStory.isOnLine");
+        var isOnLine = jsInProcRuntime.Invoke<bool>("Toolbelt.Blazor.getProperty", "navigator.onLine");
         if (!isOnLine) return "";
 
         return "?v=" + Uri.EscapeDataString(VersionUtility.GetVersionText());

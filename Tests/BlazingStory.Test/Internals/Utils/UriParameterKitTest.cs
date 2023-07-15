@@ -84,7 +84,9 @@ internal class UriParameterKitTest
         // Given
         var jsInProcRuntime = new Mock<IJSInProcessRuntime>();
         jsInProcRuntime
-            .Setup(js => js.Invoke<bool>(It.Is<string>(arg => arg == "BlazingStory.isOnLine")))
+            .Setup(js => js.Invoke<bool>(
+                It.Is<string>(arg => arg == "Toolbelt.Blazor.getProperty"),
+                It.Is<string>(arg => arg == "navigator.onLine")))
             .Returns(true);
 
         // When
@@ -100,7 +102,9 @@ internal class UriParameterKitTest
         // Given
         var jsInProcRuntime = new Mock<IJSInProcessRuntime>();
         jsInProcRuntime
-            .Setup(js => js.Invoke<bool>(It.Is<string>(arg => arg == "BlazingStory.isOnLine")))
+            .Setup(js => js.Invoke<bool>(
+                It.Is<string>(arg => arg == "Toolbelt.Blazor.getProperty"),
+                It.Is<string>(arg => arg == "navigator.onLine")))
             .Returns(false);
 
         // When
