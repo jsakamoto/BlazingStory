@@ -43,6 +43,8 @@ internal class HelperScript : IAsyncDisposable
 
     internal ValueTask<string?> GetLocalStorageItemAsync(string key) => this.InvokeAsync<string?>("getLocalStorageItem", key);
 
+    internal async ValueTask<string> GetLocalStorageItemAsync(string key, string defaultValue) => await this.InvokeAsync<string?>("getLocalStorageItem", key) ?? defaultValue;
+
     public async ValueTask<T> GetLocalStorageItemAsync<T>(string key, T defaultValue) where T : IParsable<T>
     {
         var stringValue = await this.GetLocalStorageItemAsync(key);

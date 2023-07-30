@@ -90,9 +90,25 @@
     [Parameter]
     public RenderFragment<BlazingStoryApp>? BrandLogoArea { get; set; }
 
+    /// <summary>
+    /// The available color schemes for the Blazing Story.<br/>
+    /// When the <see cref="AvailableColorSchemes.Light"/> is set, the Blazing Story app will be displayed in light mode only.<br/>
+    /// When the <see cref="AvailableColorSchemes.Dark"/> is set, the Blazing Story app will be displayed in dark mode only.<br/>
+    /// The default value is <see cref="AvailableColorSchemes.Both"/>, and system preference will be respected.
+    /// </summary>
+    // TODO:
+    // The default value is <see cref="AvailableColorSchemes.Both"/>, and user preference will be respected.
+    // The user preference page will be displayed only when the <see cref="AvailableColorSchemes.Both"/> is set.
+    [Parameter]
+    public AvailableColorSchemes AvailableColorSchemes { get; set; } = AvailableColorSchemes.Both;
+
+    private AvailableColorSchemes _PrevAvailableColorSchemes = AvailableColorSchemes.Both;
+
     private readonly StoriesStore _StoriesStore = new();
 
     private readonly AddonsStore _AddonsStore = new();
+
+    private bool _firstRendered = false;
 
     private int _InitLevel = 0;
 
@@ -143,11 +159,24 @@
             .BuildServiceProvider();
     }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (this.AvailableColorSchemes != this._PrevAvailableColorSchemes)
+        {
+            this._PrevAvailableColorSchemes = this.AvailableColorSchemes;
+            if (this._firstRendered) await this.UpdatePreferesColorSchemeAsync();
+        }
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
+        this._firstRendered = true;
 
-        this._PreferesColorScheme = await this._JSModule.InvokeAsync<string>("getPrefersColorScheme");
+        await this.UpdatePreferesColorSchemeAsync();
+
         this._PreferesColorSchemeChangeSubscribeId = await this._JSModule.InvokeAsync<int>("subscribePreferesColorSchemeChanged", this._RefThis, nameof(OnPreferesColorSchemeChanged));
 
         await this._JSModule.InvokeVoidAsync("waitForAllStyleAndFontsAreLoaded");
@@ -163,10 +192,35 @@
         this.StateHasChanged();
     }
 
-    [JSInvokable, EditorBrowsable(EditorBrowsableState.Never)]
-    public void OnPreferesColorSchemeChanged(string preferesColorScheme)
+    private async ValueTask UpdatePreferesColorSchemeAsync()
     {
-        this._PreferesColorScheme = preferesColorScheme;
+        if (this._ServiceProvider is null) throw new InvalidOperationException("The service provider is not initialized.");
+
+        if (this.AvailableColorSchemes == AvailableColorSchemes.Both)
+        {
+            var helperScript = this._ServiceProvider.GetRequiredService<HelperScript>();
+            var colorScheme = await helperScript.GetLocalStorageItemAsync("ColorScheme", defaultValue: "system");
+            if (colorScheme != "dark" && colorScheme != "light")
+            {
+                colorScheme = await this._JSModule.InvokeAsync<string>("getPrefersColorScheme");
+            };
+            this._PreferesColorScheme = colorScheme;
+        }
+        else
+        {
+            this._PreferesColorScheme = this.AvailableColorSchemes switch
+            {
+                AvailableColorSchemes.Light => "light",
+                AvailableColorSchemes.Dark => "dark",
+                _ => throw new InvalidOperationException($"The {nameof(this.AvailableColorSchemes)} is invalid."),
+            };
+        }
+    }
+
+    [JSInvokable, EditorBrowsable(EditorBrowsableState.Never)]
+    public async Task OnPreferesColorSchemeChanged(string preferesColorScheme)
+    {
+        await this.UpdatePreferesColorSchemeAsync();
         this.StateHasChanged();
     }
 
