@@ -265,6 +265,7 @@ button {
   background-repeat: inherit;
   background-position: inherit;
   background-image: var(--bs-brand-logo-icon-url);
+  display: inline-block;
 }
 
 .main-layout {
