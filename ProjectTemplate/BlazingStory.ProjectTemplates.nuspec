@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>BlazingStory.ProjectTemplates</id>
-    <version>1.0.0-preview.13</version>
+    <version>1.0.0-preview.14</version>
     <description>
       Templates for a Blazing Story project.
     </description>
@@ -20,6 +20,10 @@
       <packageType name="Template" />
     </packageTypes>
     <releaseNotes>
+      v.1.0.0-preview.14
+      - Fix Issue #12: Only a blank page is shown on Firefox.
+      - Upgrade package references for .NET 8 from prev.6 to prev.7.
+
       v.1.0.0-preview.13
       - Improve: Prefer color scheme now can be pinned the dark or light mode from the BlazingStoryApp component's parameter.
       - Fix: The brand logo icon was cut off.
