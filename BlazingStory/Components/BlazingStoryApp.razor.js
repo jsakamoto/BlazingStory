@@ -1,21 +1,22 @@
-export const waitForAllStyleAndFontsAreLoaded = () => new Promise((resolve) => {
-    if (location.pathname !== "/") {
-        resolve();
+export const ensureAllFontsAndStylesAreLoaded = async () => {
+    if (location.pathname !== "/")
         return;
-    }
-    const timerId = setInterval(() => {
-        const styleSheets = Array.from(document.head.querySelectorAll('link[rel="stylesheet"]'));
-        if (!styleSheets.every(l => Boolean(l.sheet)))
-            return;
+    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    for (const font of document.fonts)
+        font.load();
+    for (;;) {
         const fonts = Array.from(document.fonts);
-        if (!fonts.some(f => f.family === "Nunito Sans" && f.weight === "400" && f.status === "unloaded"))
-            return;
-        if (!fonts.some(f => f.family === "Nunito Sans" && f.weight === "700" && f.status === "unloaded"))
-            return;
-        clearInterval(timerId);
-        resolve();
-    }, 10);
-});
+        if (fonts.every(font => font.status === "loaded"))
+            break;
+        await delay(10);
+    }
+    for (;;) {
+        const styleSheets = Array.from(document.head.querySelectorAll('link[rel="stylesheet"]'));
+        if (styleSheets.every(l => Boolean(l.sheet)))
+            break;
+        await delay(10);
+    }
+};
 const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 export const getPrefersColorScheme = () => darkModeMediaQuery.matches ? "dark" : "light";
 let subscriberIndex = 0;

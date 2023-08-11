@@ -1,24 +1,26 @@
 import { DotNetObjectReference } from "../Scripts/types";
 
-export const waitForAllStyleAndFontsAreLoaded = (): Promise<void> => new Promise<void>((resolve) => {
+export const ensureAllFontsAndStylesAreLoaded = async () => {
 
-    if (location.pathname !== "/") { resolve(); return; }
+    if (location.pathname !== "/") return;
 
-    const timerId = setInterval(() => {
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-        // Wait for all style sheets are loaded.
-        const styleSheets = Array.from<HTMLLinkElement>(document.head.querySelectorAll('link[rel="stylesheet"]'));
-        if (!styleSheets.every(l => Boolean(l.sheet))) return;
-
-        // Wait for all custom web fonst are loaded.
+    // Ensure all fonts are loaded.
+    for (const font of document.fonts) font.load();
+    for (; ;) {
         const fonts = Array.from(document.fonts);
-        if (!fonts.some(f => f.family === "Nunito Sans" && f.weight === "400" && f.status === "unloaded")) return;
-        if (!fonts.some(f => f.family === "Nunito Sans" && f.weight === "700" && f.status === "unloaded")) return;
+        if (fonts.every(font => font.status === "loaded")) break;
+        await delay(10);
+    }
 
-        clearInterval(timerId);
-        resolve();
-    }, 10);
-});
+    // Wait for all style sheets are loaded.
+    for (; ;) {
+        const styleSheets = Array.from<HTMLLinkElement>(document.head.querySelectorAll('link[rel="stylesheet"]'));
+        if (styleSheets.every(l => Boolean(l.sheet))) break;
+        await delay(10);
+    }
+}
 
 const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 

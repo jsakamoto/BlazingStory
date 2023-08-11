@@ -179,15 +179,23 @@
 
         this._PreferesColorSchemeChangeSubscribeId = await this._JSModule.InvokeAsync<int>("subscribePreferesColorSchemeChanged", this._RefThis, nameof(OnPreferesColorSchemeChanged));
 
-        await this._JSModule.InvokeVoidAsync("waitForAllStyleAndFontsAreLoaded");
+        // Init Level 0 -> Default Background is visible & Color Scheme Container is hidden and transparent.
+
+        await this._JSModule.InvokeVoidAsync("ensureAllFontsAndStylesAreLoaded");
+
+        // Init Level 1 -> The Default Background is still visible & Color Scheme Container is becoming to be VISIBLE but still transparent.
         this._InitLevel++;
         this.StateHasChanged();
 
         await Task.Delay(50);
+
+        // Init Level 2 -> The Default Background is still visible & Color Scheme Container transitions to OPAQUE in 0.2sec.
         this._InitLevel++;
         this.StateHasChanged();
 
         await Task.Delay(200);
+        
+        // Init Level 3 -> After the Color Scheme Container transitioned to opaque, The Default Background transitions to INVISIBLE.
         this._InitLevel++;
         this.StateHasChanged();
     }
