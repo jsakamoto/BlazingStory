@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>BlazingStory.ProjectTemplates</id>
-    <version>1.0.0-preview.14</version>
+    <version>1.0.0-preview.15</version>
     <description>
       Templates for a Blazing Story project.
     </description>
@@ -20,6 +20,9 @@
       <packageType name="Template" />
     </packageTypes>
     <releaseNotes>
+      v.1.0.0-preview.15
+      - Improve: the release note page shows the RELEASE-NOTES.txt at runtime with formatting
+
       v.1.0.0-preview.14
       - Fix Issue #12: Only a blank page is shown on Firefox.
       - Upgrade package references for .NET 8 from prev.6 to prev.7.
@@ -32,13 +35,6 @@
       - Change: "Copy canvas link" now provides full absolute URL.
       - Fix: the reset button in the control panel wasn't placed right side.
       - Fix: the result of fetching XML doc comments was not cached if it respond "404 not found".
-
-      v.1.0.0-preview.11
-      - Fix: keyboard shortcuts were fired unexpectedly when a user typed on an input element existing in a story preview (canvas).
-      - Fix: XML document comment files were not deployed when using .NET 8 SDK.
-
-      v.1.0.0-preview.10
-      - Fix: A canvas frame (preview frame) was not re-rendered when a state of a story has been changed.
 
       To see all the change logs, please visit the following URL.
       - https://github.com/jsakamoto/BlazingStory/blob/main/RELEASE-NOTES.txt</releaseNotes>
