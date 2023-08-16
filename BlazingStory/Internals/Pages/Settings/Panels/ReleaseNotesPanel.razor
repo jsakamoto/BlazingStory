@@ -1,82 +1,66 @@
-<header>Blazing Story 1.0 Preview 14 - August 2023</header>
+@using System.Reflection;
+@using BlazingStory.Internals.Types;
+@inject HttpClient HttpClient
 
-<UnderConstruction/>
+<header>Blazing Story @this._VersionText - @this._BuildTimestampAttrib?.BuildMonthText</header>
 
-<code style="white-space:pre-wrap;">
-    v.1.0.0-preview.14
-    - Fix Issue #12: Only a blank page is shown on Firefox.
-    - Upgrade package references for .NET 8 from prev.6 to prev.7.
+<section>
+    @foreach (var releaseNoteSection in this._ReleaseNoteSections)
+    {
+        <h3>@releaseNoteSection.VersionTitle</h3>
+        <ul>
+            @foreach (var changeLog in releaseNoteSection.ChangeLogs)
+            {
+                <li>@changeLog</li>
+            }
+        </ul>
+    }
+</section>
 
-    v.1.0.0-preview.13
-    - Improve: Prefer color scheme now can be pinned the dark or light mode from the BlazingStoryApp component's parameter.
-    - Fix: The brand logo icon was cut off.
+@code
+{
+    private string _VersionText = "";
 
-    v.1.0.0-preview.12
-    - Change: "Copy canvas link" now provides full absolute URL.
-    - Fix: the reset button in the control panel wasn't placed right side.
-    - Fix: the result of fetching XML doc comments was not cached if it respond "404 not found".
+    private BuildTimestampAttribute? _BuildTimestampAttrib;
 
-    v.1.0.0-preview.11
-    - Fix: keyboard shortcuts were fired unexpectedly when a user typed on an input element existing in a story preview (canvas).
-    - Fix: XML document comment files were not deployed when using .NET 8 SDK.
+    private record ReleaseNoteSection(string VersionTitle, IEnumerable<string> ChangeLogs);
 
-    v.1.0.0-preview.10
-    - Fix: A canvas frame (preview frame) was not re-rendered when a state of a story has been changed.
+    private IEnumerable<ReleaseNoteSection> _ReleaseNoteSections = Enumerable.Empty<ReleaseNoteSection>();
 
-    v.1.0.0-preview.9
-    - Improve: Sorts sub items recursively by its caption, except stories.
+    protected override async Task OnInitializedAsync()
+    {
+        this._VersionText = this.GetType().Assembly.GetFormattedVersionText();
+        this._BuildTimestampAttrib = this.GetType().Assembly.GetCustomAttribute<BuildTimestampAttribute>();
 
-    v.1.0.0-preview.8
-    - Fix: radio button groups for a component parameter are not isolated.
+        var releaseNotesText = await this.HttpClient.GetStringAsync($"./_content/BlazingStory/RELEASE-NOTES.txt?v={VersionUtility.GetVersionText()}");
 
-    v.1.0.0-preview.7
-    - Fix: New added *.stories.razor files are not recognized as a Blazor component
+        var releaseNotesLines = releaseNotesText
+            .Split("\n")
+            .Select(line => line.Trim('\r'))
+            .Where(line => !string.IsNullOrWhiteSpace(line))
+            .Append("v.0.0.0");
 
-    v.1.0.0-preview.6
-    - Improvement: The branding logo area to be customizable
+        var releaseNoteSections = new List<ReleaseNoteSection>();
+        var currentVersion = "";
+        var currentChangeLogs = new List<string>();
+        foreach (var line in releaseNotesLines)
+        {
+            Console.WriteLine(line);
+            if (line.StartsWith("v."))
+            {
+                if (currentVersion != null)
+                {
+                    releaseNoteSections.Add(new(currentVersion, currentChangeLogs));
+                    currentVersion = line;
+                    currentChangeLogs = new();
+                }
+            }
+            else
+            {
+                currentChangeLogs.Add(line.TrimStart('-', ' '));
+            }
+        }
 
-    v.1.0.0-preview.5
-    - Improvement: Stories now can have shared layouts
-    - Fix: deindentation of the code in the "Show code" window is sometimes incorrect
-    - Fix: Navigation will be corrupted when the name of the story includes some symbol
-    - Fix: the first story on the "Docs" pages shearing a state of showing code with other pages unexpectedly
-
-    v.1.0.0-preview.4
-    - Docs page - Added the "Show code" feature
-
-    v.1.0.0-preview.3.2
-    - Add support for .NET 8 (Preview)
-
-    v.1.0.0-preview.3.1
-    - Fix: README - typo in the creating a new Blazing Story app command
-    - Fix: Settings pages - The toolbar was hidden in some cases
-    - Fix: Default color scheme values were not applied correctly
-    - Docs page - Enabled toggling the toolbar visibility
-    - Docs page - Added "Go fullscreen" button on the toolbar
-    - Docs page - Added the "Show sidebar" button on the toolbar
-    - Docs page - Enabled the "Background" Add-on
-
-    v.1.0.0-preview.3
-    - Implemented the "Docs" pages
-
-    v.1.0.0-preview.2.1
-    - Improved Dark Theme support
-
-    v.1.0.0-preview.2
-    - Added Dark Theme support
-
-    v.1.0.0-preview.1.4
-    - Improve the "About" page - to show the version text of the assembly of Blazing Story
-
-    v.1.0.0-preview.1.3
-    - Fix: When the page is initially loading, icons are revealed unexpectedly.
-
-    v.1.0.0-preview.1.2
-    - Improve the README and the project template to explain how to add custom css and js files for stories.
-
-    v.1.0.0-preview.1.1
-    - Fix: 3rd party libraries CSS file importing failed if the app deployed under subpath.
-
-    v.1.0.0-preview.1
-    - 1st release.
-</code>
+        this._ReleaseNoteSections = releaseNoteSections;
+    }
+}

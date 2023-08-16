@@ -53,6 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\RELEASE-NOTES.txt" Link="wwwroot\RELEASE-NOTES.txt" />
     <Content Update="**\*.json" Pack="false" CopyToOutputDirectory="Never" />
     <None Include="..\assets\icon-128x128.png" Pack="true" Visible="false" PackagePath="" />
     <None Include="..\README.md" Visible="false" Pack="true" PackagePath="\" />
@@ -88,6 +89,31 @@
       <PackageReleaseNotes>$([System.Text.RegularExpressions.Regex]::Match($(PackageReleaseNotes), "^(v\.[\d\.]+.+?)v\.[\d\.]+", System.Text.RegularExpressions.RegexOptions.Singleline).Groups[1].Value)</PackageReleaseNotes>
       <PackageReleaseNotes>$(PackageReleaseNotes)%0a%0aTo see all the change logs, please visit the following URL.%0a- $(RepositoryUrl)blob/main/RELEASE-NOTES.txt</PackageReleaseNotes>
     </PropertyGroup>
+  </Target>
+
+  <!--
+  This target is used to add the "BuildTimestampAttribute" attribute to the "AssemblyInfo.cs" file.
+  The "BuildTimestampAttribute" attribute is used to display the build month (ex."August 2023") in the Release page.
+  -->
+  <Target Name="_AddBuildTimestampAttributeToAssemblyInfo" BeforeTargets="GetAssemblyAttributes">
+    <ItemGroup>
+      <AssemblyAttribute Include="BlazingStory.Internals.Types.BuildTimestampAttribute">
+        <_Parameter1>$([System.DateTime]::Today.ToString('MMMM yyyy'))</_Parameter1>
+      </AssemblyAttribute>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  This target is used to fix the "ContentRoot" meta data of "StaticWebAsset" items that are stored in the solution folder.
+  Without this target, "Content" items linked from solution folder to the "wwwroot" folder are never served by the Blazor WebAssembly Development Server.
+  This target is required only for Blazor app projects that are project-referenceing this BlazingStory project.
+  -->
+  <Target Name="_FixStaticWebAssetsStoredInSolutionFolder" AfterTargets="ResolveProjectStaticWebAssets">
+    <ItemGroup>
+      <StaticWebAsset Update="**\*" Condition=" $([System.String]::Copy('%(OriginalItemSpec)').StartsWith('..')) ">
+        <ContentRoot>$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\%(OriginalItemSpec)'))))\</ContentRoot>
+      </StaticWebAsset>
+    </ItemGroup>
   </Target>
 
 </Project>
