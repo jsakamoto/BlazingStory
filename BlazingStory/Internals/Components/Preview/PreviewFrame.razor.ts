@@ -1,10 +1,28 @@
 import { CSSStyle, MessageArgument } from "../../../Scripts/types";
 
-export const navigatePreviewFrameTo = (iframe: HTMLIFrameElement | null, url: string) => {
-    if (iframe === null || iframe.contentWindow === null || iframe.contentDocument === null) return;
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+const waitFor = async (arg: { predecate: () => boolean, maxRetryCount: number, retryInterval: number }): Promise<void> => {
+    let retryCount = 0;
+    while (true) {
+        if (arg.predecate()) return;
+        if (retryCount >= arg.maxRetryCount) throw new Error("Timeout");
+        retryCount++;
+        await delay(arg.retryInterval);
+    }
+}
+
+export const navigatePreviewFrameTo = async (iframe: HTMLIFrameElement | null, url: string) => {
+    if (iframe === null) return;
+    await waitFor({
+        predecate: () => iframe.contentWindow !== null && iframe.contentDocument !== null && iframe.contentWindow.location.href !== "about:blank",
+        maxRetryCount: 50,
+        retryInterval: 10
+    });
+
     const event = new PopStateEvent("popstate", { state: {}, bubbles: true, cancelable: true });
-    iframe.contentWindow.history.pushState({}, "", url);
-    iframe.contentDocument.dispatchEvent(event);
+    iframe.contentWindow!.history.pushState({}, "", url);
+    iframe.contentDocument!.dispatchEvent(event);
 }
 
 export const reloadPreviewFrame = (iframe: HTMLIFrameElement | null) => {
