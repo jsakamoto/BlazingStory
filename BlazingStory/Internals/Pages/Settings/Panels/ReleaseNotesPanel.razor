@@ -45,7 +45,6 @@
         var currentChangeLogs = new List<string>();
         foreach (var line in releaseNotesLines)
         {
-            Console.WriteLine(line);
             if (line.StartsWith("v."))
             {
                 if (currentVersion != null)
