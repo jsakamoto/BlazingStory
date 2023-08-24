@@ -1,3 +1,6 @@
+v.1.0.0-preview.16
+- Fix: The unhandled exception "Microsoft.JSInterop.JSException: SecurityError: Failed to execute 'pushState' on 'History'" was thrown in some cases.
+
 v.1.0.0-preview.15
 - Improve: the release note page shows the RELEASE-NOTES.txt at runtime with formatting
 

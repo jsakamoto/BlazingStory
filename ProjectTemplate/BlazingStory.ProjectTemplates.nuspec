@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>BlazingStory.ProjectTemplates</id>
-    <version>1.0.0-preview.15</version>
+    <version>1.0.0-preview.16</version>
     <description>
       Templates for a Blazing Story project.
     </description>
@@ -20,6 +20,9 @@
       <packageType name="Template" />
     </packageTypes>
     <releaseNotes>
+      v.1.0.0-preview.16
+      - Fix: The unhandled exception "Microsoft.JSInterop.JSException: SecurityError: Failed to execute 'pushState' on 'History'" was thrown in some cases.
+
       v.1.0.0-preview.15
       - Improve: the release note page shows the RELEASE-NOTES.txt at runtime with formatting
 
@@ -30,11 +33,6 @@
       v.1.0.0-preview.13
       - Improve: Prefer color scheme now can be pinned the dark or light mode from the BlazingStoryApp component's parameter.
       - Fix: The brand logo icon was cut off.
-
-      v.1.0.0-preview.12
-      - Change: "Copy canvas link" now provides full absolute URL.
-      - Fix: the reset button in the control panel wasn't placed right side.
-      - Fix: the result of fetching XML doc comments was not cached if it respond "404 not found".
 
       To see all the change logs, please visit the following URL.
       - https://github.com/jsakamoto/BlazingStory/blob/main/RELEASE-NOTES.txt</releaseNotes>
