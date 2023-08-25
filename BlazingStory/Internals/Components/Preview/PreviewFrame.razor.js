@@ -14,7 +14,16 @@ export const navigatePreviewFrameTo = async (iframe, url) => {
     if (iframe === null)
         return;
     await waitFor({
-        predecate: () => iframe.contentWindow !== null && iframe.contentDocument !== null && iframe.contentWindow.location.href !== "about:blank",
+        predecate: () => {
+            var _a;
+            if (iframe.contentWindow === null || iframe.contentDocument === null)
+                return false;
+            if (iframe.contentWindow.location.href === "about:blank")
+                return false;
+            if (((_a = iframe.contentWindow.BlazingStory) === null || _a === void 0 ? void 0 : _a.canvasFrameInitialized) !== true)
+                return false;
+            return true;
+        },
         maxRetryCount: 50,
         retryInterval: 10
     });

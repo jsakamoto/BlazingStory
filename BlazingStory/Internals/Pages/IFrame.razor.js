@@ -3,7 +3,7 @@ const pointerdown = "pointerdown";
 const SessionStateKey = "IFrame.SessionState";
 export const initializeCanvasFrame = () => {
     const sessionState = {
-        ...{ zoom: 1 }, ...JSON.parse(sessionStorage.getItem("IFrame.SessionState") || "{}")
+        ...{ zoom: 1 }, ...JSON.parse(sessionStorage.getItem(SessionStateKey) || "{}")
     };
     document.body.style.zoom = "" + sessionState.zoom;
     window.addEventListener("message", (event) => {
@@ -37,4 +37,6 @@ export const initializeCanvasFrame = () => {
             action: pointerdown
         }, location.origin);
     });
+    window.BlazingStory = window.BlazingStory || {};
+    window.BlazingStory.canvasFrameInitialized = true;
 };

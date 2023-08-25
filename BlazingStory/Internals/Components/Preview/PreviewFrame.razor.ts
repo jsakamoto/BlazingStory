@@ -15,7 +15,12 @@ const waitFor = async (arg: { predecate: () => boolean, maxRetryCount: number, r
 export const navigatePreviewFrameTo = async (iframe: HTMLIFrameElement | null, url: string) => {
     if (iframe === null) return;
     await waitFor({
-        predecate: () => iframe.contentWindow !== null && iframe.contentDocument !== null && iframe.contentWindow.location.href !== "about:blank",
+        predecate: () => {
+            if (iframe.contentWindow === null || iframe.contentDocument === null) return false;
+            if (iframe.contentWindow.location.href === "about:blank") return false;
+            if (iframe.contentWindow.BlazingStory?.canvasFrameInitialized !== true) return false;
+            return true;
+        },
         maxRetryCount: 50,
         retryInterval: 10
     });

@@ -12,7 +12,7 @@ export const initializeCanvasFrame = () => {
 
     // Restore the session state.
     const sessionState = {
-        ...{ zoom: 1 }, ...JSON.parse(sessionStorage.getItem("IFrame.SessionState") || "{}")
+        ...{ zoom: 1 }, ...JSON.parse(sessionStorage.getItem(SessionStateKey) || "{}")
     } as IFrameSessionState;
     (document.body.style as CSSStyle).zoom = "" + sessionState.zoom;
 
@@ -56,4 +56,7 @@ export const initializeCanvasFrame = () => {
             action: pointerdown
         } as MessageArgument, location.origin);
     });
+
+    window.BlazingStory = window.BlazingStory || {};
+    window.BlazingStory.canvasFrameInitialized = true;
 }
