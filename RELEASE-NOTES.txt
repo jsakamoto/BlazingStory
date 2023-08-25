@@ -1,3 +1,6 @@
+v.1.0.0-preview.17
+- Fix: In some cases, the uncaught (in promise) error "No .NET call dispatcher has been set" was shown in the browser's console.
+
 v.1.0.0-preview.16
 - Fix: The unhandled exception "Microsoft.JSInterop.JSException: SecurityError: Failed to execute 'pushState' on 'History'" was thrown in some cases.
 
