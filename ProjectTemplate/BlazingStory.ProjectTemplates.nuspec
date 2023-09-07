@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>BlazingStory.ProjectTemplates</id>
-    <version>1.0.0-preview.17</version>
+    <version>1.0.0-preview.18</version>
     <description>
       Templates for a Blazing Story project.
     </description>
@@ -20,6 +20,9 @@
       <packageType name="Template" />
     </packageTypes>
     <releaseNotes>
+      v.1.0.0-preview.18
+      - Improve: The height of preview frames on the "Docs" page will be adjusted automatically to fit its preview contents.
+
       v.1.0.0-preview.17
       - Fix: In some cases, the uncaught (in promise) error "No .NET call dispatcher has been set" was shown in the browser's console.
 
@@ -28,10 +31,6 @@
 
       v.1.0.0-preview.15
       - Improve: the release note page shows the RELEASE-NOTES.txt at runtime with formatting
-
-      v.1.0.0-preview.14
-      - Fix Issue #12: Only a blank page is shown on Firefox.
-      - Upgrade package references for .NET 8 from prev.6 to prev.7.
 
       To see all the change logs, please visit the following URL.
       - https://github.com/jsakamoto/BlazingStory/blob/main/RELEASE-NOTES.txt</releaseNotes>
