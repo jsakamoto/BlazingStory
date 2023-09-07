@@ -19,11 +19,8 @@ export type KeyEventArgument = {
     metaKey: boolean,
 };
 
-export type MessageArgument = {
-    action: "keydown",
-    eventArgs: KeyEventArgument
-} | {
-    action: "pointerdown"
-} | {
-    action: "reload"
-}
+export type MessageArgument =
+    { action: "keydown", eventArgs: KeyEventArgument } |
+    { action: "pointerdown" } |
+    { action: "reload" } |
+    { action: "frameview-height", frameId: string, height: number };

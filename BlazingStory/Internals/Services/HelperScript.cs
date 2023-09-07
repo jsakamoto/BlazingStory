@@ -51,9 +51,7 @@ internal class HelperScript : IAsyncDisposable
         return T.TryParse(stringValue, null, out var value) ? value : defaultValue;
     }
 
-    internal ValueTask SetupKeyDownSenderAsync() => this.InvokeVoidAsync("setupKeyDownSender");
-
-    internal ValueTask SetupKeyDownReceiverAsync() => this.InvokeVoidAsync("setupKeyDownReceiver");
+    internal ValueTask SetupKeyDownReceiverAsync() => this.InvokeVoidAsync("setupMessageReceiverFromIFrame");
 
     public async ValueTask DisposeAsync()
     {

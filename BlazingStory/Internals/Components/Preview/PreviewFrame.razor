@@ -2,7 +2,7 @@
 @inject IJSRuntime JSRuntime
 
 <div class="preview-frame">
-    <iframe @ref="_Iframe" src="@_InitialPreviewFrameUrl"></iframe>
+    <iframe id="@this._IframeElementId" @ref="_Iframe" src="@_InitialPreviewFrameUrl"></iframe>
 </div>
 
 @code
@@ -18,6 +18,8 @@
 
     [Parameter]
     public IReadOnlyDictionary<string, object?>? Globals { get; set; }
+
+    private readonly string _IframeElementId = "F" + Guid.NewGuid().ToString();
 
     /// <summary>
     /// Gets the initial preview frame URL.

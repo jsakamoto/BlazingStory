@@ -1,7 +1,7 @@
 .preview-frame {
     position: absolute;
     inset: 0;
-    overflow: auto;
+    overflow: hidden;
     display: grid;
     justify-items: center;
     align-items: center;

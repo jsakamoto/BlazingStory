@@ -10,7 +10,10 @@
 
         .preview-frame-viewport {
             position: relative;
+            height: 95px;
             min-height: 95px;
+            max-height: max(95px, 100vh);
+            transition: height linear 0.2s;
 
             iframe {
                 position: absolute; // NOTICE: this is needed to make the iframe fill the viewport!

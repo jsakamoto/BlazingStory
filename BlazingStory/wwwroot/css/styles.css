@@ -1043,7 +1043,7 @@ a.icon-button {
 .preview-frame {
   position: absolute;
   inset: 0;
-  overflow: auto;
+  overflow: hidden;
   display: grid;
   justify-items: center;
   align-items: center;
@@ -1259,7 +1259,10 @@ a.icon-button {
 }
 .story-preview > .preview-part .preview-frame-viewport {
   position: relative;
+  height: 95px;
   min-height: 95px;
+  max-height: max(95px, 100vh);
+  transition: height linear 0.2s;
 }
 .story-preview > .preview-part .preview-frame-viewport iframe {
   position: absolute;

@@ -24,6 +24,19 @@
         display: none;
     }
 </style>
+
+@* 
+    By default, the html element is unscrollable.
+    This is required to make annoying scroll bars invisible while adjusting the preview frame size to fit iframe contents on "Docs" pages.
+    After adjustment, the "_blazing_story_ready_for_visible" CSS class is added, and then the preview frame contents are scrollable.
+    (See also: BlazingStory/Internals/Pages/IFrame.razor.ts)
+*@
+<style>
+    html:not(._blazing_story_ready_for_visible) {
+        overflow: hidden;
+    }
+</style>
+
 <div class="default-background init-level-@(this._InitLevel)"></div>
 
 <CascadingValue Value="this._ServiceProvider">
@@ -39,7 +52,7 @@
             }
         </div>
 
-        <div class="color-scheme-container preferes-color-scheme-@this._PreferesColorScheme" style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >=2 ? 1 : 0); display: @(this._InitLevel >= 1 ? "block" : "none");">
+        <div class="color-scheme-container preferes-color-scheme-@this._PreferesColorScheme" style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >=2 ? 1 : 0); visibility: @(this._InitLevel >= 1 ? "visible" : "hidden");">
             <CascadingValue Value="this._StoriesStore">
                 <CascadingValue Value="this">
 
@@ -194,7 +207,7 @@
         this.StateHasChanged();
 
         await Task.Delay(200);
-        
+
         // Init Level 3 -> After the Color Scheme Container transitioned to opaque, The Default Background transitions to INVISIBLE.
         this._InitLevel++;
         this.StateHasChanged();

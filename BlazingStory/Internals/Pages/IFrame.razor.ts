@@ -8,28 +8,35 @@ type IFrameSessionState = {
     zoom: string
 }
 
+/**
+ * Initialize the canvas (preview) frame.
+ */
 export const initializeCanvasFrame = () => {
+    const doc = document;
+    const wnd = window;
 
     // Restore the session state.
     const sessionState = {
         ...{ zoom: 1 }, ...JSON.parse(sessionStorage.getItem(SessionStateKey) || "{}")
     } as IFrameSessionState;
-    (document.body.style as CSSStyle).zoom = "" + sessionState.zoom;
+    (doc.body.style as CSSStyle).zoom = "" + sessionState.zoom;
 
     // Handle "Reload" message
-    window.addEventListener("message", (event) => {
+    wnd.addEventListener("message", (event) => {
         const message = event.data as MessageArgument;
         if (event.origin !== location.origin || message.action !== "reload") return;
 
         // Save state to session storage before reloading.
-        sessionState.zoom = (document.body.style as CSSStyle).zoom || "1";
+        sessionState.zoom = (doc.body.style as CSSStyle).zoom || "1";
         sessionStorage.setItem(SessionStateKey, JSON.stringify(sessionState));
 
         location.reload();
     }, false);
 
     // Transfer the keydown event to parent window.
-    document.addEventListener(keydown, event => {
+    // This is required to make the Blazing Story's hotkeys work, even when an element inside an iframe has focus.
+    // (See also: BlazingStory/wwwroot/helper.ts)
+    doc.addEventListener(keydown, event => {
 
         // Do not transfer the keydown event to the BlazingStory app when the target element is an input or editable element.
         // (Otherwise, keyboard shortcuts will be fired when the user is typing in the input element.)
@@ -37,7 +44,7 @@ export const initializeCanvasFrame = () => {
         if (['INPUT', 'TEXTAREA', 'SELECT'].includes(targetElement.tagName)) return;
         if (targetElement.contentEditable === "true") return;
 
-        window.parent.postMessage({
+        wnd.parent.postMessage({
             action: keydown,
             eventArgs: {
                 key: event.key,
@@ -51,12 +58,33 @@ export const initializeCanvasFrame = () => {
     });
 
     // Transfer the click event to parent window.
-    document.addEventListener(pointerdown, event => {
-        window.parent.postMessage({
+    // This is required to ensure popup menus are closed, even when a user clicks inside an iframe.
+    // (See also: BlazingStory/wwwroot/helper.ts)
+    doc.addEventListener(pointerdown, event => {
+        wnd.parent.postMessage({
             action: pointerdown
         } as MessageArgument, location.origin);
     });
 
-    window.BlazingStory = window.BlazingStory || {};
-    window.BlazingStory.canvasFrameInitialized = true;
+    wnd.BlazingStory = wnd.BlazingStory || {};
+    wnd.BlazingStory.canvasFrameInitialized = true;
+
+    // Notify the parent window of this frame height.
+    // This is required to make a vertical scroll bar never shown in preview frames on the "Docs" page.
+    // (See also: BlazingStory/wwwroot/helper.ts)
+    const frameElementId = wnd.frameElement?.id || '';
+    const htmlElement = document.body.parentElement;
+    const scrollHeight = htmlElement?.scrollHeight || 0;
+    wnd.parent.postMessage({
+        action: "frameview-height",
+        frameId: frameElementId,
+        height: scrollHeight
+    } as MessageArgument, location.origin);
+
+    // After sending the frame height, add a class to the html element to make the frame scrollable.
+    // (The html element without the "_blazing_story_ready_for_visible" CSS class is applied "overflow:none")
+    // This is required to make annoying scroll bars invisible while adjusting the preview frame size to fit iframe contents.
+    // After adjustment, the CSS class is added, and then the preview frame contents are scrollable.
+    // (See also: BlazingStory/Components/BlazingStoryApp.razor)
+    setTimeout(() => htmlElement?.classList.add("_blazing_story_ready_for_visible"), 300);
 }
