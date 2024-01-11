@@ -44,6 +44,23 @@ const zoomPreviewFrame = (iframe, getNextZoomLevel) => {
     const nextZoomLevel = getNextZoomLevel(currentZoomLevel);
     style.zoom = '' + nextZoomLevel;
 };
+const isDotnetWatchScriptInjected = (window) => {
+    var _a;
+    const scriptInjectedSentinel = '_dotnet_watch_ws_injected';
+    return (_a = window === null || window === void 0 ? void 0 : window.hasOwnProperty(scriptInjectedSentinel)) !== null && _a !== void 0 ? _a : false;
+};
+export const isHotReloadEnabled = () => {
+    return isDotnetWatchScriptInjected(window);
+};
+export const ensureDotnetWatchScriptInjected = (iframe) => {
+    if (iframe === null || iframe.contentWindow == null || iframe.contentDocument == null)
+        return;
+    if (isDotnetWatchScriptInjected(iframe.contentWindow))
+        return;
+    const script = iframe.contentDocument.createElement('script');
+    script.src = '_framework/aspnetcore-browser-refresh.js';
+    iframe.contentDocument.body.appendChild(script);
+};
 export const zoomInPreviewFrame = (iframe) => zoomPreviewFrame(iframe, zoom => zoom * 1.25);
 export const zoomOutPreviewFrame = (iframe) => zoomPreviewFrame(iframe, zoom => zoom / 1.25);
 export const resetZoomPreviewFrame = (iframe) => zoomPreviewFrame(iframe, _ => 1);
