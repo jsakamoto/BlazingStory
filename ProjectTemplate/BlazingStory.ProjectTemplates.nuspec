@@ -2,38 +2,22 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>BlazingStory.ProjectTemplates</id>
-    <version>1.0.0-preview.18</version>
+    <version>$version$</version>
     <description>
       Templates for a Blazing Story project.
     </description>
     <authors>J.Sakamoto</authors>
-    <copyright>Copyright © 2023 J.Sakamoto, Mozilla Public License 2.0</copyright>
-    <tags>blazor
-      storybook blazingstory</tags>
+    <copyright>$copyright$</copyright>
+    <tags>blazor storybook blazingstory</tags>
     <license type="expression">MPL-2.0</license>
-    <projectUrl>https://github.com/jsakamoto/BlazingStory/</projectUrl>
-    <repository type="git" url="https://github.com/jsakamoto/BlazingStory/" />
+    <projectUrl>$repositoryUrl$</projectUrl>
+    <repository type="git" url="$repositoryUrl$" />
     <icon>nupkg-icon.png</icon>
-    <readme>
-      README.md</readme>
+    <readme>README.md</readme>
     <packageTypes>
       <packageType name="Template" />
     </packageTypes>
-    <releaseNotes>
-      v.1.0.0-preview.18
-      - Improve: The height of preview frames on the "Docs" page will be adjusted automatically to fit its preview contents.
-
-      v.1.0.0-preview.17
-      - Fix: In some cases, the uncaught (in promise) error "No .NET call dispatcher has been set" was shown in the browser's console.
-
-      v.1.0.0-preview.16
-      - Fix: The unhandled exception "Microsoft.JSInterop.JSException: SecurityError: Failed to execute 'pushState' on 'History'" was thrown in some cases.
-
-      v.1.0.0-preview.15
-      - Improve: the release note page shows the RELEASE-NOTES.txt at runtime with formatting
-
-      To see all the change logs, please visit the following URL.
-      - https://github.com/jsakamoto/BlazingStory/blob/main/RELEASE-NOTES.txt</releaseNotes>
+    <releaseNotes>$releaseNotes$</releaseNotes>
   </metadata>
   <files>
     <file src="..\assets\icon-128x128.png" target="nupkg-icon.png" />

@@ -25,6 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "README", "README", "{A55DF8
 		README.md = README.md
 		RELEASE-NOTES.txt = RELEASE-NOTES.txt
 		THIRD-PARTY-NOTICES.txt = THIRD-PARTY-NOTICES.txt
+		VersionInfo.props = VersionInfo.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazingStoryApp3", "Tests\Fixtures\BlazingStoryApp3\BlazingStoryApp3.csproj", "{29EA6AF2-00E2-439B-87AE-6DB18D4BF0B9}"

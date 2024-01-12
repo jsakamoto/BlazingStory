@@ -11,12 +11,9 @@
     <!--<IsTrimmable>true</IsTrimmable>-->
   </PropertyGroup>
 
+  <Import Project="../VersionInfo.props"/>
+
   <PropertyGroup>
-    <Version>1.0.0-preview.18</Version>
-    <Copyright>Copyright © 2023 J.Sakamoto, Mozilla Public License 2.0</Copyright>
-    <Authors>J.Sakamoto</Authors>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/jsakamoto/BlazingStory/</RepositoryUrl>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
     <Description>The clone of "Storybook" for Blazor, a frontend workshop for building UI components and pages in isolation.</Description>
     <PackageTags>blazor,storybook</PackageTags>
