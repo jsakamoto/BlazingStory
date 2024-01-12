@@ -43,6 +43,30 @@ const zoomPreviewFrame = (iframe: HTMLIFrameElement | null, getNextZoomLevel: (z
     style.zoom = '' + nextZoomLevel;
 }
 
+// Checks the '_dotnet_watch_ws_injected' property has been added to the window object,
+// indicating that the '_framework/aspnetcore-browser-refresh.js' script has been loaded.
+// see: https://github.com/dotnet/sdk/blob/12c083fc90700d3255cc021b665764876c5747fe/src/BuiltInTools/BrowserRefresh/WebSocketScriptInjection.js#L4
+const isDotnetWatchScriptInjected = (window: Window | null):boolean => {
+    const scriptInjectedSentinel = '_dotnet_watch_ws_injected';
+    return window?.hasOwnProperty(scriptInjectedSentinel) ?? false;
+}
+
+// Checks if hot reload is enabled by verifying if the dotnet watch script is injected in the current window.
+export const isHotReloadEnabled = ():boolean => {
+    return isDotnetWatchScriptInjected(window);
+}
+
+export const ensureDotnetWatchScriptInjected = (iframe: HTMLIFrameElement | null):void => {
+    if (iframe === null || iframe.contentWindow == null || iframe.contentDocument == null) return;
+    if (isDotnetWatchScriptInjected(iframe.contentWindow)) 
+        return; // Already injected
+
+    const script = iframe.contentDocument!.createElement('script');
+    script.src = '_framework/aspnetcore-browser-refresh.js';
+    iframe.contentDocument!.body.appendChild(script);
+}
+
+
 export const zoomInPreviewFrame = (iframe: HTMLIFrameElement | null) => zoomPreviewFrame(iframe, zoom => zoom * 1.25);
 
 export const zoomOutPreviewFrame = (iframe: HTMLIFrameElement | null) => zoomPreviewFrame(iframe, zoom => zoom / 1.25);

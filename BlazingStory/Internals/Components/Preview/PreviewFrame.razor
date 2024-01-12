@@ -2,7 +2,7 @@
 @inject IJSRuntime JSRuntime
 
 <div class="preview-frame">
-    <iframe id="@this._IframeElementId" @ref="_Iframe" src="@_InitialPreviewFrameUrl"></iframe>
+    <iframe id="@this._IframeElementId" @ref="_Iframe" src="@_InitialPreviewFrameUrl" @onload="OnPreviewIFrameLoaded"></iframe>
 </div>
 
 @code
@@ -34,7 +34,9 @@
 
     private readonly JSModule _JSModule;
 
-    private bool _AfterFirstRenderd = false;
+    private bool _AfterFirstRendered = false;
+
+    private bool _IsHotReloadEnabled = false;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PreviewFrame"/> class.
@@ -44,8 +46,9 @@
         this._JSModule = new(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        this._IsHotReloadEnabled = await this.IsHotReloadEnabled();
         this._InitialPreviewFrameUrl = this._CurrentPreviewFrameUrl = this.GetPreviewFrameUrl();
     }
 
@@ -54,20 +57,28 @@
         await this.UpdatePreviewFrameUrlAsync();
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
         this.StateHasChanged();
-        this._AfterFirstRenderd = true;
+        this._AfterFirstRendered = true;
     }
 
     private async ValueTask UpdatePreviewFrameUrlAsync()
     {
-        if (!this._AfterFirstRenderd) return;
+        if (!this._AfterFirstRendered) return;
         var nextPreviewFrameUrl = this.GetPreviewFrameUrl();
         if (this._CurrentPreviewFrameUrl == nextPreviewFrameUrl) return;
         this._CurrentPreviewFrameUrl = nextPreviewFrameUrl;
         await _JSModule.InvokeVoidAsync("navigatePreviewFrameTo", this._Iframe, nextPreviewFrameUrl);
+    }
+    
+    private async Task OnPreviewIFrameLoaded(ProgressEventArgs obj)
+    {
+        if (_IsHotReloadEnabled)
+        {
+            await EnsureDotnetWatchScriptInjected();
+        }
     }
 
     private string GetPreviewFrameUrl()
@@ -102,6 +113,16 @@
     internal async ValueTask ResetZoomAsync()
     {
         await this._JSModule.InvokeVoidAsync("resetZoomPreviewFrame", this._Iframe);
+    }
+
+    private async ValueTask EnsureDotnetWatchScriptInjected()
+    {
+        await this._JSModule.InvokeVoidAsync("ensureDotnetWatchScriptInjected", this._Iframe);
+    }
+
+    private async ValueTask<bool> IsHotReloadEnabled()
+    {
+        return await this._JSModule.InvokeAsync<bool>("isHotReloadEnabled");
     }
 
     public async ValueTask DisposeAsync()
