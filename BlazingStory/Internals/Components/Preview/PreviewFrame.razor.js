@@ -49,11 +49,10 @@ const isDotnetWatchScriptInjected = (window) => {
     const scriptInjectedSentinel = '_dotnet_watch_ws_injected';
     return (_a = window === null || window === void 0 ? void 0 : window.hasOwnProperty(scriptInjectedSentinel)) !== null && _a !== void 0 ? _a : false;
 };
-export const isHotReloadEnabled = () => {
-    return isDotnetWatchScriptInjected(window);
-};
 export const ensureDotnetWatchScriptInjected = (iframe) => {
     if (iframe === null || iframe.contentWindow == null || iframe.contentDocument == null)
+        return;
+    if (!isDotnetWatchScriptInjected(window))
         return;
     if (isDotnetWatchScriptInjected(iframe.contentWindow))
         return;

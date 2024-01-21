@@ -51,13 +51,10 @@ const isDotnetWatchScriptInjected = (window: Window | null):boolean => {
     return window?.hasOwnProperty(scriptInjectedSentinel) ?? false;
 }
 
-// Checks if hot reload is enabled by verifying if the dotnet watch script is injected in the current window.
-export const isHotReloadEnabled = ():boolean => {
-    return isDotnetWatchScriptInjected(window);
-}
-
 export const ensureDotnetWatchScriptInjected = (iframe: HTMLIFrameElement | null):void => {
     if (iframe === null || iframe.contentWindow == null || iframe.contentDocument == null) return;
+    if (!isDotnetWatchScriptInjected(window))
+        return; // Hot reloading is not available
     if (isDotnetWatchScriptInjected(iframe.contentWindow)) 
         return; // Already injected
 

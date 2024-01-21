@@ -36,8 +36,6 @@
 
     private bool _AfterFirstRendered = false;
 
-    private bool _IsHotReloadEnabled = false;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="PreviewFrame"/> class.
     /// </summary>
@@ -46,9 +44,8 @@
         this._JSModule = new(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        this._IsHotReloadEnabled = await this.IsHotReloadEnabled();
         this._InitialPreviewFrameUrl = this._CurrentPreviewFrameUrl = this.GetPreviewFrameUrl();
     }
 
@@ -57,7 +54,7 @@
         await this.UpdatePreviewFrameUrlAsync();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
         if (!firstRender) return;
         this.StateHasChanged();
@@ -72,13 +69,10 @@
         this._CurrentPreviewFrameUrl = nextPreviewFrameUrl;
         await _JSModule.InvokeVoidAsync("navigatePreviewFrameTo", this._Iframe, nextPreviewFrameUrl);
     }
-    
+
     private async Task OnPreviewIFrameLoaded(ProgressEventArgs obj)
     {
-        if (_IsHotReloadEnabled)
-        {
-            await EnsureDotnetWatchScriptInjected();
-        }
+        await EnsureDotnetWatchScriptInjected();
     }
 
     private string GetPreviewFrameUrl()
@@ -118,11 +112,6 @@
     private async ValueTask EnsureDotnetWatchScriptInjected()
     {
         await this._JSModule.InvokeVoidAsync("ensureDotnetWatchScriptInjected", this._Iframe);
-    }
-
-    private async ValueTask<bool> IsHotReloadEnabled()
-    {
-        return await this._JSModule.InvokeAsync<bool>("isHotReloadEnabled");
     }
 
     public async ValueTask DisposeAsync()
