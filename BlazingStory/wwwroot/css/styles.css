@@ -9,6 +9,7 @@
 .preferes-color-scheme-light {
   --bs-back-color: #f6f9fc;
   --bs-dimmed-back-color: #ecf4f9;
+  --bs-dimmed-neutral-back-color: #ecf4f9;
   --bs-accent-color: #029cfd;
   --bs-border-color: rgb(0 0 0 / 10%);
   --bs-border-shadow: var(--bs-border-color) 0 -1px 0 0 inset;
@@ -27,9 +28,11 @@
   --bs-sidebar-nav-active-back-color: #1ea7fd;
   --bs-focused-color: var(--bs-accent-color);
   --bs-focused-half-color: rgba(2, 156, 253, 0.15);
+  --bs-chevron-color: rgba(92,104,112,0.6);
   --bs-toolbar-back-color: #fff;
   --bs-add-on-panel-back-color: #fff;
   --bs-add-on-panel-border-color: #e6e6e6;
+  --bs-add-on-panel-badge-shadow: inset 0 0 0 1px rgba(92,104,112,0.1);
   --bs-inputs-background: #fff;
   --bs-inputs-text-color: var(--bs-text-color);
   --bs-inputs-box-shadow: hsla(203, 50%, 30%, 0.2) 0 0 0 1px inset;
@@ -37,7 +40,7 @@
   --bs-icon-folder-color: #2a0481;
   --bs-icon-story-container-color: var(--bs-accent-color);
   --bs-icon-story-color: #37d5d3;
-  --bs-icon-document-color: #ffae00;
+  --bs-icon-document-color: #ff8300;
   --bs-keymap-text-color: #5c6870;
   --bs-keymap-back-color: rgba(0,0,0,0.05);
   --bs-button-flagged-back-color: rgba(2, 156, 253, 0.07);
@@ -59,6 +62,7 @@
 .preferes-color-scheme-dark {
   --bs-back-color: #222425;
   --bs-dimmed-back-color: #222425;
+  --bs-dimmed-neutral-back-color: #ecf4f9;
   --bs-accent-color: #029cfd;
   --bs-border-color: rgb(255 255 255 / 10%);
   --bs-border-shadow: var(--bs-border-color) 0 -1px 0 0 inset;
@@ -77,9 +81,11 @@
   --bs-sidebar-nav-active-back-color: #1ea7fd;
   --bs-focused-color: var(--bs-accent-color);
   --bs-focused-half-color: rgba(2, 156, 253, 0.15);
+  --bs-chevron-color: rgba(121,129,134,0.6);
   --bs-toolbar-back-color: #292c2e;
   --bs-add-on-panel-back-color: #1b1c1d;
   --bs-add-on-panel-border-color: #27292a;
+  --bs-add-on-panel-badge-shadow: none;
   --bs-inputs-background: #1b1c1d;
   --bs-inputs-text-color: #fff;
   --bs-inputs-box-shadow: hsla(203, 50%, 30%, 0.2) 0 0 0 1px inset;
@@ -87,7 +93,7 @@
   --bs-icon-folder-color: #ff4785;
   --bs-icon-story-container-color: var(--bs-accent-color);
   --bs-icon-story-color: #37d5d3;
-  --bs-icon-document-color: #ff8300;
+  --bs-icon-document-color: #ffae00;
   --bs-keymap-text-color: #798186;
   --bs-keymap-back-color: rgba(255,255,255,0.05);
   --bs-button-flagged-back-color: rgba(2, 156, 253, 0.07);
@@ -536,7 +542,7 @@ button {
   text-decoration: none;
 }
 .navigation-tree .caption .action .icon {
-  margin: 1px 0 0 3px;
+  margin: 1px 0 0 2px;
 }
 .navigation-tree .caption .action:hover, .navigation-tree .caption button.action:focus {
   background-color: var(--bs-hover-light-back-color);
@@ -557,7 +563,7 @@ button {
   width: 0;
   height: 0;
   margin: 0 2px 0 10px;
-  color: rgba(153, 153, 153, 0.6);
+  color: var(--bs-chevron-color);
   border-top: 3px solid transparent;
   border-bottom: 3px solid transparent;
   border-left: 3px solid;
@@ -626,6 +632,8 @@ button {
   visibility: hidden;
 }
 .navigation-tree .sub-heading-action svg {
+  width: calc(var(--bs-svg-icon-size) - 2px);
+  height: calc(var(--bs-svg-icon-size) - 2px);
   color: var(--bs-dimmed-text-color);
   margin: 0;
 }
@@ -692,6 +700,8 @@ button {
 }
 
 button.tab-button {
+  display: flex;
+  align-items: center;
   font-size: 13px;
   font-weight: bold;
   height: 40px;
@@ -715,13 +725,13 @@ span.toolbar-separator {
 }
 
 svg.svg-icon {
-  --bs-svg-icon-size: 12px;
+  --bs-svg-icon-size: 14px;
   display: inline-block;
   width: var(--bs-svg-icon-size);
   height: var(--bs-svg-icon-size);
   padding: 1px;
   margin-top: 3px;
-  margin-right: 5px;
+  margin-right: 4px;
   fill: currentColor;
 }
 
@@ -802,7 +812,7 @@ svg.svg-icon {
 }
 
 a.icon-button {
-  padding-top: 3px;
+  padding-top: 1px;
 }
 
 .square-button {
@@ -1106,6 +1116,18 @@ a.icon-button {
 
 .add-on-panel {
   overflow: hidden;
+}
+.add-on-panel .badge {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 4px 12px;
+  border-radius: 3em;
+  font-size: 11px;
+  line-height: 12px;
+  text-align: center;
+  background-color: var(--bs-dimmed-neutral-back-color);
+  color: var(--bs-dimmed-text-color);
+  box-shadow: var(--bs-add-on-panel-badge-shadow);
 }
 
 .add-on-panel-content {

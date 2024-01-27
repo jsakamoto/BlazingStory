@@ -3,6 +3,7 @@
     $back-color: #f6f9fc;
     --bs-back-color: #{$back-color};
     --bs-dimmed-back-color: #ecf4f9;
+    --bs-dimmed-neutral-back-color: #ecf4f9;
     $accent-color: #029cfd;
     --bs-accent-color: #{$accent-color};
     --bs-border-color: rgb(0 0 0 / 10%);
@@ -26,11 +27,13 @@
     --bs-sidebar-nav-active-back-color: #1ea7fd;
     --bs-focused-color: var(--bs-accent-color);
     --bs-focused-half-color: #{rgba($accent-color, 0.15)};
+    --bs-chevron-color: rgba(92,104,112,0.6);
     // tool bar
     --bs-toolbar-back-color: #fff;
     // add-on panel
     --bs-add-on-panel-back-color: #fff;
     --bs-add-on-panel-border-color: #e6e6e6;
+    --bs-add-on-panel-badge-shadow: inset 0 0 0 1px rgba(92,104,112,0.1);
     // inputs
     --bs-inputs-background: #fff;
     --bs-inputs-text-color: var(--bs-text-color);
@@ -40,7 +43,7 @@
     --bs-icon-folder-color: #2a0481;
     --bs-icon-story-container-color: var(--bs-accent-color);
     --bs-icon-story-color: #37d5d3;
-    --bs-icon-document-color: #ffae00;
+    --bs-icon-document-color: #ff8300;
     --bs-keymap-text-color: #5c6870;
     --bs-keymap-back-color: rgba(0,0,0,0.05);
     // buttons

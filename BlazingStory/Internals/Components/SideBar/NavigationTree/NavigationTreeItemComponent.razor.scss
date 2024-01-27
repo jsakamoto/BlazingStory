@@ -27,7 +27,7 @@
             text-decoration: none;
 
             .icon {
-                margin: 1px 0 0 3px;
+                margin: 1px 0 0 2px;
             }
         }
 
@@ -60,7 +60,7 @@
         width: 0;
         height: 0;
         margin: 0 2px 0 10px;
-        color: rgba(153,153,153,0.6);
+        color: var(--bs-chevron-color);
         border-top: 3px solid transparent;
         border-bottom: 3px solid transparent;
         border-left: 3px solid;
@@ -147,6 +147,8 @@
         visibility: hidden;
 
         svg {
+            width: calc(var(--bs-svg-icon-size) - 2px);
+            height: calc(var(--bs-svg-icon-size) - 2px);
             color: var(--bs-dimmed-text-color);
             margin: 0;
         }
