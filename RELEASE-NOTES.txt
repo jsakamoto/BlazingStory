@@ -1,3 +1,6 @@
+v.1.0.0-preview.19
+- [Preview feature] Hot Reloading is now available when you opt out of it. (Please remember that Hot Reloading on Blazing Story is still preview and not stable at all.)
+
 v.1.0.0-preview.18
 - Improve: The height of preview frames on the "Docs" page will be adjusted automatically to fit its preview contents.
 

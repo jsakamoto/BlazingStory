@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
-    <Version>1.0.0-preview.18</Version>
-    <Copyright>Copyright © 2023 J.Sakamoto, Mozilla Public License 2.0</Copyright>
+    <Version>1.0.0-preview.19</Version>
+    <Copyright>Copyright © 2023-2024 J.Sakamoto, Mozilla Public License 2.0</Copyright>
     <Authors>J.Sakamoto</Authors>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/jsakamoto/BlazingStory/</RepositoryUrl>

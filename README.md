@@ -409,8 +409,25 @@ If you want to only customize the logo icon or the URL of the link, not want to 
 ![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/customize-brand-logo-icon.png)
 
 > **Note**  
-> The `BrandLogo` component uses the `Title` parameter of the `BlazingStoryApp` component by default for rendering the title text inside it. But if the `BrandLogo` component's `Title' parameter is specified, the `BrandLogo` component uses it rather than the `Title` parameter of the `BlazingStoryApp` component.
+> The `BrandLogo` component uses the `Title` parameter of the `BlazingStoryApp` component by default for rendering the title text inside it. But if the `BrandLogo` component's `Title` parameter is specified, the `BrandLogo` component uses it rather than the `Title` parameter of the `BlazingStoryApp` component.
 
+## 🔥 Hot Reloading [Preview] [Unstable]
+
+Unfortunately, the hot reloading feature won't work well on the "Blazing Story". Now, contributors are working on enabling the hot reloading feature for Blazing Story, but it is not completed yet.
+
+However, if you want to try it, you can do that by setting the `EnableHotReloading` parameter of the `BlazingStoryApp` component to `true` explicitly in your `App.razor` file.
+
+```html
+<BlazingStoryApp EnableHotReloading="true">
+    <!-- ... -->
+</BlazingStoryApp>
+```
+
+After doing that, you will see the changes you made in the "stories" files, and component library projects will be reflected in the preview area of "Blazing Story" without restarting the app.
+
+But please remember that it is really unstable. In our experience, it doesn't work on a "Doc" page. Visiting a "Doc" page often stops the entire "Blazing Story" app. Once it happens, there is no way to recover it except to re-launch the app as far as we know (when you use the `dotnet watch` command, hit Ctrl + R).
+
+Therefore, the hot reloading feature is still a preview feature. We are working on it, but we cannot guarantee that it will work well in the future.
 
 ## 📌 System Requirements
 
@@ -429,14 +446,11 @@ However, on the "Blazing Story" side, Blazor application developers can get a St
 
 ## 🤔 Frequently Asked Questions
 
-**Q1:** Hot reloading and `dotnet watch` doesn't work.  
-**A1:** Sorry for that. I want to manage to be available for hot reloading eventually.
+**Q1:** Can I add a project reference of a Blazor application project, not a Razor Class Library project, to a Blazing Story app project?  
+**A1:** Currently, you can't. I'm considering making it be able to do it in the future.
 
-**Q2:** Can I add a project reference of a Blazor application project, not a Razor Class Library project, to a Blazing Story app project?  
-**A2:** Currently, you can't. I'm considering making it be able to do it in the future.
-
-**Q3:** How can I write or configure addons?  
-**A3:** You can't do that for now because the addon architecture is not completed yet. I'll finish it in the future version.
+**Q2:** How can I write or configure addons?  
+**A2:** You can't do that for now because the addon architecture is not completed yet. I'll finish it in the future version.
 
 ## 🎉 Release Notes
 
