@@ -11,7 +11,7 @@ namespace BlazingStory.Test._Fixtures;
 
 internal static class TestHelper
 {
-    internal static readonly RenderFragment<Types.StoryContext> EmptyFragment = ctx => ((RenderTreeBuilder _) => { });
+    internal static readonly RenderFragment<BlazingStory.Types.StoryContext> EmptyFragment = ctx => ((RenderTreeBuilder _) => { });
 
     internal static StoriesRazorDescriptor Descriptor(string title)
     {
@@ -20,18 +20,18 @@ internal static class TestHelper
 
     internal static class StoryContext
     {
-        internal static Types.StoryContext CreateEmpty() => new(Enumerable.Empty<ComponentParameter>());
+        internal static BlazingStory.Types.StoryContext CreateEmpty() => new(Enumerable.Empty<ComponentParameter>());
     }
 
-    internal static IEnumerable<StoryContainer> GetExampleStories1(IServiceProvider services) => new StoryContainer[] {
-            new(typeof(Button), null, new(typeof(Button_stories), new("Examples/Button")), services) { Stories = {
-                new(Descriptor("Examples/Button"), "Default Button", StoryContext.CreateEmpty(), null, null, TestHelper.EmptyFragment),
-                new(Descriptor("Examples/Button"), "Primary Button", StoryContext.CreateEmpty(), null, null, TestHelper.EmptyFragment),
-            }},
-            new(typeof(Button), null, new(typeof(Select_stories), new("Examples/Select")), services) { Stories = {
-                new(Descriptor("Examples/Select"), "Select", StoryContext.CreateEmpty(), null, null, TestHelper.EmptyFragment),
-            }}
-        };
+    internal static IEnumerable<StoryContainer> GetExampleStories1(IServiceProvider services) => [
+        new(typeof(Button), null, new(typeof(Button_stories), new("Examples/Button")), services) { Stories = {
+            new(Descriptor("Examples/Button"), "Default Button", StoryContext.CreateEmpty(), null, null, TestHelper.EmptyFragment),
+            new(Descriptor("Examples/Button"), "Primary Button", StoryContext.CreateEmpty(), null, null, TestHelper.EmptyFragment),
+        }},
+        new(typeof(Button), null, new(typeof(Select_stories), new("Examples/Select")), services) { Stories = {
+            new(Descriptor("Examples/Select"), "Select", StoryContext.CreateEmpty(), null, null, TestHelper.EmptyFragment),
+        }}
+    ];
 
     internal static void XProcessOptions(XProcessOptions options)
     {

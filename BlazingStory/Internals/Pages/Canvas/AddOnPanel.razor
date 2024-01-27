@@ -3,7 +3,7 @@
     <ToolBar>
         <TabButtonGroup>
             <TabButton Active="true">
-                Controls <span class="badge">@this.GetParametersCount()</span>
+                Controls <span class="badge">@this.Story?.Context.GetNoEventParameterCount()</span>
             </TabButton>
 
             @* TODO: Not implemented yet. *@
@@ -53,12 +53,5 @@
     protected override void OnInitialized()
     {
         this._Commands = this.Services.GetRequiredService<CommandService>();
-    }
-
-    private int GetParametersCount()
-    {
-        return this.Story?.Context.Parameters
-            .Where(p => p.Name != "EventCallback" && !p.Name.StartsWith("EventCallback`"))
-            .Count() ?? 0;
     }
 }

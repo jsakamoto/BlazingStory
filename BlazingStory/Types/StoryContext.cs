@@ -1,4 +1,5 @@
 using BlazingStory.Internals.Models;
+using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Types;
 
@@ -22,6 +23,17 @@ public class StoryContext
     internal StoryContext(IEnumerable<ComponentParameter> parameters)
     {
         this.Parameters = parameters;
+    }
+
+    /// <summary>
+    /// Get the number of parameters that are not event parameters.
+    /// </summary>
+    internal int GetNoEventParameterCount()
+    {
+        return this.Parameters
+            .Select(p => p.GetParameterTypeStrings().FirstOrDefault())
+            .Where(typeString => (typeString != nameof(EventCallback)) && (typeString?.StartsWith(nameof(EventCallback) + "<") == false))
+            .Count();
     }
 
     internal void InitArgument(string name, object? value)

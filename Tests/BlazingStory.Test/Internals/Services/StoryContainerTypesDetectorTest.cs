@@ -15,10 +15,10 @@ internal class StoriesRazorDetectorTest
     [Test]
     public void Detect_Test()
     {
-        var typeOfStoriesRazors = StoriesRazorDetector.Detect(new[] {
+        var typeOfStoriesRazors = StoriesRazorDetector.Detect([
             typeof(BlazingStoryApp1.App).Assembly,
             typeof(BlazingStoryApp2.App).Assembly,
-        });
+        ]);
 
         typeOfStoriesRazors
             .Select(c => $"{c.StoriesAttribute.Title},{c.TypeOfStoriesRazor.FullName}")
