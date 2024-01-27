@@ -115,6 +115,12 @@
     [Parameter]
     public AvailableColorSchemes AvailableColorSchemes { get; set; } = AvailableColorSchemes.Both;
 
+    /// <summary>
+    /// [Preview feature] Gets or sets whether to enable hot reloading. (default: false)
+    /// </summary>
+    [Parameter]
+    public bool EnableHotReloading { get; set; }
+
     private AvailableColorSchemes _PrevAvailableColorSchemes = AvailableColorSchemes.Both;
 
     private readonly StoriesStore _StoriesStore = new();
@@ -134,6 +140,8 @@
     private string _PreferesColorScheme = "light";
 
     private int _PreferesColorSchemeChangeSubscribeId = 0;
+
+    private readonly BlazingStoryOptions _Options = new();
 
     public BlazingStoryApp()
     {
@@ -169,12 +177,15 @@
             .AddSingleton<NavigationService>()
             .AddSingleton<AddonsStore>(_ => this._AddonsStore)
             .AddSingleton<IXmlDocComment, XmlDocCommentForWasm>()
+            .AddSingleton<BlazingStoryOptions>(_ => this._Options)
             .BuildServiceProvider();
     }
 
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
+
+        this._Options.EnableHotReloading = this.EnableHotReloading;
 
         if (this.AvailableColorSchemes != this._PrevAvailableColorSchemes)
         {

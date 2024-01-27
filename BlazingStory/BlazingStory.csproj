@@ -11,7 +11,7 @@
     <!--<IsTrimmable>true</IsTrimmable>-->
   </PropertyGroup>
 
-  <Import Project="../VersionInfo.props"/>
+  <Import Project="../VersionInfo.props" />
 
   <PropertyGroup>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>

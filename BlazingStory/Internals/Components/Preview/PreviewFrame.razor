@@ -19,6 +19,9 @@
     [Parameter]
     public IReadOnlyDictionary<string, object?>? Globals { get; set; }
 
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
     private readonly string _IframeElementId = "F" + Guid.NewGuid().ToString();
 
     /// <summary>
@@ -72,7 +75,11 @@
 
     private async Task OnPreviewIFrameLoaded(ProgressEventArgs obj)
     {
-        await EnsureDotnetWatchScriptInjected();
+        var options = Services.GetRequiredService<BlazingStoryOptions>();
+        if (options.EnableHotReloading)
+        {
+            await EnsureDotnetWatchScriptInjected();
+        }
     }
 
     private string GetPreviewFrameUrl()
