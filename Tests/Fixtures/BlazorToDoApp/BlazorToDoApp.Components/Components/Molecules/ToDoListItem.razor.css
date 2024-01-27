@@ -1,0 +1,15 @@
+﻿.todo-list-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+    .todo-list-item.done .todo-list-item-title {
+        text-decoration: line-through;
+        color: var(--text-muted);
+    }
+
+    .todo-list-item .todo-list-item-title {
+        flex: 1;
+    }

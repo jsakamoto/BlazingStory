@@ -1,0 +1,21 @@
+﻿@attribute [Stories("Components/Templates/ToDoList")]
+
+@{
+    var items = new ToDoItem[]
+    {
+        new(){ Id = 0, Title = "remember milk", IsDone = false },
+        new(){ Id = 1, Title = "remember eggs", IsDone = true },
+    };
+}
+
+<Stories TComponent="ToDoList">
+
+    <Story Name="Default">
+        <Template>
+            <ToDoList Items="items" @attributes="context.Args">
+            </ToDoList>
+        </Template>
+    </Story>
+
+</Stories>
+

@@ -1,0 +1,23 @@
+﻿@attribute [Stories("Components/atoms/IconButton")]
+
+<Stories TComponent="IconButton">
+
+    <ArgType For="_ => _.Icon" Control="ControlType.Select" />
+    <ArgType For="_ => _.Type" Control="ControlType.Select" />
+    <ArgType For="_ => _.Color" Control="ControlType.Color" />
+
+    <Story Name="Default">
+
+        <Arguments>
+            <Arg For="_ => _.Icon" Value="Icon.Add" />
+            <Arg For="_ => _.Type" Value="ButtonType.Button" />
+        </Arguments>
+
+        <Template>
+            <IconButton @attributes="context.Args">
+            </IconButton>
+        </Template>
+
+    </Story>
+
+</Stories>

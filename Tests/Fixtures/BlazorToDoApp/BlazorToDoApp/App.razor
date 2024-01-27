@@ -1,0 +1,33 @@
+﻿<div class="todo-app">
+    <h1>To Do List</h1>
+
+    <ToDoList Items="toDoItems" OnClickDone="OnClickDone" OnClickRemove="OnClickRemove" />
+
+    <NewToDoForm OnClickAdd="OnClickAdd" />
+
+</div>
+
+@code
+{
+    private readonly List<ToDoItem> toDoItems = new();
+
+    private void OnClickAdd(string title)
+    {
+        var nextId = toDoItems.Select(x => x.Id).DefaultIfEmpty(0).Max() + 1;
+        toDoItems.Add(new ToDoItem { Id = nextId, Title = title });
+    }
+
+    private void OnClickDone(int id)
+    {
+        var item = toDoItems.FirstOrDefault(x => x.Id == id);
+        if (item == null) return;
+        item.IsDone = !item.IsDone;
+    }
+
+    private void OnClickRemove(int id)
+    {
+        var item = toDoItems.FirstOrDefault(x => x.Id == id);
+        if (item == null) return;
+        toDoItems.Remove(item);
+    }
+}

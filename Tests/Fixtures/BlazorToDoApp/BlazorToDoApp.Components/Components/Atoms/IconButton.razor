@@ -1,0 +1,31 @@
+<button class="icon-button" type="@Type.ToString().ToLower()"
+    style="@(Color == null ? "" : ("background-color: " + Color));" @onclick="@OnClick">
+    <span class="material-icons">@Icon.ToString().ToLower()</span>
+</button>
+
+@code
+{
+    /// <summary>
+    /// 表示するアイコンの種類を取得または設定します。
+    /// </summary>
+    [Parameter, EditorRequired]
+    public Icon Icon { get; set; } = Icon.Add;
+
+    /// <summary>
+    /// このコンポーネントがレンダリングする button 要素の type 属性に設定するボタン種別を取得または設定します。
+    /// </summary>
+    [Parameter]
+    public ButtonType Type { get; set; } = ButtonType.Button;
+
+    /// <summary>
+    /// ボタンの背景色を HTML のカラーコード指定で取得または設定します。
+    /// </summary>
+    [Parameter]
+    public string? Color { get; set; }
+
+    /// <summary>
+    /// ボタンがクリックされたときに呼び出されるコールバックを取得または設定します。
+    /// </summary>
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+}

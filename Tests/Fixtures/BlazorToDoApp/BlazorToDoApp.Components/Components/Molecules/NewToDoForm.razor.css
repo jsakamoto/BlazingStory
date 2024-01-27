@@ -1,0 +1,21 @@
+﻿.new-todo-form ::deep form {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+    .new-todo-form ::deep form .input-field {
+        flex: 1;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .new-todo-form ::deep form .input-field input {
+            margin-top: 5px;
+        }
+
+        .new-todo-form ::deep form .validation-message {
+            color: red;
+        }

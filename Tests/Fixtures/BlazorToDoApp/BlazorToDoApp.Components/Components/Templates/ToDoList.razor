@@ -1,0 +1,30 @@
+@if (Items != null)
+{
+    <div class="todo-list">
+        @foreach (var toDoItem in Items)
+        {
+            <ToDoListItem @key="toDoItem.Id" Item="toDoItem" OnClickDone="OnClickDone" OnClickRemove="OnClickRemove" />
+        }
+    </div>
+}
+
+@code
+{
+    /// <summary>
+    /// 表示する ToDo アイテムのコレクションを取得または設定します。
+    /// </summary>
+    [Parameter, EditorRequired]
+    public IEnumerable<ToDoItem>? Items { get; set; }
+
+    /// <summary>
+    /// ToDo の完了状態が変更されたときに、その ToDo アイテムの Id を引数に呼び出されるコールバックを取得または設定します。
+    /// </summary>
+    [Parameter]
+    public EventCallback<int> OnClickDone { get; set; }
+
+    /// <summary>
+    /// ToDo の削除ボタンがクリックされたときに、その ToDo アイテムの Id を引数に呼び出されるコールバックを取得または設定します。
+    /// </summary>
+    [Parameter]
+    public EventCallback<int> OnClickRemove { get; set; }
+}

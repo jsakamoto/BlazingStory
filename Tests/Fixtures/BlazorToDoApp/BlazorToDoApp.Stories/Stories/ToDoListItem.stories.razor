@@ -1,0 +1,24 @@
+﻿@attribute [Stories("Components/Molecules/ToDoListItem")]
+
+@{
+    var itemA = new ToDoItem { Id = 0, Title = "title", IsDone = false };
+    var itemB = new ToDoItem { Id = 0, Title = "title", IsDone = true };
+}
+
+<Stories TComponent="ToDoListItem">
+
+    <Story Name="Default">
+        <Template>
+            <ToDoListItem Item="itemA" @attributes="context.Args">
+            </ToDoListItem>
+        </Template>
+    </Story>
+
+    <Story Name="Done">
+        <Template>
+            <ToDoListItem Item="itemB" @attributes="context.Args">
+            </ToDoListItem>
+        </Template>
+    </Story>
+
+</Stories>

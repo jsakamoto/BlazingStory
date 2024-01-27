@@ -1,0 +1,29 @@
+@if (Item != null)
+{
+    <div class="@("todo-list-item" + (Item.IsDone ? " done" : "" ))">
+        <input type="checkbox" checked="@Item.IsDone" @onchange="@(() => OnClickDone.InvokeAsync(Item.Id))" />
+        <span class="todo-list-item-title">@Item.Title</span>
+        <IconButton Icon="Icon.Delete" OnClick="@(() => OnClickRemove.InvokeAsync(Item.Id))" />
+    </div>
+}
+
+@code
+{
+    /// <summary>
+    /// 表示する ToDo アイテムを取得または設定します。
+    /// </summary>
+    [Parameter, EditorRequired]
+    public ToDoItem? Item { get; set; }
+
+    /// <summary>
+    /// ToDo の完了状態が変更されたときに、その ToDo アイテムの Id を引数に呼び出されるコールバックを取得または設定します。
+    /// </summary>
+    [Parameter]
+    public EventCallback<int> OnClickDone { get; set; }
+
+    /// <summary>
+    /// ToDo の削除ボタンがクリックされたときに、その ToDo アイテムの Id を引数に呼び出されるコールバックを取得または設定します。
+    /// </summary>
+    [Parameter]
+    public EventCallback<int> OnClickRemove { get; set; }
+}

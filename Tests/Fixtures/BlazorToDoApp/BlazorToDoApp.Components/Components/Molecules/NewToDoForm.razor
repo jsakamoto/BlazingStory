@@ -1,0 +1,27 @@
+<div class="new-todo-form">
+    <EditForm Model="toDoItem" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <div class="input-field">
+            <InputText autofocus placeholder='to do' @bind-Value="toDoItem.Title" />
+            <ValidationMessage For="@(() => toDoItem.Title)" />
+        </div>
+        <IconButton Icon="Icon.Add" Type="ButtonType.Submit" />
+    </EditForm>
+</div>
+
+@code
+{
+    private readonly ToDoItem toDoItem = new();
+
+    /// <summary>
+    /// 追加ボタンがクリックされたときに、ToDo のタイトル文字列を引数に呼び出されるコールバックを取得または設定します。
+    /// </summary>
+    [Parameter]
+    public EventCallback<string> OnClickAdd { get; set; }
+
+    private async Task OnValidSubmit()
+    {
+        await OnClickAdd.InvokeAsync(toDoItem.Title);
+        toDoItem.Title = "";
+    }
+}
