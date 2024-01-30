@@ -1,3 +1,5 @@
+@using BlazingStory.Internals.Pages.Canvas.ParameterControllers
+
 <div class="controls-panel">
     <table>
         <thead>
@@ -53,65 +55,10 @@
                     }
 
                     <td class="control">
-
-                        @if (parameter.Type == typeof(string))
-                        {
-                            if (parameter.Control is ControlType.Color)
-                            {
-                                var colorValue = (argumentValue ?? parameter.DefaultValue) as string;
-                                <ColorInput Value="@colorValue" PlaceHolder="Choose color..." OnInput="@((args) => OnInputAsync(args.Value, parameter))" />
-                            }
-                            else
-                            {
-                                <TextArea PlaceHolder="Edit string..." Value="@(argumentValue as string)" OnInput="@((args) => OnInputAsync(args.Value, parameter))" />
-                            }
-                        }
-
-                        else if (parameter.Type == typeof(bool))
-                        {
-                            if (argumentValue == null)
-                            {
-                                <SquareButton Text="Set boolean" OnClick="@(() => OnInputAsync(false, parameter))" />
-                            }
-                            else
-                            {
-                                var boolValue = (bool)argumentValue;
-                                <ToggleButton Value="boolValue" OnChange="@(() => OnInputAsync(!boolValue, parameter))" />
-                            }
-                        }
-
-                        else if (parameter.Type == typeof(int))
-                        {
-                            if (argumentValue == null)
-                            {
-                                <SquareButton Text="Set number" OnClick="@(() => OnInputAsync(0, parameter))" />
-                            }
-                            else
-                            {
-                                var numValue = (int)argumentValue;
-                                <NumberInput Value="numValue" PlaceHolder="Edit number..." OnInput="@((arg) => int.TryParse(arg.Value?.ToString(), out var n) ? OnInputAsync(n, parameter) : Task.CompletedTask)" />
-                            }
-                        }
-
-                        else if (parameter.Type.IsEnum)
-                        {
-                            var enumValues = Enum.GetValues(parameter.Type);
-                            if (parameter.Control is ControlType.Select)
-                            {
-                                <Select Value="argumentValue" Items="enumValues" OnChange="@((arg) => Enum.TryParse(parameter.Type,arg.Value as string, out var enumValue)? OnInputAsync(enumValue, parameter) : Task.CompletedTask)" />
-                            }
-                            else
-                            {
-                                <RadioGroup Name="@key" Value="argumentValue" Items="enumValues" OnChange="@((arg) => Enum.TryParse(parameter.Type,arg.Value as string, out var enumValue)? OnInputAsync(enumValue, parameter) : Task.CompletedTask)" />
-                            }
-                        }
-
-                        else
-                        {
-                            <span>
-                                @(argumentValue?.ToString() ?? "-")
-                            </span>
-                        }
+                        <ParameterControlPanel Key="@key"
+                                               Parameter="@parameter"
+                                               Value="argumentValue"
+                                               OnInput="(args) => OnInputAsync(args.Value, args.Parameter)" />
                     </td>
                 </tr>
             }

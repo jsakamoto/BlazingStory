@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Internals.Models;
 
-internal class ComponentParameter
+public class ComponentParameter
 {
     private readonly Type _ComponentType;
 
@@ -45,7 +45,7 @@ internal class ComponentParameter
     internal IEnumerable<string> GetParameterTypeStrings() => TypeUtility.GetTypeDisplayText(this.Type);
 }
 
-internal static class ComponentParameterExtensoins
+internal static class ComponentParameterExtensions
 {
     public static bool TryGetByName(this IEnumerable<ComponentParameter> componentParameters, string name, [NotNullWhen(true)] out ComponentParameter? parameter)
     {
