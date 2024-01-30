@@ -1,0 +1,13 @@
+@inherits ParameterControllerBase
+
+@{
+    var enumValues = Enum.GetValues(Parameter?.Type ?? throw new NullReferenceException("Parameter is null"));
+}
+@if (Parameter.Control is ControlType.Select)
+{
+    <Select Value="Value" Items="enumValues" OnChange="@((arg) => Enum.TryParse(Parameter.Type,arg.Value as string, out var enumValue)? OnInputAsync(enumValue) : Task.CompletedTask)" />
+}
+else
+{
+    <RadioGroup Name="@Key" Value="Value" Items="enumValues" OnChange="@((arg) => Enum.TryParse(Parameter.Type,arg.Value as string, out var enumValue)? OnInputAsync(enumValue) : Task.CompletedTask)" />
+}

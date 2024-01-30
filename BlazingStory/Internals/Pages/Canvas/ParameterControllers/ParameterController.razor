@@ -1,0 +1,37 @@
+@using BlazingStory.Internals.Pages.Canvas.ParameterControllers.Controllers
+
+@if (Parameter?.Type == typeof(string))
+{
+    <TextParameterController Key="@Key" Parameter="@Parameter" Value="Value" OnInput="OnInput" />
+}
+else if (Parameter?.Type == typeof(bool))
+{
+    <BoolParameterController Key="@Key" Parameter="@Parameter" Value="Value" OnInput="OnInput" />
+}
+else if (Parameter?.Type == typeof(int))
+{
+    <NumberParameterController Key="@Key" Parameter="@Parameter" Value="Value" OnInput="OnInput" />
+}
+else if (Parameter?.Type.IsEnum == true)
+{
+    <EnumParameterController Key="@Key" Parameter="@Parameter" Value="Value" OnInput="OnInput" />
+}
+else
+{
+    <span>@(Value?.ToString() ?? "-")</span>
+}
+
+@code
+{
+    [Parameter, EditorRequired]
+    public string? Key { get; set; }
+
+    [Parameter, EditorRequired]
+    public ComponentParameter? Parameter { get; set; }
+
+    [Parameter, EditorRequired]
+    public object? Value { get; set; }
+
+    [Parameter]
+    public EventCallback<ParameterInputEventArgs> OnInput { get; set; }
+}

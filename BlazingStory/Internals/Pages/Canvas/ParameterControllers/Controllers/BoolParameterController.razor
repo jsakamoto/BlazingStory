@@ -1,0 +1,11 @@
+@inherits ParameterControllerBase
+
+@if (Value == null)
+{
+    <SquareButton Text="Set boolean" OnClick="@(() => OnInputAsync(false))" />
+}
+else
+{
+    var boolValue = (bool)Value;
+    <ToggleButton Value="boolValue" OnChange="@(() => OnInputAsync(!boolValue))" />
+}

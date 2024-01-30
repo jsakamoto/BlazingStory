@@ -1,0 +1,11 @@
+@inherits ParameterControllerBase
+
+@if (Value == null)
+{
+    <SquareButton Text="Set number" OnClick="@(() => OnInputAsync(0))" />
+}
+else
+{
+    var numValue = (int)Value;
+    <NumberInput Value="numValue" PlaceHolder="Edit number..." OnInput="@((arg) => int.TryParse(arg.Value?.ToString(), out var n) ? OnInputAsync(n) : Task.CompletedTask)" />
+}

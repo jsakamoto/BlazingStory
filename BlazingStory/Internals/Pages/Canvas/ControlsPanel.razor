@@ -55,10 +55,10 @@
                     }
 
                     <td class="control">
-                        <ParameterControlPanel Key="@key"
-                                               Parameter="@parameter"
-                                               Value="argumentValue"
-                                               OnInput="(args) => OnInputAsync(args.Value, args.Parameter)" />
+                        <ParameterController Key="@key"
+                                             Parameter="@parameter"
+                                             Value="argumentValue"
+                                             OnInput="(args) => OnInputAsync(args.Value, args.Parameter)" />
                     </td>
                 </tr>
             }
