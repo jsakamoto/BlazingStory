@@ -45,7 +45,7 @@
         }
       ],
       "replaces": "net7.0",
-      "defaultValue": "net7.0"
+      "defaultValue": "net8.0"
     },
     "kestrelHttpPort": {
       "type": "parameter",
