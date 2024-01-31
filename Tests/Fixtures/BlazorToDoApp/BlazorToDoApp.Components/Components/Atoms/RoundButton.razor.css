@@ -1,0 +1,11 @@
+﻿button {
+    padding: 12px 24px;
+    margin: 0;
+    min-width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: royalblue;
+}

@@ -110,52 +110,12 @@ else
         {
             var parameter = parameters.FirstOrDefault(p => p.Name == arg.Key);
             if (parameter == null) continue;
-            if (!this.TryConvertType(parameter.Type, arg.Value, out var value)) continue;
+            if (!TypeUtility.TryConvertType(parameter.Type, arg.Value, out var value)) continue;
 
             await this._Story.Context.AddOrUpdateArgumentAsync(arg.Key, value);
         }
         this.StateHasChanged();
     }
-
-    private bool TryConvertType(Type targetType, string valueString, [NotNullWhen(true)] out object? value)
-    {
-        if (targetType == typeof(string))
-        {
-            value = valueString;
-            return true;
-        }
-
-        else if (targetType == typeof(bool))
-        {
-            if (bool.TryParse(valueString, out var boolValue))
-            {
-                value = boolValue;
-                return true;
-            }
-        }
-
-        else if (targetType == typeof(int))
-        {
-            if (int.TryParse(valueString, out var numValue))
-            {
-                value = numValue;
-                return true;
-            }
-        }
-
-        else if (targetType.IsEnum)
-        {
-            if (Enum.TryParse(targetType, valueString, out var enumValue))
-            {
-                value = enumValue;
-                return true;
-            }
-        }
-
-        value = null;
-        return false;
-    }
-
 
     private async ValueTask UpdateGlobalEffectsFromUrlAsync(NameValueCollection queryStrings)
     {

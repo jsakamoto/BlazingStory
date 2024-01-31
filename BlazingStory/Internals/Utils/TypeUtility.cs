@@ -1,4 +1,8 @@
-﻿namespace BlazingStory.Internals.Utils;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
+
+namespace BlazingStory.Internals.Utils;
 
 internal static class TypeUtility
 {
@@ -69,4 +73,59 @@ internal static class TypeUtility
             _ => type.Name.Split('`').First()
         };
     }
+
+    /// <summary>
+    /// Try to convert the given string to the given type.<br/>
+    /// (Most cases, this method uses for deserialize URL query parameters of iframe to component parameters.)
+    /// </summary>
+    /// <param name="targetType">The type to convert to.</param>
+    /// <param name="sourceString">The string to convert from.</param>
+    /// <param name="convertedValue">The converted value if the conversion is successful.</param>
+    /// <returns>True if the conversion is successful, otherwise false.</returns>
+    internal static bool TryConvertType(Type targetType, string sourceString, [NotNullWhen(true)] out object? convertedValue)
+    {
+        if (targetType == typeof(string))
+        {
+            convertedValue = sourceString;
+            return true;
+        }
+
+        else if (targetType == typeof(bool))
+        {
+            if (bool.TryParse(sourceString, out var boolValue))
+            {
+                convertedValue = boolValue;
+                return true;
+            }
+        }
+
+        else if (targetType == typeof(int))
+        {
+            if (int.TryParse(sourceString, out var numValue))
+            {
+                convertedValue = numValue;
+                return true;
+            }
+        }
+
+        else if (targetType.IsEnum)
+        {
+            if (Enum.TryParse(targetType, sourceString, out var enumValue))
+            {
+                convertedValue = enumValue;
+                return true;
+            }
+        }
+
+        else if (targetType == typeof(RenderFragment))
+        {
+            RenderFragment renderFragment = (RenderTreeBuilder builder) => builder.AddContent(0, sourceString);
+            convertedValue = renderFragment;
+            return true;
+        }
+
+        convertedValue = null;
+        return false;
+    }
+
 }

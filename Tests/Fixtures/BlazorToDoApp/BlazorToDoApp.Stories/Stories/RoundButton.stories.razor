@@ -1,0 +1,24 @@
+﻿@attribute [Stories("Components/atoms/RoundButton")]
+
+<Stories TComponent="RoundButton">
+
+    <Story Name="Default">
+
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_childContent" />
+        </Arguments>
+
+        <Template>
+            <RoundButton @attributes="context.Args">
+            </RoundButton>
+        </Template>
+
+    </Story>
+
+</Stories>
+
+@code
+{
+    private RenderFragment _childContent = @<text>Click me</text>;
+
+}

@@ -16,6 +16,10 @@ else if (Parameter?.Type.IsEnum == true)
 {
     <EnumParameterController Key="@Key" Parameter="@Parameter" Value="Value" OnInput="OnInput" />
 }
+else if (Parameter?.Type == typeof(RenderFragment))
+{
+    <RenderFragmentParameterController Key="@Key" Parameter="@Parameter" Value="Value" OnInput="OnInput" />
+}
 else
 {
     <span>@(Value?.ToString() ?? "-")</span>

@@ -82,15 +82,23 @@
         }
     }
 
+    /// <summary>
+    /// Gets the URL for the preview frame, from the component parameters(args).
+    /// </summary>
     private string GetPreviewFrameUrl()
     {
+        // "Stringify" the component args to encode them to the URL query string.
+        var args = this.Args?.ToDictionary(
+            keySelector: x => x.Key,
+            elementSelector: x => RenderFragmentKit.TryToString(x.Value, out var str) ? str : x.Value);
+
         return UriParameterKit.GetUri(
             uri: "./iframe.html",
             parameters: new Dictionary<string, object?>
                 {
                     ["viewMode"] = this.ViewMode,
                     ["id"] = this.Id,
-                    ["args"] = UriParameterKit.EncodeKeyValues(this.Args),
+                    ["args"] = UriParameterKit.EncodeKeyValues(args),
                     ["globals"] = UriParameterKit.EncodeKeyValues(this.Globals)
                 });
     }
