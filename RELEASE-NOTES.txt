@@ -1,3 +1,7 @@
+v.1.0.0-preview.20
+- Add support for RenderFragment on the parameter controller.
+- Fix the styles to be the same as the Storybook v.7.6.10.
+
 v.1.0.0-preview.19
 - [Preview feature] Hot Reloading is now available when you opt out of it. (Please remember that Hot Reloading on Blazing Story is still preview and not stable at all.)
 
