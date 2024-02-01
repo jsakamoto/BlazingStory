@@ -1,0 +1,22 @@
+﻿@attribute [Stories("Components/atoms/Repeater")]
+
+<Stories TComponent="Repeater<ToDoItem>">
+    <Story Name="Default">
+        <Template>
+            <Repeater Items="_items" Context="repeaterContext" ItemTemplate="_itemTemplate" @attributes="context.Args">
+            </Repeater>
+        </Template>
+    </Story>
+</Stories>
+
+@code
+{
+    private IEnumerable<ToDoItem> _items = [
+        new () { Title = "First item", IsDone = true },
+        new () { Title = "Second item", IsDone = false },
+        new () { Title = "Third item", IsDone = false } ];
+
+    private RenderFragment<RepeaterItemContext<ToDoItem>> _itemTemplate = (RepeaterItemContext<ToDoItem> context) => @<p>
+        <b style="color: royalblue;">@context.Item?.Title.ToString()</b>
+    </p>;
+}

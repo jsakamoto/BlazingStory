@@ -20,6 +20,10 @@ else if (Parameter?.Type == typeof(RenderFragment))
 {
     <RenderFragmentParameterController Key="@Key" Parameter="@Parameter" Value="Value" OnInput="OnInput" />
 }
+else if (Parameter?.Type.IsGenericType == true && Parameter?.Type.GetGenericTypeDefinition() == typeof(RenderFragment<>))
+{
+    <RenderFragmentParameterController Key="@Key" Parameter="@Parameter" Value="Value" OnInput="OnInput" />
+}
 else
 {
     <span>@(Value?.ToString() ?? "-")</span>

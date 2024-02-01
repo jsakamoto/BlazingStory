@@ -1,0 +1,24 @@
+@typeparam TItem
+
+<ul>
+    @if (Items != null)
+    {
+        var context = new RepeaterItemContext<TItem>();
+        @foreach (var item in Items)
+        {
+            context.Item = item;
+            <li>@ItemTemplate?.Invoke(context)</li>
+        }
+    }
+</ul>
+
+@code
+{
+    [Parameter]
+    public IEnumerable<TItem>? Items { get; set; }
+
+    [Parameter]
+    public RenderFragment<RepeaterItemContext<TItem>>? ItemTemplate { get; set; } = (RepeaterItemContext<TItem> context) => @<p>
+        <i>@context.Item?.ToString()</i>
+    </p>;
+}
