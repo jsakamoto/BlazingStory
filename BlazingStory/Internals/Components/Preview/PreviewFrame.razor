@@ -1,3 +1,4 @@
+@using BlazingStory.Internals.Types
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 
@@ -19,6 +20,9 @@
     [Parameter]
     public IReadOnlyDictionary<string, object?>? Globals { get; set; }
 
+    [Parameter]
+    public EventCallback<ComponentEventArgs> OnComponentEvent { get; set; }
+
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
 
@@ -39,6 +43,10 @@
 
     private bool _AfterFirstRendered = false;
 
+    private DotNetObjectReference<PreviewFrame>? _ThisRef;
+
+    private IJSObjectReference? _EventMonitorSubscriber;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="PreviewFrame"/> class.
     /// </summary>
@@ -57,11 +65,13 @@
         await this.UpdatePreviewFrameUrlAsync();
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
         this.StateHasChanged();
         this._AfterFirstRendered = true;
+        this._ThisRef = DotNetObjectReference.Create(this);
+        this._EventMonitorSubscriber = await _JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentEvent", this._Iframe, this._ThisRef, nameof(ComponentEventCallback));
     }
 
     private async ValueTask UpdatePreviewFrameUrlAsync()
@@ -129,8 +139,16 @@
         await this._JSModule.InvokeVoidAsync("ensureDotnetWatchScriptInjected", this._Iframe);
     }
 
+    [JSInvokable(nameof(ComponentEventCallback))]
+    public async Task ComponentEventCallback(string name, string argsJson)
+    {
+        await this.OnComponentEvent.InvokeAsync(new() { Name = name, ArgsJson = argsJson });
+    }
+
     public async ValueTask DisposeAsync()
     {
+        if (_EventMonitorSubscriber != null) try { await _EventMonitorSubscriber.DisposeAsync(); } catch (JSDisconnectedException) { }
+        _ThisRef?.Dispose();
         await _JSModule.DisposeAsync();
     }
 }

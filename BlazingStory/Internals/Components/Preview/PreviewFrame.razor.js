@@ -1,19 +1,19 @@
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const waitFor = async (arg) => {
+    var _a, _b;
+    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
     let retryCount = 0;
     while (true) {
-        if (arg.predecate())
-            return;
-        if (retryCount >= arg.maxRetryCount)
+        const result = arg.predecate();
+        if (result !== false)
+            return result;
+        if (retryCount >= ((_a = arg.maxRetryCount) !== null && _a !== void 0 ? _a : 50))
             throw new Error("Timeout");
         retryCount++;
-        await delay(arg.retryInterval);
+        await delay((_b = arg.retryInterval) !== null && _b !== void 0 ? _b : 10);
     }
 };
-export const navigatePreviewFrameTo = async (iframe, url) => {
-    if (iframe === null)
-        return;
-    await waitFor({
+const waitForIFrameReady = async (iframe) => {
+    return await waitFor({
         predecate: () => {
             var _a;
             if (iframe.contentWindow === null || iframe.contentDocument === null)
@@ -22,14 +22,17 @@ export const navigatePreviewFrameTo = async (iframe, url) => {
                 return false;
             if (((_a = iframe.contentWindow.BlazingStory) === null || _a === void 0 ? void 0 : _a.canvasFrameInitialized) !== true)
                 return false;
-            return true;
-        },
-        maxRetryCount: 50,
-        retryInterval: 10
+            return ({ contentWindow: iframe.contentWindow, contentDocument: iframe.contentDocument });
+        }
     });
+};
+export const navigatePreviewFrameTo = async (iframe, url) => {
+    if (iframe === null)
+        return;
+    const { contentWindow, contentDocument } = await waitForIFrameReady(iframe);
     const event = new PopStateEvent("popstate", { state: {}, bubbles: true, cancelable: true });
-    iframe.contentWindow.history.pushState({}, "", url);
-    iframe.contentDocument.dispatchEvent(event);
+    contentWindow.history.pushState({}, "", url);
+    contentDocument.dispatchEvent(event);
 };
 export const reloadPreviewFrame = (iframe) => {
     if (iframe === null || iframe.contentWindow === null)
@@ -44,22 +47,31 @@ const zoomPreviewFrame = (iframe, getNextZoomLevel) => {
     const nextZoomLevel = getNextZoomLevel(currentZoomLevel);
     style.zoom = '' + nextZoomLevel;
 };
+export const zoomInPreviewFrame = (iframe) => zoomPreviewFrame(iframe, zoom => zoom * 1.25);
+export const zoomOutPreviewFrame = (iframe) => zoomPreviewFrame(iframe, zoom => zoom / 1.25);
+export const resetZoomPreviewFrame = (iframe) => zoomPreviewFrame(iframe, _ => 1);
+export const subscribeComponentEvent = async (iframe, dotNetObj, methodName) => {
+    if (iframe === null)
+        return;
+    const { contentDocument } = await waitForIFrameReady(iframe);
+    const componentEventListener = (e) => dotNetObj.invokeMethodAsync(methodName, e.detail.name, e.detail.argsJson);
+    contentDocument.addEventListener('componentEvent', componentEventListener);
+    return { dispose: () => contentDocument.removeEventListener('componentEvent', componentEventListener) };
+};
 const isDotnetWatchScriptInjected = (window) => {
     var _a;
     const scriptInjectedSentinel = '_dotnet_watch_ws_injected';
     return (_a = window === null || window === void 0 ? void 0 : window.hasOwnProperty(scriptInjectedSentinel)) !== null && _a !== void 0 ? _a : false;
 };
-export const ensureDotnetWatchScriptInjected = (iframe) => {
-    if (iframe === null || iframe.contentWindow == null || iframe.contentDocument == null)
+export const ensureDotnetWatchScriptInjected = async (iframe) => {
+    if (iframe === null)
         return;
+    const { contentWindow, contentDocument } = await waitForIFrameReady(iframe);
     if (!isDotnetWatchScriptInjected(window))
         return;
-    if (isDotnetWatchScriptInjected(iframe.contentWindow))
+    if (isDotnetWatchScriptInjected(contentWindow))
         return;
-    const script = iframe.contentDocument.createElement('script');
+    const script = contentDocument.createElement('script');
     script.src = '_framework/aspnetcore-browser-refresh.js';
-    iframe.contentDocument.body.appendChild(script);
+    contentDocument.body.appendChild(script);
 };
-export const zoomInPreviewFrame = (iframe) => zoomPreviewFrame(iframe, zoom => zoom * 1.25);
-export const zoomOutPreviewFrame = (iframe) => zoomPreviewFrame(iframe, zoom => zoom / 1.25);
-export const resetZoomPreviewFrame = (iframe) => zoomPreviewFrame(iframe, _ => 1);

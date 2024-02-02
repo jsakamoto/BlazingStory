@@ -1,5 +1,9 @@
 @using System.Web
 @using System.Collections.Specialized;
+@using System.Reflection
+@using System.Linq.Expressions
+@using System.Text.Json
+
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 @inject ILogger<CanvasFrame> Logger
@@ -66,7 +70,7 @@ else
         this._Story = story;
         this._Story.Context.ShouldRender += StoryContext_ShouldRender;
 
-        await this.UpdateComponentStatesFromUrlAsync();
+        await this.UpdateComponentStatesAsync();
         this.StateHasChanged();
     }
 
@@ -84,14 +88,15 @@ else
 
     private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs args)
     {
-        this.UpdateComponentStatesFromUrlAsync().AndLogException(this.Logger);
+        this.UpdateComponentStatesAsync().AndLogException(this.Logger);
     }
 
-    private async ValueTask UpdateComponentStatesFromUrlAsync()
+    private async ValueTask UpdateComponentStatesAsync()
     {
         var queryStrings = HttpUtility.ParseQueryString(new Uri(this.NavigationManager.Uri).Query);
         await this.UpdateComponentArgsFromUrlAsync(queryStrings);
         await this.UpdateGlobalEffectsFromUrlAsync(queryStrings);
+        await this.WireUpEventMonitorsAsync();
     }
 
     private async ValueTask UpdateComponentArgsFromUrlAsync(NameValueCollection queryStrings)
@@ -136,6 +141,61 @@ else
         await this._JSModule.InvokeVoidAsync("ensurePreviewStyle", new object[] { background, styleDescripters });
 
         this.StateHasChanged();
+    }
+
+    private static readonly Lazy<MethodInfo> _EventTArgMonitorHandlerMethod = new(() => typeof(CanvasFrame).GetMethod(nameof(EventTArgMonitorHandler), BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new InvalidOperationException());
+
+    private static readonly Lazy<MethodInfo> _EventCallbackCreateMethod = new(() =>
+        typeof(EventCallbackFactory).GetMethods(BindingFlags.Public | BindingFlags.Instance)
+            .Where(m => m.Name == "Create" && m.IsGenericMethod)
+            .Select(m => (MethodInfo: m, ParameterTypes: m.GetParameters().Select(p => p.ParameterType).ToArray()))
+            .Where(m => m.ParameterTypes.Length == 2)
+            .Where(m => m.ParameterTypes[0] == typeof(object))
+            .Where(m => m.ParameterTypes[1].IsGenericType && m.ParameterTypes[1].GetGenericTypeDefinition() == typeof(Func<,>))
+            .Select(m => m.MethodInfo)
+            .First());
+
+    private async ValueTask WireUpEventMonitorsAsync()
+    {
+        if (this._Story == null) return;
+
+        foreach (var parameter in this._Story.Context.Parameters)
+        {
+            if (parameter.Type.IsAssignableTo(typeof(EventCallback)))
+            {
+                var eventCallback = EventCallback.Factory.Create(this, () => this.EventVoidMonitorHandler(parameter.Name));
+                await this._Story.Context.AddOrUpdateArgumentAsync(parameter.Name, eventCallback);
+            }
+
+            else if (parameter.Type.IsGenericType && parameter.Type.GetGenericTypeDefinition() == typeof(EventCallback<>))
+            {
+                var typeOfArgs = parameter.Type.GenericTypeArguments.First();
+
+                var eventArgsParam = Expression.Parameter(typeOfArgs, "eventArgs");
+                var monitorHandler = _EventTArgMonitorHandlerMethod.Value.MakeGenericMethod(typeOfArgs);
+                var callBody = Expression.Call(Expression.Constant(this), monitorHandler, Expression.Constant(parameter.Name), eventArgsParam);
+
+                var monitorHandlerLambdaType = typeof(Func<,>).MakeGenericType(typeOfArgs, typeof(Task));
+                var monitorHandlerLambda = Expression.Lambda(monitorHandlerLambdaType, callBody, eventArgsParam);
+                var monitorHandlerDelegate = monitorHandlerLambda.Compile();
+
+                var eventCallbackCreate = _EventCallbackCreateMethod.Value.MakeGenericMethod(typeOfArgs) ?? throw new InvalidOperationException();
+
+                var eventCallback = eventCallbackCreate.Invoke(EventCallback.Factory, new object[] { this, monitorHandlerDelegate });
+                await this._Story.Context.AddOrUpdateArgumentAsync(parameter.Name, eventCallback);
+            }
+        }
+    }
+
+    private async Task EventVoidMonitorHandler(string name)
+    {
+        await _JSModule.InvokeVoidAsync("dispatchComponentEvent", name, "void");
+    }
+
+    private async Task EventTArgMonitorHandler<TArgs>(string name, TArgs eventArgs)
+    {
+        var json = JsonSerializer.Serialize(eventArgs, new JsonSerializerOptions { WriteIndented = true });
+        await _JSModule.InvokeVoidAsync("dispatchComponentEvent", name, json);
     }
 
     public async ValueTask DisposeAsync()

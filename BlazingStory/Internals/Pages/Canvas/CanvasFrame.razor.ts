@@ -27,3 +27,9 @@ export const ensurePreviewStyle = (background: string, styleDescripters: StyleDe
         }
     }
 }
+
+export const dispatchComponentEvent = (name: string, argsJson: string) => {
+    const componentEventDetail = { name, argsJson };
+    const event = new CustomEvent('componentEvent', { detail: componentEventDetail });
+    document.dispatchEvent(event);
+}

@@ -1,3 +1,4 @@
+@using BlazingStory.Internals.Types
 @implements IDisposable
 @inject NavigationManager NavigationManager
 
@@ -57,7 +58,8 @@
                                   ViewMode="story"
                                   Id="@this.RouteData.Parameter"
                                   Args="this._CurrentStory?.Context.Args"
-                                  Globals="this.AddonsStore.GetFrameArguments(AddonType.CanvasPage)" />
+                                  Globals="this.AddonsStore.GetFrameArguments(AddonType.CanvasPage)"
+                                  OnComponentEvent="OnComponentEvent"/>
                 </div>
             </div>
         </FirstPane>
@@ -270,6 +272,11 @@
     private async ValueTask SaveAddonPanelLayoutAsync()
     {
         await this.HelperScript.SaveObjectToLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
+    }
+
+    private void OnComponentEvent(ComponentEventArgs e)
+    {
+        Console.WriteLine($"W-1: {e.Name}, {e.ArgsJson}");
     }
 
     public void Dispose()
