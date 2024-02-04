@@ -1,4 +1,4 @@
-﻿namespace BlazingStory.Internals.Types;
+﻿namespace BlazingStory.Internals.Models;
 
 public class ComponentEventArgs
 {
