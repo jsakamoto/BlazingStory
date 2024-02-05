@@ -1,6 +1,6 @@
 @using BlazingStory.Internals.Pages.Canvas.Controls
 
-<div class="add-on-panel stack vertical">
+<div class="add-on-panel fill stack vertical">
 
     <ToolBar>
         <TabButtonGroup>
@@ -8,24 +8,9 @@
             {
                 <TabButton Active="descriptor == this._CurrentAddonPanel" OnClick="() => this.OnSelectAddonPanel(descriptor)">
                     @descriptor.Name
-                    @if (descriptor.Badge != "")
-                    {
-                        <span class="badge">@descriptor.Badge</span>
-                    }
+                    <Badge Text="@descriptor.Badge" />
                 </TabButton>
             }
-
-            @* TODO: Not implemented yet. *@
-
-            @*
-            <TabButton>
-            Actions
-            </TabButton>
-            <TabButton>
-            Interactions
-            </TabButton>
-            *@
-
         </TabButtonGroup>
 
         <Spacer />
@@ -60,7 +45,10 @@
 
     private readonly IEnumerable<AddonPanelDescriptor> _AddonPanelDescriptors = new AddonPanelDescriptor[]
     {
-        new ControlsPanelDescriptor()
+        new ControlsPanelDescriptor(),
+        // TODO: Not implemented yet.
+        //new ActionsPanelDescriptor(),
+        //new InteractionsPanelDescriptor()
     };
 
     private AddonPanelDescriptor? _CurrentAddonPanel;

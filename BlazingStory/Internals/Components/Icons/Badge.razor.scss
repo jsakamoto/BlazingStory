@@ -1,0 +1,11 @@
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 3em;
+    font-size: 11px;
+    line-height: 12px;
+    text-align: center;
+    background-color: var(--bs-dimmed-neutral-back-color);
+    color: var(--bs-dimmed-text-color);
+    box-shadow: var(--bs-add-on-panel-badge-shadow);
+}
