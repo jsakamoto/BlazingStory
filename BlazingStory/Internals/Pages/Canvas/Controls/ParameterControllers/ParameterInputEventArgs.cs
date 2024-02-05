@@ -1,6 +1,6 @@
 ﻿using BlazingStory.Internals.Models;
 
-namespace BlazingStory.Internals.Pages.Canvas.ParameterControllers;
+namespace BlazingStory.Internals.Pages.Canvas.Controls.ParameterControllers;
 
 public struct ParameterInputEventArgs
 {

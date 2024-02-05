@@ -1,7 +1,7 @@
 ﻿using BlazingStory.Internals.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace BlazingStory.Internals.Pages.Canvas.ParameterControllers.Controllers;
+namespace BlazingStory.Internals.Pages.Canvas.Controls.ParameterControllers.Controllers;
 
 public class ParameterControllerBase : ComponentBase
 {

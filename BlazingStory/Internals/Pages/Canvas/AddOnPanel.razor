@@ -1,10 +1,19 @@
+@using BlazingStory.Internals.Pages.Canvas.Controls
+
 <div class="add-on-panel stack vertical">
 
     <ToolBar>
         <TabButtonGroup>
-            <TabButton Active="true">
-                Controls <span class="badge">@this.Story?.Context.GetNoEventParameterCount()</span>
-            </TabButton>
+            @foreach (var descriptor in this._AddonPanelDescriptors)
+            {
+                <TabButton Active="descriptor == this._CurrentAddonPanel" OnClick="() => this.OnSelectAddonPanel(descriptor)">
+                    @descriptor.Name
+                    @if (descriptor.Badge != "")
+                    {
+                        <span class="badge">@descriptor.Badge</span>
+                    }
+                </TabButton>
+            }
 
             @* TODO: Not implemented yet. *@
 
@@ -26,7 +35,10 @@
     </ToolBar>
 
     <div class="fill add-on-panel-content">
-        <ControlsPanel Story="this.Story" />
+        @if (_CurrentAddonPanel != null)
+        {
+            <DynamicComponent Type="_CurrentAddonPanel.PanelComponentType" Parameters="_AddonPanelParameters" />
+        }
     </div>
 
 </div>
@@ -44,6 +56,15 @@
 
     private CommandService _Commands = default!;
 
+    private readonly Dictionary<string, object> _AddonPanelParameters = new();
+
+    private readonly IEnumerable<AddonPanelDescriptor> _AddonPanelDescriptors = new AddonPanelDescriptor[]
+    {
+        new ControlsPanelDescriptor()
+    };
+
+    private AddonPanelDescriptor? _CurrentAddonPanel;
+
     private SvgIconType ToggleOrientationButtonIcon => this.SplitterOrientation switch
     {
         SplitterOrientation.Horizontal => SvgIconType.RightSidePane,
@@ -53,5 +74,21 @@
     protected override void OnInitialized()
     {
         this._Commands = this.Services.GetRequiredService<CommandService>();
+        this._CurrentAddonPanel = this._AddonPanelDescriptors.FirstOrDefault();
+
+        if (this.Story != null)
+        {
+            this._AddonPanelParameters.Add(nameof(Story), this.Story);
+
+            foreach (var descriptor in this._AddonPanelDescriptors)
+            {
+                descriptor.Initialize(this.Story, this.Services);
+            }
+        }
+    }
+
+    private void OnSelectAddonPanel(AddonPanelDescriptor descriptor)
+    {
+        this._CurrentAddonPanel = descriptor;
     }
 }
