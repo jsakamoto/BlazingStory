@@ -1,20 +1,25 @@
 ﻿namespace BlazingStory.Internals.Models;
 
-internal class AddonPanelDescriptor
+public class AddonPanelDescriptor
 {
-    public readonly string Name;
+    internal readonly string Name;
 
-    public string Badge = "";
+    internal string Badge = "";
 
-    public readonly Type PanelComponentType;
+    internal readonly Type PanelComponentType;
 
-    public AddonPanelDescriptor(string name, Type panelComponentType)
+    internal event EventHandler? Updated;
+
+    internal AddonPanelDescriptor(string name, Type panelComponentType)
     {
         this.Name = name;
         this.PanelComponentType = panelComponentType;
     }
 
-    public virtual void Initialize(Story story, IServiceProvider services) { }
+    internal virtual void SetParameters(Story? story, IServiceProvider services) { }
 
-
+    internal void NotifyUpdated()
+    {
+        this.Updated?.Invoke(this, EventArgs.Empty);
+    }
 }

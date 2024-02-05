@@ -4,13 +4,19 @@ namespace BlazingStory.Internals.Pages.Canvas.Controls;
 
 internal class ControlsPanelDescriptor : AddonPanelDescriptor
 {
-    public ControlsPanelDescriptor() : base("Controls", typeof(ControlsPanel))
+    internal ControlsPanelDescriptor() : base("Controls", typeof(ControlsPanel))
     {
     }
 
-    public override void Initialize(Story story, IServiceProvider services)
+    internal override void SetParameters(Story? story, IServiceProvider services)
     {
-        base.Initialize(story, services);
-        this.Badge = story.Context.GetNoEventParameterCount().ToString();
+        base.SetParameters(story, services);
+
+        var newBadge = story?.Context.GetNoEventParameterCount().ToString() ?? "";
+        if (this.Badge != newBadge)
+        {
+            this.Badge = newBadge;
+            this.NotifyUpdated();
+        }
     }
 }
