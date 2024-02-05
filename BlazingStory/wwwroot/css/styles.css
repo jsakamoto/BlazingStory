@@ -778,6 +778,25 @@ svg.svg-icon {
   color: #333333;
 }
 
+.corner-button {
+  color: var(--bs-caption-text-color);
+  background-color: var(--bs-inputs-background);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  line-height: 16px;
+  border: solid 1px var(--bs-border-color);
+  border-radius: 4px 0 0 0;
+  border-bottom: none;
+  border-right: none;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+.corner-button:focus {
+  box-shadow: var(--bs-focused-color) 0 -3px 0 0 inset;
+}
+
 .icon-button {
   min-width: 28px;
   height: 28px;
@@ -1132,6 +1151,7 @@ a.icon-button {
 
 .add-on-panel-content {
   overflow: auto;
+  position: relative;
 }
 
 .controls-panel table {
@@ -1298,24 +1318,6 @@ a.icon-button {
   font-size: 13px;
   padding: 20px;
   color: var(--bs-code-text-color);
-}
-.story-preview .show-code-button, .story-preview .copy-button {
-  color: var(--bs-caption-text-color);
-  background-color: var(--bs-inputs-background);
-  font-size: 12px;
-  font-weight: 700;
-  padding: 4px 10px;
-  line-height: 16px;
-  border: solid 1px var(--bs-border-color);
-  border-radius: 4px 0 0 0;
-  border-bottom: none;
-  border-right: none;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-}
-.story-preview .show-code-button:focus, .story-preview .copy-button:focus {
-  box-shadow: var(--bs-focused-color) 0 -3px 0 0 inset;
 }
 .story-preview .copy-button {
   color: var(--bs-code-copy-text-color);

@@ -33,26 +33,6 @@
         }
     }
 
-    .show-code-button, .copy-button {
-        color: var(--bs-caption-text-color);
-        background-color: var(--bs-inputs-background);
-        font-size: 12px;
-        font-weight: 700;
-        padding: 4px 10px;
-        line-height: 16px;
-        border: solid 1px var(--bs-border-color);
-        border-radius: 4px 0 0 0;
-        border-bottom: none;
-        border-right: none;
-        position: absolute;
-        bottom: 0;
-        right: 0;
-
-        &:focus {
-            box-shadow: var(--bs-focused-color) 0 -3px 0 0 inset;
-        }
-    }
-
     .copy-button {
         color: var(--bs-code-copy-text-color);
         background-color: var(--bs-code-copy-back-color);

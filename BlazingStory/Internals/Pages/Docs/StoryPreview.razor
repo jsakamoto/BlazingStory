@@ -22,9 +22,9 @@
             </div>
 
             <!-- "Show Code" -->
-            <button class="show-code-button" @onclick="OnClickedShowCodeButton">
+            <CornerButton Class="show-code-button" OnClick="OnClickedShowCodeButton">
                 @(this._ShowCode ? "Hide code" : "Show code")
-            </button>
+            </CornerButton>
 
         </div>
 
@@ -34,9 +34,9 @@
 
                 <pre>@this._CodeText</pre>
 
-                <button class="copy-button" @onclick="OnClickCopyButton">
+                <CornerButton Class="copy-button" OnClick="OnClickCopyButton">
                     @(this._Copied ? "Copied" : "Copy")
-                </button>
+                </CornerButton>
             </div>
         }
     </div>
