@@ -1,15 +1,12 @@
+﻿@using System.Text.Json
+
 @implements IDisposable
 
 <div class="actions-panel">
-    <h6>Actions</h6>
 
     @foreach (var log in this._ActionLogs ?? Enumerable.Empty<ComponentActionLog>())
     {
-        <div @key="log.Id">
-            @log.Repeat |
-            @log.Name |
-            @log.ArgsJson
-        </div>
+        <ActionsPanelLogLine @key="log.Id" Repeat="@log.Repeat" Name="@log.Name" Value="@log.ArgsJsonElement" />
     }
 
 </div>
@@ -20,7 +17,7 @@
 
 @code
 {
-    [Parameter, EditorRequired]
+    [Parameter]
     public Story? Story { get; set; }
 
     [CascadingParameter]
