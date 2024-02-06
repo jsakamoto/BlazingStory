@@ -1,0 +1,51 @@
+@implements IDisposable
+
+<div class="actions-panel">
+    <h6>Actions</h6>
+
+    @foreach (var log in this._ActionLogs ?? Enumerable.Empty<ComponentActionLog>())
+    {
+        <div @key="log.Id">
+            @log.Repeat |
+            @log.Name |
+            @log.ArgsJson
+        </div>
+    }
+
+</div>
+
+<CornerButton OnClick="OnClickClear">
+    Clear
+</CornerButton>
+
+@code
+{
+    [Parameter, EditorRequired]
+    public Story? Story { get; set; }
+
+    [CascadingParameter]
+    public required CanvasPageContext CanvasPageContext { get; init; }
+
+    private ComponentActionLogs? _ActionLogs;
+
+    protected override void OnInitialized()
+    {
+        this._ActionLogs = this.CanvasPageContext.GetRequiredItem<ComponentActionLogs>();
+        this._ActionLogs.Updated += ActionLogs_Updated;
+    }
+
+    private void ActionLogs_Updated(object? sender, EventArgs e)
+    {
+        this.StateHasChanged();
+    }
+
+    private void OnClickClear()
+    {
+        this._ActionLogs?.Clear();
+    }
+
+    public void Dispose()
+    {
+        if (this._ActionLogs != null) this._ActionLogs.Updated -= ActionLogs_Updated;
+    }
+}

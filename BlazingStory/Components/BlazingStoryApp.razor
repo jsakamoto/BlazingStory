@@ -178,6 +178,7 @@
             .AddSingleton<AddonsStore>(_ => this._AddonsStore)
             .AddSingleton<IXmlDocComment, XmlDocCommentForWasm>()
             .AddSingleton<BlazingStoryOptions>(_ => this._Options)
+            .AddTransient<ComponentActionLogs>()
             .BuildServiceProvider();
     }
 

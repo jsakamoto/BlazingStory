@@ -1,3 +1,4 @@
+@using BlazingStory.Internals.Pages.Canvas.Actions
 @using BlazingStory.Internals.Pages.Canvas.Controls
 @implements IDisposable
 
@@ -31,14 +32,17 @@
 
 @code
 {
-        [Parameter, EditorRequired]
-        public Story? Story { get; set; }
+    [Parameter, EditorRequired]
+    public Story? Story { get; set; }
 
-        [Parameter]
-        public SplitterOrientation SplitterOrientation { get; set; }
+    [Parameter]
+    public SplitterOrientation SplitterOrientation { get; set; }
 
-        [CascadingParameter]
-        internal IServiceProvider Services { get; init; } = default!;
+    [CascadingParameter]
+    public required IServiceProvider Services { get; init; }
+
+    [CascadingParameter]
+    public required CanvasPageContext CanvasPageContext { get; init; }
 
     private CommandService _Commands = default!;
 
@@ -47,8 +51,8 @@
     private readonly IEnumerable<AddonPanelDescriptor> _AddonPanelDescriptors = new AddonPanelDescriptor[]
     {
         new ControlsPanelDescriptor(),
+        new ActionsPanelDescriptor(),
         // TODO: Not implemented yet.
-        //new ActionsPanelDescriptor(),
         //new InteractionsPanelDescriptor()
     };
 
@@ -63,7 +67,7 @@
     protected override void OnParametersSet()
     {
         this._AddonPanelParameters["Story"] = this.Story;
-        this._AddonPanelDescriptors.ForEach(descriptor => descriptor.SetParameters(this.Story, this.Services));
+        this._AddonPanelDescriptors.ForEach(descriptor => descriptor.SetParameters(this.Story, this.Services, this.CanvasPageContext));
     }
 
     protected override void OnInitialized()
@@ -85,6 +89,10 @@
 
     public void Dispose()
     {
-        this._AddonPanelDescriptors.ForEach(descriptor => descriptor.Updated -= Descriptor_Updated);
+        this._AddonPanelDescriptors.ForEach(descriptor =>
+        {
+            descriptor.Updated -= Descriptor_Updated;
+            descriptor.Dispose();
+        });
     }
 }

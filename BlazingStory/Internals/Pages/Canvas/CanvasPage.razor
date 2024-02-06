@@ -6,8 +6,8 @@
 <div class="fill stack vertical addon-pane-@(this.AddonPanelVisible ? "visible" : "hidden")">
 
     <SplitContainer Class="canvas-page-container fill" Orientation="this._AddonPanelLayout.SplitterOrientation" SecondPaneMinSize="80"
-    @bind-SecondPaneSize="_AddonPanelSize"
-    @bind-SecondPaneSize:after="OnAddonPanelSizeChanged">
+                    @bind-SecondPaneSize="_AddonPanelSize"
+                    @bind-SecondPaneSize:after="OnAddonPanelSizeChanged">
 
         <FirstPane>
             <div class="canvas-container fill stack vertical">
@@ -66,11 +66,12 @@
         <SecondPane>
 
             @* -- Addons -- *@
-
-            <div class="add-on-container fill stack vertical">
-                <AddOnPanel Story="this._CurrentStory" SplitterOrientation="this._AddonPanelLayout.SplitterOrientation">
-                </AddOnPanel>
-            </div>
+            <CascadingValue Value="this._CanvasPageContext">
+                <div class="add-on-container fill stack vertical">
+                    <AddOnPanel Story="this._CurrentStory" SplitterOrientation="this._AddonPanelLayout.SplitterOrientation">
+                    </AddOnPanel>
+                </div>
+            </CascadingValue>
         </SecondPane>
 
     </SplitContainer>
@@ -128,6 +129,10 @@
         _ => SvgIconType.RightSidePane
     };
 
+    private ComponentActionLogs? _ComponentActionLogs;
+
+    private readonly CanvasPageContext _CanvasPageContext = new();
+
     protected override void OnInitialized()
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
@@ -143,6 +148,9 @@
             this._ToolbarVisibleCommand.Subscribe(this.OnToggleToolbarVisible),
             this._AddonPanelVisibleCommand.Subscribe(this.OnToggleAddonPanelVisible)
         );
+
+        this._ComponentActionLogs = this.Services.GetRequiredService<ComponentActionLogs>();
+        this._CanvasPageContext.SetItem(this._ComponentActionLogs);
     }
 
     protected override void OnParametersSet()
@@ -182,6 +190,7 @@
         var path = this.RouteData.Parameter;
         if (this.StoriesStore.TryGetStoryByPath(path, out var story))
         {
+            if (!object.ReferenceEquals(this._CurrentStory, story)) _ComponentActionLogs?.Clear();
             this._CurrentStory = story;
         }
         else this._CurrentStory = null;

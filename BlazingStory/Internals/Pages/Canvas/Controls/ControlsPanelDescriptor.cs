@@ -8,15 +8,11 @@ internal class ControlsPanelDescriptor : AddonPanelDescriptor
     {
     }
 
-    internal override void SetParameters(Story? story, IServiceProvider services)
+    internal override void SetParameters(Story? story, IServiceProvider services, CanvasPageContext canvasPageContext)
     {
-        base.SetParameters(story, services);
+        base.SetParameters(story, services, canvasPageContext);
 
         var newBadge = story?.Context.GetNoEventParameterCount().ToString() ?? "";
-        if (this.Badge != newBadge)
-        {
-            this.Badge = newBadge;
-            this.NotifyUpdated();
-        }
+        this.UpdateBadge(newBadge);
     }
 }
