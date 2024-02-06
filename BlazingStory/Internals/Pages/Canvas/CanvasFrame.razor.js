@@ -18,8 +18,8 @@ export const ensurePreviewStyle = (background, styleDescripters) => {
         }
     }
 };
-export const dispatchComponentEvent = (name, argsJson) => {
-    const componentEventDetail = { name, argsJson };
-    const event = new CustomEvent('componentEvent', { detail: componentEventDetail });
+export const dispatchComponentActionEvent = (name, argsJson) => {
+    const componentActionEventDetail = { name, argsJson };
+    const event = new CustomEvent('componentActionEvent', { detail: componentActionEventDetail });
     document.dispatchEvent(event);
 };

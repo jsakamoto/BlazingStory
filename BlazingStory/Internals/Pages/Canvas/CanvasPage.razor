@@ -58,7 +58,7 @@
                                   Id="@this.RouteData.Parameter"
                                   Args="this._CurrentStory?.Context.Args"
                                   Globals="this.AddonsStore.GetFrameArguments(AddonType.CanvasPage)"
-                                  OnComponentEvent="OnComponentEvent"/>
+                                  OnComponentAction="OnComponentAction" />
                 </div>
             </div>
         </FirstPane>
@@ -273,8 +273,9 @@
         await this.HelperScript.SaveObjectToLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
     }
 
-    private void OnComponentEvent(ComponentEventArgs e)
+    private void OnComponentAction(ComponentActionEventArgs e)
     {
+        _ComponentActionLogs?.Add(e.Name, e.ArgsJson);
         Console.WriteLine($"W-1: {e.Name}, {e.ArgsJson}");
     }
 

@@ -28,8 +28,8 @@ export const ensurePreviewStyle = (background: string, styleDescripters: StyleDe
     }
 }
 
-export const dispatchComponentEvent = (name: string, argsJson: string) => {
-    const componentEventDetail = { name, argsJson };
-    const event = new CustomEvent('componentEvent', { detail: componentEventDetail });
+export const dispatchComponentActionEvent = (name: string, argsJson: string) => {
+    const componentActionEventDetail = { name, argsJson };
+    const event = new CustomEvent('componentActionEvent', { detail: componentActionEventDetail });
     document.dispatchEvent(event);
 }

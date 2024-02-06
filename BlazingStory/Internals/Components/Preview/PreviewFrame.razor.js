@@ -50,13 +50,13 @@ const zoomPreviewFrame = (iframe, getNextZoomLevel) => {
 export const zoomInPreviewFrame = (iframe) => zoomPreviewFrame(iframe, zoom => zoom * 1.25);
 export const zoomOutPreviewFrame = (iframe) => zoomPreviewFrame(iframe, zoom => zoom / 1.25);
 export const resetZoomPreviewFrame = (iframe) => zoomPreviewFrame(iframe, _ => 1);
-export const subscribeComponentEvent = async (iframe, dotNetObj, methodName) => {
+export const subscribeComponentActionEvent = async (iframe, dotNetObj, methodName) => {
     if (iframe === null)
         return;
     const { contentDocument } = await waitForIFrameReady(iframe);
-    const componentEventListener = (e) => dotNetObj.invokeMethodAsync(methodName, e.detail.name, e.detail.argsJson);
-    contentDocument.addEventListener('componentEvent', componentEventListener);
-    return { dispose: () => contentDocument.removeEventListener('componentEvent', componentEventListener) };
+    const componentActionEventListener = (e) => dotNetObj.invokeMethodAsync(methodName, e.detail.name, e.detail.argsJson);
+    contentDocument.addEventListener('componentActionEvent', componentActionEventListener);
+    return { dispose: () => contentDocument.removeEventListener('componentActionEvent', componentActionEventListener) };
 };
 const isDotnetWatchScriptInjected = (window) => {
     var _a;

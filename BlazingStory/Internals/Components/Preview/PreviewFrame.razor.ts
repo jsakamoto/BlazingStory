@@ -50,13 +50,13 @@ export const zoomOutPreviewFrame = (iframe: HTMLIFrameElement | null) => zoomPre
 
 export const resetZoomPreviewFrame = (iframe: HTMLIFrameElement | null) => zoomPreviewFrame(iframe, _ => 1);
 
-export const subscribeComponentEvent = async (iframe: HTMLIFrameElement | null, dotNetObj: DotNetObjectReference, methodName: string) => {
+export const subscribeComponentActionEvent = async (iframe: HTMLIFrameElement | null, dotNetObj: DotNetObjectReference, methodName: string) => {
     if (iframe === null) return;
     const { contentDocument } = await waitForIFrameReady(iframe);
-    const componentEventListener = (e: Event & { detail?: any }) => dotNetObj.invokeMethodAsync(methodName, e.detail.name, e.detail.argsJson);
-    contentDocument.addEventListener('componentEvent', componentEventListener);
+    const componentActionEventListener = (e: Event & { detail?: any }) => dotNetObj.invokeMethodAsync(methodName, e.detail.name, e.detail.argsJson);
+    contentDocument.addEventListener('componentActionEvent', componentActionEventListener);
 
-    return { dispose: () => contentDocument.removeEventListener('componentEvent', componentEventListener) };
+    return { dispose: () => contentDocument.removeEventListener('componentActionEvent', componentActionEventListener) };
 }
 
 // Checks the '_dotnet_watch_ws_injected' property has been added to the window object,

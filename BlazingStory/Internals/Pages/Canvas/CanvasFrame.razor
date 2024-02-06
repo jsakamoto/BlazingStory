@@ -189,13 +189,13 @@ else
 
     private async Task EventVoidMonitorHandler(string name)
     {
-        await _JSModule.InvokeVoidAsync("dispatchComponentEvent", name, "void");
+        await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, "void");
     }
 
     private async Task EventTArgMonitorHandler<TArgs>(string name, TArgs eventArgs)
     {
         var json = JsonSerializer.Serialize(eventArgs, new JsonSerializerOptions { WriteIndented = true });
-        await _JSModule.InvokeVoidAsync("dispatchComponentEvent", name, json);
+        await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, json);
     }
 
     public async ValueTask DisposeAsync()
