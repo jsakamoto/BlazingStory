@@ -11,24 +11,39 @@
 
         <div class="action-log-parent">
 
-            @if (this.Value.ValueKind == JsonValueKind.Object)
-            {
-                <span class="@CssClass("action-args-node",new{ Expanded = this._IsExpanded })" @onclick="OnClickNodeIcon">
-                    ▶
-                </span>
-            }
+            <span class="@CssClass("action-args-node", new{ 
+                Expanded = this._IsExpanded,
+                NoChildren = this.Value.ValueKind is not JsonValueKind.Object and not JsonValueKind.Array
+            })" @onclick="OnClickNodeIcon">
+                ▶
+            </span>
 
             <span class="action-name">@this.Name</span>
-            <span class="separator">:</span>
-            <span class="action-value">@JsonSerializer.Serialize(this.Value)</span>
+            @if (this.Value.ValueKind != JsonValueKind.Undefined)
+            {
+                @ActionsPanelTags.Separator(":")
+                <span class="action-value">
+                    @ActionsPanelTags.RenderLogValue(this.Value)
+                </span>
+            }
         </div>
 
-        @if (this.Value.ValueKind == JsonValueKind.Object && this._IsExpanded)
+        @if (this._IsExpanded)
         {
             <div class="action-log-children">
-                @foreach (var property in this.Value.EnumerateObject())
+                @if (this.Value.ValueKind is JsonValueKind.Object)
                 {
-                    <ActionsPanelLogLine @key="property.Name" Name="@property.Name" Value="@property.Value" />
+                    @foreach (var property in this.Value.EnumerateObject())
+                    {
+                        <ActionsPanelLogLine @key="property.Name" Name="@property.Name" Value="@property.Value" />
+                    }
+                }
+                else if (this.Value.ValueKind is JsonValueKind.Array)
+                {
+                    @foreach (var element in this.Value.EnumerateArray().Select((e, index) => (Value: e, Index: index)))
+                    {
+                        <ActionsPanelLogLine @key="element.Index" Name="@element.Index.ToString()" Value="@element.Value" />
+                    }
                 }
             </div>
         }

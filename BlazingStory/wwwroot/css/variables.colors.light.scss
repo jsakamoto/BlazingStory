@@ -65,4 +65,13 @@
     --bs-code-back-color: #262626;
     --bs-code-copy-text-color: #c9cdcf;
     --bs-code-copy-back-color: #1b1c1d;
+    // actions log
+    --bs-actions-log-text-color: #{$caption-text-color};
+    --bs-actions-log-repeat-text-color: #ffffff;
+    --bs-actions-log-repeat-back-color: rgba(38,85,115,0.65);
+    --bs-actions-log-expander-color: rgba(38, 85, 115, 0.35);
+    --bs-actions-log-name-color: rgb(136, 19, 145);
+    --bs-actions-log-value-string-color: rgb(196, 26, 22);
+    --bs-actions-log-value-noobj-color: rgb(28, 0, 207);
+    --bs-actions-log-value-null-color: rgb(128, 128, 128);
 }

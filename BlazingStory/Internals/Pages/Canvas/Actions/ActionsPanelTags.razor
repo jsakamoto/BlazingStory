@@ -1,0 +1,43 @@
+@using System.Text.Json
+
+@code
+{
+    public static RenderFragment<string> Separator => (string text) => @<span class="separator" bs-actions-panel-tags>@text</span>;
+
+    public static RenderFragment<JsonElement> RenderLogValue => (JsonElement value) =>
+    @<text>
+        @if (value.ValueKind == JsonValueKind.Object)
+    {
+        <span class="action-value value-kind-object" bs-actions-panel-tags>
+            <span>&#123;</span>
+            @foreach (var property in value.EnumerateObject().Select((prop, index) => (Name: prop.Name, Value: prop.Value, Index: index)))
+        {
+        if (property.Index > 0) {
+            @ActionsPanelTags.Separator(",")
+        }
+            <span class="property-name">@property.Name</span>
+            @ActionsPanelTags.Separator(":")
+            @RenderLogValue(property.Value)
+        }
+            <span>&#125;</span>
+        </span>
+    }
+    else if(value.ValueKind == JsonValueKind.Array)
+    {
+        <span>(@value.EnumerateArray().Count())</span>
+        <span>&#91;</span>
+        @foreach (var element in value.EnumerateArray().Select((element, index) => (Value: element, Index: index))) {
+    if (element.Index > 0) {
+        @ActionsPanelTags.Separator(",")
+    }
+        @RenderLogValue(element.Value)
+    }
+        <span>&#93;</span>
+    }
+    else
+    {
+        <span class="@CssClass("action-value", new{value.ValueKind})" bs-actions-panel-tags>@JsonSerializer.Serialize(value)</span>
+    }
+    </text>;
+
+}

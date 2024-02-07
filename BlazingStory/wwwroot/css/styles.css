@@ -58,6 +58,14 @@
   --bs-code-back-color: #262626;
   --bs-code-copy-text-color: #c9cdcf;
   --bs-code-copy-back-color: #1b1c1d;
+  --bs-actions-log-text-color: #2e3438;
+  --bs-actions-log-repeat-text-color: #ffffff;
+  --bs-actions-log-repeat-back-color: rgba(38,85,115,0.65);
+  --bs-actions-log-expander-color: rgba(38, 85, 115, 0.35);
+  --bs-actions-log-name-color: rgb(136, 19, 145);
+  --bs-actions-log-value-string-color: rgb(196, 26, 22);
+  --bs-actions-log-value-noobj-color: rgb(28, 0, 207);
+  --bs-actions-log-value-null-color: rgb(128, 128, 128);
 }
 
 .preferes-color-scheme-dark {
@@ -111,6 +119,14 @@
   --bs-code-back-color: #262626;
   --bs-code-copy-text-color: #c9cdcf;
   --bs-code-copy-back-color: #1b1c1d;
+  --bs-actions-log-text-color: #c9cdcf;
+  --bs-actions-log-repeat-text-color: #222425;
+  --bs-actions-log-repeat-back-color: rgba(255,255,255,0.6);
+  --bs-actions-log-expander-color: rgba(255, 255, 255, 0.3);
+  --bs-actions-log-name-color: rgb(227, 110, 236);
+  --bs-actions-log-value-string-color: rgb(233, 63, 59);
+  --bs-actions-log-value-noobj-color: rgb(153, 128, 255);
+  --bs-actions-log-value-null-color: rgb(127, 127, 127);
 }
 
 * {
@@ -1237,17 +1253,21 @@ a.icon-button {
   font-size: var(--bs-text-size);
   padding: 10px 5px 20px 5px;
 }
+.actions-panel > .action-log-line > .action-log-content > .action-log-parent > .action-args-node.no-children {
+  width: 4px;
+}
 
 .action-log-line {
   display: flex;
   align-items: start;
   margin-left: 5px;
+  color: var(--bs-actions-log-text-color);
 }
 .action-log-line > .action-repeat {
   font-family: var(--bs-font-family);
   font-size: var(--bs-control-caption-size);
-  background-color: rgba(255, 255, 255, 0.6);
-  color: #222425;
+  color: var(--bs-actions-log-repeat-text-color);
+  background-color: var(--bs-actions-log-repeat-back-color);
   font-weight: 700;
   line-height: 1;
   border-radius: 20px;
@@ -1264,7 +1284,7 @@ a.icon-button {
   align-items: center;
 }
 .action-log-line > .action-log-content > .action-log-parent > .action-args-node {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--bs-actions-log-expander-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1274,15 +1294,14 @@ a.icon-button {
   user-select: none;
   transform: rotateZ(0deg);
 }
+.action-log-line > .action-log-content > .action-log-parent > .action-args-node.no-children {
+  visibility: hidden;
+}
 .action-log-line > .action-log-content > .action-log-parent > .action-args-node.expanded {
   transform: rotateZ(90deg);
 }
 .action-log-line > .action-log-content > .action-log-parent > .action-name {
-  color: rgb(227, 110, 236);
-}
-.action-log-line > .action-log-content > .action-log-parent > .separator {
-  margin-left: 1px;
-  width: 14px;
+  color: var(--bs-actions-log-name-color);
 }
 .action-log-line > .action-log-content > .action-log-parent > .action-value {
   flex: 1;
@@ -1291,7 +1310,29 @@ a.icon-button {
   text-overflow: ellipsis;
 }
 .action-log-line > .action-log-content > .action-log-children {
-  padding-left: 20px;
+  padding-left: 8px;
+}
+
+.separator[bs-actions-panel-tags] {
+  display: inline-block;
+  margin-left: 1px;
+  width: 14px;
+}
+
+.action-value[bs-actions-panel-tags].value-kind-object {
+  font-style: italic;
+}
+.action-value[bs-actions-panel-tags].value-kind-object > .property-name {
+  color: var(--bs-actions-log-name-color);
+}
+.action-value[bs-actions-panel-tags].value-kind-string {
+  color: var(--bs-actions-log-value-string-color);
+}
+.action-value[bs-actions-panel-tags].value-kind-null {
+  color: var(--bs-actions-log-value-null-color);
+}
+.action-value[bs-actions-panel-tags].value-kind-true, .action-value[bs-actions-panel-tags].value-kind-false, .action-value[bs-actions-panel-tags].value-kind-number {
+  color: var(--bs-actions-log-value-noobj-color);
 }
 
 .docs-page {

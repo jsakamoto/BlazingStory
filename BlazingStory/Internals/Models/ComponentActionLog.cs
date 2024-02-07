@@ -18,6 +18,9 @@ public class ComponentActionLog
     {
         this.Name = name;
         this.ArgsJson = argsJson;
-        this.ArgsJsonElement = JsonDocument.Parse(argsJson).RootElement;
+        if (argsJson != "void")
+        {
+            this.ArgsJsonElement = JsonDocument.Parse(argsJson).RootElement;
+        }
     }
 }
