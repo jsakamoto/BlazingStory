@@ -1,0 +1,37 @@
+﻿@attribute [Stories("Internals/Pages/Canvas/Actions/ActionsPanel")]
+
+<Stories TComponent="ActionsPanel">
+
+    <Story Name="Default">
+
+        <Template>
+            <div style="position:absolute; inset:0;">
+                <CascadingValue Value="this._CanvasPageContext">
+                    <ActionsPanel @attributes="context.Args">
+                    </ActionsPanel>
+                </CascadingValue>
+            </div>
+        </Template>
+    </Story>
+
+</Stories>
+
+@code
+{
+    private CanvasPageContext _CanvasPageContext = new();
+
+    protected override void OnInitialized()
+    {
+        var actionLogs = new ComponentActionLogs();
+        actionLogs.Add("OnInput", "\"H\"");
+        actionLogs.Add("OnInput", "\"He\"");
+        actionLogs.Add("OnClick", "{\"ItemId\":\"379\",\"Detail\":{\"ClientPos\":{\"X\":796,\"Y\":312},\"CtrlKey\":false}}");
+        actionLogs.Add("OnClick", "{\"ItemId\":\"379\",\"Detail\":{\"ClientPos\":{\"X\":796,\"Y\":312},\"CtrlKey\":false}}");
+        actionLogs.Add("OnBlur", "null");
+        actionLogs.Add("OnItemUpdated", "void");
+        actionLogs.Add("OnBatchRemoved", "{\"Target\":[15,73,214]}");
+
+        this._CanvasPageContext.SetItem(actionLogs);
+    }
+
+}
