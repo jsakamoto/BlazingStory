@@ -4,16 +4,17 @@
 
 <div class="actions-panel">
 
-    @foreach (var log in this._ActionLogs ?? Enumerable.Empty<ComponentActionLog>())
-    {
-        <ActionsPanelLogLine @key="log.Id" Repeat="@log.Repeat" Name="@log.Name" Value="@log.ArgsJsonElement" />
-    }
+    <div class="actions-panel-scroll-window">
+        @foreach (var log in this._ActionLogs ?? Enumerable.Empty<ComponentActionLog>())
+        {
+            <ActionsPanelLogLine @key="log.Id" Repeat="@log.Repeat" Name="@log.Name" Value="@log.ArgsJsonElement" />
+        }
+    </div>
 
+    <CornerButton OnClick="OnClickClear">
+        Clear
+    </CornerButton>
 </div>
-
-<CornerButton OnClick="OnClickClear">
-    Clear
-</CornerButton>
 
 @code
 {

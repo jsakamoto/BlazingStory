@@ -1249,11 +1249,18 @@ a.icon-button {
 }
 
 .actions-panel {
+  position: absolute;
+  inset: 0;
   font-family: var(--bs-monospace-font-family);
   font-size: var(--bs-text-size);
+}
+.actions-panel > .actions-panel-scroll-window {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
   padding: 10px 5px 20px 5px;
 }
-.actions-panel > .action-log-line > .action-log-content > .action-log-parent > .action-args-node.no-children {
+.actions-panel > .actions-panel-scroll-window > .action-log-line > .action-log-content > .action-log-parent > .action-args-node.no-children {
   width: 4px;
 }
 
