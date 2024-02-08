@@ -13,7 +13,7 @@
   "shortName": "blazingstorywasm",
   "description": "A project template for creating a Blazing Story WebAssembly application that is a clone of the Storybook for Blazor.",
   "thirdPartyNotices": "https://github.com/jsakamoto/BlazingStory/blob/main/THIRD-PARTY-NOTICES.txt",
-  "defaultName": "BlazingStoryApp",
+  "defaultName": "BlazorApp.Stories",
   "preferNameDirectory": true,
   "tags": {
     "language": "C#",

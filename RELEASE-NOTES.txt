@@ -1,3 +1,7 @@
+v.1.0.0-preview.21
+- New: Added an "Actions" panel on the canvas page.
+- Improved: Made hot-reloading more stable.
+
 v.1.0.0-preview.20
 - Add support for RenderFragment on the parameter controller.
 - Fix the styles to be the same as the Storybook v.7.6.10.
