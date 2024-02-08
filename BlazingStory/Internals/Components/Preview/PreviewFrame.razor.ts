@@ -1,12 +1,16 @@
 import { CSSStyle, MessageArgument, DotNetObjectReference } from "../../../Scripts/types";
 
+class TimeoutError extends Error {
+    constructor(message: string) { super(message); }
+}
+
 const waitFor = async <T>(arg: { predecate: () => false | T, maxRetryCount?: number, retryInterval?: number }): Promise<T> => {
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     let retryCount = 0;
     while (true) {
         const result = arg.predecate();
         if (result !== false) return result as T;
-        if (retryCount >= (arg.maxRetryCount ?? 50)) throw new Error("Timeout");
+        if (retryCount >= (arg.maxRetryCount ?? 50)) throw new TimeoutError("Timeout");
         retryCount++;
         await delay(arg.retryInterval ?? 10);
     }
@@ -51,12 +55,18 @@ export const zoomOutPreviewFrame = (iframe: HTMLIFrameElement | null) => zoomPre
 export const resetZoomPreviewFrame = (iframe: HTMLIFrameElement | null) => zoomPreviewFrame(iframe, _ => 1);
 
 export const subscribeComponentActionEvent = async (iframe: HTMLIFrameElement | null, dotNetObj: DotNetObjectReference, methodName: string) => {
-    if (iframe === null) return;
-    const { contentDocument } = await waitForIFrameReady(iframe);
-    const componentActionEventListener = (e: Event & { detail?: any }) => dotNetObj.invokeMethodAsync(methodName, e.detail.name, e.detail.argsJson);
-    contentDocument.addEventListener('componentActionEvent', componentActionEventListener);
+    try {
+        if (iframe === null) return { dispose: () => { } };
+        const { contentDocument } = await waitForIFrameReady(iframe);
+        const componentActionEventListener = (e: Event & { detail?: any }) => dotNetObj.invokeMethodAsync(methodName, e.detail.name, e.detail.argsJson);
+        contentDocument.addEventListener('componentActionEvent', componentActionEventListener);
 
-    return { dispose: () => contentDocument.removeEventListener('componentActionEvent', componentActionEventListener) };
+        return { dispose: () => contentDocument.removeEventListener('componentActionEvent', componentActionEventListener) };
+    }
+    catch (e) {
+        if (e instanceof TimeoutError) return { dispose: () => { } };
+        throw e;
+    }
 }
 
 // Checks the '_dotnet_watch_ws_injected' property has been added to the window object,
@@ -68,17 +78,23 @@ const isDotnetWatchScriptInjected = (window: Window | null): boolean => {
 }
 
 export const ensureDotnetWatchScriptInjected = async (iframe: HTMLIFrameElement | null): Promise<void> => {
-    if (iframe === null) return;
+    try {
+        if (iframe === null) return;
 
-    const { contentWindow, contentDocument } = await waitForIFrameReady(iframe);
+        const { contentWindow, contentDocument } = await waitForIFrameReady(iframe);
 
-    if (!isDotnetWatchScriptInjected(window))
-        return; // Hot reloading is not available
-    if (isDotnetWatchScriptInjected(contentWindow))
-        return; // Already injected
+        if (!isDotnetWatchScriptInjected(window))
+            return; // Hot reloading is not available
+        if (isDotnetWatchScriptInjected(contentWindow))
+            return; // Already injected
 
-    const script = contentDocument.createElement('script');
-    script.src = '_framework/aspnetcore-browser-refresh.js';
-    contentDocument.body.appendChild(script);
+        const script = contentDocument.createElement('script');
+        script.src = '_framework/aspnetcore-browser-refresh.js';
+        contentDocument.body.appendChild(script);
+    }
+    catch (e) {
+        if (e instanceof TimeoutError) return;
+        throw e;
+    }
 }
 
