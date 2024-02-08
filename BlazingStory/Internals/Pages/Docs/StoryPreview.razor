@@ -22,23 +22,14 @@
             </div>
 
             <!-- "Show Code" -->
-            <CornerButton Class="show-code-button" OnClick="OnClickedShowCodeButton">
+            <CornerButton Class="show-code-button" OnClick="() => { this._ShowCode = !this._ShowCode; }">
                 @(this._ShowCode ? "Hide code" : "Show code")
             </CornerButton>
 
         </div>
 
-        @if (_ShowCode)
-        {
-            <div class="code-part">
-
-                <pre>@this._CodeText</pre>
-
-                <CornerButton Class="copy-button" OnClick="OnClickCopyButton">
-                    @(this._Copied ? "Copied" : "Copy")
-                </CornerButton>
-            </div>
-        }
+        <!-- Code View -->
+        <CodeView Story="this.Story" Visible="this._ShowCode" />
     </div>
 }
 
@@ -60,10 +51,6 @@
 
     private bool _ShowCode = false;
 
-    private string? _CodeText = null;
-
-    private bool _Copied = false;
-
     private async void OnClickZoomIn()
     {
         if (this._PreviewFrame != null) await this._PreviewFrame.ZoomInAsync();
@@ -77,26 +64,5 @@
     private async void OnClickResetZoom()
     {
         if (this._PreviewFrame != null) await this._PreviewFrame.ResetZoomAsync();
-    }
-
-    private async Task OnClickedShowCodeButton()
-    {
-        if (this._ShowCode == false && this._CodeText == null && this.Story != null)
-        {
-            this._CodeText = await StoriesRazorSource.GetSourceCodeAsync(this.Story);
-        }
-        this._ShowCode = !this._ShowCode;
-    }
-
-    private async Task OnClickCopyButton()
-    {
-        if (this._CodeText == null) return;
-
-        await Services.GetRequiredService<HelperScript>().CopyTextToClipboardAsync(this._CodeText);
-        this._Copied = true;
-        this.StateHasChanged();
-
-        await Task.Delay(1500);
-        this._Copied = false;
     }
 }

@@ -1,0 +1,33 @@
+﻿@attribute [Stories("Internals/Pages/Docs/CodeView")]
+
+<Stories TComponent="CodeView">
+
+    <Story Name="Default">
+
+        <Arguments>
+            <Arg For="_ => _.Story" Value="_Story" />
+            <Arg For="_ => _.Visible" Value="true" />
+        </Arguments>
+
+        <Template>
+            <div class="frame">
+                <CodeView @attributes="context.Args">
+                </CodeView>
+            </div>
+        </Template>
+
+    </Story>
+
+</Stories>
+
+@code
+{
+    private Story? _Story;
+
+    protected override void OnInitialized()
+    {
+        var descriptor = new StoriesRazorDescriptor(typeof(CodeView_stories), new("Internals/Pages/Docs/CodeView"));
+        var context = new StoryContext([]);
+        this._Story = new Story(descriptor, "Default", context, null, null, null!);
+    }
+}

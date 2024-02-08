@@ -1,0 +1,16 @@
+.code-view {
+    overflow-x: auto;
+    background-color: var(--bs-code-back-color);
+
+    pre {
+        font-family: var(--bs-monospace-font-family);
+        font-size: 13px;
+        padding: 20px;
+        color: var(--bs-code-text-color);
+    }
+
+    .copy-button {
+        color: var(--bs-code-copy-text-color);
+        background-color: var(--bs-code-copy-back-color);
+    }
+}

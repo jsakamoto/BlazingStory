@@ -1,0 +1,49 @@
+@if (this.Visible)
+{
+    <div class="code-view">
+
+        <pre>@this._CodeText</pre>
+
+        <CornerButton Class="copy-button" OnClick="OnClickCopyButton">
+            @(this._Copied ? "Copied" : "Copy")
+        </CornerButton>
+
+    </div>
+}
+
+@code
+{
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
+    [Parameter]
+    public Story? Story  { get; set; }
+
+    [Parameter]
+    public bool Visible { get; set; }
+
+    private string? _CodeText = null;
+
+    private bool _Copied = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        base.OnParametersSet();
+        if (this.Visible == true && this._CodeText == null && this.Story != null)
+        {
+            this._CodeText = await StoriesRazorSource.GetSourceCodeAsync(this.Story);
+        }
+    }
+
+    private async Task OnClickCopyButton()
+    {
+        if (this._CodeText == null) return;
+
+        await Services.GetRequiredService<HelperScript>().CopyTextToClipboardAsync(this._CodeText);
+        this._Copied = true;
+        this.StateHasChanged();
+
+        await Task.Delay(1500);
+        this._Copied = false;
+    }
+}

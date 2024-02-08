@@ -1,6 +1,6 @@
 ﻿@attribute [Stories("Internals/Components/Buttons/Actions/CornerButton")]
 
-<Stories TComponent="CornerButton">
+<Stories TComponent="CornerButton" Layout="typeof(BorderedMarginedFrame)">
 
     <Story Name="Default">
 
@@ -8,13 +8,11 @@
             <Arg For="_ => _.ChildContent" Value="_childContent" />
         </Arguments>
 
-
         <Template>
-            <div style="position:absolute; inset:20px; border: solid 1px var(--bs-border-color);">
-                <CornerButton @attributes="context.Args">
-                </CornerButton>
-            </div>
+            <CornerButton @attributes="context.Args">
+            </CornerButton>
         </Template>
+
     </Story>
 
 </Stories>

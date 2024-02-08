@@ -1342,6 +1342,21 @@ a.icon-button {
   color: var(--bs-actions-log-value-noobj-color);
 }
 
+.code-view {
+  overflow-x: auto;
+  background-color: var(--bs-code-back-color);
+}
+.code-view pre {
+  font-family: var(--bs-monospace-font-family);
+  font-size: 13px;
+  padding: 20px;
+  color: var(--bs-code-text-color);
+}
+.code-view .copy-button {
+  color: var(--bs-code-copy-text-color);
+  background-color: var(--bs-code-copy-back-color);
+}
+
 .docs-page {
   position: absolute;
   inset: 0;
@@ -1422,20 +1437,6 @@ a.icon-button {
 }
 .story-preview > .preview-part .preview-frame-viewport iframe {
   position: absolute;
-}
-.story-preview > .code-part {
-  overflow-x: auto;
-  background-color: var(--bs-code-back-color);
-}
-.story-preview > .code-part pre {
-  font-family: var(--bs-monospace-font-family);
-  font-size: 13px;
-  padding: 20px;
-  color: var(--bs-code-text-color);
-}
-.story-preview .copy-button {
-  color: var(--bs-code-copy-text-color);
-  background-color: var(--bs-code-copy-back-color);
 }
 
 .settings-page-panel {
