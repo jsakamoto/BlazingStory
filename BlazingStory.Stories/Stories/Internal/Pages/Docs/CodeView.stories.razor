@@ -1,6 +1,6 @@
 ﻿@attribute [Stories("Internals/Pages/Docs/CodeView")]
 
-<Stories TComponent="CodeView">
+<Stories TComponent="CodeView" Layout="typeof(MarginedFrame)">
 
     <Story Name="Default">
 
@@ -10,10 +10,8 @@
         </Arguments>
 
         <Template>
-            <div class="frame">
-                <CodeView @attributes="context.Args">
-                </CodeView>
-            </div>
+            <CodeView @attributes="context.Args">
+            </CodeView>
         </Template>
 
     </Story>
