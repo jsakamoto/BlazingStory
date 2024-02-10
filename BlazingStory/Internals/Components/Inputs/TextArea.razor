@@ -1,6 +1,6 @@
 <label class="text-area-container">
-    <textarea class="bs-basic-inputs" placeholder="@this.PlaceHolder" @oninput="@((args) => this.OnInput.InvokeAsync(args))" value="@(this.Value ?? "")"></textarea>
-    <div class="bs-basic-inputs text-area-shadow">@((this.Value ?? "") + " ")</div>
+    <textarea class="bs-basic-inputs" placeholder="@this.PlaceHolder" @oninput="OnTextAreaInput" value="@(this.Value ?? "")"></textarea>
+    <div class="bs-basic-inputs text-area-shadow">@((this._Value ?? "") + " ")</div>
 </label>
 
 @code
@@ -13,4 +13,18 @@
 
     [Parameter]
     public EventCallback<ChangeEventArgs> OnInput { get; set; }
+
+    private string? _Value;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        this._Value = this.Value;
+    }
+
+    private async Task OnTextAreaInput(ChangeEventArgs args)
+    {
+        this._Value = args.Value?.ToString();
+        await this.OnInput.InvokeAsync(args);
+    }
 }
