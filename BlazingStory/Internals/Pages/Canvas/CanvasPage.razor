@@ -285,7 +285,6 @@
     private void OnComponentAction(ComponentActionEventArgs e)
     {
         _ComponentActionLogs?.Add(e.Name, e.ArgsJson);
-        Console.WriteLine($"W-1: {e.Name}, {e.ArgsJson}");
     }
 
     public void Dispose()
