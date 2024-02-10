@@ -9,7 +9,7 @@ const waitFor = async (arg) => {
         const result = arg.predecate();
         if (result !== false)
             return result;
-        if (retryCount >= ((_a = arg.maxRetryCount) !== null && _a !== void 0 ? _a : 50))
+        if (retryCount >= ((_a = arg.maxRetryCount) !== null && _a !== void 0 ? _a : 500))
             throw new TimeoutError("Timeout");
         retryCount++;
         await delay((_b = arg.retryInterval) !== null && _b !== void 0 ? _b : 10);

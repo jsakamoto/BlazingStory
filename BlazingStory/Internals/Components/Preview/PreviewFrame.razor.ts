@@ -10,7 +10,7 @@ const waitFor = async <T>(arg: { predecate: () => false | T, maxRetryCount?: num
     while (true) {
         const result = arg.predecate();
         if (result !== false) return result as T;
-        if (retryCount >= (arg.maxRetryCount ?? 50)) throw new TimeoutError("Timeout");
+        if (retryCount >= (arg.maxRetryCount ?? 500)) throw new TimeoutError("Timeout");
         retryCount++;
         await delay(arg.retryInterval ?? 10);
     }
