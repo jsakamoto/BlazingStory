@@ -11,6 +11,8 @@ public class ComponentParameter
 {
     private readonly Type _ComponentType;
 
+    private readonly PropertyInfo _PropertyInfo;
+
     private readonly IXmlDocComment _XmlDocComment;
 
     internal readonly string Name;
@@ -28,6 +30,7 @@ public class ComponentParameter
     internal ComponentParameter(Type componentType, PropertyInfo propertyInfo, IXmlDocComment xmlDocComment)
     {
         this._ComponentType = componentType;
+        this._PropertyInfo = propertyInfo;
         this._XmlDocComment = xmlDocComment;
         this.Name = propertyInfo.Name;
         this.Type = propertyInfo.PropertyType;
@@ -39,7 +42,7 @@ public class ComponentParameter
     /// </summary>
     internal async ValueTask UpdateSummaryFromXmlDocCommentAsync()
     {
-        this.Summary = await this._XmlDocComment.GetSummaryOfPropertyAsync(this._ComponentType, this.Name);
+        this.Summary = await this._XmlDocComment.GetSummaryOfPropertyAsync(this._PropertyInfo.DeclaringType ?? this._ComponentType, this.Name);
     }
 
     internal IEnumerable<string> GetParameterTypeStrings() => TypeUtility.GetTypeDisplayText(this.Type);

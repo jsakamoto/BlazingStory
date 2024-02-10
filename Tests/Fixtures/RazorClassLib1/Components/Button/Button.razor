@@ -1,4 +1,5 @@
 ﻿@attribute [Description("This is basic button component.")]
+@inherits SizableComponentBase
 
 <button class="@(this.Color.ToString().ToLower()) @(this.Size.ToString().ToLower()) @(this.Bold ? "bold" : "")" @onclick="@((e) => OnClick.InvokeAsync(e))">
     <span>@this.Text</span>
@@ -20,12 +21,6 @@
     /// </summary>
     [Parameter]
     public ButtonColor Color { get; set; } = ButtonColor.Default;
-
-    /// <summary>
-    /// Set a size of the button. <see cref="ButtonSize.Medium"/> is default.
-    /// </summary>
-    [Parameter]
-    public ButtonSize Size { get; set; } = ButtonSize.Medium;
 
     /// <summary>
     /// Set a callback method that will be invoked when users click the button.
