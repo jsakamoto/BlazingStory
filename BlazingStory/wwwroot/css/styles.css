@@ -1003,6 +1003,7 @@ a.icon-button {
 
 .text-area-container {
   position: relative;
+  display: block;
 }
 .text-area-container textarea, .text-area-container .text-area-shadow {
   max-height: 400px;

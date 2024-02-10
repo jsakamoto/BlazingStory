@@ -1,5 +1,6 @@
 .text-area-container {
     position: relative;
+    display: block;
 
     textarea, .text-area-shadow {
         max-height: 400px;
