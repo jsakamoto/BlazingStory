@@ -1,3 +1,7 @@
+v.1.0.0-preview.22
+- Fix: the text box didn't appear correctly on Safari browser.
+- Fix: timeout errors have happened so often.
+
 v.1.0.0-preview.21
 - New: Added an "Actions" panel on the canvas page.
 - Improved: Made hot-reloading more stable.
