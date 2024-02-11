@@ -41,6 +41,13 @@
 
     <ItemGroup>
 
+      <!-- Include the XML Doc Comment files of the Referenced NuGet packages (exclude which starts with "Microsoft.~" or "System.~") -->
+      <_XmlDocComment Include="@(_ReferenceDocumentationFiles)" Condition=" !$([System.String]::Copy('%(Filename)').StartsWith('Microsoft.')) AND !$([System.String]::Copy('%(Filename)').StartsWith('System.')) ">
+        <AssetTraitValue>symbol</AssetTraitValue>
+        <AssetTraitName>BlazorWebAssemblyResource</AssetTraitName>
+        <RelativePath>_framework/%(Filename).xml</RelativePath>
+      </_XmlDocComment>
+
       <!-- Include the XML Doc Comment files of the Referenced Assemblies -->
       <_XmlDocComment Include="@(_ReferenceRelatedPaths)" Condition=" '%(Extension)' == '.xml' " RemoveMetadata="OriginalItemSpec">
         <AssetTraitValue>symbol</AssetTraitValue>

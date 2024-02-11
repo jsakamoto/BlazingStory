@@ -46,6 +46,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorToDoApp.Stories", "Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazingStory.Stories", "BlazingStory.Stories\BlazingStory.Stories.csproj", "{0141A008-AF1C-4F89-9201-1896B744EA91}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComponentPack1", "Tests\Fixtures\ComponentPack1\ComponentPack1.csproj", "{4428A1F1-AA99-45E1-B06C-89C179E6E8F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,6 +110,10 @@ Global
 		{0141A008-AF1C-4F89-9201-1896B744EA91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0141A008-AF1C-4F89-9201-1896B744EA91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0141A008-AF1C-4F89-9201-1896B744EA91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4428A1F1-AA99-45E1-B06C-89C179E6E8F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4428A1F1-AA99-45E1-B06C-89C179E6E8F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4428A1F1-AA99-45E1-B06C-89C179E6E8F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4428A1F1-AA99-45E1-B06C-89C179E6E8F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -127,6 +133,7 @@ Global
 		{D9E41C96-0E91-426B-940D-CAFD41C9A380} = {1D8F2096-36B7-4B69-AE1A-7D50AA252ED9}
 		{7400EAB0-E57F-4D89-9A2E-057B339BA9D1} = {1D8F2096-36B7-4B69-AE1A-7D50AA252ED9}
 		{FD6E35F4-CC35-4D0D-9F7E-CC43BF6CCA03} = {1D8F2096-36B7-4B69-AE1A-7D50AA252ED9}
+		{4428A1F1-AA99-45E1-B06C-89C179E6E8F1} = {4CAC84D7-AE05-4C6F-8992-0BADC1C5B37E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {20FA05A1-802E-4D83-AF96-889FA312BA00}

@@ -38,4 +38,11 @@
     <ProjectReference Include="..\Fixtures\ClassLibVer1230\ClassLibVer1230.csproj" />
   </ItemGroup>
 
+  <Target Name="_ResolveCopyLocalNuGetPackageXmls" AfterTargets="ResolveReferences">
+    <ItemGroup>
+      <ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).xml')" 
+                               Condition=" '%(ReferenceCopyLocalPaths.NuGetPackageId)' != '' AND Exists('%(RootDir)%(Directory)%(Filename).xml') AND !$([System.String]::Copy('%(Filename)').StartsWith('Microsoft.')) AND !$([System.String]::Copy('%(Filename)').StartsWith('System.')) " />
+    </ItemGroup>
+  </Target>
+
 </Project>

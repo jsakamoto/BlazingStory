@@ -12,7 +12,7 @@ internal class XmlDocCommentTest
     {
         await using var host = new TestHost(services =>
         {
-            services.AddSingleton(_ => XmlDocCommentLoader.CreateHttpClientFor<Button>());
+            services.AddSingleton(_ => XmlDocCommentLoaderFromOutDir.CreateHttpClient());
             services.AddSingleton<IXmlDocComment, XmlDocCommentForWasm>();
         });
 
