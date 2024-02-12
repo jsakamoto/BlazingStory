@@ -112,13 +112,18 @@ internal static class StoriesRazorSource
         var argsAttr = Regex.Match(attrs.Value, "@attributes=(\"\\w+\\.Args\"|'\\w+\\.Args')");
         if (!argsAttr.Success) return codeText;
 
+        var indent = openTag.Groups["indent"];
+        var attrIndentSrc = codeText.Substring(indent.Index, attrs.Index - indent.Index);
+        var attrIndent = Regex.Replace(attrIndentSrc, "[^\\s]", " ");
+
+        var argsAttrStrings = ArgumentsToAttributeStrings(story)
+            .Select((attr, index) => (attr, index))
+            .Select(x => x.index == 0 ? x.attr : attrIndent + x.attr);
+
         var argsAttrIndex = attrs.Index + argsAttr.Index;
-
-        var argsAttrStrings = ArgumentsToAttributeStrings(story);
-
         return string.Concat(
                 codeText.Substring(0, argsAttrIndex),
-                string.Join(' ', argsAttrStrings),
+                string.Join('\n', argsAttrStrings),
                 codeText.Substring(argsAttrIndex + argsAttr.Length)
             );
     }

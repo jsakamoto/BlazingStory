@@ -66,6 +66,8 @@ internal class StoriesRazorSourceTest
         var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
 
         // Then
-        codeText.Is("<Button Bold=\"true\" Color=\"ButtonColor.Default\" />");
+        codeText.Is(
+            "<Button Bold=\"true\"\n" +
+            "        Color=\"ButtonColor.Default\" />");
     }
 }
