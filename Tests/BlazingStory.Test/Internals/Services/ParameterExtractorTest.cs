@@ -51,6 +51,6 @@ internal class ParameterExtractorTest
             .Select(p => $"{p.Name}, {p.Type.Name}, {p.Required}, {p.Summary}")
             .Is("Rate, Int32, False, Gets or sets the score of rating.",
                 "Color, String, False, Gets or sets the color of the rating mark.",
-                "Id, String, False, Gets or sets the identifier for the component.");
+                "Id, String, False, Gets or sets the identifier for the component. See also the MDN document about the <a href=\"https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id\" target=\"_blank\">global id attribute</a>.");
     }
 }

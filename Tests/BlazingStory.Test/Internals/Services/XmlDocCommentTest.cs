@@ -19,6 +19,6 @@ internal class XmlDocCommentTest
         var xmlDocComment = host.Services.GetRequiredService<IXmlDocComment>();
         var summary = await xmlDocComment.GetSummaryOfPropertyAsync(typeof(Button), nameof(Button.Text));
 
-        summary.Is("Set a text that is button caption.");
+        summary.Value.Is("Set a text that is button caption.");
     }
 }

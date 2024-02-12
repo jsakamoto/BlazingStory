@@ -1,4 +1,6 @@
-﻿namespace BlazingStory.Internals.Services.XmlDocComment;
+﻿using Microsoft.AspNetCore.Components;
+
+namespace BlazingStory.Internals.Services.XmlDocComment;
 
 /// <summary>
 /// Provides XML document comment of types
@@ -10,11 +12,11 @@ public interface IXmlDocComment
     /// </summary>
     /// <param name="ownerType">Type of the property owner.</param>
     /// <param name="propertyName">Name of the property.</param>
-    ValueTask<string> GetSummaryOfPropertyAsync(Type ownerType, string propertyName);
+    ValueTask<MarkupString> GetSummaryOfPropertyAsync(Type ownerType, string propertyName);
 
     /// <summary>
     /// Get summary text of a type from XML document comment file.
     /// </summary>
     /// <param name="componentType">Type for getting summary text.</param>
-    ValueTask<string> GetSummaryOfTypeAsync(Type componentType);
+    ValueTask<MarkupString> GetSummaryOfTypeAsync(Type componentType);
 }

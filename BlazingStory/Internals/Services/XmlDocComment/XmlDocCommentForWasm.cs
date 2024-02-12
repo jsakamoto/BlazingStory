@@ -1,5 +1,8 @@
-﻿using System.Xml;
+﻿using System.Text.Encodings.Web;
+using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Linq;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 
 namespace BlazingStory.Internals.Services.XmlDocComment;
@@ -47,10 +50,10 @@ internal class XmlDocCommentForWasm : IXmlDocComment
     /// </summary>
     /// <param name="ownerType">Type of the property owner.</param>
     /// <param name="propertyName">Name of the property.</param>
-    public async ValueTask<string> GetSummaryOfPropertyAsync(Type ownerType, string propertyName)
+    public async ValueTask<MarkupString> GetSummaryOfPropertyAsync(Type ownerType, string propertyName)
     {
         var xdocComment = await this.GetXmlDocCommentXDocAsync(ownerType);
-        if (xdocComment == null) return "";
+        if (xdocComment == null) return default;
 
         var memberName = $"P:{ownerType.FullName}.{propertyName}";
         return xdocComment
@@ -58,17 +61,17 @@ internal class XmlDocCommentForWasm : IXmlDocComment
             .Where(member => member.Attribute("name")?.Value == memberName)
             .SelectMany(member => member.Descendants("summary"))
             .Select(summary => GetInnerText(summary))
-            .FirstOrDefault() ?? "";
+            .FirstOrDefault();
     }
 
     /// <summary>
     /// Get summary text of a type from XML document comment file.
     /// </summary>
     /// <param name="componentType">Type for getting summary text.</param>
-    public async ValueTask<string> GetSummaryOfTypeAsync(Type componentType)
+    public async ValueTask<MarkupString> GetSummaryOfTypeAsync(Type componentType)
     {
         var xdocComment = await this.GetXmlDocCommentXDocAsync(componentType);
-        if (xdocComment == null) return "";
+        if (xdocComment == null) return default;
 
         var memberName = $"T:{componentType.FullName}";
         return xdocComment
@@ -76,7 +79,7 @@ internal class XmlDocCommentForWasm : IXmlDocComment
             .Where(member => member.Attribute("name")?.Value == memberName)
             .SelectMany(member => member.Descendants("summary"))
             .Select(summary => GetInnerText(summary))
-            .FirstOrDefault() ?? "";
+            .FirstOrDefault();
     }
 
     private async ValueTask<XDocument?> GetXmlDocCommentXDocAsync(Type type)
@@ -119,15 +122,17 @@ internal class XmlDocCommentForWasm : IXmlDocComment
     /// Get inner text of a XML document comment element.<br/>
     /// (e.g. <c>See also &lt;see cref="F:Foo.Bar.Fizz.Buzz"/&gt;</c> =&gt; <c>See also "Fizz.Buzz".</c>))
     /// </summary>
-    private static string GetInnerText(XElement element)
+    private static MarkupString GetInnerText(XElement element)
     {
+        static string encode(string? text) => HtmlEncoder.Default.Encode(text ?? "");
+
         static string getAttrText(XElement element, string attrName)
         {
             var attrValue = element.Attribute(attrName)?.Value ?? "";
-            return "\"" + string.Join('.', attrValue.Split('.').TakeLast(2)) + "\"";
+            return "\"" + encode(string.Join('.', attrValue.Split('.').TakeLast(2))) + "\"";
         }
 
-        return string.Concat(element
+        var innerText = string.Concat(element
             .Nodes()
             .Select(node => node switch
             {
@@ -135,33 +140,21 @@ internal class XmlDocCommentForWasm : IXmlDocComment
                 {
                     XmlNodeType.Element => e.Name.LocalName switch
                     {
-                        "see" => getAttrText(e, "cref"),
+                        "see" => e.Attribute("href") != null ?
+                            $"<a href=\"{e.Attribute("href")?.Value}\" target=\"_blank\">{e.Value}</a>" :
+                            getAttrText(e, "cref"),
                         "paramref" => getAttrText(e, "name"),
                         "typeparamref" => getAttrText(e, "name"),
-                        _ => e.Value
+                        _ => encode(e.Value)
                     },
-                    _ => e.Value
+                    _ => encode(e.Value)
                 },
-                _ => node.ToString()
+                _ => encode(node.ToString())
             })
-        ).Trim();
+        );
+
+        innerText = Regex.Replace(innerText, "^(\\s|&#xD;|&#xA;)*", "");
+        innerText = Regex.Replace(innerText, "(\\s|&#xD;|&#xA;)*$", "");
+        return (MarkupString)innerText;
     }
-
-
-    //public static string GetSummaryOfProperty(Type ownerType, string propertyName)
-    //{
-    //    if (ownerType.Assembly.Location == "") return "";
-
-    //    var xdocPath = Path.ChangeExtension(new Uri(ownerType.Assembly.Location).LocalPath, ".xml");
-    //    if (!File.Exists(xdocPath)) return "";
-
-    //    var memberName = $"P:{ownerType.FullName}.{propertyName}";
-
-    //    return XDocument.Load(xdocPath)
-    //        .Descendants("member")
-    //        .Where(member => member.Attribute("name")?.Value == memberName)
-    //        .SelectMany(member => member.Descendants("summary"))
-    //        .Select(summary => summary.Value.Trim())
-    //        .FirstOrDefault() ?? "";
-    //}
 }

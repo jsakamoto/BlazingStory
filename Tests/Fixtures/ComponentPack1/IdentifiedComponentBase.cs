@@ -8,7 +8,7 @@ namespace ComponentPack1;
 public class IdentifiedComponentBase : ComponentBase
 {
     /// <summary>
-    /// Gets or sets the identifier for the component.
+    /// Gets or sets the identifier for the component. See also the MDN document about the <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id">global id attribute</see>.
     /// </summary>
     [Parameter]
     public string? Id { get; set; }

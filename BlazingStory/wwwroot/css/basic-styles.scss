@@ -20,6 +20,10 @@ body {
     .color-scheme-container {
         color: var(--bs-text-color);
         background: var(--bs-back-color);
+
+        a {
+            color: var(--bs-link-color);
+        }
     }
 }
 

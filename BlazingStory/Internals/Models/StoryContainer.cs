@@ -14,7 +14,7 @@ internal class StoryContainer
 
     internal readonly string Title;
 
-    internal string Summary { get; private set; } = "";
+    internal MarkupString Summary { get; private set; } = default;
 
     internal readonly List<Story> Stories = new();
 

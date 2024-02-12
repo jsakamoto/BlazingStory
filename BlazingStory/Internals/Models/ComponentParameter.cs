@@ -19,7 +19,7 @@ public class ComponentParameter
 
     internal readonly Type Type;
 
-    internal string Summary { get; private set; } = "";
+    internal MarkupString Summary { get; private set; } = default;
 
     internal readonly bool Required;
 
