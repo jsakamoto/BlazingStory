@@ -52,7 +52,7 @@ internal class StoryContainer
 
     internal void RegisterStory(string name, StoryContext storyContext, Type? storiesLayout, Type? storyLayout, RenderFragment<StoryContext> renderFragment)
     {
-        var newStory = new Story(this._StoriesRazorDescriptor, name, storyContext, storiesLayout, storyLayout, renderFragment);
+        var newStory = new Story(this._StoriesRazorDescriptor, this.TargetComponentType, name, storyContext, storiesLayout, storyLayout, renderFragment);
         var index = this.Stories.FindIndex(story => story.Name == name);
         if (index == -1)
         {

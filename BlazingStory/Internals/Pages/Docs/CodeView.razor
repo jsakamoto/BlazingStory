@@ -1,3 +1,5 @@
+@implements IDisposable
+
 @if (this.Visible)
 {
     <div class="code-view">
@@ -17,22 +19,45 @@
     internal IServiceProvider Services { get; init; } = default!;
 
     [Parameter]
-    public Story? Story  { get; set; }
+    public Story? Story { get; set; }
 
     [Parameter]
     public bool Visible { get; set; }
 
-    private string? _CodeText = null;
+    private string? _SourceCodeText = null;
+
+    private string? _CodeText;
 
     private bool _Copied = false;
 
     protected override async Task OnParametersSetAsync()
     {
         base.OnParametersSet();
-        if (this.Visible == true && this._CodeText == null && this.Story != null)
+        if (this.Visible == true && this._SourceCodeText == null && this.Story != null)
         {
-            this._CodeText = await StoriesRazorSource.GetSourceCodeAsync(this.Story);
+            this._SourceCodeText = await StoriesRazorSource.GetSourceCodeAsync(this.Story);
+            this.UpdateCodeTextWithArgument();
         }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (this.Story == null) throw new InvalidOperationException("Story is required");
+        this.Story.Context.ArgumentChanged += this.Context_ArgumentChanged;
+    }
+
+    private ValueTask Context_ArgumentChanged()
+    {
+        this.UpdateCodeTextWithArgument();
+        this.StateHasChanged();
+        return ValueTask.CompletedTask;
+    }
+
+    private void UpdateCodeTextWithArgument()
+    {
+        this._CodeText = this._SourceCodeText;
+        if (this.Story == null || this._SourceCodeText == null) return;
+        this._CodeText = StoriesRazorSource.UpdateSourceTextWithArgument(Story, this._SourceCodeText);
     }
 
     private async Task OnClickCopyButton()
@@ -45,5 +70,10 @@
 
         await Task.Delay(1500);
         this._Copied = false;
+    }
+
+    public void Dispose()
+    {
+        if (this.Story != null) this.Story.Context.ArgumentChanged -= this.Context_ArgumentChanged;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
 using BlazingStory.Internals.Models;
 using BlazingStory.Internals.Types;
@@ -89,5 +90,53 @@ internal static class StoriesRazorSource
 
         // Remove the minimum indent from all lines
         return string.Join('\n', lines.Select(line => line.Substring(Math.Min(line.Length, indentToTrim))));
+    }
+
+    internal static string UpdateSourceTextWithArgument(Story story, string codeText)
+    {
+        var componentTypeNameFragments = story.ComponentType.FullName?.Split('.') ?? Array.Empty<string>();
+        var componentTagNameCandidates = componentTypeNameFragments
+            .Reverse()
+            .Aggregate(seed: new List<string>(), (list, fragment) =>
+            {
+                list.Add(list.Any() ? fragment + "\\." + list.Last() : fragment); return list;
+            });
+        var componentTagNamePattern = $"({string.Join('|', componentTagNameCandidates)})";
+
+        var openTag = Regex.Match(codeText, $"(?<indent>[ \\t]*)<(?<tagName>{componentTagNamePattern})(\\s+(?<attrs>[^>]*))?>");
+        if (!openTag.Success) return codeText;
+        var attrs = openTag.Groups["attrs"];
+        if (!attrs.Success) return codeText;
+        var closeTag = attrs.Value.EndsWith('/') ? null : Regex.Match(codeText, $"</{openTag.Groups["tagName"].Value}>");
+
+        var argsAttr = Regex.Match(attrs.Value, "@attributes=(\"\\w+\\.Args\"|'\\w+\\.Args')");
+        if (!argsAttr.Success) return codeText;
+
+        var argsAttrIndex = attrs.Index + argsAttr.Index;
+
+        var argsAttrStrings = ArgumentsToAttributeStrings(story);
+
+        return string.Concat(
+                codeText.Substring(0, argsAttrIndex),
+                string.Join(' ', argsAttrStrings),
+                codeText.Substring(argsAttrIndex + argsAttr.Length)
+            );
+    }
+
+    private static IEnumerable<string> ArgumentsToAttributeStrings(Story story)
+    {
+        var args = story.Context.Args;
+        foreach (var param in story.Context.Parameters)
+        {
+            if (!args.TryGetValue(param.Name, out var value)) continue;
+            var valueString = value switch
+            {
+                bool b => b ? "true" : "false",
+                Enum e => e.GetType().Name + "." + e,
+                _ => value?.ToString() ?? "null"
+            };
+
+            yield return $"{param.Name}=\"{HtmlEncoder.Default.Encode(valueString)}\"";
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using BlazingStory.Internals.Models;
+using BlazingStory.Internals.Services;
 using BlazingStoryApp1.Stories;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -23,13 +24,20 @@ internal static class TestHelper
         internal static BlazingStory.Types.StoryContext CreateEmpty() => new(Enumerable.Empty<ComponentParameter>());
     }
 
+    internal static Story CreateStory<TComponent>(string title = "", string name = "")
+    {
+        var parameters = ParameterExtractor.GetParametersFromComponentType(typeof(TComponent), XmlDocComment.Dummy);
+        var context = new BlazingStory.Types.StoryContext(parameters);
+        return new Story(Descriptor(title), typeof(TComponent), name, context, null, null, EmptyFragment);
+    }
+
     internal static IEnumerable<StoryContainer> GetExampleStories1(IServiceProvider services) => [
         new(typeof(Button), null, new(typeof(Button_stories), new("Examples/Button")), services) { Stories = {
-            new(Descriptor("Examples/Button"), "Default Button", StoryContext.CreateEmpty(), null, null, TestHelper.EmptyFragment),
-            new(Descriptor("Examples/Button"), "Primary Button", StoryContext.CreateEmpty(), null, null, TestHelper.EmptyFragment),
+            CreateStory<Button>(title: "Examples/Button", name: "Default Button"),
+            CreateStory<Button>(title: "Examples/Button", name: "Primary Button"),
         }},
         new(typeof(Button), null, new(typeof(Select_stories), new("Examples/Select")), services) { Stories = {
-            new(Descriptor("Examples/Select"), "Select", StoryContext.CreateEmpty(), null, null, TestHelper.EmptyFragment),
+            CreateStory<Button>(title: "Examples/Select", name: "Select"),
         }}
     ];
 

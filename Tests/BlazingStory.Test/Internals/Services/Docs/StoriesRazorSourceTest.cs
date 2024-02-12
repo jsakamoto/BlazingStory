@@ -4,6 +4,8 @@ using BlazingStory.Test._Fixtures;
 using BlazingStory.Types;
 using BlazingStoryApp1.Stories;
 using Castle.Core.Internal;
+using RazorClassLib1.Components.Button;
+using RazorClassLib1.Components.Rating;
 using static BlazingStory.Test._Fixtures.TestHelper;
 
 namespace BlazingStory.Test.Internals.Services.Docs;
@@ -17,7 +19,7 @@ internal class StoriesRazorSourceTest
         var typeofStoriesRazor = typeof(Rating_stories);
         var storyAttribute = typeofStoriesRazor.GetAttribute<StoriesAttribute>();
         var descriptor = new StoriesRazorDescriptor(typeofStoriesRazor, storyAttribute);
-        var story = new Story(descriptor, "Rate Control", TestHelper.StoryContext.CreateEmpty(), null, null, EmptyFragment);
+        var story = new Story(descriptor, typeof(Rating), "Rate Control", TestHelper.StoryContext.CreateEmpty(), null, null, EmptyFragment);
 
         // When
         var sourceCode = await StoriesRazorSource.GetSourceCodeAsync(story);
@@ -33,7 +35,7 @@ internal class StoriesRazorSourceTest
         var typeofStoriesRazor = typeof(Button_stories);
         var storyAttribute = typeofStoriesRazor.GetAttribute<StoriesAttribute>();
         var descriptor = new StoriesRazorDescriptor(typeofStoriesRazor, storyAttribute);
-        var story = new Story(descriptor, "Danger", TestHelper.StoryContext.CreateEmpty(), null, null, EmptyFragment);
+        var story = new Story(descriptor, typeof(Button), "Danger", TestHelper.StoryContext.CreateEmpty(), null, null, EmptyFragment);
 
         // When
         var sourceCode = await StoriesRazorSource.GetSourceCodeAsync(story);
@@ -49,5 +51,21 @@ internal class StoriesRazorSourceTest
             <Button @attributes="context.Args" />
             """.Split('\n').Select(s => s.TrimEnd('\r')));
         sourceCode.Is(expected);
+    }
+
+    [Test]
+    public async Task UpdateSourceTextWithArgument_Test()
+    {
+        // Given
+        var sourceText = "<Button @attributes=\"context.Args\" />";
+        var story = TestHelper.CreateStory<Button>();
+        await story.Context.AddOrUpdateArgumentAsync(nameof(Button.Bold), true);
+        await story.Context.AddOrUpdateArgumentAsync(nameof(Button.Color), ButtonColor.Default);
+
+        // When 
+        var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
+
+        // Then
+        codeText.Is("<Button Bold=\"true\" Color=\"ButtonColor.Default\" />");
     }
 }
