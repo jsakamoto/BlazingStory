@@ -23,6 +23,8 @@
     </ReadLinesFromFile>
     <PropertyGroup>
       <PackageReleaseNotes>@(ReleaseNoteLines, '%0a');v.0.0</PackageReleaseNotes>
+      <PackageReleaseNotes>$(PackageReleaseNotes.Replace('&lt;','&amp;lt;'))</PackageReleaseNotes>
+      <PackageReleaseNotes>$(PackageReleaseNotes.Replace('&gt;','&amp;gt;'))</PackageReleaseNotes>
       <PackageReleaseNotes>$([System.Text.RegularExpressions.Regex]::Match($(PackageReleaseNotes), "^(v\.[\d\.]+.+?)v\.[\d\.]+", System.Text.RegularExpressions.RegexOptions.Singleline).Groups[1].Value)</PackageReleaseNotes>
       <PackageReleaseNotes>$(PackageReleaseNotes)%0aTo see all the change logs, please visit the following URL.%0a- $(RepositoryUrl)blob/main/RELEASE-NOTES.txt</PackageReleaseNotes>
     </PropertyGroup>

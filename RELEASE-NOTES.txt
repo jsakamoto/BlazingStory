@@ -1,3 +1,6 @@
+v.1.0.0-preview.24
+- Fix: the XML doc comments markup <see href> was not displayed on the Docs page.
+
 v.1.0.0-preview.23
 - Improve: get XML Doc comments for parameters even when inherited from other assemblies or NuGet packages.
 
