@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
 using BlazingStory.Internals.Models;
@@ -95,15 +96,24 @@ internal static class StoriesRazorSource
     internal static string UpdateSourceTextWithArgument(Story story, string codeText)
     {
         var componentTypeNameFragments = story.ComponentType.FullName?.Split('.') ?? Array.Empty<string>();
-        var componentTagNameCandidates = componentTypeNameFragments
+        var componentTagCandidates = componentTypeNameFragments
             .Reverse()
             .Aggregate(seed: new List<string>(), (list, fragment) =>
             {
                 list.Add(list.Any() ? fragment + "\\." + list.Last() : fragment); return list;
             });
-        var componentTagNamePattern = $"({string.Join('|', componentTagNameCandidates)})";
+        var componentTagPattern = $"({string.Join('|', componentTagCandidates)})";
 
-        var openTag = Regex.Match(codeText, $"(?<indent>[ \\t]*)<(?<tagName>{componentTagNamePattern})(\\s+(?<attrs>[^>]*))?>");
+        return UpdateSourceTextWithArgument(story, codeText, componentTagPattern, story.Context.Args);
+    }
+
+    private static string UpdateSourceTextWithArgument(Story story, string codeText, string componentTagPattern, IReadOnlyDictionary<string, object?> args)
+    {
+        // "        <ButtonComponent       Text="Hello" @attributes=\"context.Args\" />"
+        //  ~~~~~~~~ ~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //  ↑ indent  ↑ tagName                    ↑ attrs
+
+        var openTag = Regex.Match(codeText, $"(?<indent>[ \\t]*)<(?<tagName>{componentTagPattern})((?<attrs>\\s+[^>]*))?>");
         if (!openTag.Success) return codeText;
         var attrs = openTag.Groups["attrs"];
         if (!attrs.Success) return codeText;
@@ -112,36 +122,76 @@ internal static class StoriesRazorSource
         var argsAttr = Regex.Match(attrs.Value, "@attributes=(\"\\w+\\.Args\"|'\\w+\\.Args')");
         if (!argsAttr.Success) return codeText;
 
-        var indent = openTag.Groups["indent"];
-        var attrIndentSrc = codeText.Substring(indent.Index, attrs.Index - indent.Index);
-        var attrIndent = Regex.Replace(attrIndentSrc, "[^\\s]", " ");
+        var parameters = Regex.Matches(attrs.Value, "(?<gap>\\s+)(?<name>[@\\w]+)=(?<quote>\"|')");
+        for (var i = 0; i < parameters.Count; i++)
+        {
+            if (!TryUpdateCodeText(story, codeText, args, openTag, attrs, parameters, i, out var updatedCodeText)) continue;
 
-        var argsAttrStrings = ArgumentsToAttributeStrings(story)
-            .Select((attr, index) => (attr, index))
-            .Select(x => x.index == 0 ? x.attr : attrIndent + x.attr);
+            var paramName = parameters[i].Groups["name"].Value;
+            return UpdateSourceTextWithArgument(story, updatedCodeText, componentTagPattern, args.Where(item => item.Key != paramName).ToDictionary(item => item.Key, item => item.Value));
+        }
 
-        var argsAttrIndex = attrs.Index + argsAttr.Index;
-        return string.Concat(
-                codeText.Substring(0, argsAttrIndex),
-                string.Join('\n', argsAttrStrings),
-                codeText.Substring(argsAttrIndex + argsAttr.Length)
-            );
+        return codeText;
     }
 
-    private static IEnumerable<string> ArgumentsToAttributeStrings(Story story)
+    private static bool TryUpdateCodeText(Story story, string codeText, IReadOnlyDictionary<string, object?> args, Match openTag, Group attrs, MatchCollection parameters, int i, [NotNullWhen(true)] out string? updatedCodeText)
     {
-        var args = story.Context.Args;
+        var parameter = parameters[i];
+        var paramName = parameter.Groups["name"];
+        var endIndex = (i + 1 < parameters.Count) ? parameters[i + 1].Index : attrs.Value.LastIndexOf(parameter.Groups["quote"].Value) + 1;
+
+        if (paramName.Value == "@attributes")
+        {
+            var firstParam = parameters[0];
+            var indent = openTag.Groups["indent"];
+            var attrIndentSrc = codeText.Substring(indent.Index, attrs.Index + firstParam.Groups["name"].Index - indent.Index);
+            var attrIndent = Regex.Replace(attrIndentSrc, "[^\\s]", " ");
+
+            var argString = ArgumentsToAttributeStrings(story, args)
+                .Select((attr, index) => (attr, index))
+                .Select(x => (x.index == 0 && i == 0) ? x.attr : attrIndent + x.attr);
+
+            updatedCodeText = string.Concat(
+                codeText.Substring(0, attrs.Index + parameter.Index),
+                (i == 0 ? parameter.Groups["gap"].Value : "\n"),
+                string.Join('\n', argString),
+                codeText.Substring(attrs.Index + endIndex));
+
+            return true;
+        }
+
+        else
+        {
+            if (!args.TryGetValue(paramName.Value, out var value)) { updatedCodeText = null; return false; }
+
+            var argString = ConvertArgToString(paramName.Value, value, parameter.Groups["quote"].Value);
+            updatedCodeText = string.Concat(
+                  codeText.Substring(0, attrs.Index + paramName.Index),
+                  argString,
+                  codeText.Substring(attrs.Index + endIndex));
+
+            return true;
+        }
+    }
+
+    private static IEnumerable<string> ArgumentsToAttributeStrings(Story story, IReadOnlyDictionary<string, object?> args)
+    {
         foreach (var param in story.Context.Parameters)
         {
             if (!args.TryGetValue(param.Name, out var value)) continue;
-            var valueString = value switch
-            {
-                bool b => b ? "true" : "false",
-                Enum e => e.GetType().Name + "." + e,
-                _ => value?.ToString() ?? "null"
-            };
-
-            yield return $"{param.Name}=\"{HtmlEncoder.Default.Encode(valueString)}\"";
+            yield return ConvertArgToString(param.Name, value);
         }
+    }
+
+    private static string ConvertArgToString(string name, object? value, string quote = "\"")
+    {
+        var valueString = value switch
+        {
+            bool b => b ? "true" : "false",
+            Enum e => e.GetType().Name + "." + e,
+            _ => value?.ToString() ?? "null"
+        };
+
+        return $"{name}={quote}{HtmlEncoder.Default.Encode(valueString)}{quote}";
     }
 }

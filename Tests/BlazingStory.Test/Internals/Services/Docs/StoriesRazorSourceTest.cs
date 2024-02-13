@@ -70,4 +70,29 @@ internal class StoriesRazorSourceTest
             "<Button Bold=\"true\"\n" +
             "        Color=\"ButtonColor.Default\" />");
     }
+
+    [Test]
+    public async Task UpdateSourceTextWithArgument_Override_Test()
+    {
+        // Given
+        var sourceText =
+            "<div>\n" +
+            "    <Button Text=\"One+One=Two\" @attributes=\"context.Args\">\n" +
+            "    </Button>\n" +
+            "</div>\n";
+        var story = TestHelper.CreateStory<Button>();
+        await story.Context.AddOrUpdateArgumentAsync(nameof(Button.Text), "Hello, World");
+        await story.Context.AddOrUpdateArgumentAsync(nameof(Button.Bold), false);
+
+        // When 
+        var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
+
+        // Then
+        codeText.Is(
+            "<div>\n" +
+            "    <Button Text=\"Hello, World\"\n" +
+            "            Bold=\"false\">\n" +
+            "    </Button>\n" +
+            "</div>\n");
+    }
 }
