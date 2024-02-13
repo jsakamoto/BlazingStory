@@ -149,11 +149,12 @@ internal static class StoriesRazorSource
 
             var argString = ArgumentsToAttributeStrings(story, args)
                 .Select((attr, index) => (attr, index))
-                .Select(x => (x.index == 0 && i == 0) ? x.attr : attrIndent + x.attr);
+                .Select(x => (x.index == 0 && i == 0) ? x.attr : attrIndent + x.attr)
+                .ToArray();
 
             updatedCodeText = string.Concat(
                 codeText.Substring(0, attrs.Index + parameter.Index),
-                (i == 0 ? parameter.Groups["gap"].Value : "\n"),
+                argString.Any() ? (i == 0 ? parameter.Groups["gap"].Value : "\n") : "",
                 string.Join('\n', argString),
                 codeText.Substring(attrs.Index + endIndex));
 

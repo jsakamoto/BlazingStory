@@ -95,4 +95,18 @@ internal class StoriesRazorSourceTest
             "    </Button>\n" +
             "</div>\n");
     }
+
+    [Test]
+    public void UpdateSourceTextWithArgument_EmptyArgs_Test()
+    {
+        // Given
+        var sourceText = "<Button Text=\"One+One=Two\" @attributes=\"context.Args\" />";
+        var story = TestHelper.CreateStory<Button>();
+
+        // When 
+        var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
+
+        // Then
+        codeText.Is("<Button Text=\"One+One=Two\" />");
+    }
 }
