@@ -1,11 +1,15 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
 using BlazingStory.Internals.Models;
 using BlazingStory.Internals.Types;
+using BlazingStory.Internals.Utils;
 
 namespace BlazingStory.Internals.Services.Docs;
+
+using Arguments = IReadOnlyDictionary<string, object?>;
 
 /// <summary>
 /// Provides the source code of the stories from the razor files.
@@ -93,6 +97,28 @@ internal static class StoriesRazorSource
         return string.Join('\n', lines.Select(line => line.Substring(Math.Min(line.Length, indentToTrim))));
     }
 
+    internal class UpdateSourceContext
+    {
+        public readonly IEnumerable<ComponentParameter> Parameters;
+        public readonly string ComponentTagPattern;
+        public UpdateSourceContext(IEnumerable<ComponentParameter> parameters, string componentTagPattern)
+        {
+            this.Parameters = parameters;
+            this.ComponentTagPattern = componentTagPattern;
+        }
+
+        public bool IsRenderFragmentParam(string paramName)
+        {
+            return this.Parameters.TryGetByName(paramName, out var paramInfo) && RenderFragmentKit.IsRenderFragment(paramInfo.Type);
+        }
+    }
+
+    /// <summary>
+    /// Updates the source code of the given story with the arguments of the given story.
+    /// </summary>
+    /// <param name="story">The story to update the source code.</param>
+    /// <param name="codeText">The source code of the story to update.</param>
+    /// <returns></returns>
     internal static string UpdateSourceTextWithArgument(Story story, string codeText)
     {
         var componentTypeNameFragments = story.ComponentType.FullName?.Split('.') ?? Array.Empty<string>();
@@ -104,81 +130,185 @@ internal static class StoriesRazorSource
             });
         var componentTagPattern = $"({string.Join('|', componentTagCandidates)})";
 
-        return UpdateSourceTextWithArgument(story, codeText, componentTagPattern, story.Context.Args);
+        var context = new UpdateSourceContext(story.Context.Parameters, componentTagPattern);
+        return UpdateSourceTextWithArgument(context, codeText, story.Context.Args, hasAtAttributeOnce: false);
     }
 
-    private static string UpdateSourceTextWithArgument(Story story, string codeText, string componentTagPattern, IReadOnlyDictionary<string, object?> args)
+    internal class TagMatch
+    {
+        public readonly Match OpenTag;
+        public readonly Group Attrs;
+        public readonly Match? CloseTag;
+        public readonly Match ArgsAttr;
+        public readonly MatchCollection Parameters;
+
+        public TagMatch(Match openTag, Group attrs, Match? closeTag, Match argsAttr, MatchCollection parameters)
+        {
+            this.OpenTag = openTag;
+            this.Attrs = attrs;
+            this.CloseTag = closeTag;
+            this.ArgsAttr = argsAttr;
+            this.Parameters = parameters;
+        }
+    }
+
+    private static bool TryTagMatch(UpdateSourceContext context, string codeText, bool hasAtAttributeOnce, [NotNullWhen(true)] out TagMatch? tagMatch)
+    {
+        tagMatch = null;
+        var openTag = Regex.Match(codeText, $"(?<indent>[ \\t]*)<(?<tagName>{context.ComponentTagPattern})((?<attrs>\\s+[^>]*))?>");
+        if (!openTag.Success) return false;
+        var attrs = openTag.Groups["attrs"];
+        var closeTag = attrs.Value.EndsWith('/') ? null : Regex.Match(codeText, $"</{openTag.Groups["tagName"].Value}>");
+
+        var argsAttr = Regex.Match(attrs.Value, "@attributes=(\"\\w+\\.Args\"|'\\w+\\.Args')");
+        if (!argsAttr.Success && !hasAtAttributeOnce) return false;
+        var parameters = Regex.Matches(attrs.Value, "(?<gap>\\s+)(?<name>[@\\w]+)=(?<quote>\"|')");
+
+        tagMatch = new TagMatch(openTag, attrs, closeTag, argsAttr, parameters);
+        return true;
+    }
+
+    private static string UpdateSourceTextWithArgument(UpdateSourceContext context, string codeText, Arguments args, bool hasAtAttributeOnce = true)
     {
         // "        <ButtonComponent       Text="Hello" @attributes=\"context.Args\" />"
         //  ~~~~~~~~ ~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //  ↑ indent  ↑ tagName                    ↑ attrs
+        if (!TryTagMatch(context, codeText, hasAtAttributeOnce, out var tagMatch)) return codeText;
 
-        var openTag = Regex.Match(codeText, $"(?<indent>[ \\t]*)<(?<tagName>{componentTagPattern})((?<attrs>\\s+[^>]*))?>");
-        if (!openTag.Success) return codeText;
-        var attrs = openTag.Groups["attrs"];
-        if (!attrs.Success) return codeText;
-        var closeTag = attrs.Value.EndsWith('/') ? null : Regex.Match(codeText, $"</{openTag.Groups["tagName"].Value}>");
-
-        var argsAttr = Regex.Match(attrs.Value, "@attributes=(\"\\w+\\.Args\"|'\\w+\\.Args')");
-        if (!argsAttr.Success) return codeText;
-
-        var parameters = Regex.Matches(attrs.Value, "(?<gap>\\s+)(?<name>[@\\w]+)=(?<quote>\"|')");
-        for (var i = 0; i < parameters.Count; i++)
+        // Update parameters
+        if (tagMatch.ArgsAttr.Success)
         {
-            if (!TryUpdateCodeText(story, codeText, args, openTag, attrs, parameters, i, out var updatedCodeText)) continue;
-
-            var paramName = parameters[i].Groups["name"].Value;
-            return UpdateSourceTextWithArgument(story, updatedCodeText, componentTagPattern, args.Where(item => item.Key != paramName).ToDictionary(item => item.Key, item => item.Value));
+            for (var i = 0; i < tagMatch.Parameters.Count; i++)
+            {
+                if (!TryUpdateCodeText(context, codeText, tagMatch, args, i, out var updatedCodeText, out var nextArgs)) continue;
+                return UpdateSourceTextWithArgument(context, updatedCodeText, nextArgs);
+            }
         }
 
-        return codeText;
+        // Update render fragments
+        return UpdateRenderFragments(context, codeText, tagMatch, args);
     }
 
-    private static bool TryUpdateCodeText(Story story, string codeText, IReadOnlyDictionary<string, object?> args, Match openTag, Group attrs, MatchCollection parameters, int i, [NotNullWhen(true)] out string? updatedCodeText)
+    private static bool TryUpdateCodeText(UpdateSourceContext context, string codeText, TagMatch tagMatch, Arguments args, int i, [NotNullWhen(true)] out string? updatedCodeText, [NotNullWhen(true)] out Arguments? nextArgs)
     {
-        var parameter = parameters[i];
+        var parameter = tagMatch.Parameters[i];
         var paramName = parameter.Groups["name"];
-        var endIndex = (i + 1 < parameters.Count) ? parameters[i + 1].Index : attrs.Value.LastIndexOf(parameter.Groups["quote"].Value) + 1;
+        var endIndex = (i + 1 < tagMatch.Parameters.Count) ? tagMatch.Parameters[i + 1].Index : tagMatch.Attrs.Value.LastIndexOf(parameter.Groups["quote"].Value) + 1;
 
         if (paramName.Value == "@attributes")
         {
-            var firstParam = parameters[0];
-            var indent = openTag.Groups["indent"];
-            var attrIndentSrc = codeText.Substring(indent.Index, attrs.Index + firstParam.Groups["name"].Index - indent.Index);
+            var firstParam = tagMatch.Parameters[0];
+            var indent = tagMatch.OpenTag.Groups["indent"];
+            var attrIndentSrc = codeText.Substring(indent.Index, tagMatch.Attrs.Index + firstParam.Groups["name"].Index - indent.Index);
             var attrIndent = Regex.Replace(attrIndentSrc, "[^\\s]", " ");
 
-            var argString = ArgumentsToAttributeStrings(story, args)
+            var trailingParamNames = tagMatch.Parameters.Skip(i + 1).Select(p => p.Groups["name"].Value).ToArray();
+            var availableArgs = args.Exclude(trailingParamNames);
+            var argString = ArgumentsToAttributeStrings(context, availableArgs)
                 .Select((attr, index) => (attr, index))
                 .Select(x => (x.index == 0 && i == 0) ? x.attr : attrIndent + x.attr)
                 .ToArray();
 
             updatedCodeText = string.Concat(
-                codeText.Substring(0, attrs.Index + parameter.Index),
+                codeText.Substring(0, tagMatch.Attrs.Index + parameter.Index),
                 argString.Any() ? (i == 0 ? parameter.Groups["gap"].Value : "\n") : "",
                 string.Join('\n', argString),
-                codeText.Substring(attrs.Index + endIndex));
+                codeText.Substring(tagMatch.Attrs.Index + endIndex));
+
+            nextArgs = args.Exclude(trailingParamNames);
 
             return true;
         }
 
         else
         {
-            if (!args.TryGetValue(paramName.Value, out var value)) { updatedCodeText = null; return false; }
+            if (!args.TryGetValue(paramName.Value, out var value)) { updatedCodeText = null; nextArgs = null; return false; }
 
-            var argString = ConvertArgToString(paramName.Value, value, parameter.Groups["quote"].Value);
-            updatedCodeText = string.Concat(
-                  codeText.Substring(0, attrs.Index + paramName.Index),
-                  argString,
-                  codeText.Substring(attrs.Index + endIndex));
+            if (context.IsRenderFragmentParam(paramName.Value))
+            {
+                updatedCodeText = string.Concat(
+                      codeText.Substring(0, tagMatch.Attrs.Index + parameter.Groups["gap"].Index),
+                      codeText.Substring(tagMatch.Attrs.Index + endIndex));
+                nextArgs = args;
+            }
+            else
+            {
+                var argString = ConvertArgToString(paramName.Value, value, parameter.Groups["quote"].Value);
+                updatedCodeText = string.Concat(
+                      codeText.Substring(0, tagMatch.Attrs.Index + paramName.Index),
+                      argString,
+                      codeText.Substring(tagMatch.Attrs.Index + endIndex));
+                nextArgs = args.Exclude(paramName.Value);
+            }
 
             return true;
         }
     }
 
-    private static IEnumerable<string> ArgumentsToAttributeStrings(Story story, IReadOnlyDictionary<string, object?> args)
+    private static string UpdateRenderFragments(UpdateSourceContext context, string codeText, TagMatch tagMatch, Arguments args)
     {
-        foreach (var param in story.Context.Parameters)
+        var renderFragmentArgs = args.Where(item => context.IsRenderFragmentParam(item.Key)).ToArray();
+
+        var childContent = tagMatch.CloseTag == null ? "" : codeText.Substring(tagMatch.OpenTag.Index + tagMatch.OpenTag.Length, tagMatch.CloseTag.Index - (tagMatch.OpenTag.Index + tagMatch.OpenTag.Length));
+        var childContentIsEmpty = childContent == "" ? true : Regex.IsMatch(childContent, "^\\s*$", RegexOptions.Singleline);
+
+        var renderFragmentKeys = childContentIsEmpty ? new() :
+            renderFragmentArgs
+            .Where(arg => Regex.IsMatch(childContent, $"<{arg.Key}>.*</{arg.Key}>", RegexOptions.Singleline))
+            .Select(arg => arg.Key)
+            .ToHashSet();
+
+        if (!childContentIsEmpty && !renderFragmentKeys.Any()) return codeText;
+
+        var indent = tagMatch.OpenTag.Groups["indent"].Value;
+        var indentChild = indent + "    ";
+        var childContentLines = new StringBuilder();
+        foreach (var arg in renderFragmentArgs)
         {
+            if (renderFragmentKeys.Contains(arg.Key)) continue;
+
+            var text = RenderFragmentKit.TryToString(arg.Value, out var t) ? t : arg.Value?.ToString() ?? "";
+
+            if (arg.Key == "ChildContent" && renderFragmentArgs.Length == 1)
+            {
+                childContentLines.Append(indentChild + text + "\n");
+            }
+            else
+            {
+                childContentLines.Append(indentChild + "<" + arg.Key + ">\n");
+                childContentLines.Append(indentChild + "    " + text + "\n");
+                childContentLines.Append(indentChild + "</" + arg.Key + ">\n");
+            }
+        }
+
+        if (childContentLines.Length > 0)
+        {
+            if (tagMatch.CloseTag == null)
+            {
+                return string.Concat(
+                    codeText.Substring(0, tagMatch.Attrs.Index + tagMatch.Attrs.Length - 1).TrimEnd(), ">\n",
+                    childContentLines.ToString(),
+                    indent, "</", tagMatch.OpenTag.Groups["tagName"].Value, ">",
+                    codeText.Substring(tagMatch.OpenTag.Index + tagMatch.OpenTag.Length));
+            }
+            else
+            {
+                return string.Concat(
+                    codeText.Substring(0, tagMatch.OpenTag.Index + tagMatch.OpenTag.Length), "\n",
+                    childContentLines.ToString(),
+                    childContent.TrimStart('\n'),
+                    codeText.Substring(tagMatch.CloseTag.Index));
+            }
+        }
+
+        return codeText;
+    }
+
+    private static IEnumerable<string> ArgumentsToAttributeStrings(UpdateSourceContext context, Arguments args)
+    {
+        foreach (var param in context.Parameters)
+        {
+            if (RenderFragmentKit.IsRenderFragment(param.Type)) continue;
             if (!args.TryGetValue(param.Name, out var value)) continue;
             yield return ConvertArgToString(param.Name, value);
         }

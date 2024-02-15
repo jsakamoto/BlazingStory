@@ -1,6 +1,7 @@
 ﻿using BlazingStory.Internals.Models;
 using BlazingStory.Internals.Services.Docs;
 using BlazingStory.Test._Fixtures;
+using BlazingStory.Test._Fixtures.Components;
 using BlazingStory.Types;
 using BlazingStoryApp1.Stories;
 using Castle.Core.Internal;
@@ -100,13 +101,174 @@ internal class StoriesRazorSourceTest
     public void UpdateSourceTextWithArgument_EmptyArgs_Test()
     {
         // Given
-        var sourceText = "<Button Text=\"One+One=Two\" @attributes=\"context.Args\" />";
+        var sourceText = "<Button Text=\"One+One=Two\" @attributes=\"context.Args\"></Button>";
         var story = TestHelper.CreateStory<Button>();
 
         // When 
         var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
 
         // Then
-        codeText.Is("<Button Text=\"One+One=Two\" />");
+        codeText.Is("<Button Text=\"One+One=Two\"></Button>");
+    }
+
+    [Test]
+    public async Task UpdateSourceTextWithArgument_UnoverridableParam_Test()
+    {
+        // Given
+        var sourceText = "<Rating.Rating Color='darkyellow' @attributes='context.Args' Rate=\"5\" />";
+        var story = TestHelper.CreateStory<Rating>();
+        await story.Context.AddOrUpdateArgumentAsync(nameof(Rating.Rate), 3);
+        await story.Context.AddOrUpdateArgumentAsync(nameof(Rating.Color), "gold");
+
+        // When 
+        var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
+
+        // Then
+        codeText.Is("<Rating.Rating Color='gold' Rate=\"5\" />");
+    }
+
+    [Test]
+    public async Task UpdateSourceTextWithArgument_ChildContent_Test()
+    {
+        // Given
+        var sourceText =
+            "<div>\n" +
+            "    <SampleComponent @attributes='context.Args'/>\n" +
+            "</div>\n";
+        var story = TestHelper.CreateStory<SampleComponent>();
+        await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.Number1), 123);
+        await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.ChildContent), "Mazie errata suitor");
+
+        // When 
+        var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
+
+        // Then
+        codeText.Is(
+            "<div>\n" +
+            "    <SampleComponent Number1=\"123\">\n" +
+            "        Mazie errata suitor\n" +
+            "    </SampleComponent>\n" +
+            "</div>\n");
+    }
+
+    [Test]
+    public async Task UpdateSourceTextWithArgument_ChildContent_and_RenderFragments_Test()
+    {
+        // Given
+        var sourceText =
+            "<div>\n" +
+            "    <SampleComponent @attributes='context.Args'>\n" +
+            "    </SampleComponent>\n" +
+            "</div>\n";
+        var story = TestHelper.CreateStory<SampleComponent>();
+        await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.Number1), 123);
+        await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.ChildContent), "Sed cilia invading");
+        await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.Template1), "Labore dolor stet sed");
+
+        // When 
+        var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
+
+        // Then
+        codeText.Is(
+            "<div>\n" +
+            "    <SampleComponent Number1=\"123\">\n" +
+            "        <ChildContent>\n" +
+            "            Sed cilia invading\n" +
+            "        </ChildContent>\n" +
+            "        <Template1>\n" +
+            "            Labore dolor stet sed\n" +
+            "        </Template1>\n" +
+            "    </SampleComponent>\n" +
+            "</div>\n");
+    }
+
+    [Test]
+    public async Task UpdateSourceTextWithArgument_UnoverridableRenderFragments_Test()
+    {
+        // Given
+        var sourceText =
+            "<SampleComponent @attributes='context.Args'>\n" +
+            "    <Template1>\n" +
+            "        Ut rivière dolor dolore\n" +
+            "    </Template1>\n" +
+            "</SampleComponent>\n";
+        var story = TestHelper.CreateStory<SampleComponent>();
+        await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.ChildContent), "Vero aliquot dolor");
+        await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.Template1), "Kasid nullar lorem junto");
+
+        // When 
+        var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
+
+        // Then
+        codeText.Is(
+            "<SampleComponent>\n" +
+            "    <ChildContent>\n" +
+            "        Vero aliquot dolor\n" +
+            "    </ChildContent>\n" +
+            "    <Template1>\n" +
+            "        Ut rivière dolor dolore\n" +
+            "    </Template1>\n" +
+            "</SampleComponent>\n");
+    }
+
+    [Test]
+    public async Task UpdateSourceTextWithArgument_UnoverridableChildContent_Test()
+    {
+        // Given
+        var sourceText =
+            "<BlazingStory.Test._Fixtures.Components.SampleComponent @attributes='context.Args'>\n" +
+            "    <div>\n" +
+            "        In doglores facilizes accuses\n" +
+            "    </div>\n" +
+            "</BlazingStory.Test._Fixtures.Components.SampleComponent>\n";
+        var story = TestHelper.CreateStory<SampleComponent>();
+        await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.ChildContent), "Kasdan sed et");
+        await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.Template1), "Diam rivière magna");
+
+        // When 
+        var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
+
+        // Then
+        codeText.Is(
+            "<BlazingStory.Test._Fixtures.Components.SampleComponent>\n" +
+            "    <div>\n" +
+            "        In doglores facilizes accuses\n" +
+            "    </div>\n" +
+            "</BlazingStory.Test._Fixtures.Components.SampleComponent>\n");
+    }
+
+    [Test]
+    public async Task UpdateSourceTextWithArgument_OverridableTemplateArg_Test()
+    {
+        // Given
+        var sourceText = "<SampleComponent Template1=\"_template\" @attributes='context.Args' />\n";
+        var story = TestHelper.CreateStory<SampleComponent>();
+        await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.Template1), "Sit sed no");
+
+        // When 
+        var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
+
+        // Then
+        codeText.Is(
+            "<SampleComponent>\n" +
+            "    <Template1>\n" +
+            "        Sit sed no\n" +
+            "    </Template1>\n" +
+            "</SampleComponent>\n");
+    }
+
+    [Test]
+    public async Task UpdateSourceTextWithArgument_UnoverridableTemplateArg_Test()
+    {
+        // Given
+        var sourceText = "<SampleComponent @attributes='context.Args' Template1=\"_template\" />\n";
+        var story = TestHelper.CreateStory<SampleComponent>();
+        await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.Template1), "Ea et herderite");
+
+        // When 
+        var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
+
+        // Then
+        codeText.Is("<SampleComponent Template1=\"_template\" />\n");
     }
 }

@@ -124,10 +124,10 @@ internal static class TypeUtility
             return true;
         }
 
-        else if (targetType.IsGenericType && targetType.GetGenericTypeDefinition() == typeof(RenderFragment<>))
+        else if (targetType.IsGenericTypeOf(typeof(RenderFragment<>)))
         {
             var argumentType = targetType.GetGenericArguments().First();
-            convertedValue = RenderFragmentKit.ConvertTextToRenderFragmentT(argumentType, sourceString);
+            convertedValue = RenderFragmentKit.FromString(argumentType, sourceString);
             return true;
         }
 
