@@ -287,6 +287,10 @@ button {
   background: var(--bs-scrollbar-thumb-color);
 }
 
+.color-scheme-container {
+  display: contents;
+}
+
 .brand-logo {
   padding-left: 26px;
   background-size: inherit;
