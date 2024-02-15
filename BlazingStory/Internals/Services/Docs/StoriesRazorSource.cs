@@ -121,17 +121,24 @@ internal static class StoriesRazorSource
     /// <returns></returns>
     internal static string UpdateSourceTextWithArgument(Story story, string codeText)
     {
-        var componentTypeNameFragments = story.ComponentType.FullName?.Split('.') ?? Array.Empty<string>();
+        var componentTagPattern = CreateComponentTagPattern(story);
+        var context = new UpdateSourceContext(story.Context.Parameters, componentTagPattern);
+        return UpdateSourceTextWithArgument(context, codeText, story.Context.Args, hasAtAttributeOnce: false);
+    }
+
+    private static string CreateComponentTagPattern(Story story)
+    {
+        var fullName = story.ComponentType.FullName ?? "";
+        var typeParamsIndex = fullName.IndexOf('`');
+        var componentTypeName = typeParamsIndex == -1 ? fullName : fullName.Substring(0, typeParamsIndex);
+        var componentTypeNameFragments = componentTypeName.Split('.');
         var componentTagCandidates = componentTypeNameFragments
             .Reverse()
             .Aggregate(seed: new List<string>(), (list, fragment) =>
             {
                 list.Add(list.Any() ? fragment + "\\." + list.Last() : fragment); return list;
             });
-        var componentTagPattern = $"({string.Join('|', componentTagCandidates)})";
-
-        var context = new UpdateSourceContext(story.Context.Parameters, componentTagPattern);
-        return UpdateSourceTextWithArgument(context, codeText, story.Context.Args, hasAtAttributeOnce: false);
+        return $"({string.Join('|', componentTagCandidates)})";
     }
 
     internal class TagMatch
@@ -296,8 +303,8 @@ internal static class StoriesRazorSource
                 return string.Concat(
                     codeText.Substring(0, tagMatch.OpenTag.Index + tagMatch.OpenTag.Length), "\n",
                     childContentLines.ToString(),
-                    childContent.TrimStart('\n'),
-                    codeText.Substring(tagMatch.CloseTag.Index));
+                    childContent.TrimStart('\r', '\n'),
+                    codeText.Substring(tagMatch.CloseTag.Index).TrimStart('\r', '\n'));
             }
         }
 

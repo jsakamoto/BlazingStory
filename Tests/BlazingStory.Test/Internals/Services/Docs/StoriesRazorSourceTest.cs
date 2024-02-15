@@ -271,4 +271,26 @@ internal class StoriesRazorSourceTest
         // Then
         codeText.Is("<SampleComponent Template1=\"_template\" />\n");
     }
+
+    [Test]
+    public async Task UpdateSourceTextWithArgument_GenericComponent_Test()
+    {
+        // Given
+        var sourceText =
+            "<SampleGenericComponent Items=\"_items\" Context=\"repeaterContext\" ItemTemplate=\"_itemTemplate\" @attributes=\"context.Args\">\r\n" +
+            "</SampleGenericComponent>\r\n";
+        var story = TestHelper.CreateStory<SampleGenericComponent<string>>();
+        await story.Context.AddOrUpdateArgumentAsync(nameof(SampleGenericComponent<string>.ItemTemplate), "Ipsum tempol taction");
+
+        // When 
+        var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
+
+        // Then
+        codeText.Is(
+            "<SampleGenericComponent Items=\"_items\" Context=\"repeaterContext\">\n" +
+            "    <ItemTemplate>\n" +
+            "        Ipsum tempol taction\n" +
+            "    </ItemTemplate>\n" +
+            "</SampleGenericComponent>\r\n");
+    }
 }
