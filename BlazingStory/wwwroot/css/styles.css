@@ -1362,6 +1362,25 @@ a.icon-button {
   padding: 20px;
   color: var(--bs-code-text-color);
 }
+.code-view pre code {
+  color: #ededed;
+}
+.code-view pre code .token.punctuation {
+  color: #807e74;
+}
+.code-view pre code .token.tag {
+  color: #009696;
+}
+.code-view pre code .token.attr-name {
+  color: #9cdcfe;
+}
+.code-view pre code .token.attr-value, .code-view pre code .token.attr-value .punctuation {
+  color: #c8c8c8;
+}
+.code-view pre code .token.comment {
+  color: #57a64a;
+  font-style: italic;
+}
 .code-view .copy-button {
   color: var(--bs-code-copy-text-color);
   background-color: var(--bs-code-copy-back-color);

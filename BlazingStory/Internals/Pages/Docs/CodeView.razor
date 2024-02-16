@@ -1,10 +1,11 @@
-@implements IDisposable
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
 
 @if (this.Visible)
 {
     <div class="code-view">
 
-        <pre>@this._CodeText</pre>
+        <pre @key="_RenderGen"><code @ref="_CodeElementRef" class="language-html">@this._CodeText</code></pre>
 
         <CornerButton Class="copy-button" OnClick="OnClickCopyButton">
             @(this._Copied ? "Copied" : "Copy")
@@ -30,6 +31,19 @@
 
     private bool _Copied = false;
 
+    private readonly JSModule _JSModule;
+
+    private ElementReference _CodeElementRef;
+
+    private int _RenderGen = 1;
+
+    private int _HighlightedGen = 0;
+
+    public CodeView()
+    {
+        this._JSModule = new(() => this.JSRuntime, "prism.js");
+    }
+
     protected override async Task OnParametersSetAsync()
     {
         base.OnParametersSet();
@@ -46,9 +60,19 @@
         this.Story.Context.ArgumentChanged += this.Context_ArgumentChanged;
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (this.Visible && this._HighlightedGen != this._RenderGen)
+        {
+            await this._JSModule.InvokeVoidAsync("highlightElement", _CodeElementRef);
+            this._HighlightedGen = this._RenderGen;
+        }
+    }
+
     private ValueTask Context_ArgumentChanged()
     {
         this.UpdateCodeTextWithArgument();
+        this._RenderGen++;
         this.StateHasChanged();
         return ValueTask.CompletedTask;
     }
@@ -72,8 +96,9 @@
         this._Copied = false;
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         if (this.Story != null) this.Story.Context.ArgumentChanged -= this.Context_ArgumentChanged;
+        await _JSModule.DisposeAsync();
     }
 }
