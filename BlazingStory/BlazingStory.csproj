@@ -52,6 +52,7 @@
 
   <ItemGroup>
     <Content Include="..\RELEASE-NOTES.txt" Link="wwwroot\RELEASE-NOTES.txt" />
+    <Content Include="..\THIRD-PARTY-NOTICES.txt" Link="wwwroot\THIRD-PARTY-NOTICES.txt" />
     <Content Update="**\*.json" Pack="false" CopyToOutputDirectory="Never" />
     <None Include="..\assets\icon-128x128.png" Pack="true" Visible="false" PackagePath="" />
     <None Include="..\README.md" Visible="false" Pack="true" PackagePath="\" />

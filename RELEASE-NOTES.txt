@@ -1,3 +1,6 @@
+v.1.0.0-preview.25
+- Improve: The code view on a Docs page now syntax highlights and reflects user-entered parameters in real-time.
+
 v.1.0.0-preview.24
 - Fix: the XML doc comments markup <see href> was not displayed on the Docs page.
 

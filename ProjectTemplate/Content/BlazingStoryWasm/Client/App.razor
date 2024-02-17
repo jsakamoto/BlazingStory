@@ -1,2 +1,7 @@
-﻿<BlazingStoryApp Assemblies="new []{ typeof(App).Assembly }" DefaultLayout="typeof(DefaultLayout)">
+﻿@*#if (Framework == "net7.0")*@
+<BlazingStoryApp Assemblies="new []{ typeof(App).Assembly }" DefaultLayout="typeof(DefaultLayout)">
 </BlazingStoryApp>
+@*#else*@
+<BlazingStoryApp Assemblies="[typeof(App).Assembly]" DefaultLayout="typeof(DefaultLayout)">
+</BlazingStoryApp>
+@*#endif*@
