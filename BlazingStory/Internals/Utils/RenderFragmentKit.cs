@@ -26,7 +26,7 @@ internal static class RenderFragmentKit
             result = ToString(renderFragment);
             return true;
         }
-        else if (obj?.GetType().IsGenericType == true && obj?.GetType().GetGenericTypeDefinition() == typeof(RenderFragment<>))
+        else if (obj?.GetType().IsGenericTypeOf(typeof(RenderFragment<>)) == true)
         {
             var typeOfContext = obj.GetType().GetGenericArguments().First();
             var toStringMethod = ToStringMethodT.Value.MakeGenericMethod(typeOfContext);
@@ -98,12 +98,33 @@ internal static class RenderFragmentKit
     private static readonly Lazy<ParameterExpression> BuilderParam = new(() => Expression.Parameter(typeof(RenderTreeBuilder), "builder"));
 
     /// <summary>
+    /// Convert the given string to <see cref="RenderFragment"/>.
+    /// </summary>
+    /// <param name="text">The string content what is the <see cref="RenderFragment&lt;TValue&gt;"/> will render.</param>
+    /// <returns>The <see cref="RenderFragment"/> that will render the given string content.</returns>
+    internal static RenderFragment FromString(string text)
+    {
+        return (builder) => builder.AddContent(0, text);
+    }
+
+    /// <summary>
+    /// Convert the given string to <see cref="RenderFragment&lt;TValue&gt;"/>.
+    /// </summary>
+    /// <typeparam name="T">The type argument of <see cref="RenderFragment&lt;TValue&gt;"/>.</typeparam>
+    /// <param name="text">The string content what is the <see cref="RenderFragment&lt;TValue&gt;"/> will render.</param>
+    /// <returns>The <see cref="RenderFragment&lt;TValue&gt;"/> that will render the given string content.</returns>
+    internal static object FromString<T>(string text)
+    {
+        return FromString(typeof(T), text);
+    }
+
+    /// <summary>
     /// Convert the given string to <see cref="RenderFragment&lt;TValue&gt;"/>.
     /// </summary>
     /// <param name="argumentType">The type argument of <see cref="RenderFragment&lt;TValue&gt;"/>.</param>
     /// <param name="text">The string content what is the <see cref="RenderFragment&lt;TValue&gt;"/> will render.</param>
     /// <returns>The <see cref="RenderFragment&lt;TValue&gt;"/> that will render the given string content.</returns>
-    internal static object ConvertTextToRenderFragmentT(Type argumentType, string text)
+    internal static object FromString(Type argumentType, string text)
     {
         var addContentCall = Expression.Call(BuilderParam.Value, AddContentMethod.Value, Expression.Constant(0), Expression.Constant(text));
         var renderFragment = Expression.Lambda(typeof(RenderFragment), addContentCall, BuilderParam.Value);
@@ -113,5 +134,11 @@ internal static class RenderFragmentKit
         var renderFragmentT = Expression.Lambda(renderFragmentTDelegateType, renderFragment, argParam);
 
         return renderFragmentT.Compile();
+    }
+
+    internal static bool IsRenderFragment(object? value)
+    {
+        var type = value is Type t ? t : value?.GetType();
+        return type == typeof(RenderFragment) || type?.IsGenericTypeOf(typeof(RenderFragment<>)) == true;
     }
 }

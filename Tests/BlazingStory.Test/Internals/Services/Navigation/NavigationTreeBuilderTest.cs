@@ -34,11 +34,11 @@ internal class NavigationTreeBuilderTest
         var builder = new NavigationTreeBuilder();
         var storyContainers = new StoryContainer[] {
             new(typeof(Button), null, new(typeof(Button_stories), new("Examples/Button")), host.Services) { Stories = {
-                new(Descriptor("Examples/Button"), "Default", StoryContext.CreateEmpty(), null, null, EmptyFragment),
-                new(Descriptor("Examples/Button"), "Primary", StoryContext.CreateEmpty(), null, null, EmptyFragment),
+                CreateStory<Button>("Examples/Button", "Default"),
+                CreateStory<Button>("Examples/Button", "Primary"),
             }},
             new(typeof(Button), null, new(typeof(Select_stories), new("Examples/Select")), host.Services) { Stories = {
-                new(Descriptor("Examples/Select"), "Select", StoryContext.CreateEmpty(), null, null, EmptyFragment),
+                CreateStory<Button>("Examples/Select", "Select"),
             }}
         };
 
@@ -114,12 +114,12 @@ internal class NavigationTreeBuilderTest
         var builder = new NavigationTreeBuilder();
         var storyContainers = new StoryContainer[] {
             new(typeof(Button), null, new(typeof(Button_stories), new("Components/Button")), host.Services){ Stories = {
-                new(Descriptor("Components/Button"), "Default", StoryContext.CreateEmpty(), null, null, EmptyFragment),
-                new(Descriptor("Components/Button"), "Primary", StoryContext.CreateEmpty(), null, null, EmptyFragment),
+                CreateStory<Button>("Components/Button", "Default"),
+                CreateStory<Button>("Components/Button", "Primary"),
             }},
             new(typeof(Button), null, new(typeof(Select_stories), new("Pages/Authentication")), host.Services){ Stories = {
-                new(Descriptor("Pages/Authentication"), "Sign In", StoryContext.CreateEmpty(), null, null, EmptyFragment),
-                new(Descriptor("Pages/Authentication"), "Sign Out", StoryContext.CreateEmpty(), null, null, EmptyFragment),
+                CreateStory<Button>("Pages/Authentication", "Sign In"),
+                CreateStory<Button>("Pages/Authentication", "Sign Out"),
             }},
         };
 
@@ -145,16 +145,16 @@ internal class NavigationTreeBuilderTest
         await using var host = new TestHost();
         var storyContainers = new StoryContainer[] {
             new(typeof(Rating), null, new(typeof(Select_stories), new("UI Components/Atoms/Rating")), host.Services) { Stories = {
-                new(Descriptor("UI Components/Atoms/Rating"), "Default", StoryContext.CreateEmpty(), null, null, EmptyFragment),
+                CreateStory<Rating>("UI Components/Atoms/Rating", "Default"),
             }},
             new(typeof(Select), null, new(typeof(Select_stories), new("Examples/Select")), host.Services) { Stories = {
-                new(Descriptor("Examples/Select"), "Single Select", StoryContext.CreateEmpty(), null, null, EmptyFragment),
-                new(Descriptor("Examples/Select"), "Multiple Select", StoryContext.CreateEmpty(), null, null, EmptyFragment),
+                CreateStory<Select>("Examples/Select", "Single Select"),
+                CreateStory<Select>("Examples/Select", "Multiple Select"),
             }},
             new(typeof(Button), null, new(typeof(Button_stories), new("Examples/Button")), host.Services) { Stories = {
-                new(Descriptor("Examples/Button"), "Default", StoryContext.CreateEmpty(), null, null, EmptyFragment),
-                new(Descriptor("Examples/Button"), "Primary", StoryContext.CreateEmpty(), null, null, EmptyFragment),
-                new(Descriptor("Examples/Button"), "Danger", StoryContext.CreateEmpty(), null, null, EmptyFragment),
+                CreateStory<Button>("Examples/Button", "Default"),
+                CreateStory<Button>("Examples/Button", "Primary"),
+                CreateStory<Button>("Examples/Button", "Danger"),
             }},
         };
 

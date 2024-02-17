@@ -28,6 +28,12 @@ internal class SampleComponent
     [Parameter]
     public SampleEnum? Enum2 { get; set; }
 
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public RenderFragment<SampleComponent>? Template1 { get; set; }
+
     internal static ComponentParameter CreateComponentParameter(string propertyName)
     {
         return new ComponentParameter(
