@@ -387,7 +387,7 @@ If you set that parameter with `Dark` or `Light`, except `Both`, the "Blazing St
 ```razor
 @* 📄 App.razor *@
 <BlazingStoryApp 
-    Assemblies="new []{ typeof(App).Assembly }"  
+    Assemblies="[typeof(App).Assembly]"  
     AvailableColorSchemes="AvailableColorSchemes.Light">
     @* This app will be displayed "light" mode only 👆*@
 </BlazingStoryApp>
