@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <NoWarn>$(NoWarn);1591</NoWarn>
@@ -10,22 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlazingStory" Version="1.0.0-preview.18" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.10" PrivateAssets="all" />
-    <PackageReference Include="PublishSPAforGitHubPages.Build" Version="2.1.0" />
+    <PackageReference Include="BlazingStory" Version="1.0.0-preview.25" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.2" PrivateAssets="all" />
+    <PackageReference Include="PublishSPAforGitHubPages.Build" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MyRazorClassLib\MyRazorClassLib.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Remove="Stories\Rating.stories.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Remove="Stories\Button.stories.razor" />
   </ItemGroup>
 
 </Project>
