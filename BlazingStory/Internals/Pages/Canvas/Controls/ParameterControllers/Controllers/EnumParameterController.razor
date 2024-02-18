@@ -1,13 +1,38 @@
 @inherits ParameterControllerBase
 
-@{
-    var enumValues = Enum.GetValues(Parameter?.Type ?? throw new NullReferenceException("Parameter is null"));
-}
 @if (Parameter.Control is ControlType.Select)
 {
-    <Select Value="Value" Items="enumValues" OnChange="@((arg) => Enum.TryParse(Parameter.Type,arg.Value as string, out var enumValue)? OnInputAsync(enumValue) : Task.CompletedTask)" />
+    <Select Value="Value" Items="this._EnumValues" OnChange="OnChange" />
 }
 else
 {
-    <RadioGroup Name="@Key" Value="Value" Items="enumValues" OnChange="@((arg) => Enum.TryParse(Parameter.Type,arg.Value as string, out var enumValue)? OnInputAsync(enumValue) : Task.CompletedTask)" />
+    <RadioGroup Name="@Key" Value="Value" Items="this._EnumValues" OnChange="OnChange" />
+}
+
+@code
+{
+    private string[] _EnumValues = Array.Empty<string>();
+
+    protected override void OnInitialized()
+    {
+        var (isNullable, _, enumType, _) = this.Parameter.TypeStructure;
+        var enumValues = Enum.GetValues(enumType).Cast<object>().Select(e => e.ToString() ?? "").ToArray();
+        this._EnumValues = isNullable ? enumValues.Prepend("").ToArray() : enumValues;
+    }
+
+    private async Task OnChange(ChangeEventArgs arg)
+    {
+        var valueString = arg.Value?.ToString();
+        if (string.IsNullOrEmpty(valueString))
+        {
+            if (this.Parameter.TypeStructure.IsNullable)
+            {
+                await OnInputAsync(null);
+            }
+        }
+        else if (Enum.TryParse(this.Parameter.TypeStructure.PrimaryType, valueString, out var enumValue))
+        {
+            await this.OnInputAsync(enumValue);
+        }
+    }
 }

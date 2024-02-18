@@ -1,28 +1,27 @@
 @using BlazingStory.Internals.Pages.Canvas.Controls.ParameterControllers.Controllers
 
-@if (Parameter?.Type == typeof(string))
-{
-    <TextParameterController Key="@Key" Parameter="@Parameter" Value="Value" OnInput="OnInput" />
+@{
+    var primaryType = this.Parameter.TypeStructure.PrimaryType;
 }
-else if (Parameter?.Type == typeof(bool))
+@if (primaryType == typeof(string))
 {
-    <BoolParameterController Key="@Key" Parameter="@Parameter" Value="Value" OnInput="OnInput" />
+    <TextParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
 }
-else if (Parameter?.Type == typeof(int))
+else if (primaryType == typeof(bool))
 {
-    <NumberParameterController Key="@Key" Parameter="@Parameter" Value="Value" OnInput="OnInput" />
+    <BoolParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
 }
-else if (Parameter?.Type.IsEnum == true)
+else if (primaryType == typeof(int))
 {
-    <EnumParameterController Key="@Key" Parameter="@Parameter" Value="Value" OnInput="OnInput" />
+    <NumberParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
 }
-else if (Parameter?.Type == typeof(RenderFragment))
+else if (primaryType.IsEnum == true)
 {
-    <RenderFragmentParameterController Key="@Key" Parameter="@Parameter" Value="Value" OnInput="OnInput" />
+    <EnumParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
 }
-else if (Parameter?.Type.IsGenericType == true && Parameter?.Type.GetGenericTypeDefinition() == typeof(RenderFragment<>))
+else if (RenderFragmentKit.IsRenderFragment(Parameter.Type))
 {
-    <RenderFragmentParameterController Key="@Key" Parameter="@Parameter" Value="Value" OnInput="OnInput" />
+    <RenderFragmentParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
 }
 else
 {
@@ -32,10 +31,10 @@ else
 @code
 {
     [Parameter, EditorRequired]
-    public string? Key { get; set; }
+    public required string Key { get; set; }
 
     [Parameter, EditorRequired]
-    public ComponentParameter? Parameter { get; set; }
+    public required ComponentParameter Parameter { get; set; }
 
     [Parameter, EditorRequired]
     public object? Value { get; set; }

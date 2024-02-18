@@ -36,17 +36,17 @@ internal static class TypeUtility
     /// <summary>
     /// Extracts type structure of the given type.
     /// </summary>
-    private static (bool IsNullable, bool IsGeneric, Type PrimaryType, Type[] SecondayTypes) ExtractTypeStructure(Type type)
+    internal static TypeStructure ExtractTypeStructure(Type type)
     {
         if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
         {
-            return (IsNullable: true, IsGeneric: false, PrimaryType: type.GetGenericArguments().First(), SecondayTypes: Array.Empty<Type>());
+            return new(isNullable: true, isGeneric: false, primaryType: type.GetGenericArguments().First(), secondaryTypes: Array.Empty<Type>());
         }
         else if (type.IsGenericType)
         {
-            return (IsNullable: false, IsGeneric: true, PrimaryType: type, SecondayTypes: type.GetGenericArguments());
+            return new(isNullable: false, isGeneric: true, primaryType: type, secondaryTypes: type.GetGenericArguments());
         }
-        else return (IsNullable: false, IsGeneric: false, PrimaryType: type, SecondayTypes: Array.Empty<Type>());
+        else return new(isNullable: false, isGeneric: false, primaryType: type, secondaryTypes: Array.Empty<Type>());
     }
 
     /// <summary>
