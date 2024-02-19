@@ -1,0 +1,19 @@
+﻿@attribute [Stories("Examples/UI/DumpParameter")]
+
+<Stories TComponent="DumpParameter">
+
+    <ArgType For="_=>_.NullableEnumA" Control="ControlType.Select" />
+
+    @* -- Default -- *@
+    <Story Name="Default">
+
+        <Arguments>
+            <Arg For="_ => _.NullableEnumA" Value="null" />
+        </Arguments>
+
+        <Template>
+            <DumpParameter @attributes="context.Args" />
+        </Template>
+    </Story>
+
+</Stories>

@@ -2,28 +2,32 @@
 
 @if (Parameter.Control is ControlType.Select)
 {
-    <Select Value="Value" Items="this._EnumValues" OnChange="OnChange" />
+    <Select Value="this.ValueString" Items="this._EnumValues" OnChange="OnChange" />
 }
 else
 {
-    <RadioGroup Name="@Key" Value="Value" Items="this._EnumValues" OnChange="OnChange" />
+    <RadioGroup Name="@Key" Value="this.ValueString" Items="this._EnumValues" OnChange="OnChange" />
 }
 
 @code
 {
     private string[] _EnumValues = Array.Empty<string>();
 
+    private string ValueString => this.Value?.ToString() ?? "(null)";
+
     protected override void OnInitialized()
     {
+        Console.WriteLine($"M-1: {this.Key}, Value is {(Value is null ? "<null>": Value.ToString())}");
+
         var (isNullable, _, enumType, _) = this.Parameter.TypeStructure;
         var enumValues = Enum.GetValues(enumType).Cast<object>().Select(e => e.ToString() ?? "").ToArray();
-        this._EnumValues = isNullable ? enumValues.Prepend("").ToArray() : enumValues;
+        this._EnumValues = isNullable ? enumValues.Prepend("(null)").ToArray() : enumValues;
     }
 
     private async Task OnChange(ChangeEventArgs arg)
     {
         var valueString = arg.Value?.ToString();
-        if (string.IsNullOrEmpty(valueString))
+        if (string.IsNullOrEmpty(valueString) || valueString == "(null)")
         {
             if (this.Parameter.TypeStructure.IsNullable)
             {

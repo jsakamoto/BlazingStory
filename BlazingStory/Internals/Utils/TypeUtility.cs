@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
 namespace BlazingStory.Internals.Utils;
@@ -79,18 +78,28 @@ internal static class TypeUtility
     /// (Most cases, this method uses for deserialize URL query parameters of iframe to component parameters.)
     /// </summary>
     /// <param name="targetType">The type to convert to.</param>
+    /// <param name="targetTypeStructure">The structure of the type to convert to.</param>
     /// <param name="sourceString">The string to convert from.</param>
     /// <param name="convertedValue">The converted value if the conversion is successful.</param>
     /// <returns>True if the conversion is successful, otherwise false.</returns>
-    internal static bool TryConvertType(Type targetType, string sourceString, [NotNullWhen(true)] out object? convertedValue)
+    internal static bool TryConvertType(Type targetType, TypeStructure targetTypeStructure, string sourceString, out object? convertedValue)
     {
-        if (targetType == typeof(string))
+        var primaryType = targetTypeStructure.PrimaryType;
+        var isNullable = targetTypeStructure.IsNullable;
+
+        if (isNullable && sourceString == "(null)")
+        {
+            convertedValue = null;
+            return true;
+        }
+
+        else if (primaryType == typeof(string))
         {
             convertedValue = sourceString;
             return true;
         }
 
-        else if (targetType == typeof(bool))
+        else if (primaryType == typeof(bool))
         {
             if (bool.TryParse(sourceString, out var boolValue))
             {
@@ -99,7 +108,7 @@ internal static class TypeUtility
             }
         }
 
-        else if (targetType == typeof(int))
+        else if (primaryType == typeof(int))
         {
             if (int.TryParse(sourceString, out var numValue))
             {
@@ -108,25 +117,25 @@ internal static class TypeUtility
             }
         }
 
-        else if (targetType.IsEnum)
+        else if (primaryType.IsEnum)
         {
-            if (Enum.TryParse(targetType, sourceString, out var enumValue))
+            if (Enum.TryParse(primaryType, sourceString, out var enumValue))
             {
                 convertedValue = enumValue;
                 return true;
             }
         }
 
-        else if (targetType == typeof(RenderFragment))
+        else if (primaryType == typeof(RenderFragment))
         {
             RenderFragment renderFragment = (RenderTreeBuilder builder) => builder.AddContent(0, sourceString);
             convertedValue = renderFragment;
             return true;
         }
 
-        else if (targetType.IsGenericTypeOf(typeof(RenderFragment<>)))
+        else if (primaryType.IsGenericTypeOf(typeof(RenderFragment<>)))
         {
-            var argumentType = targetType.GetGenericArguments().First();
+            var argumentType = primaryType.GetGenericArguments().First();
             convertedValue = RenderFragmentKit.FromString(argumentType, sourceString);
             return true;
         }
@@ -134,5 +143,4 @@ internal static class TypeUtility
         convertedValue = null;
         return false;
     }
-
 }

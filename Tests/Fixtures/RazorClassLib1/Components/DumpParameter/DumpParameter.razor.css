@@ -1,0 +1,17 @@
+﻿.dump-parameter {
+    font-family: sans-serif;
+    font-size: 12px;
+    color: #444;
+}
+
+th {
+    text-align: left;
+    padding: 4px 8px;
+}
+
+/* media query for dark theme */
+@media (prefers-color-scheme: dark) {
+    .dump-parameter {
+        color: #ccc;
+    }
+}

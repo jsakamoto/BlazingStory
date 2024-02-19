@@ -54,6 +54,7 @@
                 @* -- IFrame -- *@
                 <div class="canvas-frame-viewport fill">
                     <PreviewFrame @ref="_PreviewFrame"
+                                  Story="this._CurrentStory"
                                   ViewMode="story"
                                   Id="@this.RouteData.Parameter"
                                   Args="this._CurrentStory?.Context.Args"
