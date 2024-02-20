@@ -1,0 +1,10 @@
+﻿@code
+{
+    [Parameter]
+    public int Int32 { get; set; }
+
+    [Parameter]
+    public int? NullableInt32 { get; set; }
+
+    public static ComponentParameter CreateParameter(string name) => new(typeof(SampleComponent), typeof(SampleComponent).GetProperty(name)!, null!);
+}

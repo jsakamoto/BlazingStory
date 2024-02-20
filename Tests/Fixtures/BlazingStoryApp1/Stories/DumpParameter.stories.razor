@@ -8,10 +8,14 @@
     <Story Name="Default">
 
         <Arguments>
-            <Arg For="_ => _.NullableEnumA" Value="null" />
+            @* <Arg For="_ => _.NullableEnumA" Value="EnumA.ValueY" /> *@
+            <Arg For="_ => _.Int32" Value="123" />
         </Arguments>
 
         <Template>
+            @{
+                var x = System.Text.Json.JsonSerializer.Serialize(context.Args); Console.WriteLine($"T-1: {x}"); 
+            }
             <DumpParameter @attributes="context.Args" />
         </Template>
     </Story>
