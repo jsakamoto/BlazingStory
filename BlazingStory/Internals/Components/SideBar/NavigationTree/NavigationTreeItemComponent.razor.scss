@@ -1,4 +1,12 @@
 ﻿.navigation-tree {
+    min-width: 100%;
+    display: inline-flex;
+    flex-direction: column;
+
+    .navigation-tree-item {
+        display: inline-flex;
+        flex-direction: column;
+    }
 
     .caption {
         height: 24px;
@@ -13,6 +21,7 @@
             background-color: transparent;
             cursor: pointer;
             height: 100%;
+            white-space: nowrap;
         }
 
         .action {
@@ -21,8 +30,8 @@
             font-stretch: 100%;
             display: flex;
             flex-wrap: nowrap;
-            width: 100%;
-            padding: 0;
+            flex:1;
+            padding: 0 12px 0 0;
             appearance: none;
             text-decoration: none;
 
@@ -88,7 +97,8 @@
     }
 
     .expanded > .sub-items {
-        display: block;
+        display: inline-flex;
+        flex-direction: column;
     }
     //
     /* ---- Sub Heading ---- */
