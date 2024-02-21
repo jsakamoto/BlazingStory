@@ -12,5 +12,17 @@
     [Parameter]
     public bool? NullableBool { get; set; }
 
-    public static ComponentParameter CreateParameter(string name) => new(typeof(SampleComponent), typeof(SampleComponent).GetProperty(name)!, null!);
+    [Parameter]
+    public string? String { get; set; }
+
+    [Parameter]
+    public string? Color { get; set; }
+
+    public static ComponentParameter CreateParameter(string name, ControlType control = ControlType.Default)
+    {
+        return new(typeof(SampleComponent), typeof(SampleComponent).GetProperty(name)!, null!)
+            {
+                Control = control
+            };
+    }
 }
