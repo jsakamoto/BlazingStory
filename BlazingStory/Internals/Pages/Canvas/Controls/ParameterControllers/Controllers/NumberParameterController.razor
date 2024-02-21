@@ -1,11 +1,50 @@
 @inherits ParameterControllerBase
-
-@if (Value == null)
+@{
+    var nullable = this.Parameter.TypeStructure.IsNullable;
+}
+@if (this.Value is Unknown || (!nullable && this.Value is null))
 {
     <SquareButton Text="Set number" OnClick="@(() => OnInputAsync(0))" />
 }
+else if (nullable)
+{
+    var isNull = this.Value == null;
+
+    <div class="number-parameter-controller">
+
+        <label class="input-value">
+            <input type="radio" name="@(this.Key + "-value-type")" checked="@(!isNull)" @onchange="() => OnInputAsync(this._NumValue)" />
+            <NumberInput Value="_NumValue"
+                         PlaceHolder="Edit number..."
+                         OnInput="OnInputNumValue" 
+                         OnFocus="() => this.OnInputAsync(this._NumValue)"/>
+        </label>
+
+        <NullInputRadio Name="@(this.Key + "-value-type")" Checked="isNull" OnChange="() => OnInputAsync(null)" />
+
+    </div>
+}
 else
 {
-    var numValue = (int)Value;
-    <NumberInput Value="numValue" PlaceHolder="Edit number..." OnInput="@((arg) => int.TryParse(arg.Value?.ToString(), out var n) ? OnInputAsync(n) : Task.CompletedTask)" />
+    <NumberInput Value="_NumValue" PlaceHolder="Edit number..." OnInput="OnInputNumValue" />
+}
+
+@code
+{
+    private int _NumValue;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        this._NumValue = int.TryParse(this.Value?.ToString(), out var n) ? n : this._NumValue;
+    }
+
+    private async Task OnInputNumValue(ChangeEventArgs arg)
+    {
+        if (int.TryParse(arg.Value?.ToString(), out var n))
+        {
+            this._NumValue = n;
+            await this.OnInputAsync(n);
+        }
+    }
 }

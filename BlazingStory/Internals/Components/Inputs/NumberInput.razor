@@ -1,4 +1,10 @@
-<input class="bs-basic-inputs number-input" type="number" value="@this.Value" placeholder="@this.PlaceHolder" @oninput="@((arg) => this.OnInput.InvokeAsync(arg))" required />
+<input class="bs-basic-inputs number-input"
+       type="number" 
+       value="@this.Value" 
+       placeholder="@this.PlaceHolder" 
+       @oninput="(arg) => this.OnInput.InvokeAsync(arg)" 
+       @onfocus="(arg) => this.OnFocus.InvokeAsync(arg)"
+       required />
 
 @code
 {
@@ -10,4 +16,7 @@
 
     [Parameter]
     public EventCallback<ChangeEventArgs> OnInput { get; set; }
+
+    [Parameter]
+    public EventCallback<FocusEventArgs> OnFocus { get; set; }
 }

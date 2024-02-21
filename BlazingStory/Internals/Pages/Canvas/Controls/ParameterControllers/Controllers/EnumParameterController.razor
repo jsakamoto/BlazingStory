@@ -15,12 +15,6 @@ else
 
     private string ValueString => this.Value?.ToString() ?? "(null)";
 
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-        Console.WriteLine($"M-1: {this.Key}, Value is {(Value is null ? "<null>": Value.ToString())}");
-    }
-
     protected override void OnInitialized()
     {
         var (isNullable, _, enumType, _) = this.Parameter.TypeStructure;

@@ -13,9 +13,6 @@
         </Arguments>
 
         <Template>
-            @{
-                var x = System.Text.Json.JsonSerializer.Serialize(context.Args); Console.WriteLine($"T-1: {x}"); 
-            }
             <DumpParameter @attributes="context.Args" />
         </Template>
     </Story>

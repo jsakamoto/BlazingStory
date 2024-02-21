@@ -1,0 +1,16 @@
+<label class="null-input-radio">
+    <input type="radio" name="@Name" checked="@Checked" @onchange="OnChange" />
+    <span>null</span>
+</label>
+
+@code
+{
+    [Parameter]
+    public string? Name { get; set; }
+
+    [Parameter]
+    public bool Checked { get; set; }
+
+    [Parameter]
+    public EventCallback OnChange { get; set; }
+}
