@@ -1,0 +1,103 @@
+﻿@using BlazingStory.Internals.Pages.Canvas.Controls.ParameterControllers.Controllers
+@attribute [Stories("Internals/Pages/Canvas/Controls/ParameterControllers/Controllers/BoolParameterController")]
+
+<Stories TComponent="NumberParameterController" Layout="typeof(MarginedFrame)">
+
+    <Story Name="Nullable - No Value">
+        <Template>
+            <Stack>
+                <BoolParameterController Key="key"
+                                           Parameter="NullableBool"
+                                           Value="_V1"
+                                           OnInput="arg => _V1 = arg.Value">
+                </BoolParameterController>
+
+                <ResetButton OnClick="() => _V1 = Unknown.Value" />
+            </Stack>
+            <p>@(_V1?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Nullable - Initial Value">
+        <Template>
+            <Stack>
+                <BoolParameterController Key="key"
+                                           Parameter="NullableBool"
+                                           Value="_V2"
+                                           OnInput="arg => _V2 = arg.Value">
+                </BoolParameterController>
+                <ResetButton OnClick="() => _V2 = 123" />
+            </Stack>
+            <p>@(_V2?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Nullable - Null Value">
+        <Template>
+            <Stack>
+                <BoolParameterController Key="key"
+                                           Parameter="NullableBool"
+                                           Value="_V3"
+                                           OnInput="arg => _V3 = arg.Value">
+                </BoolParameterController>
+                <ResetButton OnClick="() => _V3 = null" />
+            </Stack>
+            <p>@(_V3?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Non Nullable - No Value">
+        <Template>
+            <Stack>
+                <BoolParameterController Key="key"
+                                           Parameter="Bool"
+                                           Value="_V1"
+                                           OnInput="arg => _V1 = arg.Value">
+                </BoolParameterController>
+                <ResetButton OnClick="() => _V1 = Unknown.Value" />
+            </Stack>
+            <p>@(_V1?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Non Nullable - Initial Value">
+        <Template>
+            <Stack>
+                <BoolParameterController Key="key"
+                                           Parameter="Bool"
+                                           Value="_V2"
+                                           OnInput="arg => _V2 = arg.Value">
+                </BoolParameterController>
+                <ResetButton OnClick="() => _V2 = 123" />
+            </Stack>
+            <p>@(_V2?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Non Nullable - Null Value">
+        <Template>
+            <Stack>
+                <BoolParameterController Key="key"
+                                           Parameter="Bool"
+                                           Value="_V3"
+                                           OnInput="arg => _V3 = arg.Value">
+                </BoolParameterController>
+                <ResetButton OnClick="() => _V3 = null" />
+            </Stack>
+            <p>@(_V3?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+</Stories>
+
+@code
+{
+    private readonly ComponentParameter Bool = SampleComponent.CreateParameter(nameof(SampleComponent.Bool));
+
+    private readonly ComponentParameter NullableBool = SampleComponent.CreateParameter(nameof(SampleComponent.NullableBool));
+
+    private object? _V1 = Unknown.Value;
+
+    private object? _V2 = true;
+
+    private object? _V3 = null;
+}

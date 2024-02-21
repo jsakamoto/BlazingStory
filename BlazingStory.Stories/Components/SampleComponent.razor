@@ -6,5 +6,11 @@
     [Parameter]
     public int? NullableInt32 { get; set; }
 
+    [Parameter]
+    public bool Bool { get; set; }
+
+    [Parameter]
+    public bool? NullableBool { get; set; }
+
     public static ComponentParameter CreateParameter(string name) => new(typeof(SampleComponent), typeof(SampleComponent).GetProperty(name)!, null!);
 }

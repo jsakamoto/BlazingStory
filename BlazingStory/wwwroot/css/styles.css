@@ -1011,6 +1011,7 @@ a.icon-button {
   gap: 6px;
   padding: 0 12px;
   font-size: var(--bs-text-size);
+  height: 28px;
   color: var(--bs-dimmed-text-color);
   border: solid 1px var(--bs-border-color);
   border-radius: 24px;
@@ -1276,6 +1277,21 @@ a.icon-button {
 }
 .controls-panel table th.control, .controls-panel table td.control {
   padding: 10px 20px 10px 15px;
+}
+
+.bool-parameter-controller {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  align-items: center;
+}
+.bool-parameter-controller label {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.bool-parameter-controller label .toggle-button {
+  margin: 0;
 }
 
 .number-parameter-controller {

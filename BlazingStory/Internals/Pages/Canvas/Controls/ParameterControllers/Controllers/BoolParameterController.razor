@@ -1,11 +1,44 @@
 @inherits ParameterControllerBase
-
-@if (Value == null)
+@{
+    var nullable = this.Parameter.TypeStructure.IsNullable;
+}
+@if (this.Value is Unknown || (!nullable && this.Value is null))
 {
     <SquareButton Text="Set boolean" OnClick="@(() => OnInputAsync(false))" />
 }
+else if (nullable)
+{
+    var isNull = this.Value == null;
+
+    <div class="bool-parameter-controller">
+
+        <label class="input-value">
+            <input type="radio" name="@(this.Key + "-value-type")" checked="@(!isNull)" @onchange="() => OnInputAsync(this._BoolValue)" />
+            <ToggleButton Value="_BoolValue" OnChange="OnChangeBoolValue" />
+        </label>
+
+        <NullInputRadio Name="@(this.Key + "-value-type")" Checked="isNull" OnChange="() => OnInputAsync(null)" />
+
+    </div>
+}
 else
 {
-    var boolValue = (bool)Value;
-    <ToggleButton Value="boolValue" OnChange="@(() => OnInputAsync(!boolValue))" />
+    <ToggleButton Value="_BoolValue" OnChange="OnChangeBoolValue" />
+}
+
+@code
+{
+    private bool _BoolValue;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        this._BoolValue = bool.TryParse(this.Value?.ToString(), out var n) ? n : this._BoolValue;
+    }
+
+    private async Task OnChangeBoolValue()
+    {
+        this._BoolValue = !this._BoolValue;
+        await this.OnInputAsync(this._BoolValue);
+    }
 }
