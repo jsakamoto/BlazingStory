@@ -1,0 +1,15 @@
+﻿<div style="display:flex; flex-direction:@(this.Direction.ToString().ToLower()); gap: @(this.Gap)px;">
+    @ChildContent
+</div>
+
+@code
+{
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public Direction Direction { get; set; } = Direction.Row;
+
+    [Parameter]
+    public int Gap { get; set; } = 8;
+}

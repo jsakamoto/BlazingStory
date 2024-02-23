@@ -1,0 +1,11 @@
+.null-input-radio {
+    display: flex;
+    gap: 6px;
+    padding: 0 12px;
+    font-size: var(--bs-text-size);
+    height: 28px;
+    color: var(--bs-dimmed-text-color);
+    border: solid 1px var(--bs-border-color);
+    border-radius: 24px;
+    background-color: var(--bs-dimmed-back-color);
+}

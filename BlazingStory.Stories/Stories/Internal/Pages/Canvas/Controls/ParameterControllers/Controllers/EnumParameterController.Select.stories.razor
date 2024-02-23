@@ -1,0 +1,106 @@
+﻿@using BlazingStory.Internals.Pages.Canvas.Controls.ParameterControllers.Controllers
+@attribute [Stories("Internals/Pages/Canvas/Controls/ParameterControllers/Controllers/EnumParameterController (Select)")]
+
+<Stories TComponent="EnumParameterController" Layout="typeof(MarginedFrame)">
+
+    <Story Name="Nullable - No Value">
+        <Template>
+            <Stack>
+                <EnumParameterController Key="key"
+                                         Parameter="NullableEnum"
+                                         Value="_Enum1"
+                                         OnInput="arg => _Enum1 = arg.Value">
+                </EnumParameterController>
+
+                <ResetButton OnClick="() => _Enum1 = Unknown.Value" />
+            </Stack>
+            <p>@(_Enum1?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Nullable - Initial Value">
+        <Template>
+            <Stack>
+                <EnumParameterController Key="key"
+                                         Parameter="NullableEnum"
+                                         Value="_Enum2"
+                                         OnInput="arg => _Enum2 = arg.Value">
+                </EnumParameterController>
+                <ResetButton OnClick="() => _Enum2 = SampleEnum.ValueX" />
+            </Stack>
+            <p>@(_Enum2?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Nullable - Null Value">
+        <Template>
+            <Stack>
+                <EnumParameterController Key="key"
+                                         Parameter="NullableEnum"
+                                         Value="_Enum3"
+                                         OnInput="arg => _Enum3 = arg.Value">
+                </EnumParameterController>
+                <ResetButton OnClick="() => _Enum3 = null" />
+            </Stack>
+            <p>@(_Enum3?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+
+    <Story Name="Non Nullable - No Value">
+        <Template>
+            <Stack>
+                <EnumParameterController Key="key"
+                                         Parameter="Enum"
+                                         Value="_Enum1"
+                                         OnInput="arg => _Enum1 = arg.Value">
+                </EnumParameterController>
+
+                <ResetButton OnClick="() => _Enum1 = Unknown.Value" />
+            </Stack>
+            <p>@(_Enum1?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Non Nullable - Initial Value">
+        <Template>
+            <Stack>
+                <EnumParameterController Key="key"
+                                         Parameter="Enum"
+                                         Value="_Enum2"
+                                         OnInput="arg => _Enum2 = arg.Value">
+                </EnumParameterController>
+                <ResetButton OnClick="() => _Enum2 = SampleEnum.ValueX" />
+            </Stack>
+            <p>@(_Enum2?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Non Nullable - Null Value">
+        <Template>
+            <Stack>
+                <EnumParameterController Key="key"
+                                         Parameter="Enum"
+                                         Value="_Enum3"
+                                         OnInput="arg => _Enum3 = arg.Value">
+                </EnumParameterController>
+                <ResetButton OnClick="() => _Enum3 = null" />
+            </Stack>
+            <p>@(_Enum3?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+</Stories>
+
+@code
+{
+    private readonly ComponentParameter Enum = SampleComponent.CreateParameter(nameof(SampleComponent.Enum), ControlType.Select);
+
+    private readonly ComponentParameter NullableEnum = SampleComponent.CreateParameter(nameof(SampleComponent.NullableEnum), ControlType.Select);
+
+    private object? _Enum1 = Unknown.Value;
+
+    private object? _Enum2 = SampleEnum.ValueX;
+
+    private object? _Enum3 = null;
+}

@@ -1,12 +1,11 @@
 <span class="select bs-basic-inputs-holder">
     <SvgIcon Type="SvgIconType.Chevron" />
 
-    <select class="bs-basic-inputs" value="Choose option..." @onchange="@((arg) => this.OnChange.InvokeAsync(arg))">
-        <option disabled>Choose option...</option>
-        @foreach (var item in this.Items ?? Array.Empty<object?>())
+    <select @key="_NoSelected" class="bs-basic-inputs" @onchange="this.OnChange">
+        <option disabled selected="@this._NoSelected">Choose option...</option>
+        @foreach (var option in this._Options)
         {
-            var isChecked = this.Value?.Equals(item) == true;
-            <option selected="@isChecked">@item</option>
+            <option selected="@option.Selected">@option.Text</option>
         }
     </select>
 </span>
@@ -21,4 +20,19 @@
 
     [Parameter]
     public EventCallback<ChangeEventArgs> OnChange { get; set; }
+
+    private IEnumerable<(bool Selected, string? Text)> _Options = Enumerable.Empty<(bool, string?)>();
+
+    private bool _NoSelected = false;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        this._Options = (this.Items ?? Array.Empty<object?>())
+            .Select(item => (Selected: this.Value?.Equals(item) == true, Text: item?.ToString()))
+            .ToArray();
+
+        this._NoSelected = !this._Options.Any(item => item.Selected);
+    }
 }

@@ -15,6 +15,7 @@
 
             <div class="preview-frame-viewport">
                 <PreviewFrame @ref="_PreviewFrame"
+                              Story="this.Story"
                               ViewMode="story"
                               Id="@this.Story.NavigationPath"
                               Args="this.Story.Context.Args"
@@ -38,8 +39,8 @@
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
 
-    [Parameter]
-    public Story? Story { get; set; }
+    [Parameter, EditorRequired]
+    public required Story Story { get; set; }
 
     [Parameter]
     public bool EnableZoom { get; set; }

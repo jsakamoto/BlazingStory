@@ -7,6 +7,11 @@ internal static class ExtensionMethods
         foreach (var item in values) action(item);
     }
 
+    public static IEnumerable<T> Select<T>(this Array array, Func<object?, T> projection)
+    {
+        foreach (var item in array) yield return projection(item);
+    }
+
     /// <summary>
     /// Returns a new dictionary that contains all the elements of the original dictionary except the ones with the specified keys.
     /// </summary>

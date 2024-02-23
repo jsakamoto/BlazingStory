@@ -12,7 +12,7 @@
                 }
                 <th class="control">
                     <span>Control</span>
-                    <IconButton Icon="SvgIconType.Reset" Class="reset-button" Title="Reset controls" OnClick="ResetControls" />
+                    <ResetButton Class="reset-button" OnClick="ResetControls" />
                 </th>
             </tr>
         </thead>
@@ -56,7 +56,7 @@
 
                     <td class="control">
                         <ParameterController Key="@key"
-                                             Parameter="@parameter"
+                                             Parameter="parameter"
                                              Value="argumentValue"
                                              OnInput="(args) => OnInputAsync(args.Value, args.Parameter)" />
                     </td>
@@ -104,7 +104,7 @@
 
     private object? GetArgumentValue(string parameterName)
     {
-        return this.Story?.Context.Args.TryGetValue(parameterName, out var value) == true ? value : null;
+        return this.Story?.Context.Args.TryGetValue(parameterName, out var value) == true ? value : Unknown.Value;
     }
 
     private async Task ResetControls()

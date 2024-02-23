@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using BlazingStory.Internals.Services;
+﻿using BlazingStory.Internals.Services;
 using BlazingStory.Internals.Services.XmlDocComment;
 using BlazingStory.Test._Fixtures;
 using Microsoft.AspNetCore.Components;
@@ -20,7 +19,7 @@ internal class StoriesRazorDetectorTest
 
         ctx.Services.AddSingleton(_ => Mock.Of<IXmlDocComment>());
         var cut = ctx.RenderComponent<BlazingStory.Internals.Components.StoriesRazorDetector>(builder => builder
-            .Add(_ => _.Assemblies, Enumerable.Empty<Assembly>())
+            .Add(_ => _.Assemblies, [])
             .Add(_ => _.StoriesStore, storiesStore));
 
         storiesStore.StoryContainers.Count().Is(0);
@@ -37,13 +36,13 @@ internal class StoriesRazorDetectorTest
 
         // When
         var cut = ctx.RenderComponent<BlazingStory.Internals.Components.StoriesRazorDetector>(builder => builder
-            .Add(_ => _.Assemblies, new[] {
+            .Add(_ => _.Assemblies, [
                 typeof(BlazingStoryApp1.App).Assembly,
                 typeof(BlazingStoryApp2.App).Assembly,
-            })
+            ])
             .Add(_ => _.StoriesStore, storiesStore));
 
         // Then
-        storiesStore.StoryContainers.Count().Is(6);
+        storiesStore.StoryContainers.Count().Is(7);
     }
 }

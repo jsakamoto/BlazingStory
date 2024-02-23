@@ -6,10 +6,10 @@ namespace BlazingStory.Internals.Pages.Canvas.Controls.ParameterControllers.Cont
 public class ParameterControllerBase : ComponentBase
 {
     [Parameter, EditorRequired]
-    public string? Key { get; set; }
+    public required string Key { get; set; }
 
     [Parameter, EditorRequired]
-    public ComponentParameter? Parameter { get; set; }
+    public required ComponentParameter Parameter { get; set; }
 
     [Parameter, EditorRequired]
     public object? Value { get; set; }

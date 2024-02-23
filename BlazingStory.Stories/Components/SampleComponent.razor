@@ -1,0 +1,35 @@
+﻿@code
+{
+    [Parameter]
+    public int Int32 { get; set; }
+
+    [Parameter]
+    public int? NullableInt32 { get; set; }
+
+    [Parameter]
+    public bool Bool { get; set; }
+
+    [Parameter]
+    public bool? NullableBool { get; set; }
+
+    [Parameter]
+    public string? String { get; set; }
+
+    [Parameter]
+    public string? Color { get; set; }
+
+    [Parameter]
+    public SampleEnum Enum { get; set; }
+
+    [Parameter]
+    public SampleEnum? NullableEnum { get; set; }
+
+
+    public static ComponentParameter CreateParameter(string name, ControlType control = ControlType.Default)
+    {
+        return new(typeof(SampleComponent), typeof(SampleComponent).GetProperty(name)!, null!)
+            {
+                Control = control
+            };
+    }
+}

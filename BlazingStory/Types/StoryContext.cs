@@ -1,4 +1,5 @@
 using BlazingStory.Internals.Models;
+using BlazingStory.Internals.Utils;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Types;
@@ -77,5 +78,24 @@ public class StoryContext
     internal void InvokeShouldRender()
     {
         this.ShouldRender?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Convert the given parameter value to a string.<br/>
+    /// If the value is an instance of <see cref="RenderFragment"/> or <see cref="RenderFragment&lt;T&gt;"/>, this method returns the string that will be rendered by that render fragment.<br/>
+    /// If the value is an instance of <see cref="Nullable&lt;T&gt;"/>, this method returns "(null)" if the value is null.
+    /// </summary>
+    /// <param name="name">The name of the parameter.</param>
+    /// <param name="value">The value of the parameter.</param>
+    /// <returns>The string representation of the parameter value.</returns>
+    internal string ConvertParameterValueToString(string name, object? value)
+    {
+        if (RenderFragmentKit.TryToString(value, out var str)) return str;
+
+        if (this.Parameters.TryGetByName(name, out var param))
+        {
+            if (param.TypeStructure.IsNullable && value == null) return "(null)";
+        }
+        return value?.ToString() ?? "";
     }
 }

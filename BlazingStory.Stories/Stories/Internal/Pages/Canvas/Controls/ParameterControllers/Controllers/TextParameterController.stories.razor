@@ -1,0 +1,117 @@
+﻿@using BlazingStory.Internals.Pages.Canvas.Controls.ParameterControllers.Controllers
+@attribute [Stories("Internals/Pages/Canvas/Controls/ParameterControllers/Controllers/TextParameterController")]
+
+<Stories TComponent="TextParameterController" Layout="typeof(MarginedFrame)">
+
+    <Story Name="Text - No Value">
+        <Template>
+            <Stack>
+                <div style="flex:1">
+                    <TextParameterController Key="key"
+                                             Parameter="String"
+                                             Value="_Text1"
+                                             OnInput="arg => _Text1 = arg.Value">
+                    </TextParameterController>
+                </div>
+
+                <ResetButton OnClick="() => _Text1 = Unknown.Value" />
+            </Stack>
+            <p>@(_Text1?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Text - Initial Value">
+        <Template>
+            <Stack>
+                <div style="flex:1">
+                    <TextParameterController Key="key"
+                                             Parameter="String"
+                                             Value="_Text2"
+                                             OnInput="arg => _Text2 = arg.Value">
+                    </TextParameterController>
+                </div>
+                <ResetButton OnClick="@(() => _Text2 = "Hello, World.")" />
+            </Stack>
+            <p>@(_Text2?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Text - Null Value">
+        <Template>
+            <Stack>
+                <div style="flex:1">
+                    <TextParameterController Key="key"
+                                             Parameter="String"
+                                             Value="_Text3"
+                                             OnInput="arg => _Text3 = arg.Value">
+                    </TextParameterController>
+                </div>
+                <ResetButton OnClick="() => _Text3 = null" />
+            </Stack>
+            <p>@(_Text3?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+
+    <Story Name="Color - No Value">
+        <Template>
+            <Stack>
+                <TextParameterController Key="key"
+                                         Parameter="Color"
+                                         Value="_Color1"
+                                         OnInput="arg => _Color1 = arg.Value">
+                </TextParameterController>
+                <ResetButton OnClick="() => _Color1 = Unknown.Value" />
+            </Stack>
+            <p>@(_Color1?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Color - Initial Value">
+        <Template>
+            <Stack>
+                <TextParameterController Key="key"
+                                         Parameter="Color"
+                                         Value="_Color2"
+                                         OnInput="arg => _Color2 = arg.Value">
+                </TextParameterController>
+                <ResetButton OnClick="@(() => _Color2 = "royalblue")" />
+            </Stack>
+            <p>@(_Color2?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Color - Null Value">
+        <Template>
+            <Stack>
+                <TextParameterController Key="key"
+                                         Parameter="Color"
+                                         Value="_Color3"
+                                         OnInput="arg => _Color3 = arg.Value">
+                </TextParameterController>
+                <ResetButton OnClick="() => _Color3 = null" />
+            </Stack>
+            <p>@(_Color3?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+</Stories>
+
+@code
+{
+    private readonly ComponentParameter String = SampleComponent.CreateParameter(nameof(SampleComponent.String));
+
+    private readonly ComponentParameter Color = SampleComponent.CreateParameter(nameof(SampleComponent.Color), ControlType.Color);
+
+    private object? _Text1 = Unknown.Value;
+
+    private object? _Text2 = "Hello, World.";
+
+    private object? _Text3 = null;
+
+    private object? _Color1 = Unknown.Value;
+
+    private object? _Color2 = "royalblue";
+
+    private object? _Color3 = null;
+}

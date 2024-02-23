@@ -7,6 +7,9 @@
 
 @code
 {
+    [Parameter, EditorRequired]
+    public required Story Story { get; set; }
+
     [Parameter]
     public string? ViewMode { get; set; }
 
@@ -108,7 +111,8 @@
         // "Stringify" the component args to encode them to the URL query string.
         var args = this.Args?.ToDictionary(
             keySelector: x => x.Key,
-            elementSelector: x => RenderFragmentKit.TryToString(x.Value, out var str) ? str : x.Value);
+            elementSelector: x => (object?)this.Story.Context.ConvertParameterValueToString(x.Key, x.Value)
+        );
 
         return UriParameterKit.GetUri(
             uri: "./iframe.html",

@@ -37,6 +37,7 @@
 @import "../../Internals/Components/Buttons/ToggleButton.razor.scss";
 
 @import "../../Internals/Components/Inputs/ColorInput.razor.scss";
+@import "../../Internals/Components/Inputs/NullInputRadio.razor.scss";
 @import "../../Internals/Components/Inputs/NumberInput.razor.scss";
 @import "../../Internals/Components/Inputs/Select.razor.scss";
 @import "../../Internals/Components/Inputs/TextArea.razor.scss";
@@ -52,6 +53,8 @@
 @import "../../Internals/Pages/Canvas/CanvasPage.razor.scss";
 @import "../../Internals/Pages/Canvas/AddOnPanel.razor.scss";
 @import "../../Internals/Pages/Canvas/Controls/ControlsPanel.razor.scss";
+@import "../../Internals/Pages/Canvas/Controls/ParameterControllers/Controllers/BoolParameterController.razor.scss";
+@import "../../Internals/Pages/Canvas/Controls/ParameterControllers/Controllers/NumberParameterController.razor.scss";
 @import "../../Internals/Pages/Canvas/Actions/ActionsPanel.razor.scss";
 @import "../../Internals/Pages/Canvas/Actions/ActionsPanelLogLine.razor.scss";
 @import "../../Internals/Pages/Canvas/Actions/ActionsPanelTags.razor.scss";

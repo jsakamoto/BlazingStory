@@ -1,0 +1,38 @@
+<div class="dump-parameter">
+    <table>
+        <tr><th>Int32</th><td>@this.Int32</td></tr>
+        <tr><th>Nullable Int32</th><td>@ToString(this.NullableInt32)</td></tr>
+
+        <tr><th>Bool</th><td>@this.Bool</td></tr>
+        <tr><th>Nullable Bool</th><td>@ToString(this.NullableBool)</td></tr>
+
+        <tr><th>EnumA</th><td>@this.EnumA</td></tr>
+        <tr><th>Nullable EnumA</th><td>@ToString(this.NullableEnumA)</td></tr>
+    </table>
+</div>
+
+@code
+{
+    [Parameter]
+    public int Int32 { get; set; } = 0;
+
+    [Parameter]
+    public int? NullableInt32 { get; set; } = null;
+
+    [Parameter]
+    public bool Bool { get; set; } = false;
+
+    [Parameter]
+    public bool? NullableBool { get; set; } = null;
+
+    [Parameter]
+    public EnumA EnumA { get; set; } = EnumA.ValueX;
+
+    [Parameter]
+    public EnumA? NullableEnumA { get; set; } = null;
+
+    private string? ToString<T>(Nullable<T> value) where T : struct
+    {
+        return value.HasValue ? value.Value.ToString() : "(null)";
+    }
+}

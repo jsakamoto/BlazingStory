@@ -19,6 +19,8 @@ public class ComponentParameter
 
     internal readonly Type Type;
 
+    internal readonly TypeStructure TypeStructure;
+
     internal MarkupString Summary { get; private set; } = default;
 
     internal readonly bool Required;
@@ -34,6 +36,7 @@ public class ComponentParameter
         this._XmlDocComment = xmlDocComment;
         this.Name = propertyInfo.Name;
         this.Type = propertyInfo.PropertyType;
+        this.TypeStructure = TypeUtility.ExtractTypeStructure(propertyInfo.PropertyType);
         this.Required = propertyInfo.GetCustomAttribute<EditorRequiredAttribute>() != null;
     }
 
