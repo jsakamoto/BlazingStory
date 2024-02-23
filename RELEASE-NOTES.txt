@@ -1,3 +1,6 @@
+v.1.0.0-preview.26
+- Improve: Add support for the Nullable<T> type on the component's parameters.
+
 v.1.0.0-preview.25
 - Improve: The code view on a Docs page now syntax highlights and reflects user-entered parameters in real-time.
 
