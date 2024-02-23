@@ -104,7 +104,7 @@
 
     private object? GetArgumentValue(string parameterName)
     {
-        return this.Story?.Context.Args.TryGetValue(parameterName, out var value) == true ? value : null;
+        return this.Story?.Context.Args.TryGetValue(parameterName, out var value) == true ? value : Unknown.Value;
     }
 
     private async Task ResetControls()
