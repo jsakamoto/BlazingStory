@@ -281,7 +281,7 @@ However, if you mark up the `ChildContent` parameter inside of the component's m
             <MyButton @attributes="context.Args">
                 <!-- ❌ DON'T DO THIS! -->
                 Click me
-            </Arg>
+            </MyButton>
         </Template>
         ...
 ```
@@ -299,7 +299,7 @@ Instead, you should set the `ChildContent` parameter through the `<Arguments>` r
 
         <Template>
             <MyButton @attributes="context.Args">
-            </Arg>
+            </MyButton>
         </Template>
         ...
 @code
