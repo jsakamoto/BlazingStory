@@ -1281,7 +1281,7 @@ a.icon-button {
 
 .bool-parameter-controller {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   width: 100%;
   align-items: center;
 }
@@ -1296,7 +1296,7 @@ a.icon-button {
 
 .number-parameter-controller {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   width: 100%;
 }
 .number-parameter-controller label {

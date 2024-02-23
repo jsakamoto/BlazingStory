@@ -12,6 +12,8 @@ else if (nullable)
 
     <div class="number-parameter-controller">
 
+        <NullInputRadio Name="@(this.Key + "-value-type")" Checked="isNull" OnChange="() => OnInputAsync(null)" />
+
         <label class="input-value">
             <input type="radio" name="@(this.Key + "-value-type")" checked="@(!isNull)" @onchange="() => OnInputAsync(this._NumValue)" />
             <NumberInput Value="_NumValue"
@@ -19,8 +21,6 @@ else if (nullable)
                          OnInput="OnInputNumValue" 
                          OnFocus="() => this.OnInputAsync(this._NumValue)"/>
         </label>
-
-        <NullInputRadio Name="@(this.Key + "-value-type")" Checked="isNull" OnChange="() => OnInputAsync(null)" />
 
     </div>
 }

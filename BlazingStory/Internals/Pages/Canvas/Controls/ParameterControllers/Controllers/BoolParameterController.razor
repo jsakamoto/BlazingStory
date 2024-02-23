@@ -12,12 +12,12 @@ else if (nullable)
 
     <div class="bool-parameter-controller">
 
+        <NullInputRadio Name="@(this.Key + "-value-type")" Checked="isNull" OnChange="() => OnInputAsync(null)" />
+
         <label class="input-value">
             <input type="radio" name="@(this.Key + "-value-type")" checked="@(!isNull)" @onchange="() => OnInputAsync(this._BoolValue)" />
             <ToggleButton Value="_BoolValue" OnChange="OnChangeBoolValue" />
         </label>
-
-        <NullInputRadio Name="@(this.Key + "-value-type")" Checked="isNull" OnChange="() => OnInputAsync(null)" />
 
     </div>
 }
