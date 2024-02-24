@@ -1,4 +1,5 @@
-v.1.0.0-preview.26.2
+v.1.0.0-preview.27
+- Fix: unassigned parameters show "Unknown", not "-", on the control panel.
 - Experimental: Add Blazor Server support.
 
 v.1.0.0-preview.26
