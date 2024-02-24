@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0.0",
+  "strings": {
+    "name": "Blazing Story アプリケーション (Server) (プレビュー)",
+    "description": "Storybook の Blazor 版のクローンである Blazing Story Server アプリを作成するためのプロジェクト テンプレート。"
+  }
+}

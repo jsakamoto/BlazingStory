@@ -2,7 +2,7 @@
   "version": "1.0.0.0",
   "strings": {
     "name": "Blazing Story アプリケーション (WebAssembly)",
-    "description": "Storybook の Blazor 版のクローンである Blazing Story アプリを作成するためのプロジェクト テンプレート。",
+    "description": "Storybook の Blazor 版のクローンである Blazing Story WebAssembly アプリを作成するためのプロジェクト テンプレート。",
     "parameter.Hosted.name": "ASP.NET Core でホスト(_H)"
   }
 }
