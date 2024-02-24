@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json.schemastore.org/vs-2017.3.host",
+  "order": 900,
+  "icon": "icon-32x32.png",
+  "ports": [
+    {
+      "name": "HttpPort",
+      "useHttps": false
+    },
+    {
+      "name": "HttpsPort",
+      "useHttps": true
+    }
+  ],
+  "disableHttpsSymbol": "NoHttps",
+  "symbolInfo": [
+    {
+      "id": "Hosted",
+      "name": {
+        "text": "ASP.NET Core _hosted"
+      },
+      "isVisible": true
+    }
+  ]
+}

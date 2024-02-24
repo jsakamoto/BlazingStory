@@ -1,4 +1,4 @@
-<button style="background-color: @(this.Color);" @onclick="OnClick">
+<button style="background-color: @(this.Color);" @onclick="OnClick" >
     <span>@this.Text</span>
 </button>
 
@@ -16,9 +16,6 @@
     [Parameter]
     public string Color { get; set; } = "#007bff";
 
-    /// <summary>
-    /// Set a callback for the button click event.
-    /// </summary>
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 

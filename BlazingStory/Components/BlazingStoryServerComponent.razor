@@ -1,0 +1,27 @@
+@page "/{*urlPath}"
+@* @page "/"
+@page "/iframe.html"
+ *@
+@typeparam TIndexPage
+@typeparam TIFramePage
+@inject NavigationManager NavigationManager
+
+@if (this._RequestForIFrameHtml)
+{
+    <DynamicComponent Type="typeof(TIFramePage)"></DynamicComponent>
+}
+else
+{
+    <DynamicComponent Type="typeof(TIndexPage)"></DynamicComponent>
+}
+
+@code
+{
+    private bool _RequestForIFrameHtml = false;
+
+    override protected void OnInitialized()
+    {
+        if (!Uri.TryCreate(this.NavigationManager.Uri, UriKind.Absolute, out var uri)) return;
+        this._RequestForIFrameHtml = uri.AbsolutePath == "/iframe.html";
+    }
+}

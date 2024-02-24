@@ -1,3 +1,6 @@
+v.1.0.0-preview.26.2
+- Experimental: Add Blazor Server support.
+
 v.1.0.0-preview.26
 - Improve: Add support for the Nullable<T> type on the component's parameters.
 
