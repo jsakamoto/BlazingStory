@@ -1,3 +1,6 @@
+v.1.0.0-preview.30
+- Fix: the improvement of preview 28 (the design of the description items on the "Docs" page by wrapping them when there are many) was not applied correctly.
+
 v.1.0.0-preview.28
 - Improve:  The design of the description items on the "Docs" page by wrapping them when there are many.
 
