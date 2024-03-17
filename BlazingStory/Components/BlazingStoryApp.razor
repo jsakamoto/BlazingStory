@@ -267,7 +267,7 @@
     {
         if (this._PreferesColorSchemeChangeSubscribeId != 0)
         {
-            await this._JSModule.InvokeVoidAsync("unsubscribePreferesColorSchemeChanged", this._PreferesColorSchemeChangeSubscribeId);
+            await this._JSModule.InvokeVoidIfConnectedAsync("unsubscribePreferesColorSchemeChanged", this._PreferesColorSchemeChangeSubscribeId);
             this._PreferesColorSchemeChangeSubscribeId = 0;
         }
         this._RefThis.Dispose();
