@@ -35,7 +35,7 @@
 
   <ItemGroup>
     <PackageReference Include="Toolbelt.Blazor.GetProperty.Script" Version="1.2.0" />
-    <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="3.3.0-preview.1" />
+    <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="3.3.0" />
     <PackageReference Include="Toolbelt.Web.CssClassInlineBuilder" Version="2.0.0" />
     <PackageReference Include="Toolbelt.Blazor.SplitContainer" Version="1.1.2.1" />
     <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.9.5">
