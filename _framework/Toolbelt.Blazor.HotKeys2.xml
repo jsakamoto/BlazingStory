@@ -1,0 +1,1667 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Toolbelt.Blazor.HotKeys2</name>
+    </assembly>
+    <members>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.ControlLeft">
+            <summary>ControlLeft</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.ControlRight">
+            <summary>ControlRight</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.AltLeft">
+            <summary>AltLeft</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.AltRight">
+            <summary>AltRight</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.ShiftLeft">
+            <summary>ShiftLeft</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.ShiftRight">
+            <summary>ShiftRight</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.MetaLeft">
+            <summary>MetaLeft</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.MetaRight">
+            <summary>MetaRight</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.CapsLock">
+            <summary>CapsLock</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Tab">
+            <summary>Tab</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Escape">
+            <summary>Escape</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Delete">
+            <summary>Delete</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Backspace">
+            <summary>Backspace</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Insert">
+            <summary>Insert</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Enter">
+            <summary>Enter</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.ArrowUp">
+            <summary>ArrowUp</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.ArrowRight">
+            <summary>ArrowRight</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.ArrowDown">
+            <summary>ArrowDown</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.ArrowLeft">
+            <summary>ArrowLeft</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.PageUp">
+            <summary>PageUp</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.PageDown">
+            <summary>PageDown</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Home">
+            <summary>Home</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.End">
+            <summary>End</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Space">
+            <summary>Space</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Num0">
+            <summary>0</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Num1">
+            <summary>1</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Num2">
+            <summary>2</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Num3">
+            <summary>3</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Num4">
+            <summary>4</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Num5">
+            <summary>5</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Num6">
+            <summary>6</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Num7">
+            <summary>7</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Num8">
+            <summary>8</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Num9">
+            <summary>9</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.A">
+            <summary>A</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.B">
+            <summary>B</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.C">
+            <summary>C</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.D">
+            <summary>D</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.E">
+            <summary>E</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F">
+            <summary>F</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.G">
+            <summary>G</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.H">
+            <summary>H</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.I">
+            <summary>I</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.J">
+            <summary>J</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.K">
+            <summary>K</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.L">
+            <summary>L</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.M">
+            <summary>M</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.N">
+            <summary>N</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.O">
+            <summary>O</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.P">
+            <summary>P</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Q">
+            <summary>Q</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.R">
+            <summary>R</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.S">
+            <summary>S</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.T">
+            <summary>T</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.U">
+            <summary>U</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.V">
+            <summary>V</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.W">
+            <summary>W</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.X">
+            <summary>X</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Y">
+            <summary>Y</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Z">
+            <summary>Z</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F1">
+            <summary>F1</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F2">
+            <summary>F2</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F3">
+            <summary>F3</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F4">
+            <summary>F4</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F5">
+            <summary>F5</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F6">
+            <summary>F6</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F7">
+            <summary>F7</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F8">
+            <summary>F8</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F9">
+            <summary>F9</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F10">
+            <summary>F10</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F11">
+            <summary>F11</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F12">
+            <summary>F12</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F13">
+            <summary>F13</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F14">
+            <summary>F14</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F15">
+            <summary>F15</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F16">
+            <summary>F16</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F17">
+            <summary>F17</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F18">
+            <summary>F18</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F19">
+            <summary>F19</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.F20">
+            <summary>F20</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.ContextMenu">
+            <summary>ContextMenu</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.NumLock">
+            <summary>NumLock</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.ScrollLock">
+            <summary>ScrollLock</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Equal">
+            <summary>Equal (=)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Minus">
+            <summary>Minus (-)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Slash">
+            <summary>Slash (/)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.SemiColon">
+            <summary>SemiColon (;)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Quote">
+            <summary>Quote (')</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Comma">
+            <summary>Comma (,)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Period">
+            <summary>Period (.)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Backquote">
+            <summary>Backquote (`)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.Backslash">
+            <summary>Backslash (\)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.BracketLeft">
+            <summary>BracketLeft ([)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Code.BracketRight">
+            <summary>BracketRight (])</summary>
+        </member>
+        <member name="T:Toolbelt.Blazor.HotKeys2.Exclude">
+            <summary>
+            The flags of HTML element that will be not allowed hotkey works.
+            </summary>
+        </member>
+        <member name="T:Toolbelt.Blazor.HotKeys2.HotKeyDownEventArgs">
+            <summary>
+            Provides data for the KeyDown eventsof HotKeys service.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeyDownEventArgs.Modifiers">
+            <summary>
+            Get the combination of modifier keys flags.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeyDownEventArgs.Key">
+            <summary>
+            Get the value of the "key" property in the HTML Keyboard event object, that taking into consideration the state of modifier keys such as Shift as well as the keyboard locale and layout.<br/>
+            (https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values)
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeyDownEventArgs.Code">
+            <summary>
+            Get the value of the "code" property in the HTML Keyboard event object, that represents a physical key on the keyboard.<br/>
+            (https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code/code_values)
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeyDownEventArgs.SrcElementTagName">
+            <summary>
+            Get the tag name of HTML element that is source of the DOM event.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeyDownEventArgs.SrcElementTypeAttribute">
+            <summary>
+            Get the type attribute, if any, of the HTML element that is source of the DOM event.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeyDownEventArgs.IsWasm">
+            <summary>
+            Get the runtime environment is on a WebAssembly (Web browser), or not.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeyDownEventArgs.PreventDefault">
+            <summary>
+            Get or set the flag to determine prevent default behavior or not.<br/>
+            [IMPORTANT NOTICE] When set this property to true on a Blazor Server App (not a WebAssembly app), <see cref="T:System.InvalidOperationException"/> will be thrown. <br/>
+            ("PreventDefault" behavior is not supported on Blazor Server App.)
+            </summary>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeyDownEventArgs.#ctor(Toolbelt.Blazor.HotKeys2.ModCode,System.String,System.String,System.Boolean,System.String,System.String)">
+            <summary>
+            Initialize a new instance of the HotKeyDownEventArgs class.
+            </summary>
+        </member>
+        <member name="T:Toolbelt.Blazor.HotKeys2.HotKeyEntry">
+            <summary>
+            Association of key combination and callback action.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeyEntry.Mode">
+            <summary>
+            Get the mode that how to identificate the hot key.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeyEntry.Exclude">
+            <summary>
+            Get the combination of HTML element flags that will be not allowed hotkey works.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeyEntry.ExcludeSelector">
+            <summary>
+            Get Additional CSS selector for HTML elements that will not allow hotkey to work.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeyEntry.Description">
+            <summary>
+            Get the description of the meaning of this hot key entry.
+            </summary>
+        </member>
+        <member name="F:Toolbelt.Blazor.HotKeys2.HotKeyEntry._Modifiers">
+            <summary>
+            Get the combination of modifier flags.
+            </summary>
+        </member>
+        <member name="F:Toolbelt.Blazor.HotKeys2.HotKeyEntry._KeyEntry">
+            <summary>
+            Get the key or code of the hot key.
+            </summary>
+        </member>
+        <member name="F:Toolbelt.Blazor.HotKeys2.HotKeyEntry._OwnerComponent">
+            <summary>
+            Get the instance of a Razor component that is an owner of the callback action method.
+            </summary>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeyEntry.#ctor(Microsoft.Extensions.Logging.ILogger,Toolbelt.Blazor.HotKeys2.HotKeyMode,System.Type,System.Int32,System.String,Microsoft.AspNetCore.Components.IHandleEvent,Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Initialize a new instance of the HotKeyEntry class.
+            </summary>
+            <param name="logger">The instance of <see cref="T:Microsoft.Extensions.Logging.ILogger"/> that is used to log the error message.</param>
+            <param name="mode">The mode that how to identificate the hot key.</param>
+            <param name="typeOfModifiers"></param>
+            <param name="modifiers">The combination of modifier flags</param>
+            <param name="keyEntry">The key or code of the hot key</param>
+            <param name="ownerOfAction">The instance of a Razor component that is an owner of the callback action method.</param>
+            <param name="options">The options for this hotkey entry.</param>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeyEntry.ToString">
+            <summary>
+            Returns a String that combined key combination and description of this entry, like "Ctrl+A: Select All."
+            </summary>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeyEntry.ToString(System.String)">
+            <summary>
+            Returns a String formatted with specified format string.
+            </summary>
+            <param name="format">{0} will be replaced with key combination text, and {1} will be replaced with description of this hotkey entry object.</param>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeyEntry.ToStringKeys">
+            <summary>
+            Returns an array of String formatted keys.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode.Modifiers">
+            <summary>
+            Get the combination of modifier codes flags.
+            </summary>
+        </member>
+        <member name="F:Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode._Action">
+            <summary>
+            Get the callback action that will be invoked when user enter modKeys + key combination on the browser.
+            </summary>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode.#ctor(Toolbelt.Blazor.HotKeys2.ModCode,Toolbelt.Blazor.HotKeys2.Code,Toolbelt.Blazor.HotKeys2.Exclude,System.String,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode,System.Threading.Tasks.ValueTask})">
+            <summary>
+            Initialize a new instance of the HotKeyEntryByKey class.
+            </summary>
+            <param name="modCodes">The combination of modifier keys flags.</param>
+            <param name="code">The identifier of hotkey.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="action">The callback action that will be invoked when user enter modKeys + key combination on the browser.</param>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode.#ctor(Toolbelt.Blazor.HotKeys2.ModCode,Toolbelt.Blazor.HotKeys2.Code,Toolbelt.Blazor.HotKeys2.Exclude,System.String,System.String,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode,System.Threading.Tasks.ValueTask})">
+            <summary>
+            Initialize a new instance of the HotKeyEntryByKey class.
+            </summary>
+            <param name="modCodes">The combination of modifier keys flags.</param>
+            <param name="code">The identifier of hotkey.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="excludeSelector">Additional CSS selector for HTML elements that will not allow hotkey to work.</param>
+            <param name="action">The callback action that will be invoked when user enter modKeys + key combination on the browser.</param>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode.#ctor(Microsoft.Extensions.Logging.ILogger,Toolbelt.Blazor.HotKeys2.ModCode,Toolbelt.Blazor.HotKeys2.Code,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode,System.Threading.Tasks.ValueTask},Microsoft.AspNetCore.Components.IHandleEvent,Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Initialize a new instance of the HotKeyEntryByKey class.
+            </summary>
+            <param name="logger">The logger instance.</param>
+            <param name="modCodes">The combination of modifier keys flags.</param>
+            <param name="code">The identifier of hotkey.</param>
+            <param name="action">The callback action that will be invoked when user enter modKeys + key combination on the browser.</param>
+            <param name="ownerOfAction">The instance of a Razor component that is an owner of the callback action method.</param>
+            <param name="options">The options for a hotkey entry.</param>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey.Modifiers">
+            <summary>
+            Get the combination of modifier keys flags.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey.Key">
+            <summary>
+            Get the identifier of hotkey.<br/>If this property return 0, it means the HotKey entry works based on DOM event's native key name.
+            </summary>
+        </member>
+        <member name="F:Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey._Action">
+            <summary>
+            Get the callback action that will be invoked when user enter modKeys + key combination on the browser.
+            </summary>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey.#ctor(Toolbelt.Blazor.HotKeys2.ModKey,Toolbelt.Blazor.HotKeys2.Key,Toolbelt.Blazor.HotKeys2.Exclude,System.String,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey,System.Threading.Tasks.ValueTask})">
+            <summary>
+            Initialize a new instance of the HotKeyEntryByKey class.
+            </summary>
+            <param name="modKeys">The combination of modifier keys flags.</param>
+            <param name="key">The identifier of hotkey.</param>
+            <param name="action">The callback action that will be invoked when user enter modKeys + key combination on the browser.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey.#ctor(Toolbelt.Blazor.HotKeys2.ModKey,Toolbelt.Blazor.HotKeys2.Key,Toolbelt.Blazor.HotKeys2.Exclude,System.String,System.String,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey,System.Threading.Tasks.ValueTask})">
+            <summary>
+            Initialize a new instance of the HotKeyEntryByKey class.
+            </summary>
+            <param name="modKeys">The combination of modifier keys flags.</param>
+            <param name="key">The identifier of hotkey.</param>
+            <param name="action">The callback action that will be invoked when user enter modKeys + key combination on the browser.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="excludeSelector">Additional CSS selector for HTML elements that will not allow hotkey to work.</param>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey.#ctor(Microsoft.Extensions.Logging.ILogger,Toolbelt.Blazor.HotKeys2.ModKey,Toolbelt.Blazor.HotKeys2.Key,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey,System.Threading.Tasks.ValueTask},Microsoft.AspNetCore.Components.IHandleEvent,Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Initialize a new instance of the HotKeyEntryByKey class.
+            </summary>
+            <param name="logger">The instance of ILogger.</param>
+            <param name="modKeys">The combination of modifier keys flags.</param>
+            <param name="key">The identifier of hotkey.</param>
+            <param name="action">The callback action that will be invoked when user enter modKeys + key combination on the browser.</param>
+            <param name="ownerOfAction">The instance of a Razor component that is an owner of the callback action method.</param>
+            <param name="options">The options for a hotkey entry.</param>
+        </member>
+        <member name="T:Toolbelt.Blazor.HotKeys2.HotKeyOptions">
+            <summary>
+            The options for a hotkey entry.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeyOptions.Description">
+            <summary>The description of the meaning of this hot key entry.</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeyOptions.Exclude">
+            <summary>
+            The combination of HTML element flags that will be not allowed hotkey works. The default value is <see cref="F:Toolbelt.Blazor.HotKeys2.Exclude.Default"/>.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeyOptions.ExcludeSelector">
+            <summary>Additional CSS selector for HTML elements that will not allow hotkey to work.</summary>
+        </member>
+        <member name="T:Toolbelt.Blazor.HotKeys2.HotKeys">
+            <summary>
+            A service that provides Hotkey feature.
+            </summary>
+        </member>
+        <member name="E:Toolbelt.Blazor.HotKeys2.HotKeys.KeyDown">
+            <summary>
+            Occurs when the user enter any keys on the browser.
+            </summary>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeys.#ctor(Microsoft.JSInterop.IJSRuntime,Microsoft.Extensions.Logging.ILogger{Toolbelt.Blazor.HotKeys2.HotKeys})">
+            <summary>
+            Initialize a new instance of the HotKeys class.
+            </summary>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeys.AttachAsync">
+            <summary>
+            Attach this HotKeys service instance to JavaScript DOM event handler.
+            </summary>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeys.CreateContext">
+            <summary>
+            Create hotkey entries context, and activate it.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeys.OnKeyDown(Toolbelt.Blazor.HotKeys2.ModCode,System.String,System.String,System.String,System.String)">
+            <summary>
+            The method that will be invoked from JavaScript keydown event handler.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="srcElementTagName">The tag name of HTML element that is source of the DOM event.</param>
+            <param name="srcElementTypeName">The <code>type</code>attribute, if any, of the HTML element that is source of the DOM event</param>
+            <param name="key">The value of the "key" property in the DOM event object</param>
+            <param name="code">The value of the "code" property in the DOM event object</param>
+            <returns></returns>
+        </member>
+        <member name="T:Toolbelt.Blazor.HotKeys2.HotKeysContext">
+            <summary>
+            Current active hotkeys set.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.HotKeysContext.Keys">
+            <summary>
+            The collection of Hotkey entries.
+            </summary>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.#ctor(System.Threading.Tasks.Task{Microsoft.JSInterop.IJSObjectReference},Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            Initialize a new instance of the HotKeysContext class.
+            </summary>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Key,System.Action,Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Key,System.Action{Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Key,System.Func{System.Threading.Tasks.ValueTask},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Key,System.Func{System.Threading.Tasks.Task},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Key,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey,System.Threading.Tasks.ValueTask},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Key,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey,System.Threading.Tasks.Task},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Key,System.Action,System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Key,System.Action{Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Key,System.Func{System.Threading.Tasks.ValueTask},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Key,System.Func{System.Threading.Tasks.Task},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Key,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey,System.Threading.Tasks.ValueTask},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Key,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey,System.Threading.Tasks.Task},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModKey,Toolbelt.Blazor.HotKeys2.Key,System.Action,Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModKey,Toolbelt.Blazor.HotKeys2.Key,System.Action{Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModKey,Toolbelt.Blazor.HotKeys2.Key,System.Func{System.Threading.Tasks.ValueTask},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModKey,Toolbelt.Blazor.HotKeys2.Key,System.Func{System.Threading.Tasks.Task},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModKey,Toolbelt.Blazor.HotKeys2.Key,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey,System.Threading.Tasks.ValueTask},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModKey,Toolbelt.Blazor.HotKeys2.Key,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey,System.Threading.Tasks.Task},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModKey,Toolbelt.Blazor.HotKeys2.Key,System.Action,System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModKey,Toolbelt.Blazor.HotKeys2.Key,System.Action{Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModKey,Toolbelt.Blazor.HotKeys2.Key,System.Func{System.Threading.Tasks.ValueTask},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModKey,Toolbelt.Blazor.HotKeys2.Key,System.Func{System.Threading.Tasks.Task},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModKey,Toolbelt.Blazor.HotKeys2.Key,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey,System.Threading.Tasks.ValueTask},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModKey,Toolbelt.Blazor.HotKeys2.Key,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey,System.Threading.Tasks.Task},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.AddInternal(Toolbelt.Blazor.HotKeys2.ModKey,Toolbelt.Blazor.HotKeys2.Key,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByKey,System.Threading.Tasks.ValueTask},Microsoft.AspNetCore.Components.IHandleEvent,Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="key">The identifier of hotkey by key.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="ownerOfAction">The owner of the action. If the owner is disposed, the hotkey will be removed automatically.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Code,System.Action,Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Code,System.Action{Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Code,System.Func{System.Threading.Tasks.ValueTask},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Code,System.Func{System.Threading.Tasks.Task},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Code,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode,System.Threading.Tasks.ValueTask},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Code,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode,System.Threading.Tasks.Task},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Code,System.Action,System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Code,System.Action{Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Code,System.Func{System.Threading.Tasks.ValueTask},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Code,System.Func{System.Threading.Tasks.Task},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Code,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode,System.Threading.Tasks.ValueTask},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.Code,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode,System.Threading.Tasks.Task},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter the key without any modifiers on the browser.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModCode,Toolbelt.Blazor.HotKeys2.Code,System.Action,Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModCode,Toolbelt.Blazor.HotKeys2.Code,System.Action{Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModCode,Toolbelt.Blazor.HotKeys2.Code,System.Func{System.Threading.Tasks.ValueTask},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModCode,Toolbelt.Blazor.HotKeys2.Code,System.Func{System.Threading.Tasks.Task},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModCode,Toolbelt.Blazor.HotKeys2.Code,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode,System.Threading.Tasks.ValueTask},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModCode,Toolbelt.Blazor.HotKeys2.Code,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode,System.Threading.Tasks.Task},Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModCode,Toolbelt.Blazor.HotKeys2.Code,System.Action,System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModCode,Toolbelt.Blazor.HotKeys2.Code,System.Action{Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModCode,Toolbelt.Blazor.HotKeys2.Code,System.Func{System.Threading.Tasks.ValueTask},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModCode,Toolbelt.Blazor.HotKeys2.Code,System.Func{System.Threading.Tasks.Task},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModCode,Toolbelt.Blazor.HotKeys2.Code,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode,System.Threading.Tasks.ValueTask},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Add(Toolbelt.Blazor.HotKeys2.ModCode,Toolbelt.Blazor.HotKeys2.Code,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode,System.Threading.Tasks.Task},System.String,Toolbelt.Blazor.HotKeys2.Exclude)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.AddInternal(Toolbelt.Blazor.HotKeys2.ModCode,Toolbelt.Blazor.HotKeys2.Code,System.Func{Toolbelt.Blazor.HotKeys2.HotKeyEntryByCode,System.Threading.Tasks.ValueTask},Microsoft.AspNetCore.Components.IHandleEvent,Toolbelt.Blazor.HotKeys2.HotKeyOptions)">
+            <summary>
+            Add a new hotkey entry to this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="code">The identifier of hotkey by code.</param>
+            <param name="action">The callback action that will be invoked when user enter modifiers + key combination on the browser.</param>
+            <param name="ownerOfAction">The instance of a Razor component that is an owner of the callback action method.</param>
+            <param name="options">The options for this hotkey entry.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Remove(Toolbelt.Blazor.HotKeys2.Key,System.String,Toolbelt.Blazor.HotKeys2.Exclude,System.String)">
+            <summary>
+            Remove one or more hotkey entries from this context.
+            </summary>
+            <param name="key">The identifier of hotkey.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="excludeSelector">Additional CSS selector for HTML elements that will not allow hotkey to work.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Remove(Toolbelt.Blazor.HotKeys2.ModKey,Toolbelt.Blazor.HotKeys2.Key,System.String,Toolbelt.Blazor.HotKeys2.Exclude,System.String)">
+            <summary>
+            Remove one or more hotkey entries from this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="key">The identifier of hotkey.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="excludeSelector">Additional CSS selector for HTML elements that will not allow hotkey to work.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Remove(Toolbelt.Blazor.HotKeys2.Code,System.String,Toolbelt.Blazor.HotKeys2.Exclude,System.String)">
+            <summary>
+            Remove one or more hotkey entries from this context.
+            </summary>
+            <param name="code">The identifier of hotkey.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="excludeSelector">Additional CSS selector for HTML elements that will not allow hotkey to work.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Remove(Toolbelt.Blazor.HotKeys2.ModCode,Toolbelt.Blazor.HotKeys2.Code,System.String,Toolbelt.Blazor.HotKeys2.Exclude,System.String)">
+            <summary>
+            Remove one or more hotkey entries from this context.
+            </summary>
+            <param name="modifiers">The combination of modifier keys flags.</param>
+            <param name="code">The identifier of hotkey.</param>
+            <param name="description">The description of the meaning of this hot key entry.</param>
+            <param name="exclude">The combination of HTML element flags that will be not allowed hotkey works.</param>
+            <param name="excludeSelector">Additional CSS selector for HTML elements that will not allow hotkey to work.</param>
+            <returns>This context.</returns>
+        </member>
+        <member name="M:Toolbelt.Blazor.HotKeys2.HotKeysContext.Dispose">
+            <summary>
+            Deactivate the hot key entry contained in this context.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Control">
+            <summary>Control</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Alt">
+            <summary>Alt</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Shift">
+            <summary>Shift</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Meta">
+            <summary>Meta</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.CapsLock">
+            <summary>CapsLock</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Tab">
+            <summary>Tab</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Escape">
+            <summary>Escape</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Delete">
+            <summary>Delete</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Backspace">
+            <summary>Backspace</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Insert">
+            <summary>Insert</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Enter">
+            <summary>Enter</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.ArrowUp">
+            <summary>ArrowUp</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.ArrowRight">
+            <summary>ArrowRight</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.ArrowDown">
+            <summary>ArrowDown</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.ArrowLeft">
+            <summary>ArrowLeft</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.PageUp">
+            <summary>PageUp</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.PageDown">
+            <summary>PageDown</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Home">
+            <summary>Home</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.End">
+            <summary>End</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Space">
+            <summary>Space</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Num0">
+            <summary>0</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Num1">
+            <summary>1</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Num2">
+            <summary>2</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Num3">
+            <summary>3</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Num4">
+            <summary>4</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Num5">
+            <summary>5</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Num6">
+            <summary>6</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Num7">
+            <summary>7</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Num8">
+            <summary>8</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Num9">
+            <summary>9</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.A">
+            <summary>A</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.B">
+            <summary>B</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.C">
+            <summary>C</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.D">
+            <summary>D</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.E">
+            <summary>E</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F">
+            <summary>F</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.G">
+            <summary>G</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.H">
+            <summary>H</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.I">
+            <summary>I</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.J">
+            <summary>J</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.K">
+            <summary>K</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.L">
+            <summary>L</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.M">
+            <summary>M</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.N">
+            <summary>N</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.O">
+            <summary>O</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.P">
+            <summary>P</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Q">
+            <summary>Q</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.R">
+            <summary>R</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.S">
+            <summary>S</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.T">
+            <summary>T</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.U">
+            <summary>U</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.V">
+            <summary>V</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.W">
+            <summary>W</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.X">
+            <summary>X</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Y">
+            <summary>Y</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Z">
+            <summary>Z</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.a">
+            <summary>a</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.b">
+            <summary>b</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.c">
+            <summary>c</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.d">
+            <summary>d</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.e">
+            <summary>e</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.f">
+            <summary>f</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.g">
+            <summary>g</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.h">
+            <summary>h</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.i">
+            <summary>i</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.j">
+            <summary>j</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.k">
+            <summary>k</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.l">
+            <summary>l</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.m">
+            <summary>m</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.n">
+            <summary>n</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.o">
+            <summary>o</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.p">
+            <summary>p</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.q">
+            <summary>q</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.r">
+            <summary>r</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.s">
+            <summary>s</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.t">
+            <summary>t</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.u">
+            <summary>u</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.v">
+            <summary>v</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.w">
+            <summary>w</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.x">
+            <summary>x</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.y">
+            <summary>y</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.z">
+            <summary>z</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F1">
+            <summary>F1</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F2">
+            <summary>F2</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F3">
+            <summary>F3</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F4">
+            <summary>F4</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F5">
+            <summary>F5</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F6">
+            <summary>F6</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F7">
+            <summary>F7</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F8">
+            <summary>F8</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F9">
+            <summary>F9</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F10">
+            <summary>F10</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F11">
+            <summary>F11</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F12">
+            <summary>F12</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F13">
+            <summary>F13</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F14">
+            <summary>F14</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F15">
+            <summary>F15</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F16">
+            <summary>F16</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F17">
+            <summary>F17</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F18">
+            <summary>F18</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F19">
+            <summary>F19</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.F20">
+            <summary>F20</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.ContextMenu">
+            <summary>ContextMenu</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.NumLock">
+            <summary>NumLock</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.ScrollLock">
+            <summary>ScrollLock</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Equal">
+            <summary>Equal (=)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LessThan">
+            <summary>Less Than (&lt;)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.GreaterThan">
+            <summary>Greater Than (&gt;)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Asterisk">
+            <summary>Asterisk (*)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Plus">
+            <summary>Plus (+)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Minus">
+            <summary>Minus (-)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Slash">
+            <summary>Slash (/)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.SemiColon">
+            <summary>SemiColon (;)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Colon">
+            <summary>Colon (:)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.DoubleQuote">
+            <summary>Double Quote (")</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Comma">
+            <summary>Comma (,)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Period">
+            <summary>Period (.)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Backquote">
+            <summary>Backquote (`)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Backslash">
+            <summary>Backslash (\)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.BracketLeft">
+            <summary>BracketLeft ([)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.BracketRight">
+            <summary>BracketRight (])</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.BraceLeft">
+            <summary>BraceLeft ({)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.BraceRight">
+            <summary>BraceRight (})</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.ParenthesisLeft">
+            <summary>ParenthesisLeft (()</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.ParenthesisRight">
+            <summary>ParenthesisRight ())</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Underscore">
+            <summary>Underscore (_)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Exclamation">
+            <summary>Exclamation (!)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Sharp">
+            <summary>Sharp (#)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Dollar">
+            <summary>Dollar ($)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Percent">
+            <summary>Percent (%)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Ampersand">
+            <summary>Ampersand (&amp;)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Question">
+            <summary>Question (?)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.At">
+            <summary>At (@)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Caret">
+            <summary>Caret (^)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.VerticalLine">
+            <summary>Vertical Line (|)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.Tilde">
+            <summary>Tilde (~)</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.AudioVolumeMute">
+            <summary>AudioVolumeMute</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.AudioVolumeDown">
+            <summary>AudioVolumeDown</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.AudioVolumeUp">
+            <summary>AudioVolumeUp</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.MediaTrackNext">
+            <summary>MediaTrackNext</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.MediaTrackPrevious">
+            <summary>MediaTrackPrevious</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.MediaStop">
+            <summary>MediaStop</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.MediaPlayPause">
+            <summary>MediaPlayPause</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchMail">
+            <summary>LaunchMail</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchMediaPlayer">
+            <summary>LaunchMediaPlayer</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchCalculator">
+            <summary>LaunchCalculator</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchCalendar">
+            <summary>LaunchCalendar</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchContacts">
+            <summary>LaunchContacts</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchMusicPlayer">
+            <summary>LaunchMusicPlayer</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchMyComputer">
+            <summary>LaunchMyComputer</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchPhone">
+            <summary>LaunchPhone</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchScreenSaver">
+            <summary>LaunchScreenSaver</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchSpreadsheet">
+            <summary>LaunchSpreadsheet</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchWebBrowser">
+            <summary>LaunchWebBrowser</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchWebCam">
+            <summary>LaunchWebCam</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchWordProcessor">
+            <summary>LaunchWordProcessor</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication1">
+            <summary>LaunchApplication1</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication2">
+            <summary>LaunchApplication2</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication3">
+            <summary>LaunchApplication3</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication4">
+            <summary>LaunchApplication4</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication5">
+            <summary>LaunchApplication5</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication6">
+            <summary>LaunchApplication6</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication7">
+            <summary>LaunchApplication7</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication8">
+            <summary>LaunchApplication8</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication9">
+            <summary>LaunchApplication9</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication10">
+            <summary>LaunchApplication10</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication11">
+            <summary>LaunchApplication11</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication12">
+            <summary>LaunchApplication12</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication13">
+            <summary>LaunchApplication13</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication14">
+            <summary>LaunchApplication14</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication15">
+            <summary>LaunchApplication15</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication16">
+            <summary>LaunchApplication16</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication17">
+            <summary>LaunchApplication17</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication18">
+            <summary>LaunchApplication18</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication19">
+            <summary>LaunchApplication19</summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.HotKeys2.Key.LaunchApplication20">
+            <summary>LaunchApplication20</summary>
+        </member>
+        <member name="T:Toolbelt.Blazor.HotKeys2.ModCode">
+            <summary>
+            The flags of modifier keys.
+            </summary>
+        </member>
+        <member name="T:Toolbelt.Blazor.HotKeys2.ModKey">
+            <summary>
+            The flags of modifier keys.
+            </summary>
+        </member>
+        <member name="T:Toolbelt.Blazor.Extensions.DependencyInjection.HotKeysExtensions">
+            <summary>
+            Extension methods for adding HotKeys service.
+            </summary>
+        </member>
+        <member name="M:Toolbelt.Blazor.Extensions.DependencyInjection.HotKeysExtensions.AddHotKeys2(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+             Adds a HotKeys service to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
+            </summary>
+            <param name="services">The Microsoft.Extensions.DependencyInjection.IServiceCollection to add the service to.</param>
+        </member>
+    </members>
+</doc>
