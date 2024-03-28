@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyBlazorWasmApp1.Stories</title>
+    <base href="/" />
+    <!--
+    If you need to add <link> or <script> elements to include CSS or JavaScript files 
+    for canvas views of your Stories, 
+    YOU SHOULD DO THAT IN THE "iframe.html" FILE, NOT HERE.
+    -->
+    <link rel="stylesheet" href="css/blazor-ui.css" />
+</head>
+
+<body>
+    <div id="app">
+        <div class="loading-progress">
+            <svg>
+                <circle r="40%" cx="50%" cy="50%" />
+                <circle r="40%" cx="50%" cy="50%" />
+            </svg>
+            <div class="text"></div>
+            <img src="_content/BlazingStory/images/icon.min.svg" />
+        </div>
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <!--
+    If you need to add <script> elements to include JavaScript files for canvas views of your Stories, 
+    YOU SHOULD DO THAT IN THE "iframe.html" FILE, NOT HERE.
+    -->
+    <script src="_framework/blazor.webassembly.js"></script>
+</body>
+
+</html>
