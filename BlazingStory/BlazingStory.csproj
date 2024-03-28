@@ -56,7 +56,7 @@
     <Content Update="**\*.json" Pack="false" CopyToOutputDirectory="Never" />
     <None Include="..\assets\icon-128x128.png" Pack="true" Visible="false" PackagePath="" />
     <None Include="..\README.md" Visible="false" Pack="true" PackagePath="\" />
-    <None Include="Build\BlazingStory.targets" Pack="true" PackagePath="build\BlazingStory.targets" />
+    <None Include="Build\**\*" Pack="true" PackagePath="build\" />
   </ItemGroup>
 
   <ItemGroup>
