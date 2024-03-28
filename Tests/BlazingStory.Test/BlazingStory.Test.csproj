@@ -15,17 +15,17 @@
     <PackageReference Include="ChainingAssertion-NUnit.Bin" Version="4.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
     <PackageReference Include="Moq" Version="4.18.4" />
-    <PackageReference Include="NUnit" Version="4.0.1" />
+    <PackageReference Include="NUnit" Version="4.1.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
-    <PackageReference Include="NUnit.Analyzers" Version="4.0.1">
+    <PackageReference Include="NUnit.Analyzers" Version="4.1.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="6.0.0">
+    <PackageReference Include="coverlet.collector" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="bunit" Version="1.26.64" />
+    <PackageReference Include="bunit" Version="1.27.17" />
     <PackageReference Include="Toolbelt.WorkDirectory" Version="1.0.0" />
     <PackageReference Include="XProcess" Version="1.3.1.1" />
   </ItemGroup>
@@ -40,8 +40,7 @@
 
   <Target Name="_ResolveCopyLocalNuGetPackageXmls" AfterTargets="ResolveReferences">
     <ItemGroup>
-      <ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).xml')" 
-                               Condition=" '%(ReferenceCopyLocalPaths.NuGetPackageId)' != '' AND Exists('%(RootDir)%(Directory)%(Filename).xml') AND !$([System.String]::Copy('%(Filename)').StartsWith('Microsoft.')) AND !$([System.String]::Copy('%(Filename)').StartsWith('System.')) " />
+      <ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).xml')" Condition=" '%(ReferenceCopyLocalPaths.NuGetPackageId)' != '' AND Exists('%(RootDir)%(Directory)%(Filename).xml') AND !$([System.String]::Copy('%(Filename)').StartsWith('Microsoft.')) AND !$([System.String]::Copy('%(Filename)').StartsWith('System.')) " />
     </ItemGroup>
   </Target>
 
