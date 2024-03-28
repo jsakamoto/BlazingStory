@@ -14,13 +14,13 @@ You can try it out from the live demonstration site at the following link: https
 
 ### Example scenario
 
-For the example scenario, you already have a Razor Class Library project, "MyRazorClassLib", that includes the "Button" component.
+For the example scenario, you already have a Blazor WebAssembly application project, "MyBlazorWasmApp1", that includes the "Button" component.
 
 ```
 📂 (working directory)
-    + 📄 MyRazorClassLib.sln
-    + 📂 MyRazorClassLib
-        + 📄 MyRazorClassLib.csproj
+    + 📄 MyBlazorWasmApp1.sln
+    + 📂 MyBlazorWasmApp1
+        + 📄 MyBlazorWasmApp1.csproj
         + ...
         + 📂 Components
             + 📄 Button.razor
@@ -39,72 +39,72 @@ dotnet new install BlazingStory.ProjectTemplates
 
 #### Step 1 - Create a new Blazing Story app project
 
-Open the solution file (.sln) with Visual Studio, and add a new "Blazing Story" project from the project templates. (In this example scenario, we named it "MyRazorClassLib.Stories")
+Open the solution file (.sln) with Visual Studio, and add a new "Blazing Story" project from the project templates. (In this example scenario, we named it "MyBlazorWasmApp1.Stories")
 
 ![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/add-a-new-project.png)
 
 If you are working on dotnet CLI, you can do that with the following commands in a terminal.
 
 > **Note**  
-> Please remind again that this example scenario assumes that there is already a solution file (.sln) in the current directory with an existing Razor component library.
+> Please remind again that this example scenario assumes that there is already a solution file (.sln) in the current directory with an existing Blazor WebAssembly app project.
 
 ```shell
 # Create a new Blazing Story app
-dotnet new blazingstorywasm -n MyRazorClassLib.Stories
+dotnet new blazingstorywasm -n MyBlazorWasmApp1.Stories
 # Add the Blazing Story app project to the solution
-dotnet sln add ./MyRazorClassLib.Stories/
+dotnet sln add ./MyBlazorWasmApp1.Stories/
 ```
 
 The file layout will be the following tree.
 
 ```
 📂 (working directory)
-    + 📄 MyRazorClassLib.sln
-    + 📂 MyRazorClassLib
+    + 📄 MyBlazorWasmApp1.sln
+    + 📂 MyBlazorWasmApp1
         + ...
-    + 📂 MyRazorClassLib.Stories
-        + 📄 MyRazorClassLib.Stories.csproj✨ 👈 Add this
+    + 📂 MyBlazorWasmApp1.Stories
+        + 📄 MyBlazorWasmApp1.Stories.csproj✨ 👈 Add this
 ```
 
-#### Step 2 - Add a project reference of the class lib to the Blazing Story project
+#### Step 2 - Add a project reference of the Blazor Wasm app to the Blazing Story project
 
-Next, add a project reference in the Blazing Story App project "MyRazorClassLib.Stories" that refers to the Razor Class Library "MyRazorClassLib".
+Next, add a project reference in the Blazing Story App project "MyBlazorWasmApp1.Stories" that refers to the Blazor WebAssembly app project "MyBlazorWasmApp1".
 
 ![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/add-a-project-reference.png)
 
 If you are working on dotnet CLI, you can do that with the following commands in a terminal.
 
 ```shell
-dotnet add ./MyRazorClassLib.Stories reference ./MyRazorClassLib
+dotnet add ./MyBlazorWasmApp1.Stories reference ./MyBlazorWasmApp1
 ```
 
 ```
 📂 (working directory)
-    + 📄 MyRazorClassLib.sln
-    + 📂 MyRazorClassLib <--- refers --+
-        + ...                          |
-    + 📂 MyRazorClassLib.Stories ------+
+    + 📄 MyBlazorWasmApp1.sln
+    + 📂 MyBlazorWasmApp1 <--- refers --+
+        + ...                           |
+    + 📂 MyBlazorWasmApp1.Stories ------+
         + ...
 ```
 
 #### Step 3 - Add a "stories" file
 
-Add a new "stories" file to the Blazing Story App project "MyRazorClassLib.Stories".
+Add a new "stories" file to the Blazing Story App project "MyBlazorWasmApp1.Stories".
 
 A "stories" file is a normal Razor Component file (.razor), but it is annotated with the `[Stories]` attribute and includes a markup of the `<Stories>` component. There is no restriction on file layout of "stories" files, but usually, we place it in the "Stories" subfolder.
 
 > **Warning**  
 > Currently, The file name of the "stories" files must end with ".stories.razor". This is a requirement of the naming convention for available the "Show code" feature in the "Docs" pages.
 
-In this example scenario, we are going to write a "stories" for the `Button` component lived in the "MyRazorClassLib" project, so we would add a new story file named "Button.stories.razor" in the "Stories" subfolder where is under the "MyRazorClassLib.Stories" project.
+In this example scenario, we are going to write a "stories" for the `Button` component lived in the "MyBlazorWasmApp1" project, so we would add a new story file named "Button.stories.razor" in the "Stories" subfolder where is under the "MyBlazorWasmApp1.Stories" project.
 
 ```
 📂 (working directory)
-    + 📄 MyRazorClassLib.sln
-    + 📂 MyRazorClassLib
+    + 📄 MyBlazorWasmApp1.sln
+    + 📂 MyBlazorWasmApp1
         + ...
-    + 📂 MyRazorClassLib.Stories
-        + 📄 MyRazorClassLib.Stories.csproj
+    + 📂 MyBlazorWasmApp1.Stories
+        + 📄 MyBlazorWasmApp1.Stories.csproj
         + 📂 Stories
             + 📄 Button.stories.razor✨ 👈 Add this
 ```
@@ -116,7 +116,7 @@ Implement a stories.
 The "Button.stories.razor" would be like the below.
 
 ```html
-@using MyRazorClassLib.Components
+@using MyBlazorWasmApp1.Components
 @attribute [Stories("Components/Button")]
 
 <Stories TComponent="Button">
@@ -132,12 +132,12 @@ The "Button.stories.razor" would be like the below.
 
 #### Step 5 - Run it!
 
-If you are working on Visual Studio, right-click the "MyRazorClassLib.Stories" project in the solution explorer to show the context menu, click the "Set as Startup Project" menu item, and hit the `Ctrl` + `F5` key.
+If you are working on Visual Studio, right-click the "MyBlazorWasmApp1.Stories" project in the solution explorer to show the context menu, click the "Set as Startup Project" menu item, and hit the `Ctrl` + `F5` key.
 
 If you are working on dotnet CLI, you can do that with the following commands in a terminal.
 
 ```shell
-dotnet run --project ./MyRazorClassLib.Stories
+dotnet run --project ./MyBlazorWasmApp1.Stories
 ```
 
 Then you will see the clone of the "Storybook" built on Blazor! 🎉
@@ -182,7 +182,7 @@ First, you can specify the layout for the application level via the `DefaultLayo
 </BlazingStoryApp>
 ```
 
-In the above case, the layout component  `DefaultLayout.razor` will be used when displaying every story.
+In the above case, the layout component `DefaultLayout.razor` will be used when displaying every story.
 
 ### Component (Stories) level layout
 
@@ -489,8 +489,8 @@ However, on the "Blazing Story" side, Blazor application developers can get a St
 
 ## 🤔 Frequently Asked Questions
 
-**Q1:** Can I add a project reference of a Blazor application project, not a Razor Class Library project, to a Blazing Story app project?  
-**A1:** Currently, you can't. I'm considering making it be able to do it in the future.
+**Q1:** Can I run a Blazing Story app as a Blazor Server app?  
+**A1:** Almost, yes, you can. However, running a Blazing Story app as a Blazor Server has yet to be fully supported. We are working on it, but it still needs to be completed.
 
 **Q2:** How can I write or configure addons?  
 **A2:** You can't do that for now because the addon architecture is not completed yet. I'll finish it in the future version.
