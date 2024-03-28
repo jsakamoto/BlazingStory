@@ -11,14 +11,14 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(Framework)' == 'net7.0' ">
-    <PackageReference Include="BlazingStory" Version="1.0.0-preview.30" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.16" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.16" PrivateAssets="all" />
+    <PackageReference Include="BlazingStory" Version="1.0.0-preview.31" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.17" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.17" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Framework)' == 'net8.0' ">
-    <PackageReference Include="BlazingStory" Version="1.0.0-preview.30" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.2" PrivateAssets="all" />
+    <PackageReference Include="BlazingStory" Version="1.0.0-preview.31" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.3" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>
