@@ -10,20 +10,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checkout the code
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       # Install .NET SDK
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
-           dotnet-version: '8.0.x'
-           dotnet-quality: 'preview'
+          dotnet-version: "8.0.x"
+          dotnet-quality: "preview"
       - name: Install .NET WebAssembly Tools
         run: dotnet workload install wasm-tools
 
       # Publish the site
       - name: Publish
-        run: dotnet publish Samples/MyRazorClassLib/MyRazorClassLib.Stories/MyRazorClassLib.Stories.csproj -c Release -o public -p GHPages=true
+        run: dotnet publish Samples/MyBlazorWasmApp1/MyBlazorWasmApp1.Stories/MyBlazorWasmApp1.Stories.csproj -c Release -o public -p GHPages=true
 
       # Deploy the site
       - name: Deploy

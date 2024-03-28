@@ -108,4 +108,5 @@
     </ItemGroup>
   </Target>
 
+  <Import Project="$(MSBuildThisFileDirectory)ReferenceAppProjects.targets"  />
 </Project>

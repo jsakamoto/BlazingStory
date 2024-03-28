@@ -1,3 +1,7 @@
+v.1.0.0-preview.31
+- Improve: Add an ability to reference application projects, not class libraries
+- Improve: XML doc comments are now fetched even when it is running on a Blazor Server project
+
 v.1.0.0-preview.30
 - Fix: the improvement of preview 28 (the design of the description items on the "Docs" page by wrapping them when there are many) was not applied correctly.
 
