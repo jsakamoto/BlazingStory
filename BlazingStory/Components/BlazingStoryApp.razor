@@ -1,4 +1,5 @@
 @using System.Reflection
+@using System.Runtime.InteropServices
 @using BlazingStory.Internals.Services.XmlDocComment;
 @using Toolbelt.Blazor.Extensions.DependencyInjection
 @implements IAsyncDisposable
@@ -165,7 +166,7 @@
 
     private IServiceProvider ConfigureServices()
     {
-        return new ServiceCollection()
+        var services = new ServiceCollection()
             .AddSingleton<IJSRuntime>(_ => this.JSRuntime)
             .AddSingleton<ILoggerFactory>(_ => LoggerFactory)
             .AddSingleton(typeof(ILogger<>), typeof(Logger<>))
@@ -176,10 +177,15 @@
             .AddSingleton<CommandService>()
             .AddSingleton<NavigationService>()
             .AddSingleton<AddonsStore>(_ => this._AddonsStore)
-            .AddSingleton<IXmlDocComment, XmlDocCommentForWasm>()
             .AddSingleton<BlazingStoryOptions>(_ => this._Options)
-            .AddTransient<ComponentActionLogs>()
-            .BuildServiceProvider();
+            .AddTransient<ComponentActionLogs>();
+
+        if (OperatingSystem.IsBrowser())
+            services.AddSingleton<IXmlDocComment, XmlDocCommentForWasm>();
+        else
+            services.AddSingleton<IXmlDocComment, XmlDocCommentForServer>();
+
+        return services.BuildServiceProvider();
     }
 
     protected override async Task OnParametersSetAsync()
@@ -261,7 +267,7 @@
     {
         if (this._PreferesColorSchemeChangeSubscribeId != 0)
         {
-            await this._JSModule.InvokeVoidAsync("unsubscribePreferesColorSchemeChanged", this._PreferesColorSchemeChangeSubscribeId);
+            await this._JSModule.InvokeVoidIfConnectedAsync("unsubscribePreferesColorSchemeChanged", this._PreferesColorSchemeChangeSubscribeId);
             this._PreferesColorSchemeChangeSubscribeId = 0;
         }
         this._RefThis.Dispose();

@@ -2,7 +2,7 @@
 @inherits SizableComponentBase
 
 <button class="@(this.Color.ToString().ToLower()) @(this.Size.ToString().ToLower()) @(this.Bold ? "bold" : "")" @onclick="@((e) => OnClick.InvokeAsync(e))">
-    <span>@this.Text</span>
+    <span>@this.Text?.ToLower()</span>
 </button>
 
 @code {
