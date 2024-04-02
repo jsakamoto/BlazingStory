@@ -86,9 +86,7 @@
         this._HotKeysContext?.Dispose();
         this._HotKeysContext = null;
 
-        if (this._EventSubscriber == null) return;
-        await this._EventSubscriber.InvokeVoidIfConnectedAsync("dispose");
-        await this._EventSubscriber.DisposeIfConnectedAsync();
+        await this._EventSubscriber.DisposeIfConnectedAsync("dispose");
         this._EventSubscriber = null;
     }
 

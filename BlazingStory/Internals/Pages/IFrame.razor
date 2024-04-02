@@ -1,6 +1,5 @@
 @page "/iframe.html"
 @layout NullLayout
-@implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 
 <IdQueryRouter>
@@ -9,21 +8,10 @@
 
 @code
 {
-    private readonly JSModule _JSModule;
-
-    public IFrame()
-    {
-        this._JSModule = new(() => this.JSRuntime, "Internals/Pages/IFrame.razor.js");
-    }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
-        await this._JSModule.InvokeVoidAsync("initializeCanvasFrame");
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await this._JSModule.DisposeAsync();    
+        await using var module = await this.JSRuntime.ImportAsync("Internals/Pages/IFrame.razor.js");
+        await module.InvokeVoidAsync("initializeCanvasFrame");
     }
 }

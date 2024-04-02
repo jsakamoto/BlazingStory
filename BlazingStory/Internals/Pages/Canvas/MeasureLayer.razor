@@ -69,9 +69,9 @@
         "opacity:1 !important;" +
         "transition:none !important;";
 
-    private readonly DotNetObjectReference<MeasureLayer> _This;
+    private DotNetObjectReference<MeasureLayer>? _This;
 
-    private readonly JSModule _JSModule;
+    private IJSObjectReference? _EventMonitorSubscriber;
 
     public struct DOMRect
     {
@@ -129,16 +129,13 @@
 
     private string _ContentSizeText = "";
 
-    public MeasureLayer()
-    {
-        this._This = DotNetObjectReference.Create(this);
-        this._JSModule = new(() => this.JSRuntime, "Internals/Pages/Canvas/MeasureLayer.razor.js");
-    }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
-        await this._JSModule.InvokeVoidAsync("attach", this._This);
+
+        await using var module = await this.JSRuntime.ImportAsync("Internals/Pages/Canvas/MeasureLayer.razor.js");
+        this._This = DotNetObjectReference.Create(this);
+        this._EventMonitorSubscriber = await module.InvokeAsync<IJSObjectReference>("subscribeTargetElementChanged", this._This);
     }
 
     [JSInvokable(nameof(TargetElementChanged))]
@@ -315,8 +312,7 @@
 
     public async ValueTask DisposeAsync()
     {
-        await this._JSModule.InvokeVoidIfConnectedAsync("detach");
-        await this._JSModule.DisposeAsync();
-        this._This.Dispose();
+        await this._EventMonitorSubscriber.DisposeIfConnectedAsync("dispose");
+        this._This?.Dispose();
     }
 }

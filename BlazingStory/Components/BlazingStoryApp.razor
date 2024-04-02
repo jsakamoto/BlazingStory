@@ -140,7 +140,7 @@
 
     private string _PreferesColorScheme = "light";
 
-    private int _PreferesColorSchemeChangeSubscribeId = 0;
+    private IJSObjectReference? _PreferesColorSchemeChangeSubscriber;
 
     private readonly BlazingStoryOptions _Options = new();
 
@@ -208,7 +208,7 @@
 
         await this.UpdatePreferesColorSchemeAsync();
 
-        this._PreferesColorSchemeChangeSubscribeId = await this._JSModule.InvokeAsync<int>("subscribePreferesColorSchemeChanged", this._RefThis, nameof(OnPreferesColorSchemeChanged));
+        this._PreferesColorSchemeChangeSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribePreferesColorSchemeChanged", this._RefThis, nameof(OnPreferesColorSchemeChanged));
 
         // Init Level 0 -> Default Background is visible & Color Scheme Container is hidden and transparent.
 
@@ -265,11 +265,7 @@
 
     public async ValueTask DisposeAsync()
     {
-        if (this._PreferesColorSchemeChangeSubscribeId != 0)
-        {
-            await this._JSModule.InvokeVoidIfConnectedAsync("unsubscribePreferesColorSchemeChanged", this._PreferesColorSchemeChangeSubscribeId);
-            this._PreferesColorSchemeChangeSubscribeId = 0;
-        }
+        await this._PreferesColorSchemeChangeSubscriber.DisposeIfConnectedAsync("dispose");
         this._RefThis.Dispose();
         await _JSModule.DisposeAsync();
     }
