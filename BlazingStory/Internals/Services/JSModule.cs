@@ -31,11 +31,7 @@ internal class JSModule : IAsyncDisposable
         return this._Module;
     }
 
-    public async ValueTask InvokeVoidIfConnectedAsync(string identifier, params object?[]? args)
-    {
-        try { await this.InvokeVoidAsync(identifier, args); }
-        catch (JSDisconnectedException) { }
-    }
+    public ValueTask InvokeVoidIfConnectedAsync(string identifier, params object?[]? args) => this._Module.InvokeVoidIfConnectedAsync(identifier, args);
 
     public async ValueTask InvokeVoidAsync(string identifier, params object?[]? args)
     {

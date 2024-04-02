@@ -315,7 +315,7 @@
 
     public async ValueTask DisposeAsync()
     {
-        await this._JSModule.InvokeVoidAsync("detach");
+        await this._JSModule.InvokeVoidIfConnectedAsync("detach");
         await this._JSModule.DisposeAsync();
         this._This.Dispose();
     }
