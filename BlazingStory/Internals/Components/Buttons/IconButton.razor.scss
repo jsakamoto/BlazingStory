@@ -4,6 +4,7 @@
     border-radius: 4px;
     padding: 1px 6px;
     color: var(--bs-dimmed-text-color);
+    --bs-link-color: var(--bs-dimmed-text-color);
     display: flex;
     align-items: center;
 
@@ -24,6 +25,7 @@
         background-color: var(--bs-hover-back-color);
         background-color: var(--bs-button-flagged-back-color);
         color: var(--bs-focused-color);
+        --bs-link-color: var(--bs-focused-color);
 
         & > .text {
             font-weight: bold;
@@ -33,6 +35,7 @@
     &:hover {
         background-color: var(--bs-hover-back-color);
         color: var(--bs-focused-color);
+        --bs-link-color: var(--bs-focused-color);
     }
 }
 

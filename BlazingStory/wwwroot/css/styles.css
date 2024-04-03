@@ -850,6 +850,7 @@ svg.svg-icon {
   border-radius: 4px;
   padding: 1px 6px;
   color: var(--bs-dimmed-text-color);
+  --bs-link-color: var(--bs-dimmed-text-color);
   display: flex;
   align-items: center;
 }
@@ -868,6 +869,7 @@ svg.svg-icon {
   background-color: var(--bs-hover-back-color);
   background-color: var(--bs-button-flagged-back-color);
   color: var(--bs-focused-color);
+  --bs-link-color: var(--bs-focused-color);
 }
 .icon-button.active > .text {
   font-weight: bold;
@@ -875,6 +877,7 @@ svg.svg-icon {
 .icon-button:hover {
   background-color: var(--bs-hover-back-color);
   color: var(--bs-focused-color);
+  --bs-link-color: var(--bs-focused-color);
 }
 
 a.icon-button {
