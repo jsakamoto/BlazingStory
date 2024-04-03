@@ -1,4 +1,4 @@
-﻿namespace BlazingStory.Internals.Utils;
+﻿namespace BlazingStory.Internals.Extensions;
 
 internal static class ExtensionMethods
 {

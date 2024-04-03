@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
+using BlazingStory.Internals.Extensions;
 using BlazingStory.Internals.Models;
 using BlazingStory.Internals.Types;
 using BlazingStory.Internals.Utils;
