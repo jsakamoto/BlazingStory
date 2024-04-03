@@ -9,7 +9,7 @@
   "groupIdentity": "BlazingStory.Server",
   "identity": "BlazingStory.Server.CSharp.1.0",
   "precedence": "7000",
-  "name": "Blazing Story (Server App) (Preview)",
+  "name": "Blazing Story (Server App)",
   "shortName": "blazingstoryserver",
   "description": "A project template for creating a Blazing Story Server application that is a clone of the Storybook for Blazor.",
   "thirdPartyNotices": "https://github.com/jsakamoto/BlazingStory/blob/main/THIRD-PARTY-NOTICES.txt",

@@ -16,6 +16,9 @@ You can try it out from the live demonstration site at the following link: https
 
 For the example scenario, you already have a Blazor WebAssembly application project, "MyBlazorWasmApp1", that includes the "Button" component.
 
+> [!Note]  
+> Blazing Story supports Blazor Server application projects as well as Blazor WebAssembly application projects.
+
 ```
 📂 (working directory)
     + 📄 MyBlazorWasmApp1.sln
@@ -39,13 +42,17 @@ dotnet new install BlazingStory.ProjectTemplates
 
 #### Step 1 - Create a new Blazing Story app project
 
-Open the solution file (.sln) with Visual Studio, and add a new "Blazing Story" project from the project templates. (In this example scenario, we named it "MyBlazorWasmApp1.Stories")
+Open the solution file (.sln) with Visual Studio, and add a new **"Blazing Story (WebAssembly App)"** project from the project templates. (In this example scenario, we named it "MyBlazorWasmApp1.Stories")
 
 ![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/add-a-new-project.png)
 
+> [!Note]  
+> If you are working on a Blazor Server application project, you should add a new **"Blazing Story (Server App)"** project instead of the "Blazing Story (WebAssembly App)" project.
+
+
 If you are working on dotnet CLI, you can do that with the following commands in a terminal.
 
-> **Note**  
+> [!Note]  
 > Please remind again that this example scenario assumes that there is already a solution file (.sln) in the current directory with an existing Blazor WebAssembly app project.
 
 ```shell
@@ -54,6 +61,9 @@ dotnet new blazingstorywasm -n MyBlazorWasmApp1.Stories
 # Add the Blazing Story app project to the solution
 dotnet sln add ./MyBlazorWasmApp1.Stories/
 ```
+
+> [!Note]  
+> If you are working on a Blazor Server application project, you should do the `dotnet new blazingstoryserver` command.
 
 The file layout will be the following tree.
 
@@ -93,7 +103,7 @@ Add a new "stories" file to the Blazing Story App project "MyBlazorWasmApp1.Stor
 
 A "stories" file is a normal Razor Component file (.razor), but it is annotated with the `[Stories]` attribute and includes a markup of the `<Stories>` component. There is no restriction on file layout of "stories" files, but usually, we place it in the "Stories" subfolder.
 
-> **Warning**  
+> [!Warning]  
 > Currently, The file name of the "stories" files must end with ".stories.razor". This is a requirement of the naming convention for available the "Show code" feature in the "Docs" pages.
 
 In this example scenario, we are going to write a "stories" for the `Button` component lived in the "MyBlazorWasmApp1" project, so we would add a new story file named "Button.stories.razor" in the "Stories" subfolder where is under the "MyBlazorWasmApp1.Stories" project.
@@ -435,7 +445,7 @@ You can also replace the brand logo contents at the top of the sidebar entirely 
 
 You can refer to the `BlazingStoryApp` component instance via the `context` argument, so you can retrieve the title string, which is specified in the `Title` parameter of the `BlazingStoryApp` component.
 
-> **Note**  
+> [!Note]  
 > The 'BlazingStoryApp' component instance is also provided as a cascade parameter value. So you can get the reference to the instance of the `BlazingStoryApp` component anywhere in your Razor component implemented in your Blazing Story app.
 
 If you want to only customize the logo icon or the URL of the link, not want to change the entire brand logo HTML contents, you can use the `BrandLogo` built-in component instead. The `BrandLogo` component will render the default design of the brand logo of the Blazing Story app and expose some parameters, such as `IconUrl`, `Url`, and `Title`, to customize them.
@@ -451,7 +461,7 @@ If you want to only customize the logo icon or the URL of the link, not want to 
 
 ![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/customize-brand-logo-icon.png)
 
-> **Note**  
+> [!Note]  
 > The `BrandLogo` component uses the `Title` parameter of the `BlazingStoryApp` component by default for rendering the title text inside it. But if the `BrandLogo` component's `Title` parameter is specified, the `BrandLogo` component uses it rather than the `Title` parameter of the `BlazingStoryApp` component.
 
 ## 🔥 Hot Reloading [Preview] [Unstable]
@@ -489,11 +499,8 @@ However, on the "Blazing Story" side, Blazor application developers can get a St
 
 ## 🤔 Frequently Asked Questions
 
-**Q1:** Can I run a Blazing Story app as a Blazor Server app?  
-**A1:** Almost, yes, you can. However, running a Blazing Story app as a Blazor Server has yet to be fully supported. We are working on it, but it still needs to be completed.
-
-**Q2:** How can I write or configure addons?  
-**A2:** You can't do that for now because the addon architecture is not completed yet. I'll finish it in the future version.
+**Q:** How can I write or configure addons?  
+**A:** You can't do that for now because the addon architecture is not completed yet. I'll finish it in the future version.
 
 ## 🎉 Release Notes
 

@@ -1,3 +1,8 @@
+v.1.0.0-preview.32
+- Now, the "Blazing Story" officially supports the Blazor Server deployment model.
+  - Fix: unexpected "JSDisconnectedException" was thrown when running on a Blazor Server.
+  - Fix: the server-side pre-rendering process crashed.
+
 v.1.0.0-preview.31
 - Improve: Add an ability to reference application projects, not class libraries
 - Improve: XML doc comments are now fetched even when it is running on a Blazor Server project
