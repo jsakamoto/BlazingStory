@@ -48,6 +48,8 @@ else
 
     private bool _EnableMeasure = false;
 
+    private bool _Rendered = false;
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -71,6 +73,14 @@ else
         this._Story.Context.ShouldRender += StoryContext_ShouldRender;
 
         await this.UpdateComponentStatesAsync();
+        this.StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        this._Rendered = true;
+        await UpdateComponentStatesAsync();
         this.StateHasChanged();
     }
 
@@ -124,6 +134,9 @@ else
 
     private async ValueTask UpdateGlobalEffectsFromUrlAsync(NameValueCollection queryStrings)
     {
+        // If it is during the server-side pre-rendering, nothing to do.
+        if (!this._Rendered) return;
+
         var globalEffectsString = queryStrings["globals"] ?? "";
         if (this._GlobalEffectsString == globalEffectsString) return;
         this._GlobalEffectsString = globalEffectsString;

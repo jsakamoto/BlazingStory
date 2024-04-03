@@ -42,12 +42,17 @@
 
     public IReadOnlyDictionary<string, object?> FrameArguments => _FrameArguments;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
+        this.AddonsStore.RegisterAddon(this);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
         var enableStr = await this.HelperScript.GetLocalStorageItemAsync(StorageKey);
         this._Enable = bool.TryParse(enableStr, out var enable) ? enable : this._Enable;
-        this.AddonsStore.RegisterAddon(this);
         this.SetFrameArguments();
     }
 

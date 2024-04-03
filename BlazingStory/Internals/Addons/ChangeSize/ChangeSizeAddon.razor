@@ -107,11 +107,16 @@
         );
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
-        this._CurrentState = await this.HelperScript.LoadObjectFromLocalStorageAsync(StorageKey, this._CurrentState);
         this.AddonsStore.RegisterAddon(this);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        this._CurrentState = await this.HelperScript.LoadObjectFromLocalStorageAsync(StorageKey, this._CurrentState);
     }
 
     private async Task OnClickSize(SizeType size)

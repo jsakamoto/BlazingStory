@@ -61,12 +61,18 @@
 
     private BackgroundMode _BackgroundMode = BackgroundMode.None;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
+        this.AddonsStore.RegisterAddon(this);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
         var backgroudnModeStr = await this.HelperScript.GetLocalStorageItemAsync(StorageKeys.BackgroundMode);
         this._BackgroundMode = Enum.TryParse<BackgroundMode>(backgroudnModeStr, out var backgroundMode) ? backgroundMode : BackgroundMode.None;
-        this.AddonsStore.RegisterAddon(this);
         this.SetFrameArguments();
     }
 
