@@ -12,11 +12,11 @@
     <title>StoryServerApp</title>
     <base href="/" />
     <link rel="stylesheet" href="css/blazor-ui.css" />
-    <HeadOutlet @rendermode="@InteractiveServerNoPreRender" />
+    <HeadOutlet @rendermode="@InteractiveServer" />
 </head>
 
 <body>
-    <App @rendermode="@InteractiveServerNoPreRender" />
+    <StoryServerApp.Components.App @rendermode="@InteractiveServer" />
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.
