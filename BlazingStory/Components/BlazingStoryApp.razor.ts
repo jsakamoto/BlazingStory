@@ -1,4 +1,4 @@
-import { DotNetObjectReference } from "../Scripts/types";
+import { DotNetObjectReference, IDisposable } from "../Scripts/types";
 
 export const ensureAllFontsAndStylesAreLoaded = async () => {
 
@@ -26,23 +26,8 @@ const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
 export const getPrefersColorScheme = (): string => darkModeMediaQuery.matches ? "dark" : "light";
 
-let subscriberIndex = 0;
-const subscribers = new Map<number, (e: MediaQueryListEvent) => void>();
-
-export const subscribePreferesColorSchemeChanged = (dotnetObjRef: DotNetObjectReference, methodName: string): number => {
-    const subscriber = (e: MediaQueryListEvent) => {
-        dotnetObjRef.invokeMethodAsync(methodName, getPrefersColorScheme());
-    };
+export const subscribePreferesColorSchemeChanged = (dotnetObjRef: DotNetObjectReference, methodName: string): IDisposable => {
+    const subscriber = (e: MediaQueryListEvent) => { dotnetObjRef.invokeMethodAsync(methodName, getPrefersColorScheme()); };
     darkModeMediaQuery.addEventListener("change", subscriber);
-
-    subscriberIndex++;
-    subscribers.set(subscriberIndex, subscriber);
-    return subscriberIndex;
-}
-
-export const unsubscribePreferesColorSchemeChanged = (subscriberIndex: number): void => {
-    const subscriber = subscribers.get(subscriberIndex);
-    if (typeof (subscriber) === "undefined") return;
-    darkModeMediaQuery.removeEventListener("change", subscriber);
-    subscribers.delete(subscriberIndex);
+    return ({ dispose: () => darkModeMediaQuery.removeEventListener("change", subscriber) });
 }

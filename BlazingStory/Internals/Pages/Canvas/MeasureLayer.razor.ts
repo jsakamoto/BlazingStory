@@ -1,4 +1,4 @@
-import { DotNetObjectReference } from "../../../Scripts/types";
+import { DotNetObjectReference, IDisposable } from "../../../Scripts/types";
 
 type SpacingSize = {
     top: number;
@@ -21,9 +21,10 @@ const targetEvents = [
     "scroll"
 ] as const;
 
-let lastHoveredElement: HTMLElement | null = null;
-
-let attachedOwner: DotNetObjectReference | null = null;
+type Context = {
+    owner: DotNetObjectReference,
+    lastHoveredElement: HTMLElement | null
+};
 
 const pxToNumber = (px: string) => parseInt(px.replace("px", ""), 10);
 
@@ -32,21 +33,20 @@ const getSpacingSize = (style: CSSStyleDeclaration, prefix: "margin" | "padding"
     return { top, left, bottom, right };
 }
 
-const handler = (ev: MouseEvent | Event) => {
-    if (attachedOwner === null) return;
+const handler = (context: Context, ev: MouseEvent | Event) => {
 
     let hoveredElement = (ev instanceof MouseEvent) && document.elementFromPoint(ev.clientX, ev.clientY) as HTMLElement | null;
 
     let measurement: Measurement | null = null;
-    if (lastHoveredElement !== null && hoveredElement === null) {
-        lastHoveredElement = null;
+    if (context.lastHoveredElement !== null && hoveredElement === null) {
+        context.lastHoveredElement = null;
     }
-    else if (hoveredElement !== null && lastHoveredElement !== hoveredElement) {
-        lastHoveredElement = hoveredElement === false ? lastHoveredElement : hoveredElement;
-        if (lastHoveredElement !== null) {
-            const computedStyle = window.getComputedStyle(lastHoveredElement);
+    else if (hoveredElement !== null && context.lastHoveredElement !== hoveredElement) {
+        context.lastHoveredElement = hoveredElement === false ? context.lastHoveredElement : hoveredElement;
+        if (context.lastHoveredElement !== null) {
+            const computedStyle = window.getComputedStyle(context.lastHoveredElement);
             measurement = {
-                boundary: lastHoveredElement.getBoundingClientRect(),
+                boundary: context.lastHoveredElement.getBoundingClientRect(),
                 padding: getSpacingSize(computedStyle, "padding"),
                 margin: getSpacingSize(computedStyle, "margin"),
             };
@@ -54,15 +54,12 @@ const handler = (ev: MouseEvent | Event) => {
     }
     else return;
 
-    attachedOwner.invokeMethodAsync("TargetElementChanged", measurement);
+    context.owner.invokeMethodAsync("TargetElementChanged", measurement);
 }
 
-export const attach = (owner: DotNetObjectReference) => {
-    attachedOwner = owner;
-    targetEvents.forEach(eventName => doc.addEventListener(eventName, handler));
-}
-
-export const detach = () => {
-    attachedOwner = null;
-    targetEvents.forEach(eventName => doc.removeEventListener(eventName, handler));
+export const subscribeTargetElementChanged = (owner: DotNetObjectReference): IDisposable => {
+    const context = { owner, lastHoveredElement: null as (HTMLElement | null)};
+    const h = (ev: MouseEvent | Event) => handler(context, ev);
+    targetEvents.forEach(eventName => doc.addEventListener(eventName, h));
+    return ({ dispose: () => { targetEvents.forEach(eventName => doc.removeEventListener(eventName, h)); } });
 }

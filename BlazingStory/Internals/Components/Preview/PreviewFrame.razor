@@ -159,7 +159,7 @@
 
     public async ValueTask DisposeAsync()
     {
-        await _EventMonitorSubscriber.DisposeIfConnectedAsync();
+        await _EventMonitorSubscriber.DisposeIfConnectedAsync("dispose");
         await _JSModule.DisposeAsync();
         _ThisRef?.Dispose();
     }

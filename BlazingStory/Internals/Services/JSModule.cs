@@ -1,5 +1,4 @@
 ﻿using BlazingStory.Internals.Extensions;
-using BlazingStory.Internals.Utils;
 using Microsoft.JSInterop;
 
 namespace BlazingStory.Internals.Services;
@@ -12,8 +11,6 @@ internal class JSModule : IAsyncDisposable
 
     private readonly string _ModulePath;
 
-    private const string _DefaultBasePath = "./_content/BlazingStory/";
-
     internal JSModule(Func<IJSRuntime> jSRuntime, string modulePath)
     {
         this._GetJSRuntime = jSRuntime;
@@ -25,17 +22,12 @@ internal class JSModule : IAsyncDisposable
         if (this._Module == null)
         {
             var jsRuntime = this._GetJSRuntime();
-            var updateToken = UriParameterKit.GetUpdateToken(jsRuntime);
-            this._Module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", _DefaultBasePath + this._ModulePath + updateToken);
+            this._Module = await jsRuntime.ImportAsync(this._ModulePath);
         }
         return this._Module;
     }
 
-    public async ValueTask InvokeVoidIfConnectedAsync(string identifier, params object?[]? args)
-    {
-        try { await this.InvokeVoidAsync(identifier, args); }
-        catch (JSDisconnectedException) { }
-    }
+    public ValueTask InvokeVoidIfConnectedAsync(string identifier, params object?[]? args) => this._Module.InvokeVoidIfConnectedAsync(identifier, args);
 
     public async ValueTask InvokeVoidAsync(string identifier, params object?[]? args)
     {
