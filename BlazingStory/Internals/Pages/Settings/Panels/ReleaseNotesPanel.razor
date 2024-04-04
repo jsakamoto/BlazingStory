@@ -1,6 +1,5 @@
 @using System.Reflection;
 @using BlazingStory.Internals.Types;
-@inject HttpClient HttpClient
 
 <header>Blazing Story @this._VersionText - @this._BuildTimestampAttrib?.BuildMonthText</header>
 
@@ -19,6 +18,9 @@
 
 @code
 {
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
     private string _VersionText = "";
 
     private BuildTimestampAttribute? _BuildTimestampAttrib;
@@ -32,7 +34,8 @@
         this._VersionText = this.GetType().Assembly.GetFormattedVersionText();
         this._BuildTimestampAttrib = this.GetType().Assembly.GetCustomAttribute<BuildTimestampAttribute>();
 
-        var releaseNotesText = await this.HttpClient.GetStringAsync($"./_content/BlazingStory/RELEASE-NOTES.txt?v={VersionUtility.GetVersionText()}");
+        var webAssets = this.Services.GetRequiredService<WebAssets>();
+        var releaseNotesText = await webAssets.GetStringAsync("_content/BlazingStory/RELEASE-NOTES.txt", $"v={VersionUtility.GetVersionText()}");
 
         var releaseNotesLines = releaseNotesText
             .Split("\n")

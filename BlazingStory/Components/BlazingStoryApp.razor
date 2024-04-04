@@ -3,7 +3,7 @@
 @using BlazingStory.Internals.Services.XmlDocComment;
 @using Toolbelt.Blazor.Extensions.DependencyInjection
 @implements IAsyncDisposable
-@inject HttpClient HttpClient
+@inject IServiceProvider GlobalServices
 @inject IJSRuntime JSRuntime
 @inject ILoggerFactory LoggerFactory
 @inject NavigationManager NavigationManager
@@ -26,7 +26,7 @@
     }
 </style>
 
-@* 
+@*
     By default, the html element is unscrollable.
     This is required to make annoying scroll bars invisible while adjusting the preview frame size to fit iframe contents on "Docs" pages.
     After adjustment, the "_blazing_story_ready_for_visible" CSS class is added, and then the preview frame contents are scrollable.
@@ -170,7 +170,7 @@
             .AddSingleton<IJSRuntime>(_ => this.JSRuntime)
             .AddSingleton<ILoggerFactory>(_ => LoggerFactory)
             .AddSingleton(typeof(ILogger<>), typeof(Logger<>))
-            .AddSingleton<HttpClient>(_ => this.HttpClient)
+            .AddSingleton<HttpClient>(_ => this.GlobalServices.GetRequiredService<HttpClient>())
             .AddSingleton<NavigationManager>(_ => this.NavigationManager)
             .AddHotKeys2()
             .AddSingleton<HelperScript>()
@@ -178,6 +178,8 @@
             .AddSingleton<NavigationService>()
             .AddSingleton<AddonsStore>(_ => this._AddonsStore)
             .AddSingleton<BlazingStoryOptions>(_ => this._Options)
+            .AddSingleton<WebAssets>()
+            .AddSingleton<GlobalServiceProvider>(_ => new(this.GlobalServices))
             .AddTransient<ComponentActionLogs>();
 
         if (OperatingSystem.IsBrowser())
