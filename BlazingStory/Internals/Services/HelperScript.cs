@@ -1,5 +1,7 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using Microsoft.JSInterop;
+using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.Internals.Services;
 
@@ -19,20 +21,22 @@ internal class HelperScript : IAsyncDisposable
         await this._JSModule.InvokeVoidAsync(id, args);
     }
 
-    internal async ValueTask<T> InvokeAsync<T>(string id, params object?[]? args)
+    internal async ValueTask<T> InvokeAsync<[DynamicallyAccessedMembers(PublicConstructors | PublicFields | PublicProperties)] T>(string id, params object?[]? args)
     {
         return await this._JSModule.InvokeAsync<T>(id, args);
     }
 
     internal ValueTask CopyTextToClipboardAsync(string text) => this.InvokeVoidAsync("copyTextToClipboard", text);
 
-    internal async ValueTask SaveObjectToLocalStorageAsync<T>(string key, T obj)
+    [UnconditionalSuppressMessage("Trimming", "IL2026")]
+    internal async ValueTask SaveObjectToLocalStorageAsync<[DynamicallyAccessedMembers(PublicConstructors | PublicFields | PublicProperties)] T>(string key, T obj)
     {
         var json = JsonSerializer.Serialize(obj, this.JsonSerializerOptions);
         await this.SetLocalStorageItemAsync(key, json);
     }
 
-    internal async ValueTask<T> LoadObjectFromLocalStorageAsync<T>(string key, T defaultObject)
+    [UnconditionalSuppressMessage("Trimming", "IL2026")]
+    internal async ValueTask<T> LoadObjectFromLocalStorageAsync<[DynamicallyAccessedMembers(PublicConstructors | PublicFields | PublicProperties)] T>(string key, T defaultObject)
     {
         var json = await this.GetLocalStorageItemAsync(key);
         if (string.IsNullOrEmpty(json)) return defaultObject;

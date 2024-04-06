@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using BlazingStory.Internals.Models;
 using BlazingStory.Types;
 
@@ -13,6 +14,7 @@ internal static class StoriesRazorDetector
     /// Gets a type of Stories Razor component (..stories.razor) and its <see cref="StoriesAttribute"/> from assemblies.
     /// </summary>
     /// <param name="assemblies">Assemblies to detect types of Stories Razor component (..stories.razor).</param>
+    [UnconditionalSuppressMessage("Trimming", "IL2026")]
     internal static IEnumerable<StoriesRazorDescriptor> Detect(IEnumerable<Assembly>? assemblies)
     {
         return (assemblies ?? Enumerable.Empty<Assembly>())

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 
 namespace BlazingStory.Internals.Services;
@@ -35,6 +36,8 @@ internal class WebAssets
         return await fileReader.ReadToEndAsync();
     }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2026")]
+    [UnconditionalSuppressMessage("Trimming", "IL2075")]
     private IFileProvider GetFileProvider()
     {
         if (this._FileProvider == null)

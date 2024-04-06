@@ -8,7 +8,7 @@
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName).xml</DocumentationFile>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
-    <!--<IsTrimmable>true</IsTrimmable>-->
+    <IsTrimmable>true</IsTrimmable>
   </PropertyGroup>
 
   <Import Project="../VersionInfo.props" />
@@ -63,6 +63,9 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\KeyCodeMap.csv" />
+    <EmbeddedResource Include="ILLink.Descriptors.xml">
+      <LogicalName>ILLink.Descriptors.xml</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 
   <PropertyGroup>

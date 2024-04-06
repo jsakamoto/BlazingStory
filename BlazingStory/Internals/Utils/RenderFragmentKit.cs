@@ -6,6 +6,7 @@ using BlazingStory.Internals.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.RenderTree;
+using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.Internals.Utils;
 
@@ -20,6 +21,8 @@ internal static class RenderFragmentKit
     /// <param name="obj">The object to convert to string if it is <see cref="RenderFragment"/> or <see cref="RenderFragment&lt;TValue&gt;"/>.</param>
     /// <param name="result">The string content what is the given <see cref="RenderFragment"/> or <see cref="RenderFragment&lt;TValue&gt;"/> renders.</param>
     /// <returns>True if the given object is <see cref="RenderFragment"/> or <see cref="RenderFragment&lt;TValue&gt;"/>. Otherwise, false.</returns>
+    [UnconditionalSuppressMessage("Trimming", "IL2060")]
+    [DynamicDependency(NonPublicMethods, "BlazingStory.Internals.Utils.RenderFragmentKit", "BlazingStory")]
     internal static bool TryToString(object? obj, [NotNullWhen(true)] out string? result)
     {
         if (obj is RenderFragment renderFragment)

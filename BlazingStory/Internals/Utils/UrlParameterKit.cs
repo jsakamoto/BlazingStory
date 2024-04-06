@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.JSInterop;
 
 namespace BlazingStory.Internals.Utils;
 
@@ -40,6 +41,7 @@ internal static class UriParameterKit
     /// (This method depends on the "Toolbelt.Blazor.getProperty" JavaScript function, which is provided by Toolbelt.Blazor.GetProperty.Script NuGet package)
     /// </summary>
     /// <param name="jSRuntime">The <see cref="IJSRuntime"/> instance to retrieve browser's on-line status</param>
+    [UnconditionalSuppressMessage("Trimming", "IL2026")]
     internal static string GetUpdateToken(IJSRuntime jSRuntime)
     {
         var jsInProcRuntime = jSRuntime as IJSInProcessRuntime;
