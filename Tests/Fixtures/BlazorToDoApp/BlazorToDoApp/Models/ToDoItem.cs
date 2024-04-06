@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BlazorToDoApp.Components.Models;
+namespace BlazorToDoApp.Models;
 
 public class ToDoItem
 {

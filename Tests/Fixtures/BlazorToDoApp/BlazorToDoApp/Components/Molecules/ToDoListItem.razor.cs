@@ -1,4 +1,4 @@
-﻿namespace BlazorToDoApp.Components.Components.Molecules;
+﻿namespace BlazorToDoApp.Components.Molecules;
 
 /// <summary>
 /// ToDo アイテムを表示するコンポーネント

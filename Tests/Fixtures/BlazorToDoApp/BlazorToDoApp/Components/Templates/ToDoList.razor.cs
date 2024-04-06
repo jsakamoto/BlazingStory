@@ -1,4 +1,4 @@
-﻿namespace BlazorToDoApp.Components.Components.Templates;
+﻿namespace BlazorToDoApp.Components.Templates;
 
 /// <summary>
 /// ToDo アイテムのコレクションをリスト形式で表示するコンポーネント

@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BlazorToDoApp.Components\BlazorToDoApp.Components.csproj" />
+    <ProjectReference Include="..\BlazorToDoApp\BlazorToDoApp.csproj" />
   </ItemGroup>
 
   <ItemGroup>

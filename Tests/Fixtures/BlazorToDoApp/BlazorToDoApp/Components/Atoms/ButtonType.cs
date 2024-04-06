@@ -1,4 +1,4 @@
-﻿namespace BlazorToDoApp.Components.Components.Atoms;
+﻿namespace BlazorToDoApp.Components.Atoms;
 
 public enum ButtonType
 {
