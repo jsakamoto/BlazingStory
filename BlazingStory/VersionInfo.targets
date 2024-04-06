@@ -1,0 +1,70 @@
+<Project>
+  <PropertyGroup>
+    <PrepareForBuildDependsOn>$(PrepareForBuildDependsOn);_BS_GenerateVersionInfoClass</PrepareForBuildDependsOn>
+  </PropertyGroup>
+
+  <UsingTask TaskName="_BS_GetFormattedVersionText" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <VersionText ParameterType="System.String" Required="true" />
+      <EscapedVersionText ParameterType="System.String" Output="true" />
+      <FormattedVersionText ParameterType="System.String" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.Text.RegularExpressions" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+
+        this.EscapedVersionText = Uri.EscapeDataString(this.VersionText);
+        
+        var m1 = Regex.Match(this.VersionText, @"^(?<version>\d+(\.\d+(\.\d+(\.\d+)?)?)?)([ \-]+(?<suffix>.*)?)?$");
+        var version = Version.Parse(m1.Groups["version"].Value);
+        var i = new[] { version.Major, version.Minor, version.Build, version.Revision }
+            .Select((num, index) => (num, index))
+            .Reverse()
+            .First(x => x.num > 0)
+            .index;
+        var formattedVersionText = version.ToString(i + 1) + (i == 0 ? ".0" : "");
+
+        if (string.IsNullOrEmpty(m1.Groups["suffix"].Value))
+        {
+            this.FormattedVersionText = formattedVersionText;
+        }
+        else
+        {
+            var m2 = Regex.Match(m1.Groups["suffix"].Value, @"^(?<suffix>[^\d\.]*)(\.(?<revision>[\d\.]*\d+))?$");
+            var suffix = m2.Groups["suffix"].Value;
+            var revision = m2.Groups["revision"].Value;
+
+            // Capitalize the first letter of the suffix.
+            if (!string.IsNullOrEmpty(suffix)) suffix = char.ToUpper(suffix[0]) + suffix.Substring(1);
+
+            this.FormattedVersionText = $"{formattedVersionText} {suffix} {revision}".Trim();
+        }
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="_BS_GenerateVersionInfoClass" Inputs="../VersionInfo.props" Outputs="VersionInfo.cs">
+    <Message Importance="high" Text=""/>
+    <Message Importance="high" Text="==== GenerateVersionInfoClass ===="/>
+    <Message Importance="high" Text=""/>
+    <_BS_GetFormattedVersionText VersionText="$(Version)">
+      <Output TaskParameter="EscapedVersionText" PropertyName="_BS_EscapedVersionText" />
+      <Output TaskParameter="FormattedVersionText" PropertyName="_BS_FormattedVersionText" />
+    </_BS_GetFormattedVersionText>
+    <ItemGroup>
+      <VersionInfoLines Include="namespace $(RootNamespace)%3b"/>
+      <VersionInfoLines Include="internal static class VersionInfo"/>
+      <VersionInfoLines Include="{"/>
+      <VersionInfoLines Include="%20%20%20%20internal static string GetVersionText() => &quot;$(Version)&quot;%3b"/>
+      <VersionInfoLines Include="%20%20%20%20internal static string GetEscapedVersionText() => &quot;$(_BS_EscapedVersionText)&quot;%3b"/>
+      <VersionInfoLines Include="%20%20%20%20internal static string GetFormattedVersionText() => &quot;$(_BS_FormattedVersionText)&quot;%3b"/>
+      <VersionInfoLines Include="%20%20%20%20internal static string GetBuildTimestamp() => &quot;$([System.DateTime]::Today.ToString('MMMM yyyy'))&quot;%3b"/>
+      <VersionInfoLines Include="}"/>
+    </ItemGroup>
+    <WriteLinesToFile File="VersionInfo.cs" Overwrite="true" Lines="@(VersionInfoLines)"></WriteLinesToFile>
+  </Target>
+
+</Project>

@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <Import Project="../VersionInfo.props" />
+  <Import Project="VersionInfo.targets" />
 
   <PropertyGroup>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
@@ -93,18 +94,6 @@
       <PackageReleaseNotes>$([System.Text.RegularExpressions.Regex]::Match($(PackageReleaseNotes), "^(v\.[\d\.]+.+?)v\.[\d\.]+", System.Text.RegularExpressions.RegexOptions.Singleline).Groups[1].Value)</PackageReleaseNotes>
       <PackageReleaseNotes>$(PackageReleaseNotes)%0a%0aTo see all the change logs, please visit the following URL.%0a- $(RepositoryUrl)blob/main/RELEASE-NOTES.txt</PackageReleaseNotes>
     </PropertyGroup>
-  </Target>
-
-  <!--
-  This target is used to add the "BuildTimestampAttribute" attribute to the "AssemblyInfo.cs" file.
-  The "BuildTimestampAttribute" attribute is used to display the build month (ex."August 2023") in the Release page.
-  -->
-  <Target Name="_AddBuildTimestampAttributeToAssemblyInfo" BeforeTargets="GetAssemblyAttributes">
-    <ItemGroup>
-      <AssemblyAttribute Include="BlazingStory.Internals.Types.BuildTimestampAttribute">
-        <_Parameter1>$([System.DateTime]::Today.ToString('MMMM yyyy'))</_Parameter1>
-      </AssemblyAttribute>
-    </ItemGroup>
   </Target>
 
   <!--

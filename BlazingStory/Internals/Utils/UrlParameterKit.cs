@@ -50,6 +50,6 @@ internal static class UriParameterKit
         var isOnLine = jsInProcRuntime.Invoke<bool>("Toolbelt.Blazor.getProperty", "navigator.onLine");
         if (!isOnLine) return "";
 
-        return "?v=" + Uri.EscapeDataString(VersionUtility.GetVersionText());
+        return "?v=" + VersionInfo.GetEscapedVersionText();
     }
 }

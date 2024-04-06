@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using BlazingStory.Internals.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.JSInterop;
 
 namespace BlazingStory.Internals.Services;
 
@@ -15,16 +17,18 @@ internal class WebAssets
         this._Services = services;
     }
 
-    public ValueTask<string> GetStringAsync(string path, string queryString = "")
+    public ValueTask<string> GetStringAsync(string path)
     {
         if (!OperatingSystem.IsBrowser()) return this.GetStringOnServerAsync(path);
-        return this.GetStringOnWebAssemblyAsync(path, queryString);
+        return this.GetStringOnWebAssemblyAsync(path);
     }
 
-    private async ValueTask<string> GetStringOnWebAssemblyAsync(string path, string queryString)
+    private async ValueTask<string> GetStringOnWebAssemblyAsync(string path)
     {
         var httpClient = this._Services.GetRequiredService<HttpClient>();
-        return await httpClient.GetStringAsync(path + "?" + queryString.TrimStart('?'));
+        var jsRuntime = this._Services.GetRequiredService<IJSRuntime>();
+        var updateToken = UriParameterKit.GetUpdateToken(jsRuntime);
+        return await httpClient.GetStringAsync(path + updateToken);
     }
 
     private async ValueTask<string> GetStringOnServerAsync(string path)

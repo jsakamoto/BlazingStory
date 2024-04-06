@@ -1,7 +1,7 @@
 @using System.Reflection;
 @using BlazingStory.Internals.Types;
 
-<header>Blazing Story @this._VersionText - @this._BuildTimestampAttrib?.BuildMonthText</header>
+<header>Blazing Story @VersionInfo.GetFormattedVersionText() - @VersionInfo.GetBuildTimestamp()</header>
 
 <section>
     @foreach (var releaseNoteSection in this._ReleaseNoteSections)
@@ -21,21 +21,14 @@
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
 
-    private string _VersionText = "";
-
-    private BuildTimestampAttribute? _BuildTimestampAttrib;
-
     private record ReleaseNoteSection(string VersionTitle, IEnumerable<string> ChangeLogs);
 
     private IEnumerable<ReleaseNoteSection> _ReleaseNoteSections = Enumerable.Empty<ReleaseNoteSection>();
 
     protected override async Task OnInitializedAsync()
     {
-        this._VersionText = this.GetType().Assembly.GetFormattedVersionText();
-        this._BuildTimestampAttrib = this.GetType().Assembly.GetCustomAttribute<BuildTimestampAttribute>();
-
         var webAssets = this.Services.GetRequiredService<WebAssets>();
-        var releaseNotesText = await webAssets.GetStringAsync("_content/BlazingStory/RELEASE-NOTES.txt", $"v={VersionUtility.GetVersionText()}");
+        var releaseNotesText = await webAssets.GetStringAsync("_content/BlazingStory/RELEASE-NOTES.txt");
 
         var releaseNotesLines = releaseNotesText
             .Split("\n")
