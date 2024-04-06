@@ -1,5 +1,5 @@
 <button type="button" class="@this.GetCssClasses()" style="@this.GetStyles()" @attributes="this.Attributes" @onclick="OnClick">
-    @this.Label
+    @this.ChildContent
 </button>
 
 @code
@@ -26,7 +26,7 @@
     /// Button contents
     /// </summary>
     [Parameter]
-    public string? Label { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
     /// Optional click handler
