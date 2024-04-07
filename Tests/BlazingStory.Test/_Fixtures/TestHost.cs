@@ -15,13 +15,17 @@ internal class TestHost : IAsyncDisposable
 {
     private readonly IServiceScope _Scope;
 
+    private readonly Bunit.TestContext _bUnitContext;
+
     internal IServiceProvider Services { get; }
 
     public TestHost(Action<IServiceCollection>? configureServices = null)
     {
+        this._bUnitContext = new Bunit.TestContext();
+
         var services = new ServiceCollection();
         services.AddScoped(_ => Mock.Of<IJSRuntime>());
-        services.AddScoped(_ => Mock.Of<NavigationManager>());
+        services.AddScoped<NavigationManager>(_ => new Bunit.TestDoubles.FakeNavigationManager(this._bUnitContext));
         services.AddScoped<HelperScript>();
         services.AddScoped<NavigationService>();
         services.AddScoped(typeof(ILogger<>), typeof(NullLogger<>));
@@ -35,5 +39,6 @@ internal class TestHost : IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         if (this._Scope is IAsyncDisposable scope) await scope.DisposeAsync();
+        this._bUnitContext.Dispose();
     }
 }

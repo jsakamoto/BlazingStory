@@ -64,6 +64,30 @@ internal class NavigationService
         return true;
     }
 
+    internal void NavigateToNextComponentItem(QueryRouteData? routeData, bool navigateToNext)
+    {
+        if (!this.TryGetActiveNavigationItem(routeData, out var activeItem, out var _)) return;
+        var allComponents = this._Root.EnumAll().Where(item => item.Type is NavigationItemType.Component).ToList();
+        var ativeComponentIndex = allComponents.FindIndex(item => item.EnumAll().Contains(activeItem));
+        var nextComponentIndex = ativeComponentIndex + (navigateToNext ? +1 : -1);
+        if (nextComponentIndex < 0 || allComponents.Count <= nextComponentIndex) return;
+        var nextComponent = allComponents[nextComponentIndex];
+        var nextItem = nextComponent.EnumAll().Where(item => item.Type is NavigationItemType.Story or NavigationItemType.Docs).FirstOrDefault();
+        if (nextItem == null) return;
+        this.NavigateTo(nextItem);
+    }
+
+    internal void NavigateToNextDocsOrStory(QueryRouteData? routeData, bool navigateToNext)
+    {
+        if (!this.TryGetActiveNavigationItem(routeData, out var activeItem, out var _)) return;
+        var allItems = this._Root.EnumAll().Where(item => item.Type is NavigationItemType.Docs or NavigationItemType.Story).ToList();
+        var ativeIndex = allItems.FindIndex(item => item == activeItem);
+        var nextIndex = ativeIndex + (navigateToNext ? +1 : -1);
+        if (nextIndex < 0 || allItems.Count <= nextIndex) return;
+        var nextItem = allItems[nextIndex];
+        this.NavigateTo(allItems[nextIndex]);
+    }
+
     internal void NotifyLastVisitedWasUnknown()
     {
         this._LastNavigatedWasunknown = true;

@@ -46,57 +46,23 @@
         }
     }
 
-    private ValueTask OnPreviousComponent() => this.MoveComponent(delta: -1);
+    private ValueTask OnPreviousComponent() => this.MoveComponent(navigateToNext: false);
 
-    private ValueTask OnNextComponent() => this.MoveComponent(delta: +1);
+    private ValueTask OnNextComponent() => this.MoveComponent(navigateToNext: true);
 
-    private ValueTask MoveComponent(int delta)
+    private ValueTask MoveComponent(bool navigateToNext)
     {
-        var navigationPath = this.RouteData?.Parameter;
-
-        var currentComponent = default(NavigationTreeItem);
-        foreach (var item in this.NavigationRoot.EnumAll())
-        {
-            if (item.Type == NavigationItemType.Component) currentComponent = item;
-            if (item.NavigationPath == navigationPath) break;
-        }
-        if (currentComponent == null) return ValueTask.CompletedTask;
-
-        var componentItems = this.NavigationRoot.EnumAll()
-            .Where(item => item.Type == NavigationItemType.Component)
-            .ToArray();
-
-        var index = Array.IndexOf<NavigationTreeItem>(componentItems, currentComponent);
-        var indexMoveTo = index + delta;
-        if (indexMoveTo < 0 || componentItems.Length <= indexMoveTo) return ValueTask.CompletedTask;
-
-        var componentMoveTo = componentItems[index + delta];
-        var itemMoveTo = componentMoveTo.SubItems.FirstOrDefault();
-        if (itemMoveTo == null) return ValueTask.CompletedTask;
-
-        this.NavigationRoot.EnsureExpandedTo(itemMoveTo);
-
-        this._NavigationService?.NavigateTo(itemMoveTo);
+        this._NavigationService?.NavigateToNextComponentItem(this.RouteData, navigateToNext);
         return ValueTask.CompletedTask;
     }
 
-    private ValueTask OnPreviousStory() => this.MoveStory(delta: -1);
+    private ValueTask OnPreviousStory() => this.MoveStory(navigateToNext: false);
 
-    private ValueTask OnNextStory() => this.MoveStory(delta: +1);
+    private ValueTask OnNextStory() => this.MoveStory(navigateToNext: true);
 
-    private ValueTask MoveStory(int delta)
+    private ValueTask MoveStory(bool navigateToNext)
     {
-        var storyItems = this.NavigationRoot.EnumAll()
-            .Where(item => item.Type == NavigationItemType.Story)
-            .ToArray();
-        var index = Array.FindIndex<NavigationTreeItem>(storyItems, item => this.RouteData?.Parameter == item.NavigationPath);
-        var indexMoveTo = index + delta;
-        if (indexMoveTo < 0 || storyItems.Length <= indexMoveTo) return ValueTask.CompletedTask;
-
-        var itemMoveTo = storyItems[index + delta];
-        this.NavigationRoot.EnsureExpandedTo(itemMoveTo);
-
-        this._NavigationService?.NavigateTo(itemMoveTo);
+        this._NavigationService?.NavigateToNextDocsOrStory(this.RouteData, navigateToNext);
         return ValueTask.CompletedTask;
     }
 

@@ -6,6 +6,7 @@ using BlazingStoryApp1.Stories;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using RazorClassLib1.Components.Button;
+using RazorClassLib1.Components.Select;
 using Toolbelt.Diagnostics;
 
 namespace BlazingStory.Test._Fixtures;
@@ -36,7 +37,7 @@ internal static class TestHelper
             CreateStory<Button>(title: "Examples/Button", name: "Default Button"),
             CreateStory<Button>(title: "Examples/Button", name: "Primary Button"),
         }},
-        new(typeof(Button), null, new(typeof(Select_stories), new("Examples/Select")), services) { Stories = {
+        new(typeof(Select), null, new(typeof(Select_stories), new("Examples/Select")), services) { Stories = {
             CreateStory<Button>(title: "Examples/Select", name: "Select"),
         }}
     ];
