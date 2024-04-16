@@ -12,7 +12,7 @@
   <Import Project="../VersionInfo.props"/>
 
   <PropertyGroup>
-    <PackageVersion>$(Version)</PackageVersion>
+    <PackageVersion>$(Version).1</PackageVersion>
   </PropertyGroup>
   
   <Target Name="PreparePackageProperties" BeforeTargets="GenerateNuspec">

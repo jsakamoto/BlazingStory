@@ -1,3 +1,7 @@
+v.1.0.0-preview.34
+- Fix: navigation next/prev stories, docs, and components didn't work.
+- Improve: Brush up the project templates and add new item templates.
+
 v.1.0.0-preview.33
 - Improve: the "Blazing Story" is now IL trimmable on Blazor WebAssembly platforms.
 - Fix: The "Release Notes" page crashed in some Blazor Server deployment environments.
