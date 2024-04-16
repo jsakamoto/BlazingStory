@@ -1,0 +1,6 @@
+{
+  "author": "J.Sakamoto",
+  "name": "Blazing Story Stories ファイル",
+  "description": "UI コンポーネントカタログを定義する Blazing Story 用の Stories ファイル",
+  "postActions/openInEditor/description": "エディターで Component1.stories.razor を開きます"
+}

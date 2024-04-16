@@ -148,6 +148,12 @@
       "datatype": "bool",
       "defaultValue": "false",
       "description": "If specified, adds a solution file for the standalone Blazor WebAssembly app."
+    },
+    "IncludeSampleContent": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "If specified, adds a sample component and its stories."
     }
   },
   "guids": [
@@ -181,6 +187,12 @@
           }
         },
         {
+          "condition": "!IncludeSampleContent",
+          "exclude": [
+            "Client/Stories/*.*"
+          ]
+        },
+        {
           "condition": "(!Hosted && !Solution)",
           "exclude": [
             "Client/BlazingStoryWasm.Client.sln"
@@ -189,7 +201,8 @@
         {
           "condition": "(Hosted)",
           "exclude": [
-            "Client/BlazingStoryWasm.Client.sln"
+            "Client/BlazingStoryWasm.Client.sln",
+            "Client/Properties/launchSettings.json"
           ]
         },
         {

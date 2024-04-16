@@ -138,6 +138,12 @@
       "datatype": "bool",
       "defaultValue": "false",
       "description": "If specified, adds a solution file for the standalone Blazor WebAssembly app."
+    },
+    "IncludeSampleContent":{
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "If specified, adds a sample component and its stories."
     }
   },
   "guids": [
@@ -161,6 +167,12 @@
           "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
           "exclude": [
             "*.sln"
+          ]
+        },
+        {
+          "condition": "!IncludeSampleContent",
+          "exclude": [
+            "Components/Stories/*.*"
           ]
         }
       ]

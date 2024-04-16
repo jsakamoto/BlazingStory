@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "J.Sakamoto",
+  "classifications": ["Web", "Blazor", "ASP.NET"],
+  "name": "Blazing Story Stories File",
+  "generatorVersions": "[1.0.0.0-*)",
+  "description": "A Stories file for Blazing Story that defines a UI component catalog.",
+  "tags": {
+    "language": "C#",
+    "type": "item"
+  },
+  "thirdPartyNotices": "https://github.com/jsakamoto/BlazingStory/blob/main/THIRD-PARTY-NOTICES.txt",
+  "groupIdentity": "BlazingStory.Components",
+  "precedence": "7000",
+  "identity": "BlazingStory.Components.Stories.CSharp.1.0",
+  "shortName": "bstories",
+  "sourceName": "Component1",
+  "preferDefaultName": true,
+  "defaultName": "Component1",
+  "primaryOutputs": [
+    {
+      "path": "Component1.stories.razor"
+    }
+  ],
+  "symbols": {
+    "HostIdentifier": {
+      "type": "bind",
+      "binding": "HostIdentifier"
+    }
+  },
+  "sources": [
+    {
+      "source": "./",
+      "target": "./",
+      "exclude": [".template.config/**"],
+      "copyOnly": [],
+      "modifiers": []
+    }
+  ],
+  "postActions": [
+    {
+      "id": "openInEditor",
+      "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+      "description": "Opens Component1.stories.razor in the editor",
+      "manualInstructions": [],
+      "actionId": "84C0DA21-51C8-4541-9940-6CA19AF04EE6",
+      "args": {
+        "files": "0"
+      },
+      "continueOnError": true
+    }
+  ]
+}

@@ -15,6 +15,9 @@
     "Solution": {
       "longName": "solution"
     },
+    "IncludeSampleContent": {
+      "longName": "include-sample"
+    },
     "kestrelHttpPort": {
       "isHidden": true
     },

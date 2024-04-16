@@ -1,0 +1,34 @@
+@attribute [Stories("Components/Component1")]
+
+<Stories TComponent="Component1">
+
+    @* <ArgType For="_ => _.(Property)" Control="ControlType.(Control Type)" /> *@
+
+    <Story Name="(Another story name)">
+
+        <Arguments>
+            @* <Arg For="_ => _.(Property)" Value='"(Value)"' /> *@
+        </Arguments>
+
+        <Template>
+            <Component1 @attributes ="context.Args">
+            </Component1>
+        </Template>
+
+    </Story>
+
+    @*
+    <Story Name="(Another story name)">
+
+        <Arguments>
+            <Arg For="_ => _.(Property)" Value='"(Value)"' /> 
+        </Arguments >
+
+        <Template>
+            <Component1 @attributes ="context.Args">
+            </Component1>
+        </Template>
+
+    </Story>
+    *@
+</Stories>

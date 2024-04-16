@@ -11,11 +11,15 @@
 @*#if (Hosted)
 @using BlazingStoryWasm.Client
 @using BlazingStoryWasm.Client.Shared
+#endif*@
+@*#if (Hosted && IncludeSampleContent)
 @using BlazingStoryWasm.Client.Stories
 #endif*@
 @*#if (!Hosted)
 @using BlazingStoryWasm
 @using BlazingStoryWasm.Shared
+#endif*@
+@*#if (!Hosted && IncludeSampleContent)
 @using BlazingStoryWasm.Stories
 #endif*@
 

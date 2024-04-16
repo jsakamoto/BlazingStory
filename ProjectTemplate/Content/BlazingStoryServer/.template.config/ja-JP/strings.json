@@ -1,7 +1,9 @@
 {
   "version": "1.0.0.0",
   "strings": {
-    "name": "Blazing Story アプリケーション (Server) (プレビュー)",
-    "description": "Storybook の Blazor 版のクローンである Blazing Story Server アプリを作成するためのプロジェクト テンプレート。"
+    "name": "Blazing Story アプリケーション (Server)",
+    "description": "Storybook の Blazor 版のクローンである Blazing Story Server アプリを作成するためのプロジェクト テンプレート。",
+    "parameter.IncludeSampleContent.name": "サンプルのコンポーネントとそのストーリーを含める(_I)",
+    "parameter.IncludeSampleContent.description": "基本的な使用パターンを示すサンプルのコンポーネントとそのストーリーを追加するかどうかを構成します。"
   }
 }

@@ -20,6 +20,14 @@
         "text": "ASP.NET Core _hosted"
       },
       "isVisible": true
+    },
+    {
+      "id": "IncludeSampleContent",
+      "name": {
+        "text": "_Include a sample component and stories"
+      },
+      "isVisible": true,
+      "persistenceScope": "templateGroup"
     }
   ]
 }
