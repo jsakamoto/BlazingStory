@@ -1,16 +1,16 @@
-﻿<!DOCTYPE html>
+﻿@inject NavigationManager NavigationManager
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!--
-    If you need to add <link> or <script> elements to include CSS or JavaScript files
-    for canvas views of your Stories,
-    YOU SHOULD DO THAT IN THE "IFramePage.razor" FILE, NOT HERE.
-    -->
     <title>StoryServerApp</title>
-    <base href="/" />
+    <base href="@(new Uri(NavigationManager.BaseUri).AbsolutePath)" />
+    <!--
+    DON'T PUT ANY ADDITIONAL CSS OR JAVASCRIPT LINKS IN THIS FILE.
+    Please do that in the "IFramePage.razor" instead.
+    -->
     <link rel="stylesheet" href="css/blazor-ui.css" />
     <HeadOutlet @rendermode="@InteractiveServer" />
 </head>
@@ -25,8 +25,8 @@
     </div>
 
     <!--
-    If you need to add <script> elements to include JavaScript files for canvas views of your Stories,
-    YOU SHOULD DO THAT IN THE "IFramePage.razor" FILE, NOT HERE.
+    DON'T PUT ANY ADDITIONAL JAVASCRIPT LINKS IN THIS FILE.
+    Please do that in the "IFramePage.razor" instead.
     -->
     <script src="_framework/blazor.web.js"></script>
 </body>

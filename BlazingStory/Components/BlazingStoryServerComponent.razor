@@ -1,9 +1,7 @@
 @page "/{*urlPath}"
-@* @page "/"
-@page "/iframe.html"
- *@
-@typeparam TIndexPage
-@typeparam TIFramePage
+@typeparam TIndexPage where TIndexPage : ComponentBase
+@typeparam TIFramePage where TIFramePage : ComponentBase
+
 @inject NavigationManager NavigationManager
 
 @if (this._RequestForIFrameHtml)
@@ -22,6 +20,8 @@ else
     override protected void OnInitialized()
     {
         if (!Uri.TryCreate(this.NavigationManager.Uri, UriKind.Absolute, out var uri)) return;
-        this._RequestForIFrameHtml = uri.AbsolutePath == "/iframe.html";
+        
+        var iframePath = this.NavigationManager.ToAbsoluteUri("iframe.html").AbsolutePath;
+        this._RequestForIFrameHtml = uri.AbsolutePath == iframePath;
     }
 }
