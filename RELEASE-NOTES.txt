@@ -1,3 +1,6 @@
+v.1.0.0-preview.35
+- Fix: a Story server app deployed under the subpath didn't work.
+
 v.1.0.0-preview.34
 - Fix: navigation next/prev stories, docs, and components didn't work.
 - Improve: Brush up the project templates and add new item templates.
