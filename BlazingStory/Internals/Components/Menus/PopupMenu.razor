@@ -83,7 +83,7 @@
 
     private async ValueTask UnsubscribeEventAsync()
     {
-        this._HotKeysContext?.Dispose();
+        if (this._HotKeysContext is not null) await this._HotKeysContext.DisposeAsync();
         this._HotKeysContext = null;
 
         await this._EventSubscriber.DisposeIfConnectedAsync("dispose");

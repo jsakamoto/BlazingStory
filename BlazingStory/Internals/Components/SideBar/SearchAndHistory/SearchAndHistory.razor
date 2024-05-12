@@ -1,4 +1,4 @@
-@implements IDisposable
+@implements IAsyncDisposable
 
 <div class="search-and-history">
 
@@ -33,14 +33,16 @@
 
     private HotKeysContext? _HotKeysContext;
 
-    private void OnFocus()
+    private async Task OnFocus()
     {
         this.SearchMode = true;
-        this.SearchModeChanged.InvokeAsync(this.SearchMode);
+        await this.SearchModeChanged.InvokeAsync(this.SearchMode);
 
-        this._HotKeysContext?.Dispose();
-        var hotKeys = this.Services.GetRequiredService<HotKeys>();
-        this._HotKeysContext = hotKeys.CreateContext().Add(Code.Escape, OnEscapeKeyPressed, exclude: Exclude.None);
+        if (this._HotKeysContext is not null) await this._HotKeysContext.DisposeAsync();
+        this._HotKeysContext = this.Services
+            .GetRequiredService<HotKeys>()
+            .CreateContext()
+            .Add(Code.Escape, OnEscapeKeyPressed, exclude: Exclude.None);
     }
 
     private async Task OnCleared()
@@ -64,7 +66,7 @@
     private async Task ExitSearchMode()
     {
         this.SearchMode = false;
-        this._HotKeysContext?.Dispose();
+        if (this._HotKeysContext is not null) await this._HotKeysContext.DisposeAsync();
         this._HotKeysContext = null;
         await this.SearchModeChanged.InvokeAsync(this.SearchMode);
 
@@ -72,8 +74,8 @@
         await helperScript.InvokeVoidAsync("releaseFocus");
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        this._HotKeysContext?.Dispose();
+        if (this._HotKeysContext is not null) await this._HotKeysContext.DisposeAsync();
     }
 }

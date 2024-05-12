@@ -5,7 +5,7 @@ using Toolbelt.Blazor.HotKeys2;
 
 namespace BlazingStory.Internals.Services.Command;
 
-internal class CommandService : IDisposable
+internal class CommandService : IAsyncDisposable
 {
     private readonly HotKeys _HotKeys;
 
@@ -54,10 +54,10 @@ internal class CommandService : IDisposable
         commad.InvokeAsync().AndLogException(this._Logger);
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         this.Commands.Dispose();
         this._HotKeys.KeyDown -= this.HotKeys_OnKeyDown;
-        this._HotKeysContext.Dispose();
+        await this._HotKeysContext.DisposeAsync();
     }
 }
