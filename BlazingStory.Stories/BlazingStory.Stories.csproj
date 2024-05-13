@@ -9,12 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.1" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.4" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
-    <!--<PackageReference Include="BlazingStory" Version="1.0.0-preview.21" />-->
+    <!--<PackageReference Include="BlazingStory" Version="1.0.0-preview.36" />-->
     <ProjectReference Include="..\BlazingStory\BlazingStory.csproj" />
   </ItemGroup>
 
