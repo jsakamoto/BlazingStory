@@ -40,7 +40,7 @@
 
 <div class="default-background init-level-@(this._InitLevel)"></div>
 
-<CascadingValue Value="this._ServiceProvider">
+<CascadingValue TValue="IServiceProvider" Value="this._ServiceScope?.ServiceProvider">
 
     <StoriesRazorDetector Assemblies="this.Assemblies" StoriesStore="this._StoriesStore" />
 
@@ -132,7 +132,7 @@
 
     private int _InitLevel = 0;
 
-    private IServiceProvider? _ServiceProvider;
+    private AsyncServiceScope? _ServiceScope;
 
     private readonly JSModule _JSModule;
 
@@ -161,10 +161,10 @@
 
     protected override void OnInitialized()
     {
-        this._ServiceProvider = this.ConfigureServices();
+        this._ServiceScope = this.ConfigureServices();
     }
 
-    private IServiceProvider ConfigureServices()
+    private AsyncServiceScope ConfigureServices()
     {
         var services = new ServiceCollection()
             .AddSingleton<IJSRuntime>(_ => this.JSRuntime)
@@ -172,14 +172,14 @@
             .AddSingleton(typeof(ILogger<>), typeof(Logger<>))
             .AddSingleton<HttpClient>(_ => this.GlobalServices.GetRequiredService<HttpClient>())
             .AddSingleton<NavigationManager>(_ => this.NavigationManager)
-            .AddHotKeys2()
-            .AddSingleton<HelperScript>()
-            .AddSingleton<CommandService>()
-            .AddSingleton<NavigationService>()
-            .AddSingleton<AddonsStore>(_ => this._AddonsStore)
-            .AddSingleton<BlazingStoryOptions>(_ => this._Options)
-            .AddSingleton<WebAssets>()
             .AddSingleton<GlobalServiceProvider>(_ => new(this.GlobalServices))
+            .AddHotKeys2()
+            .AddScoped<HelperScript>()
+            .AddScoped<CommandService>()
+            .AddScoped<NavigationService>()
+            .AddScoped<AddonsStore>(_ => this._AddonsStore)
+            .AddScoped<BlazingStoryOptions>(_ => this._Options)
+            .AddScoped<WebAssets>()
             .AddTransient<ComponentActionLogs>();
 
         if (OperatingSystem.IsBrowser())
@@ -187,7 +187,8 @@
         else
             services.AddSingleton<IXmlDocComment, XmlDocCommentForServer>();
 
-        return services.BuildServiceProvider();
+        var serviceProvider = services.BuildServiceProvider();
+        return serviceProvider.CreateAsyncScope();
     }
 
     protected override async Task OnParametersSetAsync()
@@ -235,11 +236,11 @@
 
     private async ValueTask UpdatePreferesColorSchemeAsync()
     {
-        if (this._ServiceProvider is null) throw new InvalidOperationException("The service provider is not initialized.");
+        if (!this._ServiceScope.HasValue) throw new InvalidOperationException("The service provider is not initialized.");
 
         if (this.AvailableColorSchemes == AvailableColorSchemes.Both)
         {
-            var helperScript = this._ServiceProvider.GetRequiredService<HelperScript>();
+            var helperScript = this._ServiceScope.Value.ServiceProvider.GetRequiredService<HelperScript>();
             var colorScheme = await helperScript.GetLocalStorageItemAsync("ColorScheme", defaultValue: "system");
             if (colorScheme != "dark" && colorScheme != "light")
             {
@@ -269,6 +270,7 @@
     {
         await this._PreferesColorSchemeChangeSubscriber.DisposeIfConnectedAsync("dispose");
         this._RefThis.Dispose();
-        await _JSModule.DisposeAsync();
+        await this._JSModule.DisposeAsync();
+        if (this._ServiceScope.HasValue) await _ServiceScope.Value.DisposeAsync();
     }
 }

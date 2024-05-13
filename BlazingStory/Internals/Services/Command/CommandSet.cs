@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using BlazingStory.Internals.Extensions;
 using BlazingStory.Internals.Utils;
 using Microsoft.Extensions.Logging;
+using Toolbelt.Blazor.HotKeys2;
 
 namespace BlazingStory.Internals.Services.Command;
 
@@ -10,6 +11,8 @@ internal class CommandSet<TKey> : IDisposable, IEnumerable<(TKey Type, Command C
     where TKey : struct, Enum
 {
     private readonly string _StorageKey;
+
+    private readonly HotKeysContext _HotKeysContext;
 
     private readonly HelperScript _HelperScript;
 
@@ -21,9 +24,10 @@ internal class CommandSet<TKey> : IDisposable, IEnumerable<(TKey Type, Command C
 
     public Command? this[TKey type] => this._Commands[(object)type] as Command;
 
-    internal CommandSet(string storageKey, HelperScript helperScript, ILogger logger)
+    internal CommandSet(string storageKey, HotKeysContext hotKeysContext, HelperScript helperScript, ILogger logger)
     {
         this._StorageKey = storageKey;
+        this._HotKeysContext = hotKeysContext;
         this._HelperScript = helperScript;
         this._Logger = logger;
     }
@@ -34,11 +38,13 @@ internal class CommandSet<TKey> : IDisposable, IEnumerable<(TKey Type, Command C
         this._Initialized = true;
 
         var commandStates = await this._HelperScript.LoadObjectFromLocalStorageAsync(this._StorageKey, new Dictionary<TKey, CommandState>());
-        foreach (var cmdEntry in getCommandEntries())
+        foreach (var (type, command) in getCommandEntries())
         {
-            if (commandStates.TryGetValue(cmdEntry.Type, out var state)) state.Apply(cmdEntry.Command);
-            cmdEntry.Command.StateChanged += this.Command_StateChanged;
-            this._Commands.Add(cmdEntry.Type, cmdEntry.Command);
+            if (commandStates.TryGetValue(type, out var state)) state.Apply(command);
+            command.StateChanged += this.Command_StateChanged;
+            this._Commands.Add(type, command);
+
+            if (command.HotKey != null) this._HotKeysContext.Add(command.HotKey.Modifiers, command.HotKey.Code, command.InvokeAsync);
         }
     }
 
