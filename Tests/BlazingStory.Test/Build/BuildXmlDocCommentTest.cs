@@ -7,13 +7,9 @@ namespace BlazingStory.Test.Build;
 internal class BuildXmlDocCommentTest
 {
     [Parallelizable(ParallelScope.Self)]
-    [TestCase("net7.0", "7.0.0", false)]
-    [TestCase("net7.0", "8.0.0", true)]
-    [TestCase("net8.0", "8.0.0", true)]
+    [TestCase("net8.0", "8.0.0", false)]
     public async Task DotNetRun_Test(string targetFramework, string SDKVersion, bool allowPrerelease)
     {
-        if (SDKVersion == "7.0.0" && Environment.GetEnvironmentVariable("CI") is not null) Assert.Ignore("Running test with .NET 7.0 SDK on GitHub Actions always fails, so we will skip this test case for a moment.");
-
         // Given
         var testFixtureSpace = new TestFixtureSpace();
         testFixtureSpace.CreateGlobalJson(SDKVersion, "latestMinor", allowPrerelease);
@@ -41,13 +37,9 @@ internal class BuildXmlDocCommentTest
     }
 
     [Parallelizable(ParallelScope.Self)]
-    [TestCase("net7.0", "7.0.0", false)]
-    [TestCase("net7.0", "8.0.0", true)]
-    [TestCase("net8.0", "8.0.0", true)]
+    [TestCase("net8.0", "8.0.0", false)]
     public async Task Publish_Test(string targetFramework, string SDKVersion, bool allowPrerelease)
     {
-        if (SDKVersion == "7.0.0" && Environment.GetEnvironmentVariable("CI") is not null) Assert.Ignore("Running test with .NET 7.0 SDK on GitHub Actions always fails, so we will skip this test case for a moment.");
-
         // Given
         var testFixtureSpace = new TestFixtureSpace();
         testFixtureSpace.CreateGlobalJson(SDKVersion, "latestMinor", allowPrerelease);

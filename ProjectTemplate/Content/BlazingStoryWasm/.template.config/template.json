@@ -36,15 +36,11 @@
       "datatype": "choice",
       "choices": [
         {
-          "choice": "net7.0",
-          "description": "Target net70"
-        },
-        {
           "choice": "net8.0",
           "description": "Target net80"
         }
       ],
-      "replaces": "net7.0",
+      "replaces": "net8.0",
       "defaultValue": "net8.0"
     },
     "kestrelHttpPort": {
