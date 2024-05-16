@@ -1,0 +1,27 @@
+/* _content/Toolbelt.Blazor.SplitContainer/SplitContainer.razor.rz.scp.css */
+.split-container[b-split-container] {
+  --splitter-bar-size: 4px;
+  display: flex;
+}
+.split-container.splitter-orientation-vertical[b-split-container] {
+  flex-direction: row;
+}
+.split-container.splitter-orientation-horizontal[b-split-container] {
+  flex-direction: column;
+}
+.split-container .pane-of-split-container[b-split-container] {
+  position: relative;
+  overflow: auto;
+}
+
+.spliter-bar[b-split-container] {
+  user-select: none;
+}
+.splitter-orientation-vertical .spliter-bar[b-split-container] {
+  min-width: var(--splitter-bar-size);
+  cursor: w-resize;
+}
+.splitter-orientation-horizontal .spliter-bar[b-split-container] {
+  min-height: var(--splitter-bar-size);
+  cursor: n-resize;
+}

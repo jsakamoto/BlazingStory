@@ -1,0 +1,6 @@
+body {
+    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px !important;
+    background-position: 16px 16px, 16px 16px, 16px 16px, 16px 16px !important;
+    background-blend-mode: difference !important;
+    background-image: linear-gradient(rgba(130, 130, 130, 0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(130, 130, 130, 0.5) 1px, transparent 1px), linear-gradient(rgba(130, 130, 130, 0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(130, 130, 130, 0.25) 1px, transparent 1px) !important;
+}

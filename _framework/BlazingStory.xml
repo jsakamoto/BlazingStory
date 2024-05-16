@@ -1,0 +1,551 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BlazingStory</name>
+    </assembly>
+    <members>
+        <member name="T:BlazingStory.Components.BrandLogo">
+            <summary>
+            The default implementation of the brand logo of the Blazing Story app.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Components.BrandLogo.Title">
+            <summary>
+            The title of the branding logo.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Components.BrandLogo.Url">
+            <summary>
+            The URL of the link applied to the branding logo title text.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Components.BrandLogo.IconUrl">
+            <summary>
+            The icon URL of the branding logo.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Components.BlazingStoryApp.Assemblies">
+            <summary>
+            A collection of assemblies to search for stories.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Components.BlazingStoryApp.Title">
+            <summary>
+            A title string of this Blazing Story app. (The default value is "Blazing Story")<br/>
+            This is used for the title of every HTML document. And also, this is used for the brand logo unless you customize the logo contents using <see cref="P:BlazingStory.Components.BlazingStoryApp.BrandLogoArea"/> render fragment parameter.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Components.BlazingStoryApp.DefaultLayout">
+            <summary>
+            A type of the default layout component to use when displaying a story.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Components.BlazingStoryApp.BrandLogoArea">
+            <summary>
+            Content for the brand logo area at the top of the sidebar.<br/>
+            You can refer to the instance of the <see cref="T:BlazingStory.Components.BlazingStoryApp"/> component via <c>context</c> argument in the rendered fragment.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Components.BlazingStoryApp.AvailableColorSchemes">
+            <summary>
+            The available color schemes for the Blazing Story.<br/>
+            When the <see cref="F:BlazingStory.Types.AvailableColorSchemes.Light"/> is set, the Blazing Story app will be displayed in light mode only.<br/>
+            When the <see cref="F:BlazingStory.Types.AvailableColorSchemes.Dark"/> is set, the Blazing Story app will be displayed in dark mode only.<br/>
+            The default value is <see cref="F:BlazingStory.Types.AvailableColorSchemes.Both"/>, and system preference will be respected.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Components.BlazingStoryApp.EnableHotReloading">
+            <summary>
+            [Preview feature] Gets or sets whether to enable hot reloading. (default: false)
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Components.Stories`1.Layout">
+            <summary>
+            A type of the layout component to use when displaying these stories.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Components.Story`1.Layout">
+            <summary>
+            A type of the layout component to use when displaying this story.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Components.Story`1.ShouldRender">
+            <summary>
+            When this story should be rendered, notify it to the canvas frame (preview frame inside the ifrmae) through the <see cref="T:BlazingStory.Types.StoryContext"/>.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Configurations.BlazingStoryOptions">
+            <summary>
+            The configuration options for BlazingStory.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Configurations.BlazingStoryOptions.EnableHotReloading">
+            <summary>
+            [Preview feature] Gets or sets whether to enable hot reloading. (default: false)
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Internals.Components.Preview.PreviewFrame.CurrentPreviewFrameUrl">
+            <summary>
+            Gets the initial preview frame URL.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Components.Preview.PreviewFrame.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:BlazingStory.Internals.Components.Preview.PreviewFrame"/> class.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Components.Preview.PreviewFrame.GetPreviewFrameUrl">
+            <summary>
+            Gets the URL for the preview frame, from the component parameters(args).
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Extensions.ExtensionMethods.Exclude(System.Collections.Generic.IReadOnlyDictionary{System.String,System.Object},System.String[])">
+            <summary>
+            Returns a new dictionary that contains all the elements of the original dictionary except the ones with the specified keys.
+            </summary>
+            <param name="value">A dictionary to exclude the specified keys.</param>
+            <param name="keysToExclude">Key strings to exclude from the dictionary.</param>
+            <returns>A dictionary that contains all the elements of the original dictionary except the ones with the specified keys.</returns>
+        </member>
+        <member name="M:BlazingStory.Internals.Extensions.ExtensionMethods.IsGenericTypeOf(System.Type,System.Type)">
+            <summary>
+            Returns the type is a generic type of the specified type.
+            </summary>
+            <param name="targetType">A type object to compare with the specified generics type.</param>
+            <param name="genericsType">A generics type to compare with the specified type.</param>
+            <returns>Returns true if the specified type is the specified generics type. otherwise, false.</returns>
+        </member>
+        <member name="M:BlazingStory.Internals.Extensions.IJSExtensions.ImportAsync(Microsoft.JSInterop.IJSRuntime,System.String)">
+            <summary>
+            Import a JavScript module from the specified path.
+            </summary>
+            <param name="jsRuntime">The <see cref="T:Microsoft.JSInterop.IJSRuntime"/> instance.</param>
+            <param name="modulePath">The path to the JavaScript module to import, like "./Component.razor.js".</param>
+            <returns></returns>
+        </member>
+        <member name="M:BlazingStory.Internals.Extensions.IJSExtensions.InvokeVoidIfConnectedAsync(Microsoft.JSInterop.IJSObjectReference,System.String,System.Object[])">
+            <summary>
+            Invoke a JavaScript function with the specified identifier.<br/>
+            This method will not throw an exception if the <see cref="T:Microsoft.JSInterop.IJSObjectReference"/> is disconnected.
+            </summary>
+            <param name="value">The <see cref="T:Microsoft.JSInterop.IJSObjectReference"/> instance.</param>
+            <param name="identifier">An identifier for the function to invoke.</param>
+            <param name="args">JSON-serializable arguments.</param>
+        </member>
+        <member name="M:BlazingStory.Internals.Extensions.IJSExtensions.DisposeIfConnectedAsync(Microsoft.JSInterop.IJSObjectReference,System.String)">
+            <summary>
+            Dispose this <see cref="T:Microsoft.JSInterop.IJSObjectReference"/> object.<br/>
+            If <paramref name="methodToCallBeforeDispose"/> is not null, it will be invoked before disposing the object.<br/>
+            This method will not throw an exception if the <see cref="T:Microsoft.JSInterop.IJSObjectReference"/> is disconnected.
+            </summary>
+            <param name="value">The <see cref="T:Microsoft.JSInterop.IJSObjectReference"/> instance.</param>
+            <param name="methodToCallBeforeDispose">If specified, this method will be invoked before disposing the object.</param>
+        </member>
+        <member name="M:BlazingStory.Internals.Models.ComponentParameter.UpdateSummaryFromXmlDocCommentAsync">
+            <summary>
+            Update summary property text of this parameter by reading a XML document comment file.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Internals.Models.INavigationPath.NavigationPath">
+            <summary>
+            Gets a navigation path string for the item.<br/>
+            (ex. "/story/example-button--primary", "/docs/example-button--docs")
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Internals.Models.NavigationListItem.NavigationPath">
+            <summary>
+            Gets a navigation path string for the item.<br/>
+            (ex. "/story/example-button--primary", "/docs/example-button--docs")
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Models.NavigationListItem.Equals(BlazingStory.Internals.Models.NavigationListItem)">
+            <summary>
+            Compares the equality of two <see cref="T:BlazingStory.Internals.Models.NavigationListItem"/>, except the <see cref="F:BlazingStory.Internals.Models.NavigationListItem.Id"/> field.
+            </summary>
+            <param name="other">The other <see cref="T:BlazingStory.Internals.Models.NavigationListItem"/> to compare.</param>
+        </member>
+        <member name="P:BlazingStory.Internals.Models.NavigationTreeItem.NavigationPath">
+            <summary>
+            Gets a navigation path string for the item.<br/>
+            (ex. "/story/example-button--primary", "/docs/example-button--docs")
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Models.NavigationTreeItem.SortSubItemsRecurse">
+            <summary>
+            Sorts sub items recursively by its caption, except stories.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Internals.Models.QueryRouteData">
+            <summary>
+            Represents the structured route data of the "path" query string of a URL like "http://.../?path=/story/example-button--primary".
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Internals.Models.QueryRouteData.Path">
+            <summary>
+            Gets the "path" query string that is source of this <see cref="T:BlazingStory.Internals.Models.QueryRouteData"/> instance.<br/>
+            If a URL like "http://.../?path=/story/example-button--primary" is given, this field will return "/story/example-button--primary".
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Internals.Models.QueryRouteData.View">
+            <summary>
+            Gets the first segment of the "path" query string.<br/>
+            If a URL like "http://.../?path=/story/example-button--primary" is given, this field will return "story".
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Internals.Models.QueryRouteData.Parameter">
+            <summary>
+            Gets the second segment of the "path" query string.<br/>
+            If a URL like "http://.../?path=/story/example-button--primary" is given, this field will return "example-button--primary".
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Internals.Models.QueryRouteData.RouteToStoryOrDocs">
+            <summary>
+            Gets whether the View is "story" or "docs".<br/>
+            If a URL like "http://.../?path=/story/example-button--primary" is given, this field will return true.<br/>
+            If a URL like "http://.../?path=/settings/about" is given, this field will return false.<br/>
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Models.QueryRouteData.#ctor(System.Uri,System.String)">
+            <summary>
+            Initialize a new instance of <see cref="T:BlazingStory.Internals.Models.QueryRouteData"/> from an URL like "http://.../?path=/story/example-button--primary" and a name of query parameter.
+            </summary>
+            <param name="uri">An URL to create a query route data from.</param>
+            <param name="queryName">A query parameter name to create a query route data from.</param>
+        </member>
+        <member name="M:BlazingStory.Internals.Models.QueryRouteData.#ctor(System.String,System.String)">
+            <summary>
+            Initialize a new instance of <see cref="T:BlazingStory.Internals.Models.QueryRouteData"/> with arguments to specify each field directly.<br/>
+            The <see cref="F:BlazingStory.Internals.Models.QueryRouteData.Path"/> field will be created from the <paramref name="view"/> and <paramref name="parameter"/> arguments.
+            </summary>
+            <param name="view">An argument for the <see cref="F:BlazingStory.Internals.Models.QueryRouteData.View"/> field</param>
+            <param name="parameter">An argument for the <see cref="F:BlazingStory.Internals.Models.QueryRouteData.Parameter"/> field</param>
+        </member>
+        <member name="F:BlazingStory.Internals.Models.Story.ComponentType">
+            <summary>
+            The type of the target UI component in this story.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Internals.Models.Story.NavigationPath">
+            <summary>
+            Gets a navigation path string for this story.<br/>
+            (ex. "examples-ui-button--primary")
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Internals.Models.StoryContainer">
+            <summary>
+            Represents a "component", container for stories.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Internals.Models.StoryContainer.NavigationPath">
+            <summary>
+            Gets a navigation path string for this story container (component).<br/>
+            (ex. "examples-ui-button")
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Internals.Models.StoryContainer.Layout">
+            <summary>
+            The type of the layout component to use when displaying these stories.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Models.StoryContainer.#ctor(System.Type,System.Type,BlazingStory.Internals.Models.StoriesRazorDescriptor,System.IServiceProvider)">
+            <summary>
+            Initialize a new instance of <see cref="T:BlazingStory.Internals.Models.StoryContainer"/>.
+            </summary>
+            <param name="componentType">A type of target UI component in this stories</param>
+            <param name="layout">A type of the layout component to use when displaying these stories.</param>
+            <param name="storiesRazorDescriptor">A descriptor of a type of Stories Razor component (..stories.razor) and its <see cref="T:BlazingStory.Types.StoriesAttribute"/>.</param>
+            <param name="services">A service provider for getting a <see cref="T:BlazingStory.Internals.Services.XmlDocComment.IXmlDocComment"/> service.</param>
+        </member>
+        <member name="M:BlazingStory.Internals.Models.StoryContainer.UpdateSummaryFromXmlDocCommentAsync">
+            <summary>
+            Update summary property text of this parameter by reading a XML document comment file.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Pages.Canvas.Controls.ControlsPanel.GetParameters">
+            <summary>
+            Get parameters of the component from the current story.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Pages.Canvas.CanvasFrame.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Pages.Canvas.CanvasFrame.StoryContext_ShouldRender(System.Object,System.EventArgs)">
+            <summary>
+            When the state of the story has been changed, this canvas frame should be re-rendered.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Internals.Services.Docs.StoriesRazorSource">
+            <summary>
+            Provides the source code of the stories from the razor files.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Services.Docs.StoriesRazorSource.GetSourceCodeAsync(BlazingStory.Internals.Models.Story)">
+            <summary>
+            Gets the source code of the given story.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Services.Docs.StoriesRazorSource.GetSourceOfStory(System.String,System.String)">
+            <summary>
+            Gets the source code of the given story from the given source code of the razor file.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Services.Docs.StoriesRazorSource.Deindent(System.String)">
+            <summary>
+            Removes the minimum indent from all lines of the given text.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Services.Docs.StoriesRazorSource.UpdateSourceTextWithArgument(BlazingStory.Internals.Models.Story,System.String)">
+            <summary>
+            Updates the source code of the given story with the arguments of the given story.
+            </summary>
+            <param name="story">The story to update the source code.</param>
+            <param name="codeText">The source code of the story to update.</param>
+            <returns></returns>
+        </member>
+        <member name="M:BlazingStory.Internals.Services.Navigation.NavigationPath.Create(System.String,System.String)">
+            <summary>
+            Create a navigation path from title and name (optional).<br/>
+            If you provide the title "Examples/Ui/Button" and the name "Default", you will get "examples-ui-button--default".<br/>
+            If you provide only the title "Examples/Ui/Button", you will get "examples-ui-button".
+            </summary>
+            <param name="title">A title to create the navigation path</param>
+            <param name="name">A name to create the navigation path (optional)</param>
+            <returns></returns>
+        </member>
+        <member name="T:BlazingStory.Internals.Services.Navigation.NavigationTreeBuilder">
+            <summary>
+            NavigationTreeBuilder builds a tree of <see cref="T:BlazingStory.Internals.Models.NavigationTreeItem"/> from a collection of <see cref="T:BlazingStory.Internals.Models.StoryContainer"/>.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Services.Navigation.NavigationTreeBuilder.Build(System.Collections.Generic.IEnumerable{BlazingStory.Internals.Models.StoryContainer},System.String)">
+            <summary>
+            Build a tree of <see cref="T:BlazingStory.Internals.Models.NavigationTreeItem"/> from a collection of <see cref="T:BlazingStory.Internals.Models.StoryContainer"/>.
+            </summary>
+            <param name="components">A collection of <see cref="T:BlazingStory.Internals.Models.StoryContainer"/> that is the source of the navigation item tree</param>
+            <param name="expandedNavigationPath">A navigation path string to specify the tree item node that should be expanded (ex."/story/examples-button--primary")</param>
+            <returns></returns>
+        </member>
+        <member name="T:BlazingStory.Internals.Services.StoriesRazorDetector">
+            <summary>
+            This class detects types of Stories Razor component (..stories.razor) and its <see cref="T:BlazingStory.Types.StoriesAttribute"/> from assemblies.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Services.StoriesRazorDetector.Detect(System.Collections.Generic.IEnumerable{System.Reflection.Assembly})">
+            <summary>
+            Gets a type of Stories Razor component (..stories.razor) and its <see cref="T:BlazingStory.Types.StoriesAttribute"/> from assemblies.
+            </summary>
+            <param name="assemblies">Assemblies to detect types of Stories Razor component (..stories.razor).</param>
+        </member>
+        <member name="M:BlazingStory.Internals.Services.StoriesStore.TryGetStoryByPath(System.String,BlazingStory.Internals.Models.Story@)">
+            <summary>
+            Try to find a story by navigationn path, such as "examples-ui-button--default".
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Services.StoriesStore.TryGetComponentByPath(System.String,BlazingStory.Internals.Models.StoryContainer@)">
+            <summary>
+            Try to find a component by navigationn path, such as "examples-ui-button".
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Internals.Services.XmlDocComment.IXmlDocComment">
+            <summary>
+            Provides XML document comment of types
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Services.XmlDocComment.IXmlDocComment.GetSummaryOfPropertyAsync(System.Type,System.String)">
+            <summary>
+            Get summary text of a property from XML document comment file.
+            </summary>
+            <param name="ownerType">Type of the property owner.</param>
+            <param name="propertyName">Name of the property.</param>
+        </member>
+        <member name="M:BlazingStory.Internals.Services.XmlDocComment.IXmlDocComment.GetSummaryOfTypeAsync(System.Type)">
+            <summary>
+            Get summary text of a type from XML document comment file.
+            </summary>
+            <param name="componentType">Type for getting summary text.</param>
+        </member>
+        <member name="M:BlazingStory.Internals.Services.XmlDocComment.XmlDocCommentBase.GetSummaryOfPropertyAsync(System.Type,System.String)">
+            <summary>
+            Get summary text of a property from XML document comment file.
+            </summary>
+            <param name="ownerType">Type of the property owner.</param>
+            <param name="propertyName">Name of the property.</param>
+        </member>
+        <member name="M:BlazingStory.Internals.Services.XmlDocComment.XmlDocCommentBase.GetSummaryOfTypeAsync(System.Type)">
+            <summary>
+            Get summary text of a type from XML document comment file.
+            </summary>
+            <param name="componentType">Type for getting summary text.</param>
+        </member>
+        <member name="M:BlazingStory.Internals.Services.XmlDocComment.XmlDocCommentBase.GetInnerText(System.Xml.Linq.XElement)">
+            <summary>
+            Get inner text of a XML document comment element.<br/>
+            (e.g. <c>See also &lt;see cref="F:Foo.Bar.Fizz.Buzz"/&gt;</c> =&gt; <c>See also "Fizz.Buzz".</c>))
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Internals.Services.XmlDocComment.XmlDocCommentForServer">
+            <summary>
+            Provides XML document comment of types for Blazor Server apps.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Internals.Services.XmlDocComment.XmlDocCommentForWasm">
+            <summary>
+            Provides XML document comment of types for Blazor WebAssembly apps.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Internals.Services.XmlDocComment.XmlDocCommentForWasm.CachePeriodSec">
+            <summary>
+            Cache period in seconds.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Services.XmlDocComment.XmlDocCommentForWasm.#ctor(System.Net.Http.HttpClient,Microsoft.Extensions.Logging.ILogger{BlazingStory.Internals.Services.XmlDocComment.XmlDocCommentForWasm})">
+            <summary>
+            initialize new instance of <see cref="T:BlazingStory.Internals.Services.XmlDocComment.XmlDocCommentForWasm"/>
+            </summary>
+            <param name="httpClient"></param>
+            <param name="logger"></param>
+        </member>
+        <member name="T:BlazingStory.Internals.Utils.RenderFragmentKit">
+            <summary>
+            The utility class for operations involved with <see cref="T:Microsoft.AspNetCore.Components.RenderFragment"/>.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Utils.RenderFragmentKit.TryToString(System.Object,System.String@)">
+            <summary>
+            When the given object is <see cref="T:Microsoft.AspNetCore.Components.RenderFragment"/> or <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/>, returns true and the string content what is the given <see cref="T:Microsoft.AspNetCore.Components.RenderFragment"/> renders.
+            </summary>
+            <param name="obj">The object to convert to string if it is <see cref="T:Microsoft.AspNetCore.Components.RenderFragment"/> or <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/>.</param>
+            <param name="result">The string content what is the given <see cref="T:Microsoft.AspNetCore.Components.RenderFragment"/> or <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/> renders.</param>
+            <returns>True if the given object is <see cref="T:Microsoft.AspNetCore.Components.RenderFragment"/> or <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/>. Otherwise, false.</returns>
+        </member>
+        <member name="M:BlazingStory.Internals.Utils.RenderFragmentKit.ToString``1(Microsoft.AspNetCore.Components.RenderFragment{``0})">
+            <summary>
+            Get the string content what is the given <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/> renders.
+            </summary>
+            <param name="renderFragment">The <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/> to get the string content.</param>
+            <returns>The string content what is the given <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/> renders.</returns>
+        </member>
+        <member name="M:BlazingStory.Internals.Utils.RenderFragmentKit.ToString(Microsoft.AspNetCore.Components.RenderFragment)">
+            <summary>
+            Get the string content what is the given <see cref="T:Microsoft.AspNetCore.Components.RenderFragment"/> renders.
+            </summary>
+            <param name="renderFragment">The <see cref="T:Microsoft.AspNetCore.Components.RenderFragment"/> to get the string content.</param>
+            <returns>The string content what is the given <see cref="T:Microsoft.AspNetCore.Components.RenderFragment"/> renders.</returns>
+        </member>
+        <member name="M:BlazingStory.Internals.Utils.RenderFragmentKit.FromString(System.String)">
+            <summary>
+            Convert the given string to <see cref="T:Microsoft.AspNetCore.Components.RenderFragment"/>.
+            </summary>
+            <param name="text">The string content what is the <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/> will render.</param>
+            <returns>The <see cref="T:Microsoft.AspNetCore.Components.RenderFragment"/> that will render the given string content.</returns>
+        </member>
+        <member name="M:BlazingStory.Internals.Utils.RenderFragmentKit.FromString``1(System.String)">
+            <summary>
+            Convert the given string to <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/>.
+            </summary>
+            <typeparam name="T">The type argument of <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/>.</typeparam>
+            <param name="text">The string content what is the <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/> will render.</param>
+            <returns>The <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/> that will render the given string content.</returns>
+        </member>
+        <member name="M:BlazingStory.Internals.Utils.RenderFragmentKit.FromString(System.Type,System.String)">
+            <summary>
+            Convert the given string to <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/>.
+            </summary>
+            <param name="argumentType">The type argument of <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/>.</param>
+            <param name="text">The string content what is the <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/> will render.</param>
+            <returns>The <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/> that will render the given string content.</returns>
+        </member>
+        <member name="M:BlazingStory.Internals.Utils.TypeUtility.GetTypeDisplayText(System.Type)">
+            <summary>
+            Returns the name of the given type as a C# language keyword.
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BlazingStory.Internals.Utils.TypeUtility.ExtractTypeStructure(System.Type)">
+            <summary>
+            Extracts type structure of the given type.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Utils.TypeUtility.GetTypeNameAsLangKeyword(System.Type)">
+            <summary>
+            Get name of the type as a C# language keyword.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Utils.TypeUtility.TryConvertType(System.Type,BlazingStory.Internals.Utils.TypeStructure,System.String,System.Object@)">
+            <summary>
+            Try to convert the given string to the given type.<br/>
+            (Most cases, this method uses for deserialize URL query parameters of iframe to component parameters.)
+            </summary>
+            <param name="targetType">The type to convert to.</param>
+            <param name="targetTypeStructure">The structure of the type to convert to.</param>
+            <param name="sourceString">The string to convert from.</param>
+            <param name="convertedValue">The converted value if the conversion is successful.</param>
+            <returns>True if the conversion is successful, otherwise false.</returns>
+        </member>
+        <member name="T:BlazingStory.Internals.Utils.UriParameterKit">
+            <summary>
+            Utility class for handling URL parameters.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Internals.Utils.UriParameterKit.GetUpdateToken(Microsoft.JSInterop.IJSRuntime)">
+            <summary>
+            Get the query string that ensures the loading of the latest static assets.<br/>
+            This method will return a string like "?v=1.0.0-preview.2.3" if the browser is online. Otherwise, "".<br/>
+            (This method depends on the "Toolbelt.Blazor.getProperty" JavaScript function, which is provided by Toolbelt.Blazor.GetProperty.Script NuGet package)
+            </summary>
+            <param name="jSRuntime">The <see cref="T:Microsoft.JSInterop.IJSRuntime"/> instance to retrieve browser's on-line status</param>
+        </member>
+        <member name="T:BlazingStory.Types.AvailableColorSchemes">
+            <summary>
+            The available color schemes for the Blazing Story.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Types.AvailableColorSchemes.Light">
+            <summary>Only the light color scheme is available.</summary>
+        </member>
+        <member name="F:BlazingStory.Types.AvailableColorSchemes.Dark">
+            <summary>Only the dark color scheme is available.</summary>
+        </member>
+        <member name="F:BlazingStory.Types.AvailableColorSchemes.Both">
+            <summary>Both the light and dark color schemes are available.</summary>
+        </member>
+        <member name="T:BlazingStory.Types.RenderMode">
+            <summary>
+            Provides pre-constructed <see cref="T:Microsoft.AspNetCore.Components.IComponentRenderMode"/> instances that may be used during rendering.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Types.RenderMode.InteractiveServerNoPreRender">
+            <summary>
+            Gets an <see cref="T:Microsoft.AspNetCore.Components.IComponentRenderMode"/> that represents rendering interactively on the server via Blazor Server hosting. (without server-side prerendering.)
+            </summary>
+        </member>
+        <member name="E:BlazingStory.Types.StoryContext.ShouldRender">
+            <summary>
+            This event is used to notify the story that it should re-render.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Types.StoryContext.GetNoEventParameterCount">
+            <summary>
+            Get the number of parameters that are not event parameters.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Types.StoryContext.InvokeShouldRender">
+            <summary>
+            This method is used to notify the story that it should re-render.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Types.StoryContext.ConvertParameterValueToString(System.String,System.Object)">
+            <summary>
+            Convert the given parameter value to a string.<br/>
+            If the value is an instance of <see cref="T:Microsoft.AspNetCore.Components.RenderFragment"/> or <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/>, this method returns the string that will be rendered by that render fragment.<br/>
+            If the value is an instance of <see cref="T:System.Nullable`1"/>, this method returns "(null)" if the value is null.
+            </summary>
+            <param name="name">The name of the parameter.</param>
+            <param name="value">The value of the parameter.</param>
+            <returns>The string representation of the parameter value.</returns>
+        </member>
+    </members>
+</doc>
