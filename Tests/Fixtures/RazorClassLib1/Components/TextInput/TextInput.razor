@@ -1,13 +1,9 @@
+@inherits TextInputBase<string>
+
 <input type="text" value="@Value" @oninput="OnInput" />
 
 @code
 {
-    [Parameter]
-    public string? Value { get; set; }
-
-    [Parameter]
-    public EventCallback<string?> ValueChanged { get; set; }
-
     private async Task OnInput(ChangeEventArgs e)
     {
         Value = e.Value?.ToString();

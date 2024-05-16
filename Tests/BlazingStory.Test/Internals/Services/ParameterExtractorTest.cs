@@ -5,6 +5,7 @@ using BlazingStory.Test._Fixtures;
 using Microsoft.Extensions.Logging.Abstractions;
 using RazorClassLib1.Components.Button;
 using RazorClassLib1.Components.Rating;
+using RazorClassLib1.Components.TextInput;
 
 namespace BlazingStory.Test.Internals.Services;
 
@@ -52,5 +53,21 @@ internal class ParameterExtractorTest
             .Is("Rate, Int32, False, Gets or sets the score of rating.",
                 "Color, String, False, Gets or sets the color of the rating mark.",
                 "Id, String, False, Gets or sets the identifier for the component. See also the MDN document about the <a href=\"https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id\" target=\"_blank\">global id attribute</a>.");
+    }
+
+    [Test]
+    public async Task GetParametersForTheComponent_Inherited_GenericType_Test()
+    {
+        var xmlDocComment = new XmlDocCommentForWasm(XmlDocCommentLoaderFromOutDir.CreateHttpClient(), NullLogger<XmlDocCommentForWasm>.Instance);
+        var parameters = ParameterExtractor.GetParametersFromComponentType(typeof(TextInput), xmlDocComment);
+        foreach (var item in parameters)
+        {
+            await item.UpdateSummaryFromXmlDocCommentAsync();
+        }
+
+        parameters
+            .Select(p => $"{p.Name}, {p.Type.Name}, {p.Required}, {p.Summary}")
+            .Is("Value, String, False, Gets or sets the value of the input.",
+                "ValueChanged, EventCallback`1, False, Gets or sets the callback that will be invoked when the value changes.");
     }
 }

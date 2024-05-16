@@ -18,7 +18,7 @@ internal abstract class XmlDocCommentBase : IXmlDocComment
         var xdocComment = await this.GetXmlDocCommentXDocAsync(ownerType);
         if (xdocComment == null) return default;
 
-        var memberName = $"P:{ownerType.FullName}.{propertyName}";
+        var memberName = $"P:{ownerType.Namespace}.{ownerType.Name}.{propertyName}";
         return xdocComment
             .Descendants("member")
             .Where(member => member.Attribute("name")?.Value == memberName)
