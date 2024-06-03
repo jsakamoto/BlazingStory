@@ -15,6 +15,9 @@
     [Parameter]
     public object? DefaultValue { get; set; }
 
+    [Parameter]
+    public string[] Options { get; set; } = Array.Empty<string>();
+
     protected override void OnInitialized()
     {
         if (this.ComponentParameters == null) throw new InvalidOperationException($"The ComponentParameters cascading parameter is required.");
@@ -23,6 +26,7 @@
         {
             parameter.Control = this.Control;
             parameter.DefaultValue = this.DefaultValue;
+            parameter.Options = this.Options;
         }
     }
 }

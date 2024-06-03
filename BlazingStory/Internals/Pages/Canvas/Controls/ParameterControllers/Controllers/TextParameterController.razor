@@ -5,6 +5,11 @@
     var colorValue = (Value ?? Parameter.DefaultValue) as string;
     <ColorInput Value="@colorValue" PlaceHolder="Choose color..." OnInput="@((args) => OnInputAsync(args.Value))" />
 }
+else if (Parameter?.Control is ControlType.Select)
+{
+    var selectValue = (Value ?? Parameter.DefaultValue) as string;
+    <Select Value="@selectValue" Items="(Options ?? Parameter.Options)" OnChange="@((args) => OnInputAsync(args.Value))" />
+}
 else
 {
     <TextArea PlaceHolder="Edit string..." Value="@(Value as string)" OnInput="@((args) => OnInputAsync(args.Value))" />

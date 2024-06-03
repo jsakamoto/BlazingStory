@@ -16,7 +16,7 @@
 
   <PropertyGroup>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
-    <Description>The clone of "Storybook" for Blazor, a frontend workshop for building UI components and pages in isolation.</Description>
+    <Description>The clone of "Storybook" for Blazor, a front-end workshop for building UI components and pages in isolation.</Description>
     <PackageTags>blazor,storybook</PackageTags>
     <PackageReleaseNotes>(Please write the package release notes in "RELEASE NOTES.txt".)</PackageReleaseNotes>
     <PackageIcon>icon-128x128.png</PackageIcon>
@@ -94,7 +94,7 @@
   <!--
   This target is used to fix the "ContentRoot" meta data of "StaticWebAsset" items that are stored in the solution folder.
   Without this target, "Content" items linked from solution folder to the "wwwroot" folder are never served by the Blazor WebAssembly Development Server.
-  This target is required only for Blazor app projects that are project-referenceing this BlazingStory project.
+  This target is required only for Blazor app projects that are project-referencing this BlazingStory project.
   -->
   <Target Name="_FixStaticWebAssetsStoredInSolutionFolder" AfterTargets="ResolveProjectStaticWebAssets">
     <ItemGroup>
