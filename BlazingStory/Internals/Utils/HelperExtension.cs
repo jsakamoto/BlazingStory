@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+
+namespace BlazingStory.Internals.Utils;
+
+public static class HelperExtension
+{
+    #region Public Methods
+
+    public static string GenerateUniqueId()
+    {
+        var guidBytes = Guid.NewGuid().ToByteArray();
+        var base64Guid = Convert.ToBase64String(guidBytes);
+        var sanitizedGuid = Regex.Replace(base64Guid, @"[/+=]", "-");
+        return sanitizedGuid.Substring(0, 10).Replace("-", "_");
+    }
+
+    public static string GenerateUniqueId(this string? id)
+    {
+        var guidBytes = Guid.NewGuid().ToByteArray();
+        var base64Guid = Convert.ToBase64String(guidBytes);
+        var sanitizedGuid = Regex.Replace(base64Guid, @"[/+=]", "-");
+        var uniqueId = sanitizedGuid.Substring(0, 10).Replace("-", "_");
+        var returnResponse = string.IsNullOrWhiteSpace(id) ? uniqueId : $"{uniqueId}_{id.Trim()}";
+
+        return returnResponse;
+    }
+
+    #endregion Public Methods
+}
