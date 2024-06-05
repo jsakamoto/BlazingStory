@@ -9,25 +9,35 @@ namespace BlazingStory.Internals.Models;
 
 public class ComponentParameter
 {
+    #region Internal Properties
+
+    internal MarkupString Summary { get; private set; } = default;
+
+    #endregion Internal Properties
+
+    #region Internal Fields
+
+    internal readonly string Name;
+    internal readonly Type Type;
+    internal readonly TypeStructure TypeStructure;
+    internal readonly bool Required;
+    internal ControlType Control = ControlType.Default;
+    internal object? DefaultValue = null;
+    internal string[]? Options = null;
+
+    #endregion Internal Fields
+
+    #region Private Fields
+
     private readonly Type _ComponentType;
 
     private readonly PropertyInfo _PropertyInfo;
 
     private readonly IXmlDocComment _XmlDocComment;
 
-    internal readonly string Name;
+    #endregion Private Fields
 
-    internal readonly Type Type;
-
-    internal readonly TypeStructure TypeStructure;
-
-    internal MarkupString Summary { get; private set; } = default;
-
-    internal readonly bool Required;
-
-    internal ControlType Control = ControlType.Default;
-
-    internal object? DefaultValue = null;
+    #region Internal Constructors
 
     internal ComponentParameter(Type componentType, PropertyInfo propertyInfo, IXmlDocComment xmlDocComment)
     {
@@ -40,6 +50,10 @@ public class ComponentParameter
         this.Required = propertyInfo.GetCustomAttribute<EditorRequiredAttribute>() != null;
     }
 
+    #endregion Internal Constructors
+
+    #region Internal Methods
+
     /// <summary>
     /// Update summary property text of this parameter by reading a XML document comment file.
     /// </summary>
@@ -49,13 +63,19 @@ public class ComponentParameter
     }
 
     internal IEnumerable<string> GetParameterTypeStrings() => TypeUtility.GetTypeDisplayText(this.Type);
+
+    #endregion Internal Methods
 }
 
 internal static class ComponentParameterExtensions
 {
+    #region Public Methods
+
     public static bool TryGetByName(this IEnumerable<ComponentParameter> componentParameters, string name, [NotNullWhen(true)] out ComponentParameter? parameter)
     {
         parameter = componentParameters.FirstOrDefault(p => p.Name == name);
         return parameter != null;
     }
+
+    #endregion Public Methods
 }

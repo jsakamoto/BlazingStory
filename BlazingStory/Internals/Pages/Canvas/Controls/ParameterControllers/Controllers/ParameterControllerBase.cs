@@ -5,21 +5,32 @@ namespace BlazingStory.Internals.Pages.Canvas.Controls.ParameterControllers.Cont
 
 public class ParameterControllerBase : ComponentBase
 {
-    [Parameter, EditorRequired]
-    public required string Key { get; set; }
+    #region Public Properties
 
     [Parameter, EditorRequired]
-    public required ComponentParameter Parameter { get; set; }
+    public string Key { get; set; }
+
+    [Parameter, EditorRequired]
+    public ComponentParameter Parameter { get; set; }
 
     [Parameter, EditorRequired]
     public object? Value { get; set; }
 
     [Parameter]
+    public string[] Options { get; set; }
+
+    [Parameter]
     public EventCallback<ParameterInputEventArgs> OnInput { get; set; }
+
+    #endregion Public Properties
+
+    #region Protected Methods
 
     protected async Task OnInputAsync(object? value)
     {
         if (this.Parameter == null) throw new NullReferenceException("Parameter is null.");
         await this.OnInput.InvokeAsync(new ParameterInputEventArgs(value, this.Parameter));
     }
+
+    #endregion Protected Methods
 }

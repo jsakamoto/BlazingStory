@@ -129,7 +129,7 @@ internal static class TypeUtility
 
         else if (primaryType == typeof(RenderFragment))
         {
-            RenderFragment renderFragment = (RenderTreeBuilder builder) => builder.AddContent(0, sourceString);
+            RenderFragment renderFragment = (RenderTreeBuilder builder) => builder.AddMarkupContent(0, sourceString);
             convertedValue = renderFragment;
             return true;
         }
