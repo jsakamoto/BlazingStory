@@ -1,22 +1,27 @@
 ﻿using BlazingStory.Internals.Extensions;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
 
 namespace BlazingStory.Internals.Utils;
 
 internal static class TypeUtility
 {
+    #region Internal Methods
+
     /// <summary>
     /// Returns the name of the given type as a C# language keyword.
     /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
+    /// <param name="type">
+    /// </param>
+    /// <returns>
+    /// </returns>
     internal static IEnumerable<string> GetTypeDisplayText(Type type)
     {
         var (isNullable, isGeneric, primaryType, secondaryTypes) = TypeUtility.ExtractTypeStructure(type);
+
         if (primaryType.IsEnum)
         {
             yield return primaryType.Name + (isNullable ? "?" : "");
+
             foreach (var enumValue in Enum.GetValues(primaryType))
             {
                 yield return $"\"{enumValue}\"";
@@ -25,6 +30,7 @@ internal static class TypeUtility
         else if (isGeneric)
         {
             var typeArguments = string.Join(", ", secondaryTypes.SelectMany(t => GetTypeDisplayText(t)));
+
             yield return GetTypeNameAsLangKeyword(primaryType) + "<" + typeArguments + ">" + (isNullable ? "?" : "");
         }
         else
@@ -46,8 +52,92 @@ internal static class TypeUtility
         {
             return new(isNullable: false, isGeneric: true, primaryType: type, secondaryTypes: type.GetGenericArguments());
         }
-        else return new(isNullable: false, isGeneric: false, primaryType: type, secondaryTypes: Array.Empty<Type>());
+        else
+        {
+            return new(isNullable: false, isGeneric: false, primaryType: type, secondaryTypes: Array.Empty<Type>());
+        }
     }
+
+    /// <summary>
+    /// Try to convert the given string to the given type. <br /> (Most cases, this method uses for
+    /// deserialize URL query parameters of iframe to component parameters.)
+    /// </summary>
+    /// <param name="targetType">
+    /// The type to convert to.
+    /// </param>
+    /// <param name="targetTypeStructure">
+    /// The structure of the type to convert to.
+    /// </param>
+    /// <param name="sourceString">
+    /// The string to convert from.
+    /// </param>
+    /// <param name="convertedValue">
+    /// The converted value if the conversion is successful.
+    /// </param>
+    /// <returns>
+    /// True if the conversion is successful, otherwise false.
+    /// </returns>
+    internal static bool TryConvertType(this Type targetType, TypeStructure targetTypeStructure, string sourceString, out object? convertedValue)
+    {
+        var primaryType = targetTypeStructure.PrimaryType;
+        var isNullable = targetTypeStructure.IsNullable;
+
+        if (isNullable && sourceString == "(null)")
+        {
+            convertedValue = null;
+            return true;
+        }
+        else if (primaryType == typeof(string))
+        {
+            convertedValue = sourceString;
+            return true;
+        }
+        else if (primaryType == typeof(bool))
+        {
+            if (bool.TryParse(sourceString, out var boolValue))
+            {
+                convertedValue = boolValue;
+                return true;
+            }
+        }
+        else if (primaryType == typeof(int))
+        {
+            if (int.TryParse(sourceString, out var numValue))
+            {
+                convertedValue = numValue;
+                return true;
+            }
+        }
+        else if (primaryType.IsEnum)
+        {
+            if (Enum.TryParse(primaryType, sourceString, out var enumValue))
+            {
+                convertedValue = enumValue;
+                return true;
+            }
+        }
+        else if (primaryType == typeof(RenderFragment))
+        {
+            var renderFragment = sourceString.ToRenderFragment();
+            convertedValue = renderFragment;
+
+            return true;
+        }
+        else if (primaryType.IsGenericTypeOf(typeof(RenderFragment<>)))
+        {
+            var argumentType = primaryType.GetGenericArguments().First();
+            convertedValue = sourceString.ToRenderFragment(argumentType);
+
+            return true;
+        }
+
+        convertedValue = null;
+        return false;
+    }
+
+    #endregion Internal Methods
+
+    #region Private Methods
 
     /// <summary>
     /// Get name of the type as a C# language keyword.
@@ -74,74 +164,5 @@ internal static class TypeUtility
         };
     }
 
-    /// <summary>
-    /// Try to convert the given string to the given type.<br/>
-    /// (Most cases, this method uses for deserialize URL query parameters of iframe to component parameters.)
-    /// </summary>
-    /// <param name="targetType">The type to convert to.</param>
-    /// <param name="targetTypeStructure">The structure of the type to convert to.</param>
-    /// <param name="sourceString">The string to convert from.</param>
-    /// <param name="convertedValue">The converted value if the conversion is successful.</param>
-    /// <returns>True if the conversion is successful, otherwise false.</returns>
-    internal static bool TryConvertType(Type targetType, TypeStructure targetTypeStructure, string sourceString, out object? convertedValue)
-    {
-        var primaryType = targetTypeStructure.PrimaryType;
-        var isNullable = targetTypeStructure.IsNullable;
-
-        if (isNullable && sourceString == "(null)")
-        {
-            convertedValue = null;
-            return true;
-        }
-
-        else if (primaryType == typeof(string))
-        {
-            convertedValue = sourceString;
-            return true;
-        }
-
-        else if (primaryType == typeof(bool))
-        {
-            if (bool.TryParse(sourceString, out var boolValue))
-            {
-                convertedValue = boolValue;
-                return true;
-            }
-        }
-
-        else if (primaryType == typeof(int))
-        {
-            if (int.TryParse(sourceString, out var numValue))
-            {
-                convertedValue = numValue;
-                return true;
-            }
-        }
-
-        else if (primaryType.IsEnum)
-        {
-            if (Enum.TryParse(primaryType, sourceString, out var enumValue))
-            {
-                convertedValue = enumValue;
-                return true;
-            }
-        }
-
-        else if (primaryType == typeof(RenderFragment))
-        {
-            RenderFragment renderFragment = (RenderTreeBuilder builder) => builder.AddMarkupContent(0, sourceString);
-            convertedValue = renderFragment;
-            return true;
-        }
-
-        else if (primaryType.IsGenericTypeOf(typeof(RenderFragment<>)))
-        {
-            var argumentType = primaryType.GetGenericArguments().First();
-            convertedValue = RenderFragmentKit.FromString(argumentType, sourceString);
-            return true;
-        }
-
-        convertedValue = null;
-        return false;
-    }
+    #endregion Private Methods
 }

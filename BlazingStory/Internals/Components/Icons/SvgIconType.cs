@@ -13,10 +13,12 @@ public enum SvgIconType
 
     // ---- icons on the side bar's history ----
     NavigationBack,
+
     TrashCan,
 
     // ---- icons on the canvas page's toolbar ----
     Reload,
+
     ZoomIn,
     ZoomOut,
     ZoomReset,
@@ -29,6 +31,7 @@ public enum SvgIconType
 
     // ---- icons in the canvas page's Addons > Controls ----
     Reset,
+
     Chevron,
     Exchange,
 
@@ -40,5 +43,7 @@ public enum SvgIconType
     Link,
     FullScreen,
     Check,
-    Sidebar
+    Sidebar,
+
+    Pencil
 }

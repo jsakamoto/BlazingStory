@@ -4,9 +4,19 @@ namespace BlazingStory.Internals.Services.Addons;
 
 public class AddonsStore
 {
+    #region Private Fields
+
     private readonly List<IAddonComponent> _Addons = new();
 
+    #endregion Private Fields
+
+    #region Internal Events
+
     internal event EventHandler? OnFrameArgumentsChanged;
+
+    #endregion Internal Events
+
+    #region Internal Methods
 
     internal void RegisterAddon(IAddonComponent addon)
     {
@@ -31,4 +41,6 @@ public class AddonsStore
     {
         this.OnFrameArgumentsChanged?.Invoke(this, EventArgs.Empty);
     }
+
+    #endregion Internal Methods
 }

@@ -1,50 +1,33 @@
 @inherits ParameterControllerBase
-@{
+
+@if (this.Parameter != null)
+{
     var nullable = this.Parameter.TypeStructure.IsNullable;
-}
-@if (this.Value is Unknown || (!nullable && this.Value is null))
-{
-    <SquareButton Text="Set number" OnClick="@(() => OnInputAsync(0))" />
-}
-else if (nullable)
-{
-    var isNull = this.Value == null;
-
-    <div class="number-parameter-controller">
-
-        <NullInputRadio Name="@(this.Key + "-value-type")" Checked="isNull" OnChange="() => OnInputAsync(null)" />
-
-        <label class="input-value">
-            <input type="radio" name="@(this.Key + "-value-type")" checked="@(!isNull)" @onchange="() => OnInputAsync(this._NumValue)" />
-            <NumberInput Value="_NumValue"
-                         PlaceHolder="Edit number..."
-                         OnInput="OnInputNumValue" 
-                         OnFocus="() => this.OnInputAsync(this._NumValue)"/>
-        </label>
-
-    </div>
-}
-else
-{
-    <NumberInput Value="_NumValue" PlaceHolder="Edit number..." OnInput="OnInputNumValue" />
-}
-
-@code
-{
-    private int _NumValue;
-
-    protected override void OnParametersSet()
+    
+    @if (this.Value is Unknown || (!nullable && this.Value is null))
     {
-        base.OnParametersSet();
-        this._NumValue = int.TryParse(this.Value?.ToString(), out var n) ? n : this._NumValue;
+        <SquareButton Text="Set number" OnClick="@(() => OnInputAsync(0))" />
     }
-
-    private async Task OnInputNumValue(ChangeEventArgs arg)
+    else if (nullable)
     {
-        if (int.TryParse(arg.Value?.ToString(), out var n))
-        {
-            this._NumValue = n;
-            await this.OnInputAsync(n);
-        }
+        var isNull = this.Value == null;
+
+        <div class="number-parameter-controller">
+
+            <NullInputRadio Name="@(this.Key + "-value-type")" Checked="isNull" OnChange="() => OnInputAsync(null)" />
+
+            <label class="input-value">
+                <input type="radio" name="@(this.Key + "-value-type")" checked="@(!isNull)" @onchange="() => OnInputAsync(this._NumValue)" />
+                <NumberInput Value="_NumValue"
+                             PlaceHolder="Edit number..."
+                             OnInput="OnInputNumValue" 
+                             OnFocus="() => this.OnInputAsync(this._NumValue)"/>
+            </label>
+
+        </div>
+    }
+    else
+    {
+        <NumberInput Value="_NumValue" PlaceHolder="Edit number..." OnInput="OnInputNumValue" />
     }
 }

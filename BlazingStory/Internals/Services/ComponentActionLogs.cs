@@ -5,18 +5,32 @@ namespace BlazingStory.Internals.Services;
 
 public class ComponentActionLogs : IEnumerable<ComponentActionLog>
 {
+    #region Private Fields
+
     private readonly List<ComponentActionLog> _actionLogs = new();
+
+    #endregion Private Fields
+
+    #region Internal Events
 
     internal event EventHandler? Updated;
 
-    private void NotifyUpdated()
-    {
-        this.Updated?.Invoke(this, EventArgs.Empty);
-    }
+    #endregion Internal Events
+
+    #region Public Methods
+
+    public IEnumerator<ComponentActionLog> GetEnumerator() => this._actionLogs.GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+    #endregion Public Methods
+
+    #region Internal Methods
 
     internal void Add(string name, string argsJson)
     {
         var lastLog = this._actionLogs.FirstOrDefault();
+
         if (lastLog != null && lastLog.Name == name && lastLog.ArgsJson == argsJson)
         {
             lastLog.Repeat++;
@@ -25,6 +39,7 @@ public class ComponentActionLogs : IEnumerable<ComponentActionLog>
         {
             this._actionLogs.Insert(0, new ComponentActionLog(name, argsJson));
         }
+
         this.NotifyUpdated();
     }
 
@@ -34,7 +49,14 @@ public class ComponentActionLogs : IEnumerable<ComponentActionLog>
         this.NotifyUpdated();
     }
 
-    public IEnumerator<ComponentActionLog> GetEnumerator() => this._actionLogs.GetEnumerator();
+    #endregion Internal Methods
 
-    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+    #region Private Methods
+
+    private void NotifyUpdated()
+    {
+        this.Updated?.Invoke(this, EventArgs.Empty);
+    }
+
+    #endregion Private Methods
 }

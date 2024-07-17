@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>nullable</WarningsAsErrors>
-    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <NoWarn>$(NoWarn);CS1591,IL2087,IL2060,IL2070,IL2026</NoWarn>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName).xml</DocumentationFile>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
     <IsTrimmable>true</IsTrimmable>
@@ -27,16 +27,17 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '8.0')) ">
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Markdig" Version="0.37.0" />
     <PackageReference Include="Toolbelt.Blazor.GetProperty.Script" Version="1.2.0" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="5.0.0-preview.5" />
     <PackageReference Include="Toolbelt.Web.CssClassInlineBuilder" Version="3.1.0.1" />
     <PackageReference Include="Toolbelt.Blazor.SplitContainer" Version="1.1.2.1" />
-    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.9.5">
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.5.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -50,10 +51,11 @@
 
   <ItemGroup>
     <Content Include="..\RELEASE-NOTES.txt" Link="wwwroot\RELEASE-NOTES.txt" />
+    <Content Include="..\README.md" Link="wwwroot\README.txt" />
     <Content Include="..\THIRD-PARTY-NOTICES.txt" Link="wwwroot\THIRD-PARTY-NOTICES.txt" />
     <Content Update="**\*.json" Pack="false" CopyToOutputDirectory="Never" />
     <None Include="..\assets\icon-128x128.png" Pack="true" Visible="false" PackagePath="" />
-    <None Include="..\README.md" Visible="false" Pack="true" PackagePath="\" />
+    <!--<None Include="..\README.md" Visible="false" Pack="true" PackagePath="\" />-->
     <None Include="Build\**\*" Pack="true" PackagePath="build\" />
   </ItemGroup>
 
@@ -79,6 +81,18 @@
     <TypeScriptMapRoot />
     <TypeScriptSourceRoot />
   </PropertyGroup>
+
+  <Target Name="PreparePackageReadmeFromFile" BeforeTargets="GenerateNuspec">
+    <ReadLinesFromFile File="..\README.md">
+      <Output TaskParameter="Lines" ItemName="ReadmeLines" />
+    </ReadLinesFromFile>
+    <!-- Join all lines into a single property -->
+    <PropertyGroup>
+      <!-- Join all lines with a newline character -->
+      <PackageReadmeFile>@(ReadmeLines, '%0a')</PackageReadmeFile>
+      <PackageReadmeFile>$([System.Text.RegularExpressions.Regex]::Match($(PackageReadmeFile), "^(v\.[\d\.]+.+?)v\.[\d\.]+", System.Text.RegularExpressions.RegexOptions.Singleline).Groups[1].Value)</PackageReadmeFile>
+    </PropertyGroup>
+  </Target>
 
   <Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec">
     <ReadLinesFromFile File="../RELEASE-NOTES.txt">

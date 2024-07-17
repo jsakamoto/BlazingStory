@@ -1,19 +1,137 @@
-﻿using System.Text.Encodings.Web;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using BlazingStory.Internals.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.RenderTree;
 
+using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
+
 namespace BlazingStory.Internals.Utils;
 
-public static class RenderFragmentExtensions
+/// <summary>
+/// This class contains extension methods for the RenderFragment class.
+/// </summary>
+internal static class RenderFragmentExtensions
 {
-    #region Public Methods
+    #region Private Fields
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "BL0006:Do not use RenderTree types", Justification = "<Pending>")]
-    public static string ToMarkupString(this RenderFragment fragment)
+    private static readonly Lazy<MethodInfo> ToStringMethodT = new(() => typeof(RenderFragmentExtensions)
+            .GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+            .Where(m => m.Name == nameof(ToString))
+            .First(m => m.IsGenericMethod));
+
+    #endregion Private Fields
+
+    #region Internal Methods
+
+    /// <summary>
+    /// When the given object is <see cref="RenderFragment" /> or <see
+    /// cref="RenderFragment&lt;TValue&gt;" />, returns true and the string content what is the
+    /// given <see cref="RenderFragment" /> renders.
+    /// </summary>
+    /// <param name="obj">
+    /// The object to convert to string if it is <see cref="RenderFragment" /> or <see
+    /// cref="RenderFragment&lt;TValue&gt;" />.
+    /// </param>
+    /// <param name="result">
+    /// The string content what is the given <see cref="RenderFragment" /> or <see
+    /// cref="RenderFragment&lt;TValue&gt;" /> renders.
+    /// </param>
+    /// <returns>
+    /// True if the given object is <see cref="RenderFragment" /> or <see
+    /// cref="RenderFragment&lt;TValue&gt;" />. Otherwise, false.
+    /// </returns>
+    [UnconditionalSuppressMessage("Trimming", "IL2060")]
+    [DynamicDependency(NonPublicMethods, "BlazingStory.Internals.Utils.RenderFragmentKit", "BlazingStory")]
+    internal static bool TryToString(this object? obj, [NotNullWhen(true)] out string? result)
     {
-        var renderer = new TestHtmlRenderer();
-        var component = new ContainerComponent { Content = fragment };
+        if (obj?.GetType().IsGenericTypeOf(typeof(RenderFragment<>)) == true)
+        {
+            var typeOfContext = obj.GetType().GetGenericArguments().First();
+            var toStringMethod = ToStringMethodT.Value.MakeGenericMethod(typeOfContext);
+
+            result = toStringMethod.Invoke(null, new[] { obj }) as string ?? "";
+
+            return true;
+        }
+        else if (obj is RenderFragment renderFragment)
+        {
+            result = renderFragment.ToMarkupString();
+
+            return true;
+        }
+        else
+        {
+            result = null;
+
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Check if the given object is <see cref="RenderFragment" /> or <see
+    /// cref="RenderFragment&lt;TValue&gt;" />.
+    /// </summary>
+    /// <param name="value">
+    /// </param>
+    /// <returns>
+    /// </returns>
+    internal static bool IsRenderFragment(this object? value)
+    {
+        var type = value is Type t ? t : value?.GetType();
+
+        var result = type == typeof(RenderFragment) || type.IsGenericRenderFragment();
+
+        return result;
+    }
+
+    internal static bool IsGenericRenderFragment(this object? value)
+    {
+        var type = value is Type t ? t : value?.GetType();
+
+        var result = type?.IsGenericTypeOf(typeof(RenderFragment<>)) == true;
+
+        return result;
+    }
+
+    /// <summary>
+    /// Get the string content what is the given <see cref="RenderFragment&lt;TValue&gt;" /> renders.
+    /// </summary>
+    /// <param name="renderFragment">
+    /// The <see cref="RenderFragment&lt;TValue&gt;" /> to get the string content.
+    /// </param>
+    /// <returns>
+    /// The string content what is the given <see cref="RenderFragment&lt;TValue&gt;" /> renders.
+    /// </returns>
+    internal static string ToString<TContext>(RenderFragment<TContext>? renderFragment)
+    {
+        if (renderFragment == null)
+        {
+            return string.Empty;
+        }
+
+        var innerRenderFragment = renderFragment.Invoke(default!);
+
+        var result = innerRenderFragment.ToMarkupString();
+
+        return result;
+    }
+
+    /// <summary>
+    /// Get the string content what is the given <see cref="RenderFragment" /> renders.
+    /// </summary>
+    /// <param name="fragment">
+    /// RenderFragment to get the string content.
+    /// </param>
+    /// <returns>
+    /// The string content what is the given <see cref="RenderFragment" /> renders.
+    /// </returns>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "BL0006:Do not use RenderTree types", Justification = "<Pending>")]
+    internal static string ToMarkupString(this RenderFragment fragment)
+    {
+        var renderer = new RenderedTreeFrames();
+        var component = new ContainerComponent<object> { Content = fragment };
         var renderTree = new RenderTreeBuilder();
         component.BuildTree(renderTree);
 
@@ -22,14 +140,24 @@ public static class RenderFragmentExtensions
         Array.Copy(frameRange.Array, framesArray, frameRange.Count);
 
         var result = renderer.RenderFrames(framesArray);
+
         return result;
     }
 
+    /// <summary>
+    /// Get the string content what is the given <see cref="RenderFragment&lt;TValue&gt;" /> renders.
+    /// </summary>
+    /// <param name="fragment">
+    /// The <see cref="RenderFragment&lt;TValue&gt;" /> to get the string content.
+    /// </param>
+    /// <returns>
+    /// The string content what is the given <see cref="RenderFragment&lt;TValue&gt;" /> renders.
+    /// </returns>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "BL0006:Do not use RenderTree types", Justification = "<Pending>")]
-    public static string ToMarkupString(this object fragment)
+    internal static string ToMarkupString(this object fragment)
     {
-        var renderer = new TestHtmlRenderer();
-        var component = new ContainerComponent { Content = (RenderFragment)fragment };
+        var renderer = new RenderedTreeFrames();
+        var component = new ContainerComponent<object> { Content = (RenderFragment)fragment };
         var renderTree = new RenderTreeBuilder();
         component.BuildTree(renderTree);
 
@@ -38,115 +166,32 @@ public static class RenderFragmentExtensions
         Array.Copy(frameRange.Array, framesArray, frameRange.Count);
 
         var result = renderer.RenderFrames(framesArray);
+
         return result;
     }
 
-    public static RenderFragment ToRenderFragment(this string markup)
+    /// <summary>
+    /// Get the string content what is the given <see cref="RenderFragment&lt;TValue&gt;" /> renders.
+    /// </summary>
+    /// <param name="renderFragment">
+    /// The <see cref="RenderFragment&lt;TValue&gt;" /> to get the string content.
+    /// </param>
+    /// <returns>
+    /// The string content what is the given <see cref="RenderFragment&lt;TValue&gt;" /> renders.
+    /// </returns>
+    internal static string? ToMarkupString<TContext>(this RenderFragment<TContext>? renderFragment)
     {
-        return builder =>
+        if (renderFragment == null)
         {
-            builder.AddMarkupContent(0, markup);
-        };
-    }
-
-    #endregion Public Methods
-}
-
-public class ContainerComponent : ComponentBase
-{
-    #region Public Properties
-
-    public RenderFragment? Content { get; set; }
-
-    #endregion Public Properties
-
-    #region Public Methods
-
-    public void BuildTree(RenderTreeBuilder builder)
-    {
-        BuildRenderTree(builder);
-    }
-
-    #endregion Public Methods
-
-    #region Protected Methods
-
-    protected override void BuildRenderTree(RenderTreeBuilder builder)
-    {
-        if (Content != null)
-        {
-            builder.AddContent(0, Content);
+            return string.Empty;
         }
+
+        var innerRenderFragment = renderFragment.Invoke(default!);
+
+        var result = innerRenderFragment?.ToMarkupString();
+
+        return result;
     }
 
-    #endregion Protected Methods
-}
-
-public class TestHtmlRenderer
-{
-    #region Public Methods
-
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "BL0006:Do not use RenderTree types", Justification = "<Pending>")]
-    public string RenderFrames(RenderTreeFrame[] frames)
-    {
-        using (var writer = new StringWriter())
-        {
-            var encoder = HtmlEncoder.Default;
-
-            foreach (var frame in frames)
-            {
-                switch (frame.FrameType)
-                {
-                    case RenderTreeFrameType.Text:
-                        encoder.Encode(writer, frame.TextContent);
-                        break;
-
-                    case RenderTreeFrameType.Element:
-                        writer.Write($"<{frame.ElementName}>");
-                        break;
-
-                    case RenderTreeFrameType.Attribute:
-                        writer.Write($" {frame.AttributeName}=\"{frame.AttributeValue}\"");
-                        break;
-
-                    case RenderTreeFrameType.Region:
-                        // Region frames usually indicate a group of other frames. You might not
-                        // need to do anything special here.
-                        break;
-
-                    case RenderTreeFrameType.Markup:
-                        // Markup frames contain pre-rendered HTML. Encode to make sure it is safe
-                        // to insert.
-                        encoder.Encode(writer, frame.MarkupContent);
-                        break;
-
-                    case RenderTreeFrameType.None:
-                        // Log or ignore
-                        break;
-
-                    case RenderTreeFrameType.Component:
-                        // Components render themselves, might not need to do anything here. If you
-                        // really need to render child components, you'll need to dig deeper.
-                        break;
-
-                    case RenderTreeFrameType.ElementReferenceCapture:
-                        // Capturing a reference to a DOM element, probably not applicable for
-                        // string representation.
-                        break;
-
-                    case RenderTreeFrameType.ComponentReferenceCapture:
-                        // Capturing a reference to a Component, probably not applicable for string representation.
-                        break;
-
-                    default:
-                        // You might want to log or handle other frame types.
-                        break;
-                }
-            }
-
-            return writer.ToString();
-        }
-    }
-
-    #endregion Public Methods
+    #endregion Internal Methods
 }

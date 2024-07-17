@@ -1,9 +1,14 @@
 @using BlazingStory.Internals.Pages.Canvas.Controls.ParameterControllers.Controllers
 
 @{
-    var primaryType = this.Parameter.TypeStructure.PrimaryType;
+    var primaryType = this.Parameter?.TypeStructure.PrimaryType;
 }
-@if (primaryType == typeof(string))
+
+@if (primaryType is null || this.Parameter is null)
+{
+    <span>@(Value?.ToString() ?? "-")</span>
+}
+else if (primaryType == typeof(string))
 {
     <TextParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
 }
@@ -19,26 +24,11 @@ else if (primaryType.IsEnum == true)
 {
     <EnumParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
 }
-else if (RenderFragmentKit.IsRenderFragment(Parameter.Type))
+else if (Parameter.Type.IsRenderFragment())
 {
     <RenderFragmentParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
 }
 else
 {
     <span>@(Value?.ToString() ?? "-")</span>
-}
-
-@code
-{
-    [Parameter, EditorRequired]
-    public required string Key { get; set; }
-
-    [Parameter, EditorRequired]
-    public required ComponentParameter Parameter { get; set; }
-
-    [Parameter, EditorRequired]
-    public object? Value { get; set; }
-
-    [Parameter]
-    public EventCallback<ParameterInputEventArgs> OnInput { get; set; }
 }

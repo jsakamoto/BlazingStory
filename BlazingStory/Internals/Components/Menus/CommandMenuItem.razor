@@ -1,5 +1,4 @@
-﻿@using BlazingStory.Internals.Services.Command;
-@implements IDisposable
+﻿@implements IDisposable
 
 @if (this.Command != null)
 {
@@ -21,33 +20,4 @@
             }
         </span>
     </div>
-}
-
-@code
-{
-    [Parameter, EditorRequired]
-    public Command? Command { get; set; }
-
-    protected override void OnInitialized()
-    {
-        if (this.Command == null) return;
-        this.Command.StateChanged += Command_StateChanged;
-    }
-
-    private async Task OnClickMenuItem()
-    {
-        if (this.Command == null) return;
-        await this.Command.InvokeAsync();
-    }
-
-    private void Command_StateChanged(object? sender, EventArgs args)
-    {
-        this.StateHasChanged();    
-    }
-
-    public void Dispose()
-    {
-        if (this.Command == null) return;
-        this.Command.StateChanged -= Command_StateChanged;
-    }
 }

@@ -74,6 +74,7 @@ internal static class ComponentParameterExtensions
     public static bool TryGetByName(this IEnumerable<ComponentParameter> componentParameters, string name, [NotNullWhen(true)] out ComponentParameter? parameter)
     {
         parameter = componentParameters.FirstOrDefault(p => p.Name == name);
+
         return parameter != null;
     }
 

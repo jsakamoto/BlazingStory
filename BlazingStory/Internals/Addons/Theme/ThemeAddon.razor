@@ -1,0 +1,19 @@
+﻿@implements IAddonComponent
+@typeparam TEnum where TEnum : struct, Enum
+
+<AddonToobarContents @ref="_ToobarContentsRef">
+    <PopupMenu MarginTop="6">
+        <Trigger>
+            <IconButton Icon="SvgIconType.Pencil" Title="Change the Theme of the preview" Text="@($"{this._ThemeMode} Theme")" Active="true" />
+        </Trigger>
+        <MenuItems>
+            @foreach (var theme in Enum.GetValues(typeof(TEnum)).Cast<TEnum>())
+            {
+                <MenuItem Active="@(this._ThemeMode.Equals(theme))" OnClick="() => OnClickBackground(theme)">
+                    <span>@theme.ToString()</span>
+                </MenuItem>
+            }            
+        </MenuItems>
+    </PopupMenu>
+
+</AddonToobarContents>
