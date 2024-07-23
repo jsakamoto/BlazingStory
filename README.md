@@ -281,7 +281,7 @@ You can specify the initial value of the component parameter by using the `<Arg>
 
 Blazing Story supports the `RenderFragment` type parameter in its control panel. For example, if you have a story for a component such as having a `RenderFragment ChildContent` parameter, you can dynamically set text to that `ChildContent` parameter from the control panel UI at runtime.
 
-(NOTICE: Currently, Blazing Story allows you to set only text to the `RenderFragment` type parameter in its control panel UI. You cannot set fragments consisting of other components or HTML tags to the `RenderFragment` type parameter. This is a limitation of Blazing Story.)
+(NOTICE: Currently, Blazing Story allows you to set `RenderFragment` type parameter in its control panel UI. You cannot set fragments consisting of EditForm and/or InputBase. This is a limitation of Blazing Story.)
 
 However, if you mark up the `ChildContent` parameter inside of the component's markup, you will not be able to set text to that parameter from the control panel UI. Because the `ChildContent` parameter is already set with the component's markup.
 
