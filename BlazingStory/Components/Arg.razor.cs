@@ -24,9 +24,18 @@ public partial class Arg<TComponent, TParameter> : ComponentBase where TComponen
 {
     #region Public Properties
 
+    /// <summary>
+    /// Gets or sets the component parameter. The component parameter is specified by using a lambda
+    /// expression. For example: (x) =&gt; x.MyParameter. The lambda expression must be a member
+    /// access expression. The member access expression must be a member of the component type.
+    /// </summary>
     [Parameter]
     public Expression<Func<TComponent, TParameter>>? For { get; set; }
 
+    /// <summary>
+    /// Gets or sets the initial value of the component parameter. The initial value of the
+    /// component parameter.
+    /// </summary>
     [Parameter]
     public TParameter? Value { get; set; }
 

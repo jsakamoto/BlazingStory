@@ -17,6 +17,8 @@ using Toolbelt.Blazor.Extensions.DependencyInjection;
 namespace BlazingStory.Components;
 
 /// <summary>
+/// The Blazing Story app component. <br /> This component is the root component of the Blazing
+/// Story app.
 /// </summary>
 /// <seealso cref="Microsoft.AspNetCore.Components.ComponentBase" />
 /// <seealso cref="System.IAsyncDisposable" />
@@ -73,6 +75,10 @@ public partial class BlazingStoryApp : IAsyncDisposable
     [Parameter]
     public bool EnableHotReloading { get; set; }
 
+    /// <summary>
+    /// A type of the theme component to use when displaying a story. <br /> The theme component is
+    /// a component that provides a theme for the story.
+    /// </summary>
     [Parameter]
     public Type? ThemeType { get; set; }
 

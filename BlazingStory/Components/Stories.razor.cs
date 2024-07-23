@@ -39,8 +39,13 @@ public partial class Stories<TComponent> : ComponentBase where TComponent : notn
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to show all properties for all stories. If set to
+    /// true, all properties will be shown for all stories. If set to false, only properties that
+    /// are different from the default values will be shown.
+    /// </summary>
     [Parameter]
-    public bool ShowAllPropertiesForAllStories { get; set; } = false;
+    public bool ShowAllPropertiesForAllStories { get; set; } = true;
 
     #endregion Public Properties
 

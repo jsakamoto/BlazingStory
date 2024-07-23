@@ -24,15 +24,34 @@ public partial class ArgType<TComponent, TParameter> : ComponentBase where TComp
 {
     #region Public Properties
 
+    /// <summary>
+    /// Gets or sets the component parameter. The component parameter is specified by using a lambda
+    /// expression. For example: (x) =&gt; x.MyParameter. The lambda expression must be a member
+    /// access expression. The member access expression must be a member of the component type.
+    /// </summary>
     [Parameter]
     public Expression<Func<TComponent, TParameter>>? For { get; set; }
 
+    /// <summary>
+    /// Gets or sets the type of control for the component parameter. The type of control for the
+    /// component parameter. The default value is ControlType.Default. The ControlType enumeration
+    /// contains the following values: Default, Radio, Select, and Color. The ControlType
+    /// enumeration is defined in the BlazingStory.Types namespace.
+    /// </summary>
     [Parameter]
     public ControlType Control { get; set; } = ControlType.Default;
 
+    /// <summary>
+    /// The default value of the component parameter. The default value of the component parameter.
+    /// The default value is null. The default value is used when the component parameter is not specified.
+    /// </summary>
     [Parameter]
     public object? DefaultValue { get; set; }
 
+    /// <summary>
+    /// The options of the component parameter. The options of the component parameter. The default
+    /// value is an empty array.
+    /// </summary>
     [Parameter]
     public string[] Options { get; set; } = Array.Empty<string>();
 

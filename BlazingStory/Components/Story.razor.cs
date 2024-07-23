@@ -54,9 +54,16 @@ public partial class Story<TComponent> : ComponentBase where TComponent : notnul
     [Parameter, EditorRequired]
     public RenderFragment<StoryContext>? Template { get; set; }
 
+    /// <summary>
+    /// Show all properties for this story. If set to true, all properties will be shown for this
+    /// story. If set to false, only properties that are different from the default values will be shown.
+    /// </summary>
     [Parameter]
     public bool ShowAllProperties { get; set; } = false;
 
+    /// <summary>
+    /// The description of the story.
+    /// </summary>
     [Parameter]
     public string? Description { get; set; }
 
