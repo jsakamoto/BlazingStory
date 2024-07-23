@@ -1,10 +1,16 @@
 @using BlazingStory.Internals.Utils.TextSearch;
+
 <div class="navigation-list">
     <div class="navigation-list-items">
         @if (this.Items != null)
         {
             @foreach (var item in this.Items)
             {
+                @if (item?.Segments == null || item.Segments.Count() == 0)
+                {
+                    continue;
+                }
+
                 var title = string.Join(" / ", item.Segments.Append(item.Caption));
                 var id = $"p:{item.Id}";
                 var iconType = this.GetIconType(item.Type);
@@ -39,40 +45,3 @@
     </div>
 
 </div>
-
-@code
-{
-    [Parameter]
-    public IEnumerable<NavigationListItem>? Items { get; set; }
-
-    [Parameter]
-    public EventCallback<NavigationListItem> OnClickItem { get; set; }
-
-    [Parameter]
-    public RenderFragment<NavigationList>? Actions { get; set; }
-
-    [Parameter]
-    public Func<NavigationItemType, SvgIconType> GetIconType { get; set; }
-
-    [Parameter]
-    public Func<NavigationItemType, string> GetCssClass { get; set; }
-
-    [Parameter]
-    public IEnumerable<string>? Keywords { get; set; }
-
-    private string? _LastHoveredId;
-
-    public NavigationList()
-    {
-        this.GetIconType = itemType => itemType switch { NavigationItemType.Component => SvgIconType.Component, NavigationItemType.Story => SvgIconType.BookmarkHollow, _ => SvgIconType.Document };
-        this.GetCssClass = itemType => itemType switch { NavigationItemType.Component => "type-component", NavigationItemType.Story => "type-story", _ => "type-docs" };
-    }
-
-    public bool IsSelected(string id) => this._LastHoveredId == id;
-
-    public void OnHover(string id)
-    {
-        this._LastHoveredId = id;
-    }
-
-}

@@ -95,6 +95,52 @@
         </Template>
     </Story>
 
+
+    <Story Name="Select - No Value">
+        <Template>
+            <Stack>
+                <TextParameterController Key="key"
+                                         Parameter="Select"
+                                         Value="_Select1"
+                                         Options="_Options"
+                                         OnInput="arg => _Select1 = arg.Value">
+                </TextParameterController>
+                <ResetButton OnClick="() => _Select1 = Unknown.Value" />
+            </Stack>
+            <p>@(_Select1?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Select - Initial Value">
+        <Template>
+            <Stack>
+                <TextParameterController Key="key"
+                                         Parameter="Select"
+                                         Value="_Select2"
+                                         Options="_Options"
+                                         OnInput="arg => _Select2 = arg.Value">
+                </TextParameterController>
+                <ResetButton OnClick="@(() => _Select2 = "Option 2")" />
+            </Stack>
+            <p>@(_Select2?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Select - Null Value">
+        <Template>
+            <Stack>
+                <TextParameterController Key="key"
+                                         Parameter="Select"
+                                         Value="_Select3"
+                                         Options="_Options"
+                                         OnInput="arg => _Select3 = arg.Value">
+                </TextParameterController>
+                <ResetButton OnClick="() => _Select3 = null" />
+            </Stack>
+            <p>@(_Select3?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
 </Stories>
 
 @code
@@ -102,6 +148,8 @@
     private readonly ComponentParameter String = SampleComponent.CreateParameter(nameof(SampleComponent.String));
 
     private readonly ComponentParameter Color = SampleComponent.CreateParameter(nameof(SampleComponent.Color), ControlType.Color);
+
+    private readonly ComponentParameter Select = SampleComponent.CreateParameter(nameof(SampleComponent.Select), ControlType.Select);
 
     private object? _Text1 = Unknown.Value;
 
@@ -114,4 +162,12 @@
     private object? _Color2 = "royalblue";
 
     private object? _Color3 = null;
+
+    private string[] _Options = new[] { "Option 1", "Option 2", "Option 3" };
+
+    private object? _Select1 = Unknown.Value;
+
+    private object? _Select2 = "Option 2";
+
+    private object? _Select3 = null;
 }

@@ -5,6 +5,8 @@ namespace BlazingStory.Internals.Models;
 
 public class Story
 {
+    #region Internal Fields
+
     internal readonly StoriesRazorDescriptor StoriesRazorDescriptor;
 
     /// <summary>
@@ -17,8 +19,7 @@ public class Story
     internal readonly string Name;
 
     /// <summary>
-    /// Gets a navigation path string for this story.<br/>
-    /// (ex. "examples-ui-button--primary")
+    /// Gets a navigation path string for this story. <br /> (ex. "examples-ui-button--primary")
     /// </summary>
     internal readonly string NavigationPath;
 
@@ -28,9 +29,15 @@ public class Story
 
     internal readonly Type? StoryLayout;
 
-    internal readonly RenderFragment<StoryContext> RenderFragment;
+    internal readonly RenderFragment<StoryContext> RenderFragmentStoryContext;
 
-    internal Story(StoriesRazorDescriptor storiesRazorDescriptor, Type componentType, string name, StoryContext context, Type? storiesLayout, Type? storyLayout, RenderFragment<StoryContext> renderFragment)
+    internal readonly string? Description;
+
+    #endregion Internal Fields
+
+    #region Internal Constructors
+
+    internal Story(StoriesRazorDescriptor storiesRazorDescriptor, Type componentType, string name, StoryContext context, Type? storiesLayout, Type? storyLayout, RenderFragment<StoryContext> renderFragment, string? description = null)
     {
         this.StoriesRazorDescriptor = storiesRazorDescriptor ?? throw new ArgumentNullException(nameof(storiesRazorDescriptor));
         this.Title = this.StoriesRazorDescriptor.StoriesAttribute.Title ?? throw new ArgumentNullException(nameof(storiesRazorDescriptor));
@@ -39,7 +46,10 @@ public class Story
         this.Context = context;
         this.StoriesLayout = storiesLayout;
         this.StoryLayout = storyLayout;
-        this.RenderFragment = renderFragment;
+        this.RenderFragmentStoryContext = renderFragment;
         this.NavigationPath = Services.Navigation.NavigationPath.Create(this.Title, this.Name);
+        this.Description = description;
     }
+
+    #endregion Internal Constructors
 }

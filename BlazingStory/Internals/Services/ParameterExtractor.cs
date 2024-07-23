@@ -10,11 +10,25 @@ namespace BlazingStory.Internals.Services;
 
 internal class ParameterExtractor
 {
+    #region Public Methods
+
     public static string GetParameterName(Expression? expression)
     {
-        if (expression == null) throw new ArgumentNullException(nameof(expression));
-        if (expression is not LambdaExpression lambda) throw new ArgumentException("expression is not a proprty expression.", nameof(expression));
-        if (lambda.Body is not MemberExpression body) throw new ArgumentException("expression is not a proprty expression.", nameof(expression));
+        if (expression == null)
+        {
+            throw new ArgumentNullException(nameof(expression));
+        }
+
+        if (expression is not LambdaExpression lambda)
+        {
+            throw new ArgumentException("expression is not a property expression.", nameof(expression));
+        }
+
+        if (lambda.Body is not MemberExpression body)
+        {
+            throw new ArgumentException("expression is not a property expression.", nameof(expression));
+        }
+
         return body.Member.Name;
     }
 
@@ -25,4 +39,11 @@ internal class ParameterExtractor
             .Select(prop => new ComponentParameter(componentType, prop, xmlDocComment))
             .ToArray();
     }
+
+    public static ComponentParameter GetComponentParameterByName(Type componentType, string name, IXmlDocComment xmlDocComment)
+    {
+        return new ComponentParameter(componentType, componentType.GetProperty(name, BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"The property {name} does not exist in the component type {componentType.Name}."), xmlDocComment);
+    }
+
+    #endregion Public Methods
 }

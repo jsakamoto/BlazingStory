@@ -14,30 +14,3 @@
         }
     </select>
 </span>
-
-@code
-{
-    [Parameter, EditorRequired]
-    public object? Value { get; set; }
-
-    [Parameter, EditorRequired]
-    public Array? Items { get; set; }
-
-    [Parameter]
-    public EventCallback<ChangeEventArgs> OnChange { get; set; }
-
-    private IEnumerable<(bool Selected, string? Text)> _Options = Enumerable.Empty<(bool, string?)>();
-
-    private bool _NoSelected = false;
-
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-
-        this._Options = (this.Items ?? Array.Empty<object?>())
-            .Select(item => (Selected: this.Value?.Equals(item) == true, Text: item?.ToString()))
-            .ToArray();
-
-        this._NoSelected = !this._Options.Any(item => item.Selected);
-    }
-}

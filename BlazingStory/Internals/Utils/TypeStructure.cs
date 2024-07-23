@@ -2,10 +2,16 @@
 
 internal class TypeStructure
 {
+    #region Internal Fields
+
     internal readonly bool IsNullable;
     internal readonly bool IsGeneric;
     internal readonly Type PrimaryType;
     internal readonly Type[] SecondaryTypes;
+
+    #endregion Internal Fields
+
+    #region Public Constructors
 
     public TypeStructure(bool isNullable, bool isGeneric, Type primaryType, Type[] secondaryTypes)
     {
@@ -15,6 +21,10 @@ internal class TypeStructure
         this.SecondaryTypes = secondaryTypes;
     }
 
+    #endregion Public Constructors
+
+    #region Public Methods
+
     public void Deconstruct(out bool isNullable, out bool isGeneric, out Type primaryType, out Type[] secondaryTypes)
     {
         isNullable = this.IsNullable;
@@ -22,4 +32,6 @@ internal class TypeStructure
         primaryType = this.PrimaryType;
         secondaryTypes = this.SecondaryTypes;
     }
+
+    #endregion Public Methods
 }

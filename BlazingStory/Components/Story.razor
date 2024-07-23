@@ -3,68 +3,7 @@
 @attribute [CascadingTypeParameter(nameof(TComponent))]
 
 <div class="display:none;">
-    <CascadingValue Value="this._StoryContext">
+    <CascadingValue Value="this">
         @Arguments
     </CascadingValue>
 </div>
-
-@code
-{
-    [CascadingParameter]
-    internal IServiceProvider Services { get; init; } = default!;
-
-    [CascadingParameter]
-    internal StoriesStore StoriesStore { get; init; } = default!;
-
-    [CascadingParameter]
-    internal StoryContainer? StoryContainer { get; set; }
-
-    [CascadingParameter]
-    internal StoriesRazorDescriptor StoriesRazorDescriptor { get; init; } = default!;
-
-    [CascadingParameter]
-    internal IEnumerable<ComponentParameter>? ComponentParameters { get; set; }
-
-    [Parameter, EditorRequired]
-    public string Name { get; set; } = "";
-
-    /// <summary>
-    /// A type of the layout component to use when displaying this story.
-    /// </summary>
-    [Parameter]
-    public Type? Layout { get; set; }
-
-    [Parameter]
-    public RenderFragment? Arguments { get; set; }
-
-    [Parameter, EditorRequired]
-    public RenderFragment<StoryContext>? Template { get; set; }
-
-    private StoryContext? _StoryContext;
-
-    protected override void OnInitialized()
-    {
-        if (this.Template == null) throw new InvalidOperationException($"The Template parameter is required.");
-
-        var xmlDocComment = this.Services.GetRequiredService<IXmlDocComment>();
-        this._StoryContext = new(this.ComponentParameters ?? ParameterExtractor.GetParametersFromComponentType(typeof(TComponent), xmlDocComment));
-
-        if (this.StoryContainer == null)
-        {
-            this.StoryContainer = new StoryContainer(typeof(TComponent), null, this.StoriesRazorDescriptor, this.Services);
-            this.StoriesStore.RegisterStoryContainer(this.StoryContainer);
-        }
-
-        this.StoryContainer.RegisterStory(this.Name, this._StoryContext, this.StoryContainer.Layout, this.Layout, this.Template);
-    }
-
-    /// <summary>
-    /// When this story should be rendered, notify it to the canvas frame (preview frame inside the ifrmae) through the <see cref="StoryContext"/>.
-    /// </summary>
-    protected override bool ShouldRender()
-    {
-        var shouldRender = base.ShouldRender();
-        if (shouldRender) this._StoryContext?.InvokeShouldRender();
-        return shouldRender;
-    }
-}

@@ -2,7 +2,13 @@
 
 internal class Subscriptions : IDisposable
 {
+    #region Private Fields
+
     private readonly List<IDisposable> _Subscriptions = new();
+
+    #endregion Private Fields
+
+    #region Public Methods
 
     public void Add(params IDisposable[] subscriptions)
     {
@@ -16,4 +22,6 @@ internal class Subscriptions : IDisposable
             subscription.Dispose();
         }
     }
+
+    #endregion Public Methods
 }

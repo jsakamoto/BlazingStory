@@ -1,0 +1,88 @@
+﻿@using BlazingStory.Internals.Pages.Canvas.Controls.ParameterControllers.Controllers
+@using BlazingStory.Internals.Utils
+@attribute [Stories("Internals/Pages/Canvas/Controls/ParameterControllers/Controllers/RenderFragmentParameterController")]
+
+<Stories TComponent="RenderFragmentParameterController" Layout="typeof(MarginedFrame)">
+
+    <Story Name="RenderFragment - No Value">
+        <Template>
+            <Stack>
+                <div style="flex:1">
+                    <RenderFragmentParameterController Key="key"
+                                                       Parameter="RenderFragment"
+                                                       Value="_RenderFragment1"
+                                                       OnInput="arg => _RenderFragment1 = arg.Value">
+                    </RenderFragmentParameterController>
+                </div>
+
+                <ResetButton OnClick="() => _RenderFragment1 = Unknown.Value.ToString().ToRenderFragment()" />
+            </Stack>
+            @if (_RenderFragment1 != null)
+            {
+                <p>@((RenderFragment)_RenderFragment1)</p>
+            }
+            else
+            {
+                <p>(null)</p>
+            }
+            
+        </Template>
+    </Story>
+
+    <Story Name="RenderFragment - Initial Value">
+        <Template>
+            <Stack>
+                <div style="flex:1">
+                    <RenderFragmentParameterController Key="key"
+                                                       Parameter="RenderFragment"
+                                                       Value="_RenderFragment2"
+                                                       OnInput="arg => _RenderFragment2 = arg.Value">
+                    </RenderFragmentParameterController>
+                </div>
+                <ResetButton OnClick="@(() => _RenderFragment2 = "<span style=\"color: red;\">Hello, World.</span>".ToRenderFragment())" />
+            </Stack>
+            @if (_RenderFragment2 != null)
+            {
+                <p>@((RenderFragment)_RenderFragment2)</p>
+            }
+            else
+            {
+                <p>(null)</p>
+            }
+        </Template>
+    </Story>
+
+    <Story Name="RenderFragment - Null Value">
+        <Template>
+            <Stack>
+                <div style="flex:1">
+                    <RenderFragmentParameterController Key="key"
+                                                       Parameter="RenderFragment"
+                                                       Value="_RenderFragment3"
+                                                       OnInput="arg => _RenderFragment3 = arg.Value">
+                    </RenderFragmentParameterController>
+                </div>
+                <ResetButton OnClick="() => _RenderFragment3 = null" />
+            </Stack>
+            @if (_RenderFragment3 != null)
+            {
+                <p>@((RenderFragment)_RenderFragment3)</p>
+            }
+            else
+            {
+                <p>(null)</p>
+            }
+        </Template>
+    </Story>
+
+</Stories>
+
+@code {
+    private readonly ComponentParameter RenderFragment = SampleComponent.CreateParameter(nameof(SampleComponent.RenderFragment));
+
+    private object? _RenderFragment1 = Unknown.Value.ToString().ToRenderFragment();
+
+    private object? _RenderFragment2 = "<span style=\"color: red;\">Hello, World.</span>".ToRenderFragment();
+
+    private object? _RenderFragment3 = null;
+}

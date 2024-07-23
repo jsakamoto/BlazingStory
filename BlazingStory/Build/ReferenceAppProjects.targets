@@ -54,7 +54,7 @@
 
         projectBundle.Add(bundleScpCss);
       }
-      
+
       this.ProjectBundle = projectBundle.ToArray();
       ]]>
       </Code>
@@ -76,13 +76,13 @@
       var prunedItems = new List<ITaskItem>();
 
       // Prune the assets of the referenced app projects for each app project.
-      foreach (var appProj in this.ReferencedAppProjects) 
+      foreach (var appProj in this.ReferencedAppProjects)
       {
         var appName = appProj.GetMetadata("Filename");
         var appBasePath = "_content/" + appName;
 
         var assets = this.Items
-        
+
           // Filter the assets of the current app project in a loop.
           .Where(item => item.GetMetadata("SourceId") == appName)
           .Where(item => item.GetMetadata("AssetKind") == "All")
@@ -104,14 +104,14 @@
 
         prunedItems.AddRange(assets);
       }
-      
+
       var appNames = this.ReferencedAppProjects.Select(item => item.GetMetadata("Filename")).ToArray();
       var appDirs = this.ReferencedAppProjects.Select(item => GetPath(item)).ToArray();
-      var otherAssets = this.PruneByPath 
+      var otherAssets = this.PruneByPath
         ? this.Items.Where(item => !appDirs.Any(dir => GetPath(item).StartsWith(dir))).ToArray()
         : this.Items.Where(item => !appNames.Any(name => item.GetMetadata("SourceId") == name)).ToArray();
       prunedItems.AddRange(otherAssets);
-      
+
       this.PrunedItems = prunedItems.ToArray();
       ]]>
       </Code>
@@ -140,7 +140,7 @@
     </ItemGroup>
   </Target>
 
-  <!-- 
+  <!--
   *** FOR BUILD - Remove App Projects Static Web Assets ***
   * On Blazor WebAssembly projects
     If you don't have this target, you will see the following error when you build Blazor WebAssembly projects.
@@ -163,7 +163,7 @@
     </ItemGroup>
   </Target>
 
-  <!-- 
+  <!--
   *** FOR PUBLISH - Remove App Projects Static Web Assets ***
 
   If you don't have this target, *.razor.js files in referenced app projects are deployed under the "_content/{appName}/" folders.
@@ -171,8 +171,8 @@
 
   * On Blazor WebAssembly projects
     If you don't have this target, you will see the following error when you build Blazor WebAssembly projects.
-    Microsoft.NET.Sdk.StaticWebAssets.Publish.targets(25,5): error : Conflicting assets with the same target path '_framework/blazor.webassembly.js'. 
-    For assets '...\blazor.webassembly.js' and '...\blazor.webassembly.js' from different projects. 
+    Microsoft.NET.Sdk.StaticWebAssets.Publish.targets(25,5): error : Conflicting assets with the same target path '_framework/blazor.webassembly.js'.
+    For assets '...\blazor.webassembly.js' and '...\blazor.webassembly.js' from different projects.
   -->
   <Target Name="_BS_Publish_RemoveAppProjectsStaticWebAssets"
           BeforeTargets="GeneratePublishWasmBootJson;GenerateStaticWebAssetsPublishManifest"
@@ -187,7 +187,7 @@
     </ItemGroup>
   </Target>
 
-  <!-- 
+  <!--
   *** FOR BUILD - Ommit App Host Binary (.exe) ***
   * On Blazor WebAssembly projects
     This target does not affect Blazor WebAssembly projects.
@@ -206,7 +206,7 @@
     </ItemGroup>
   </Target>
 
-  <!-- 
+  <!--
   *** FOR PUBLISH - Ommit App Host Binary (.exe) ***
   * On Blazor WebAssembly projects
     This target does not affect Blazor WebAssembly projects.
@@ -225,11 +225,11 @@
     </ItemGroup>
   </Target>
 
-  <!-- 
+  <!--
   *** FOR PUBLISH - Remove App Projects Content ***
   * On Blazor Server projects
     If you don't have this target, you will see the following error when you publish the project.
-    Microsoft.NET.ConflictResolution.targets(112,5): 
+    Microsoft.NET.ConflictResolution.targets(112,5):
     error NETSDK1152: Found multiple publish output files with the same relative path: .../abc/appsettings.Development.json, .../xyz/appsettings.Development.json, etc...
   -->
   <Target Name="_BS_Publish_RemoveAppProjectsContent"
@@ -248,5 +248,4 @@
       <_BS_PrunedSourceItemsToCopyToPublishDirectory Remove="@(_BS_PrunedSourceItemsToCopyToPublishDirectory)" />
     </ItemGroup>
   </Target>
-
 </Project>

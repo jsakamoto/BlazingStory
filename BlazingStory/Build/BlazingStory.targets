@@ -1,7 +1,7 @@
 <Project>
 
   <!--
-  This target is used to generate the BlazingStoryAssemblyInfo.cs file wihch contains project meta data such as project directory, root namespace.
+  This target is used to generate the BlazingStoryAssemblyInfo.cs file which contains project meta data such as project directory, root namespace.
   This is required to the "Show Code" feature in the "Docs" pages.
   -->
   <Target Name="_GenerateBlazingStoryAssemblyInfo" BeforeTargets="BeforeCompile;CoreCompile">
@@ -23,7 +23,7 @@
   </Target>
 
   <!--
-  This item group is used to embedd the ".stories.razor" story component files to the assembly resources.
+  This item group is used to embed the ".stories.razor" story component files to the assembly resources.
   This is required to the "Show Code" feature in the "Docs" pages.
   -->
   <Target Name="_EmbeddStoriesFilesAsResources" BeforeTargets="BeforeBuild">
@@ -61,10 +61,9 @@
         <AssetTraitName>BlazorWebAssemblyResource</AssetTraitName>
         <RelativePath>_framework/%(Filename).xml</RelativePath>
       </_XmlDocComment>
-
     </ItemGroup>
 
-    <!-- 
+    <!--
     [.NET 8.0 SDK Support]
     Before .NET 8.0 SDK, the Blazor WebAssembly Static Web Assets are defined by the "BlazorWebAssemblyResource" trait and by the "_BlazorStaticWebAsset" item name.
     But .NET 8.0 or later, those are defined by the "WasmResource" trait and by the "WasmStaticWebAsset" item name.
@@ -74,7 +73,7 @@
       <_XmlDocCommentAssetItemName>_BlazorStaticWebAsset</_XmlDocCommentAssetItemName>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" $(NETCoreSdkVersion.StartsWith('8.0')) " >
+    <PropertyGroup Condition=" $(NETCoreSdkVersion.StartsWith('8.0')) ">
       <_XmlDocCommentAssetTraitName>WasmResource</_XmlDocCommentAssetTraitName>
       <_XmlDocCommentAssetItemName>WasmStaticWebAsset</_XmlDocCommentAssetItemName>
     </PropertyGroup>
@@ -89,11 +88,9 @@
       CopyToOutputDirectory="PreserveNewest"
       CopyToPublishDirectory="Never"
       ContentRoot="$(OutputPath)wwwroot"
-      BasePath="$(StaticWebAssetBasePath)"
-    >
+      BasePath="$(StaticWebAssetBasePath)">
       <Output TaskParameter="Assets" ItemName="$(_XmlDocCommentAssetItemName)" />
     </DefineStaticWebAssets>
-  
   </Target>
 
   <Target Name="_AddXmlDocCommentToPublishContents"
@@ -108,5 +105,5 @@
     </ItemGroup>
   </Target>
 
-  <Import Project="$(MSBuildThisFileDirectory)ReferenceAppProjects.targets"  />
+  <Import Project="$(MSBuildThisFileDirectory)ReferenceAppProjects.targets" />
 </Project>

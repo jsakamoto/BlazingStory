@@ -4,9 +4,15 @@ namespace BlazingStory.Internals.Services;
 
 public class HotKeyCombo
 {
+    #region Public Fields
+
     public ModCode Modifiers;
 
     public Code Code;
+
+    #endregion Public Fields
+
+    #region Public Constructors
 
     public HotKeyCombo(Code code)
     {
@@ -19,4 +25,6 @@ public class HotKeyCombo
         this.Modifiers = modifiers;
         this.Code = code;
     }
+
+    #endregion Public Constructors
 }

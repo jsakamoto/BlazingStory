@@ -8,11 +8,3 @@
 {
     <DynamicComponent @key="@(route.ViewName+ "|" + route.Parameter)" Type="route.ViewComponent" />
 }
-
-@code {
-    [CascadingParameter]
-    public QueryRouteData? RouteData { get; set; }
-
-    [Parameter, EditorRequired]
-    public IEnumerable<QueryRoute>? Routes { get; set; }
-}

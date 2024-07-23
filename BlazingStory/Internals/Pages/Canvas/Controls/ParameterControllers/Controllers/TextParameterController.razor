@@ -1,11 +1,17 @@
 @inherits ParameterControllerBase
 
-@if (Parameter?.Control is ControlType.Color)
+@if (this.Parameter != null)
 {
-    var colorValue = (Value ?? Parameter.DefaultValue) as string;
-    <ColorInput Value="@colorValue" PlaceHolder="Choose color..." OnInput="@((args) => OnInputAsync(args.Value))" />
-}
-else
-{
-    <TextArea PlaceHolder="Edit string..." Value="@(Value as string)" OnInput="@((args) => OnInputAsync(args.Value))" />
+    @if (Parameter.Control is ControlType.Color)
+    {
+        <ColorInput Value="@_TextValue" PlaceHolder="Choose color..." OnInput="OnInputTextValue" />
+    }
+    else if (Parameter.Control is ControlType.Select)
+    {
+        <Select Value="@_TextValue" Items="(Options ?? Parameter.Options)" OnChange="OnInputTextValue" />
+    }
+    else
+    {
+        <TextArea Value="@_TextValue" PlaceHolder="Edit string..." OnInput="OnInputTextValue" />
+    }
 }

@@ -8,26 +8,45 @@ namespace BlazingStory.Internals.Services;
 
 internal class WebAssets
 {
+    #region Private Fields
+
     private readonly IServiceProvider _Services;
 
     private IFileProvider? _FileProvider;
+
+    #endregion Private Fields
+
+    #region Public Constructors
 
     public WebAssets(IServiceProvider services)
     {
         this._Services = services;
     }
 
+    #endregion Public Constructors
+
+    #region Public Methods
+
     public ValueTask<string> GetStringAsync(string path)
     {
-        if (!OperatingSystem.IsBrowser()) return this.GetStringOnServerAsync(path);
+        if (!OperatingSystem.IsBrowser())
+        {
+            return this.GetStringOnServerAsync(path);
+        }
+
         return this.GetStringOnWebAssemblyAsync(path);
     }
+
+    #endregion Public Methods
+
+    #region Private Methods
 
     private async ValueTask<string> GetStringOnWebAssemblyAsync(string path)
     {
         var httpClient = this._Services.GetRequiredService<HttpClient>();
         var jsRuntime = this._Services.GetRequiredService<IJSRuntime>();
         var updateToken = UriParameterKit.GetUpdateToken(jsRuntime);
+
         return await httpClient.GetStringAsync(path + updateToken);
     }
 
@@ -37,6 +56,7 @@ internal class WebAssets
         var fileInfo = fileProvider.GetFileInfo(path);
         using var fileStream = fileInfo.CreateReadStream();
         using var fileReader = new StreamReader(fileStream);
+
         return await fileReader.ReadToEndAsync();
     }
 
@@ -52,8 +72,15 @@ internal class WebAssets
             var webHostEnv = globalServices.GetService(typeOfIWebHostEnv!);
             var propOfWebRootFileProvider = typeOfIWebHostEnv?.GetProperty("WebRootFileProvider");
             this._FileProvider = propOfWebRootFileProvider?.GetValue(webHostEnv, null) as IFileProvider;
-            if (this._FileProvider == null) throw new InvalidOperationException();
+
+            if (this._FileProvider == null)
+            {
+                throw new InvalidOperationException();
+            }
         }
+
         return this._FileProvider;
     }
+
+    #endregion Private Methods
 }

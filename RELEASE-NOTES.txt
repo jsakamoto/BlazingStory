@@ -1,3 +1,10 @@
+v.1.0.0-preview.38
+- Improve: Add support for the text type to have a dropdown list of predefined values.
+- Improve: Added the possibility to use the full way of RenderFragment (only EditForm and/or InputBase doesn't work)
+- Improve: Added the possibility to add theming to the BlazingStoryApp component.
+- Improve: Added the possibility to only show all the properties of a component or only those used in Args.
+- Improve: Added the possibility to add some Description to a story.
+
 v.1.0.0-preview.37
 - Fix: Property descriptions did not appear when the component was inherited from a generic typed component.
 - Update: Drop the support for .NET 7

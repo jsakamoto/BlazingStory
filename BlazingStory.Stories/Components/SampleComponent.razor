@@ -24,6 +24,12 @@
     [Parameter]
     public SampleEnum? NullableEnum { get; set; }
 
+    [Parameter]
+    public string[] Select { get; set; }
+
+    [Parameter]
+    public RenderFragment? RenderFragment { get; set; }
+
 
     public static ComponentParameter CreateParameter(string name, ControlType control = ControlType.Default)
     {

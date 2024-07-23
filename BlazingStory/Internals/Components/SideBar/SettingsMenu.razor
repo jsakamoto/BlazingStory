@@ -3,7 +3,7 @@
         <IconButton Icon="SvgIconType.Gear" Title="Shortcuts" />
     </Trigger>
     <MenuItems>
-        @if (_CommandSegments != null)
+        @if (this._CommandSegments != null)
         {
             var topCommands = this._CommandSegments[true];
             var restCommands = this._CommandSegments[false];
@@ -22,24 +22,3 @@
         }
     </MenuItems>
 </PopupMenu>
-
-@code
-{
-    [CascadingParameter]
-    protected IServiceProvider Services { get; init; } = default!;
-
-    private IReadOnlyDictionary<bool, IEnumerable<Command>>? _CommandSegments;
-
-    protected override void OnInitialized()
-    {
-        var commandService = this.Services.GetRequiredService<CommandService>();
-        var topCommandsTypes = new[] { 
-            CommandType.AboutYourBlazingStory,
-            CommandType.ReleaseNotes,
-            CommandType.KeyboardShortcuts,
-        };
-        this._CommandSegments = commandService.Commands
-            .GroupBy(cmd => topCommandsTypes.Contains(cmd.Type))
-            .ToDictionary(g => g.Key, g => g.Select(a => a.Command).ToArray().AsEnumerable());
-    }
-}

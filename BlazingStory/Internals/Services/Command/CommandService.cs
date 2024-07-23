@@ -6,13 +6,27 @@ namespace BlazingStory.Internals.Services.Command;
 
 internal class CommandService : IAsyncDisposable
 {
+    #region Private Properties
+
+    private string CommandStateKeyName => this.GetType().Name + "." + nameof(this.Commands);
+
+    #endregion Private Properties
+
+    #region Internal Fields
+
+    internal readonly CommandSet<CommandType> Commands;
+
+    #endregion Internal Fields
+
+    #region Private Fields
+
     private readonly HotKeysContext _HotKeysContext;
 
     private readonly ILogger<CommandService> _Logger;
 
-    private string CommandStateKeyName => this.GetType().Name + "." + nameof(this.Commands);
+    #endregion Private Fields
 
-    internal readonly CommandSet<CommandType> Commands;
+    #region Public Constructors
 
     public CommandService(HotKeys hotKeys, HelperScript helperScript, ILogger<CommandService> logger)
     {
@@ -21,17 +35,33 @@ internal class CommandService : IAsyncDisposable
         this.Commands = new CommandSet<CommandType>(this.CommandStateKeyName, this._HotKeysContext, helperScript, logger);
     }
 
+    #endregion Public Constructors
+
+    #region Public Indexers
+
     public Command? this[CommandType type] => this.Commands[type];
+
+    #endregion Public Indexers
+
+    #region Public Methods
 
     public async Task InvokeAsync(CommandType type)
     {
-        if (this.Commands[type] is not Command command) return;
+        if (this.Commands[type] is not Command command)
+        {
+            return;
+        }
+
         await command.InvokeAsync();
     }
 
     public IDisposable Subscribe(CommandType type, ValueTaskCallback callBack)
     {
-        if (this.Commands[type] is not Command command) throw new KeyNotFoundException();
+        if (this.Commands[type] is not Command command)
+        {
+            throw new KeyNotFoundException();
+        }
+
         return command.Subscribe(callBack);
     }
 
@@ -40,4 +70,6 @@ internal class CommandService : IAsyncDisposable
         this.Commands.Dispose();
         await this._HotKeysContext.DisposeAsync();
     }
+
+    #endregion Public Methods
 }

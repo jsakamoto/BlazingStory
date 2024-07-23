@@ -5,19 +5,47 @@ namespace BlazingStory.Internals.Pages.Canvas.Actions;
 
 internal class ActionsPanelDescriptor : AddonPanelDescriptor
 {
+    #region Private Fields
+
     private ComponentActionLogs? _ActionLogs;
+
+    #endregion Private Fields
+
+    #region Internal Constructors
 
     internal ActionsPanelDescriptor() : base("Actions", typeof(ActionsPanel))
     {
     }
 
-    internal override void SetParameters(Story? story, IServiceProvider services, CanvasPageContext canvasPageContext)
+    #endregion Internal Constructors
+
+    #region Internal Methods
+
+    internal override void SetParameters(Story? story, IServiceProvider? services, CanvasPageContext? canvasPageContext)
     {
         base.SetParameters(story, services, canvasPageContext);
         this.UnsubscribeActionLogsEvent();
-        this._ActionLogs = canvasPageContext.GetRequiredItem<ComponentActionLogs>();
-        this._ActionLogs.Updated += this.ActionLogs_Updated;
+        this._ActionLogs = canvasPageContext?.GetRequiredItem<ComponentActionLogs>();
+
+        if (this._ActionLogs != null)
+        {
+            this._ActionLogs.Updated += this.ActionLogs_Updated;
+        }
     }
+
+    #endregion Internal Methods
+
+    #region Protected Methods
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        this.UnsubscribeActionLogsEvent();
+    }
+
+    #endregion Protected Methods
+
+    #region Private Methods
 
     private void ActionLogs_Updated(object? sender, EventArgs e)
     {
@@ -34,9 +62,5 @@ internal class ActionsPanelDescriptor : AddonPanelDescriptor
         }
     }
 
-    protected override void Dispose(bool disposing)
-    {
-        base.Dispose(disposing);
-        this.UnsubscribeActionLogsEvent();
-    }
+    #endregion Private Methods
 }

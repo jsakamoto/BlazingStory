@@ -4,7 +4,24 @@ namespace BlazingStory.Internals.Services;
 
 internal class KeyCodeMapper
 {
+    #region Private Fields
+
     private static Dictionary<string, string>? _CodeToKey;
+
+    #endregion Private Fields
+
+    #region Public Methods
+
+    public static string GetKeyTextFromCode(Code code)
+    {
+        var codeToKeyMap = GetCodeToKeyMap();
+
+        return codeToKeyMap.TryGetValue(code, out var key) ? key : code;
+    }
+
+    #endregion Public Methods
+
+    #region Private Methods
 
     private static IReadOnlyDictionary<string, string> GetCodeToKeyMap()
     {
@@ -12,27 +29,31 @@ internal class KeyCodeMapper
         {
             var csvLines = EnnumKeyCodeMapCsvLines();
             var keyCodePair = TinyCsvParser.Parse(csvLines.Skip(1));
+
             _CodeToKey = keyCodePair
                 .Where(pair => pair.Count() >= 2 && !string.IsNullOrEmpty(pair[1]))
                 .ToDictionary(pair => pair[1], pair => pair[0]);
         }
+
         return _CodeToKey;
     }
 
     private static IEnumerable<string> EnnumKeyCodeMapCsvLines()
     {
         using var stream = typeof(KeyCodeMapper).Assembly.GetManifestResourceStream("BlazingStory.Resources.KeyCodeMap.csv");
-        if (stream == null) yield break;
+
+        if (stream == null)
+        {
+            yield break;
+        }
+
         using var streamReader = new StreamReader(stream);
+
         while (!streamReader.EndOfStream)
         {
             yield return streamReader.ReadLine() ?? "";
         }
     }
 
-    public static string GetKeyTextFromCode(Code code)
-    {
-        var codeToKeyMap = GetCodeToKeyMap();
-        return codeToKeyMap.TryGetValue(code, out var key) ? key : code;
-    }
+    #endregion Private Methods
 }

@@ -5,17 +5,32 @@ namespace BlazingStory.Internals.Services;
 
 public class StoriesStore
 {
-    private readonly List<StoryContainer> _StoryContainers = new();
+    #region Internal Properties
 
     internal IEnumerable<StoryContainer> StoryContainers => this._StoryContainers;
+
+    #endregion Internal Properties
+
+    #region Private Fields
+
+    private readonly List<StoryContainer> _StoryContainers = new();
+
+    #endregion Private Fields
+
+    #region Internal Constructors
 
     internal StoriesStore()
     {
     }
 
+    #endregion Internal Constructors
+
+    #region Internal Methods
+
     internal void RegisterStoryContainer(StoryContainer storyContainer)
     {
         var index = this._StoryContainers.FindIndex(container => container.Title == storyContainer.Title);
+
         if (index != -1)
         {
             if (Object.ReferenceEquals(this._StoryContainers[index], storyContainer) == false)
@@ -35,7 +50,7 @@ public class StoriesStore
     }
 
     /// <summary>
-    /// Try to find a story by navigationn path, such as "examples-ui-button--default".
+    /// Try to find a story by navigation path, such as "examples-ui-button--default".
     /// </summary>
     internal bool TryGetStoryByPath(string navigationPath, [NotNullWhen(true)] out Story? story)
     {
@@ -44,11 +59,13 @@ public class StoriesStore
     }
 
     /// <summary>
-    /// Try to find a component by navigationn path, such as "examples-ui-button".
+    /// Try to find a component by navigation path, such as "examples-ui-button".
     /// </summary>
     internal bool TryGetComponentByPath(string navigationPath, [NotNullWhen(true)] out StoryContainer? component)
     {
         component = this._StoryContainers.FirstOrDefault(c => c.NavigationPath == navigationPath);
         return component != null;
     }
+
+    #endregion Internal Methods
 }
