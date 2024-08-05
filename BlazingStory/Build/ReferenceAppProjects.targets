@@ -14,18 +14,43 @@
       <ProjectBundle ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
     </ParameterGroup>
     <Task>
+      <Using Namespace="System" />
       <Using Namespace="System.IO" />
       <Using Namespace="System.Linq" />
+      <Using Namespace="System.Numerics" />
+      <Using Namespace="System.Security.Cryptography" />
       <Using Namespace="Microsoft.Build.Framework" />
       <Code Type="Fragment" Language="cs">
         <![CDATA[
       static string GetPath(ITaskItem item) => item.GetMetadata("RootDir") + item.GetMetadata("Directory");
+      
+      static byte[] ComputeHash(ITaskItem item) {
+          var contentBytes = File.ReadAllBytes(item.GetMetadata("OriginalItemSpec"));
+          using var sha256 = SHA256.Create();
+          return sha256.ComputeHash(contentBytes);
+      }
+
+      static string ToBase36(byte[] hash)
+      {
+	      var array = new char[10];
+          var buff = new byte[10];
+          Array.Copy(hash, buff, 10);
+          var dividend = BigInteger.Abs(new BigInteger(buff));
+	      for (var i = 0; i < 10; i++)
+	      {
+		      dividend = BigInteger.DivRem(dividend, 36, out var remainder);
+		      array[i] = "0123456789abcdefghijklmnopqrstuvwxyz"[(int)remainder];
+	      }
+	      return new string(array);
+      }
+
       var projectBundle = new List<ITaskItem>();
       foreach (var appProj in this.ReferencedAppProjects) {
         var appName = appProj.GetMetadata("Filename");
         var stylesCssName = appName + ".styles.css";
         var stylesCssItem = this.Items.FirstOrDefault(item => item.GetMetadata("RelativePath") == stylesCssName);
         if (stylesCssItem == null) continue;
+        
         var bundleScpCssName = appProj.GetMetadata("Filename") + ".bundle.scp.css";
         var bundleScpCssDir = Path.GetFullPath(GetPath(stylesCssItem) + "../projectbundle/");
         var bundleScpCssPath = bundleScpCssDir + bundleScpCssName;
@@ -51,6 +76,10 @@
         bundleScpCss.SetMetadata("AssetTraitValue", "ProjectBundle");
         bundleScpCss.SetMetadata("AssetTraitName", "ScopedCss");
         bundleScpCss.SetMetadata("CopyToPublishDirectory", "PreserveNewest");
+        
+        var hash = ComputeHash(bundleScpCss);
+        bundleScpCss.SetMetadata("Integrity", Convert.ToBase64String(hash));
+        bundleScpCss.SetMetadata("Fingerprint", ToBase36(hash));
 
         projectBundle.Add(bundleScpCss);
       }
