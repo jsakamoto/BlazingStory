@@ -1,3 +1,6 @@
+v.1.0.0-preview.38
+- Fix: the summary text for a generic type component couldn't be retrieved. (Issue #51)
+
 v.1.0.0-preview.37
 - Fix: Property descriptions did not appear when the component was inherited from a generic typed component.
 - Update: Drop the support for .NET 7
