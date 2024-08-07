@@ -2,6 +2,10 @@
 
 namespace RazorClassLib1.Components.TextInput;
 
+/// <summary>
+/// A base class for text input components.
+/// </summary>
+/// <typeparam name="T">A type representing the value of the input.</typeparam>
 public class TextInputBase<T> : ComponentBase
 {
     /// <summary>
