@@ -144,4 +144,10 @@ internal static class TypeUtility
         convertedValue = null;
         return false;
     }
+
+    /// <summary>
+    /// Get open type of the given type.<br/>
+    /// When you pass the `List&lt;T&gt;` type, this method returns `List&lt;&gt;`.
+    /// </summary>
+    internal static Type GetOpenType(Type type) => type.IsGenericType ? type.GetGenericTypeDefinition() : type;
 }

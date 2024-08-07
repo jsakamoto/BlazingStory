@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using BlazingStory.Internals.Utils;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Internals.Services.XmlDocComment;
@@ -36,7 +37,9 @@ internal abstract class XmlDocCommentBase : IXmlDocComment
         var xdocComment = await this.GetXmlDocCommentXDocAsync(componentType);
         if (xdocComment == null) return default;
 
-        var memberName = $"T:{componentType.FullName}";
+        var componentOpenType = TypeUtility.GetOpenType(componentType);
+
+        var memberName = $"T:{componentOpenType.FullName}";
         return xdocComment
             .Descendants("member")
             .Where(member => member.Attribute("name")?.Value == memberName)
