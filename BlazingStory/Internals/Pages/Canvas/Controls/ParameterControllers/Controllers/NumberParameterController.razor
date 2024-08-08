@@ -18,6 +18,7 @@ else if (nullable)
             <input type="radio" name="@(this.Key + "-value-type")" checked="@(!isNull)" @onchange="() => this.OnInputNumValue(new(){ Value = this._NumText })" />
             <NumberInput Value="@_NumText"
                          PlaceHolder="Edit number..."
+                         AllowDecimalPoint="_AllowDecimalPoint"
                          OnInput="OnInputNumValue"
                          OnFocus="() => this.OnInputNumValue(new(){ Value = this._NumText })" />
         </label>
@@ -26,12 +27,14 @@ else if (nullable)
 }
 else
 {
-    <NumberInput Value="@_NumText" PlaceHolder="Edit number..." OnInput="OnInputNumValue" />
+    <NumberInput Value="@_NumText" PlaceHolder="Edit number..." AllowDecimalPoint="_AllowDecimalPoint" OnInput="OnInputNumValue" />
 }
 
 @code
 {
     private string? _NumText;
+
+    private bool _AllowDecimalPoint;
 
     private bool TryConvertType(object? value, out object? convertedValue)
     {
@@ -42,6 +45,7 @@ else
     {
         base.OnParametersSet();
         this._NumText = TryConvertType(this.Value, out var n) ? n?.ToString() : this._NumText;
+        this._AllowDecimalPoint = TypeUtility.IsDecimalPointType(this.Parameter.TypeStructure.PrimaryType);
     }
 
     private async Task OnInputNumValue(ChangeEventArgs arg)

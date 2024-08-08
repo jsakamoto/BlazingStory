@@ -2,6 +2,7 @@
        type="number" 
        value="@this.Value" 
        placeholder="@this.PlaceHolder" 
+       step="@_Step"
        @oninput="(arg) => this.OnInput.InvokeAsync(arg)" 
        @onfocus="(arg) => this.OnFocus.InvokeAsync(arg)"
        required />
@@ -19,4 +20,25 @@
 
     [Parameter]
     public EventCallback<FocusEventArgs> OnFocus { get; set; }
+
+    [Parameter]
+    public bool AllowDecimalPoint { get; set; }
+
+    private string _Step = "1";
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (this.AllowDecimalPoint)
+        {
+            var parts = this.Value?.Split('.') ?? [];
+            var hasDecimalPoint = parts.Length == 2;
+            var dicimalPartLen = (hasDecimalPoint ? parts[1] : "").Length;
+            this._Step = dicimalPartLen == 0 ? (hasDecimalPoint ? "0.1": "1") : ("0." + new String('0', dicimalPartLen - 1) + "1");
+        }
+        else
+        {
+            this._Step = "1";
+        }
+    }
 }

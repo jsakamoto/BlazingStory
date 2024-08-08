@@ -178,6 +178,17 @@ internal static class TypeUtility
     };
 
     /// <summary>
+    /// Returns whether the given type is a decimal point type.
+    /// </summary>
+    internal static bool IsDecimalPointType(Type type) => Type.GetTypeCode(type) switch
+    {
+        TypeCode.Single => true,
+        TypeCode.Double => true,
+        TypeCode.Decimal => true,
+        _ => false
+    };
+
+    /// <summary>
     /// Get open type of the given type.<br/>
     /// When you pass the `List&lt;T&gt;` type, this method returns `List&lt;&gt;`.
     /// </summary>
