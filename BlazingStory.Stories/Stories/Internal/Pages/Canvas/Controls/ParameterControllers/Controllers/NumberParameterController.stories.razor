@@ -16,7 +16,7 @@
 
                 <ResetButton OnClick="() => _V1Unknown = Unknown.Value" />
             </Stack>
-            <p>@(_V1Unknown?.ToString() ?? "(null)")</p>
+            @ValueDisplay(_V1Unknown)
         </Template>
     </Story>
 
@@ -30,7 +30,7 @@
                 </NumberParameterController>
                 <ResetButton OnClick="() => _V2Int32 = 123" />
             </Stack>
-            <p>@(_V2Int32?.ToString() ?? "(null)")</p>
+            @ValueDisplay(_V2Int32)
         </Template>
     </Story>
 
@@ -44,7 +44,7 @@
                 </NumberParameterController>
                 <ResetButton OnClick="() => _V3Null = null" />
             </Stack>
-            <p>@(_V3Null?.ToString() ?? "(null)")</p>
+            @ValueDisplay(_V3Null)
         </Template>
     </Story>
     
@@ -60,7 +60,7 @@
                 </NumberParameterController>
                 <ResetButton OnClick="() => _V1Unknown = Unknown.Value" />
             </Stack>
-            <p>@(_V1Unknown?.ToString() ?? "(null)")</p>
+            @ValueDisplay(_V1Unknown)
         </Template>
     </Story>
 
@@ -75,7 +75,7 @@
                 </NumberParameterController>
                 <ResetButton OnClick="() => _V2Int32 = 123" />
             </Stack>
-            <p>@(_V2Int32?.ToString() ?? "(null)")</p>
+            @ValueDisplay(_V2Int32)
         </Template>
     </Story>
 
@@ -90,7 +90,7 @@
                 </NumberParameterController>
                 <ResetButton OnClick="() => _V3Null = null" />
             </Stack>
-            <p>@(_V3Null?.ToString() ?? "(null)")</p>
+            @ValueDisplay(_V3Null)
         </Template>
     </Story>
 
@@ -107,7 +107,7 @@
 
                 <ResetButton OnClick="() => _V1Unknown = Unknown.Value" />
             </Stack>
-            <p>@(_V1Unknown?.ToString() ?? "(null)")</p>
+            @ValueDisplay(_V1Unknown)
         </Template>
     </Story>
 
@@ -121,7 +121,7 @@
                 </NumberParameterController>
                 <ResetButton OnClick="() => _V2Decimal = 123.45m" />
             </Stack>
-            <p>@(_V2Decimal?.ToString() ?? "(null)")</p>
+            @ValueDisplay(_V2Decimal)
         </Template>
     </Story>
 
@@ -135,7 +135,7 @@
                 </NumberParameterController>
                 <ResetButton OnClick="() => _V3Null = null" />
             </Stack>
-            <p>@(_V3Null?.ToString() ?? "(null)")</p>
+            @ValueDisplay(_V3Null)
         </Template>
     </Story>
 
@@ -151,7 +151,7 @@
                 </NumberParameterController>
                 <ResetButton OnClick="() => _V1Unknown = Unknown.Value" />
             </Stack>
-            <p>@(_V1Unknown?.ToString() ?? "(null)")</p>
+            @ValueDisplay(_V1Unknown)
         </Template>
     </Story>
 
@@ -166,7 +166,7 @@
                 </NumberParameterController>
                 <ResetButton OnClick="() => _V2Decimal = 123.45m" />
             </Stack>
-            <p>@(_V2Decimal?.ToString() ?? "(null)")</p>
+            @ValueDisplay(_V2Decimal)
         </Template>
     </Story>
 
@@ -181,7 +181,7 @@
                 </NumberParameterController>
                 <ResetButton OnClick="() => _V3Null = null" />
             </Stack>
-            <p>@(_V3Null?.ToString() ?? "(null)") (@_V3Null?.GetType().Name)</p>
+            @ValueDisplay(_V3Null)
         </Template>
     </Story>
 
@@ -189,6 +189,8 @@
 
 @code
 {
+    private RenderFragment<object?> ValueDisplay = (value) => @<p>@value?.ToString() (@(value?.GetType().Name ?? "null"))</p>;
+
     private readonly ComponentParameter Int32 = SampleComponent.CreateParameter(nameof(SampleComponent.Int32));
 
     private readonly ComponentParameter NullableInt32 = SampleComponent.CreateParameter(nameof(SampleComponent.NullableInt32));

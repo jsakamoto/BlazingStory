@@ -4,7 +4,7 @@
 }
 @if (this.Value is Unknown || (!nullable && this.Value is null))
 {
-    <SquareButton Text="Set number" OnClick="@(() => OnInputAsync(0))" />
+    <SquareButton Text="Set number" OnClick="OnClickSetNumber" />
 }
 else if (nullable)
 {
@@ -51,5 +51,10 @@ else
             this._NumText = n?.ToString();
             await this.OnInputAsync(n);
         }
+    }
+
+    private async Task OnClickSetNumber()
+    {
+        await this.OnInputAsync(Activator.CreateInstance(this.Parameter.TypeStructure.PrimaryType));
     }
 }
