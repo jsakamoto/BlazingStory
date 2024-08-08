@@ -15,35 +15,40 @@ else if (nullable)
         <NullInputRadio Name="@(this.Key + "-value-type")" Checked="isNull" OnChange="() => OnInputAsync(null)" />
 
         <label class="input-value">
-            <input type="radio" name="@(this.Key + "-value-type")" checked="@(!isNull)" @onchange="() => OnInputAsync(this._NumValue)" />
-            <NumberInput Value="_NumValue"
+            <input type="radio" name="@(this.Key + "-value-type")" checked="@(!isNull)" @onchange="() => this.OnInputNumValue(new(){ Value = this._NumText })" />
+            <NumberInput Value="@_NumText"
                          PlaceHolder="Edit number..."
-                         OnInput="OnInputNumValue" 
-                         OnFocus="() => this.OnInputAsync(this._NumValue)"/>
+                         OnInput="OnInputNumValue"
+                         OnFocus="() => this.OnInputNumValue(new(){ Value = this._NumText })" />
         </label>
 
     </div>
 }
 else
 {
-    <NumberInput Value="_NumValue" PlaceHolder="Edit number..." OnInput="OnInputNumValue" />
+    <NumberInput Value="@_NumText" PlaceHolder="Edit number..." OnInput="OnInputNumValue" />
 }
 
 @code
 {
-    private int _NumValue;
+    private string? _NumText;
+
+    private bool TryConvertType(object? value, out object? convertedValue)
+    {
+        return TypeUtility.TryConvertType(this.Parameter.TypeStructure.PrimaryType, this.Parameter.TypeStructure, value?.ToString() ?? "", out convertedValue);
+    }
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        this._NumValue = int.TryParse(this.Value?.ToString(), out var n) ? n : this._NumValue;
+        this._NumText = TryConvertType(this.Value, out var n) ? n?.ToString() : this._NumText;
     }
 
     private async Task OnInputNumValue(ChangeEventArgs arg)
     {
-        if (int.TryParse(arg.Value?.ToString(), out var n))
+        if (TryConvertType(arg.Value, out var n))
         {
-            this._NumValue = n;
+            this._NumText = n?.ToString();
             await this.OnInputAsync(n);
         }
     }

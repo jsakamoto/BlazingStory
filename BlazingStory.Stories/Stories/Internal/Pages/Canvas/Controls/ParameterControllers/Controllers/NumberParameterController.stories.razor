@@ -3,92 +3,188 @@
 
 <Stories TComponent="NumberParameterController" Layout="typeof(MarginedFrame)">
 
-    <Story Name="Nullable - No Value">
+    @* ---- Nullable Int32 ---- *@
+
+    <Story Name="Nullable Int32 - No Value">
         <Template>
             <Stack>
                 <NumberParameterController Key="key"
                                            Parameter="NullableInt32"
-                                           Value="_V1"
-                                           OnInput="arg => _V1 = arg.Value">
+                                           Value="_V1Unknown"
+                                           OnInput="arg => _V1Unknown = arg.Value">
                 </NumberParameterController>
 
-                <ResetButton OnClick="() => _V1 = Unknown.Value" />
+                <ResetButton OnClick="() => _V1Unknown = Unknown.Value" />
             </Stack>
-            <p>@(_V1?.ToString() ?? "(null)")</p>
+            <p>@(_V1Unknown?.ToString() ?? "(null)")</p>
         </Template>
     </Story>
 
-    <Story Name="Nullable - Initial Value">
+    <Story Name="Nullable Int32 - Initial Value">
         <Template>
             <Stack>
                 <NumberParameterController Key="key"
                                            Parameter="NullableInt32"
-                                           Value="_V2"
-                                           OnInput="arg => _V2 = arg.Value">
+                                           Value="_V2Int32"
+                                           OnInput="arg => _V2Int32 = arg.Value">
                 </NumberParameterController>
-                <ResetButton OnClick="() => _V2 = 123" />
+                <ResetButton OnClick="() => _V2Int32 = 123" />
             </Stack>
-            <p>@(_V2?.ToString() ?? "(null)")</p>
+            <p>@(_V2Int32?.ToString() ?? "(null)")</p>
         </Template>
     </Story>
 
-    <Story Name="Nullable - Null Value">
+    <Story Name="Nullable Int32 - Null Value">
         <Template>
             <Stack>
                 <NumberParameterController Key="key"
                                            Parameter="NullableInt32"
-                                           Value="_V3"
-                                           OnInput="arg => _V3 = arg.Value">
+                                           Value="_V3Null"
+                                           OnInput="arg => _V3Null = arg.Value">
                 </NumberParameterController>
-                <ResetButton OnClick="() => _V3 = null" />
+                <ResetButton OnClick="() => _V3Null = null" />
             </Stack>
-            <p>@(_V3?.ToString() ?? "(null)")</p>
+            <p>@(_V3Null?.ToString() ?? "(null)")</p>
         </Template>
     </Story>
+    
+    @* ---- Non Nullable Int32 ---- *@
 
-    <Story Name="Non Nullable - No Value">
+    <Story Name="Non Nullable Int32 - No Value">
         <Template>
             <Stack>
                 <NumberParameterController Key="key"
                                            Parameter="Int32"
-                                           Value="_V1"
-                                           OnInput="arg => _V1 = arg.Value">
+                                           Value="_V1Unknown"
+                                           OnInput="arg => _V1Unknown = arg.Value">
                 </NumberParameterController>
-                <ResetButton OnClick="() => _V1 = Unknown.Value" />
+                <ResetButton OnClick="() => _V1Unknown = Unknown.Value" />
             </Stack>
-            <p>@(_V1?.ToString() ?? "(null)")</p>
+            <p>@(_V1Unknown?.ToString() ?? "(null)")</p>
         </Template>
     </Story>
 
-    <Story Name="Non Nullable - Initial Value">
-        <Template>
-            <Stack>
-
-                <NumberParameterController Key="key"
-                                           Parameter="Int32"
-                                           Value="_V2"
-                                           OnInput="arg => _V2 = arg.Value">
-                </NumberParameterController>
-                <ResetButton OnClick="() => _V2 = 123" />
-            </Stack>
-            <p>@(_V2?.ToString() ?? "(null)")</p>
-        </Template>
-    </Story>
-
-    <Story Name="Non Nullable - Null Value">
+    <Story Name="Non Nullable Int32 - Initial Value">
         <Template>
             <Stack>
 
                 <NumberParameterController Key="key"
                                            Parameter="Int32"
-                                           Value="_V3"
-                                           OnInput="arg => _V3 = arg.Value">
+                                           Value="_V2Int32"
+                                           OnInput="arg => _V2Int32 = arg.Value">
                 </NumberParameterController>
-                <ResetButton OnClick="() => _V3 = null" />
+                <ResetButton OnClick="() => _V2Int32 = 123" />
             </Stack>
-            <p>@(_V3?.ToString() ?? "(null)")</p>
+            <p>@(_V2Int32?.ToString() ?? "(null)")</p>
         </Template>
     </Story>
+
+    <Story Name="Non Nullable Int32 - Null Value">
+        <Template>
+            <Stack>
+
+                <NumberParameterController Key="key"
+                                           Parameter="Int32"
+                                           Value="_V3Null"
+                                           OnInput="arg => _V3Null = arg.Value">
+                </NumberParameterController>
+                <ResetButton OnClick="() => _V3Null = null" />
+            </Stack>
+            <p>@(_V3Null?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    @* ---- Nullable Decimal ---- *@
+
+    <Story Name="Nullable Decimal - No Value">
+        <Template>
+            <Stack>
+                <NumberParameterController Key="key"
+                                           Parameter="NullableDecimal"
+                                           Value="_V1Unknown"
+                                           OnInput="arg => _V1Unknown = arg.Value">
+                </NumberParameterController>
+
+                <ResetButton OnClick="() => _V1Unknown = Unknown.Value" />
+            </Stack>
+            <p>@(_V1Unknown?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Nullable Decimal - Initial Value">
+        <Template>
+            <Stack>
+                <NumberParameterController Key="key"
+                                           Parameter="NullableDecimal"
+                                           Value="_V2Decimal"
+                                           OnInput="arg => _V2Decimal = arg.Value">
+                </NumberParameterController>
+                <ResetButton OnClick="() => _V2Decimal = 123.45m" />
+            </Stack>
+            <p>@(_V2Decimal?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Nullable Decimal - Null Value">
+        <Template>
+            <Stack>
+                <NumberParameterController Key="key"
+                                           Parameter="NullableDecimal"
+                                           Value="_V3Null"
+                                           OnInput="arg => _V3Null = arg.Value">
+                </NumberParameterController>
+                <ResetButton OnClick="() => _V3Null = null" />
+            </Stack>
+            <p>@(_V3Null?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    @* ---- Non Nullable Decimal ---- *@
+
+    <Story Name="Non Nullable Decimal - No Value">
+        <Template>
+            <Stack>
+                <NumberParameterController Key="key"
+                                           Parameter="Decimal"
+                                           Value="_V1Unknown"
+                                           OnInput="arg => _V1Unknown = arg.Value">
+                </NumberParameterController>
+                <ResetButton OnClick="() => _V1Unknown = Unknown.Value" />
+            </Stack>
+            <p>@(_V1Unknown?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Non Nullable Decimal - Initial Value">
+        <Template>
+            <Stack>
+
+                <NumberParameterController Key="key"
+                                           Parameter="Decimal"
+                                           Value="_V2Decimal"
+                                           OnInput="arg => _V2Decimal = arg.Value">
+                </NumberParameterController>
+                <ResetButton OnClick="() => _V2Decimal = 123.45m" />
+            </Stack>
+            <p>@(_V2Decimal?.ToString() ?? "(null)")</p>
+        </Template>
+    </Story>
+
+    <Story Name="Non Nullable Decimal - Null Value">
+        <Template>
+            <Stack>
+
+                <NumberParameterController Key="key"
+                                           Parameter="Decimal"
+                                           Value="_V3Null"
+                                           OnInput="arg => _V3Null = arg.Value">
+                </NumberParameterController>
+                <ResetButton OnClick="() => _V3Null = null" />
+            </Stack>
+            <p>@(_V3Null?.ToString() ?? "(null)") (@_V3Null?.GetType().Name)</p>
+        </Template>
+    </Story>
+
 </Stories>
 
 @code
@@ -97,9 +193,15 @@
 
     private readonly ComponentParameter NullableInt32 = SampleComponent.CreateParameter(nameof(SampleComponent.NullableInt32));
 
-    private object? _V1 = Unknown.Value;
+    private readonly ComponentParameter Decimal = SampleComponent.CreateParameter(nameof(SampleComponent.Decimal));
 
-    private object? _V2 = 123;
+    private readonly ComponentParameter NullableDecimal = SampleComponent.CreateParameter(nameof(SampleComponent.NullableDecimal));
 
-    private object? _V3 = null;
+    private object? _V1Unknown = Unknown.Value;
+
+    private object? _V2Int32 = 123;
+    
+    private object? _V2Decimal = 123.45m;
+
+    private object? _V3Null = null;
 }

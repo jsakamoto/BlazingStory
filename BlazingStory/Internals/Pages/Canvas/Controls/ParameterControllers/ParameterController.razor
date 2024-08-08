@@ -11,7 +11,7 @@ else if (primaryType == typeof(bool))
 {
     <BoolParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
 }
-else if (primaryType == typeof(int))
+else if (TypeUtility.IsNumericType(primaryType))
 {
     <NumberParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
 }

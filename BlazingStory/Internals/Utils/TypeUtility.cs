@@ -1,6 +1,9 @@
 ﻿using BlazingStory.Internals.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.Internals.Utils;
 
@@ -109,15 +112,6 @@ internal static class TypeUtility
             }
         }
 
-        else if (primaryType == typeof(int))
-        {
-            if (int.TryParse(sourceString, out var numValue))
-            {
-                convertedValue = numValue;
-                return true;
-            }
-        }
-
         else if (primaryType.IsEnum)
         {
             if (Enum.TryParse(primaryType, sourceString, out var enumValue))
@@ -141,9 +135,47 @@ internal static class TypeUtility
             return true;
         }
 
+        else if (IsParsableType(primaryType))
+        {
+            var tryParseMethod = primaryType.GetMethod(nameof(IParsable<int>.TryParse), BindingFlags.Public | BindingFlags.Static, [typeof(string), typeof(IFormatProvider), primaryType.MakeByRefType()]);
+            var parameters = new object?[] { sourceString, default(IFormatProvider), Activator.CreateInstance(primaryType) };
+            if ((bool)(tryParseMethod?.Invoke(null, parameters) ?? false))
+            {
+                convertedValue = parameters[2];
+                return true;
+            }
+        }
+
         convertedValue = null;
         return false;
     }
+
+    /// <summary>
+    /// Returns whether the given type implements <see cref="IParsable{TSelf}"/>.
+    /// </summary>
+    internal static bool IsParsableType([DynamicallyAccessedMembers(Interfaces)] Type type)
+    {
+        return type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IParsable<>));
+    }
+
+    /// <summary>
+    /// Returns whether the given type is a numeric type.
+    /// </summary>
+    internal static bool IsNumericType(Type type) => Type.GetTypeCode(type) switch
+    {
+        TypeCode.Byte => true,
+        TypeCode.SByte => true,
+        TypeCode.Int16 => true,
+        TypeCode.UInt16 => true,
+        TypeCode.Int32 => true,
+        TypeCode.UInt32 => true,
+        TypeCode.Int64 => true,
+        TypeCode.UInt64 => true,
+        TypeCode.Single => true,
+        TypeCode.Double => true,
+        TypeCode.Decimal => true,
+        _ => false
+    };
 
     /// <summary>
     /// Get open type of the given type.<br/>
