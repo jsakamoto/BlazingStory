@@ -11,13 +11,13 @@ else if (primaryType == typeof(bool))
 {
     <BoolParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
 }
-else if (TypeUtility.IsNumericType(primaryType))
-{
-    <NumberParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
-}
 else if (primaryType.IsEnum == true)
 {
     <EnumParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
+}
+else if (TypeUtility.IsNumericType(primaryType))
+{
+    <NumberParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
 }
 else if (RenderFragmentKit.IsRenderFragment(Parameter.Type))
 {
