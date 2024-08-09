@@ -1,5 +1,6 @@
 ﻿using BlazingStory.Internals.Utils;
 using Microsoft.AspNetCore.Components;
+using System.Net;
 
 namespace BlazingStory.Test.Internals.Utils;
 
@@ -125,5 +126,68 @@ public class TypeUtilityTest
 
         // Then
         result.IsInstanceOf<int>().Is(1024);
+    }
+
+    [Test]
+    public void TryConvertType_Double_from_Value_Test()
+    {
+        // Given
+        var targetType = typeof(double);
+        var typeStruct = TypeUtility.ExtractTypeStructure(targetType);
+
+        // When
+        TypeUtility.TryConvertType(targetType, typeStruct, "3.141592", out var result).IsTrue();
+
+        // Then
+        var doubleValue = result.IsInstanceOf<double>();
+        doubleValue.Is(3.141592);
+    }
+
+    [Test]
+    public void GetOpenType_NonGetenricType_Test()
+    {
+        TypeUtility.GetOpenType(typeof(IPAddress)).Is(typeof(IPAddress));
+    }
+
+    [Test]
+    public void GetOpenType_GetenricType_Test()
+    {
+        TypeUtility.GetOpenType(typeof(List<>)).Is(typeof(List<>));
+    }
+
+    [Test]
+    public void GetOpenType_SignleTypeArgType_Test()
+    {
+        TypeUtility.GetOpenType(typeof(List<IPAddress>)).Is(typeof(List<>));
+    }
+
+    [Test]
+    public void GetOpenType_SignleTypeArgNestedType_Test()
+    {
+        TypeUtility.GetOpenType(typeof(List<List<IPAddress>>)).Is(typeof(List<>));
+    }
+
+    [Test]
+    public void GetOpenType_DoubleTypeArgTypes_Test()
+    {
+        TypeUtility.GetOpenType(typeof(Dictionary<int, IPAddress>)).Is(typeof(Dictionary<,>));
+    }
+
+    [Test]
+    public void GetOpenType_DoubleTypeArgNestedTypes_Test()
+    {
+        TypeUtility.GetOpenType(typeof(Dictionary<int, List<IPAddress>>)).Is(typeof(Dictionary<,>));
+    }
+
+    [Test]
+    public void IsParsableType_for_int_Test()
+    {
+        TypeUtility.IsParsableType(typeof(int)).IsTrue();
+    }
+
+    [Test]
+    public void IsParsableType_for_string_Test()
+    {
+        TypeUtility.IsParsableType(typeof(TypeUtility)).IsFalse();
     }
 }

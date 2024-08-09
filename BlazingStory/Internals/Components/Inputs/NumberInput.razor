@@ -1,22 +1,72 @@
-<input class="bs-basic-inputs number-input"
-       type="number" 
-       value="@this.Value" 
-       placeholder="@this.PlaceHolder" 
-       @oninput="(arg) => this.OnInput.InvokeAsync(arg)" 
+<input @ref="_ElementRef"
+       class="bs-basic-inputs number-input"
+       type="number"
+       value="@this.Value"
+       placeholder="@this.PlaceHolder"
+       step="@_Step"
+       @oninput="(arg) => this.OnInput.InvokeAsync(arg)"
        @onfocus="(arg) => this.OnFocus.InvokeAsync(arg)"
-       required />
+       required="@this.Required" />
 
 @code
 {
     [Parameter]
-    public int Value { get; set; }
+    public string? Value { get; set; }
 
     [Parameter]
     public string? PlaceHolder { get; set; }
+
+    [Parameter]
+    public bool Required { get; set; }
+
+    [Parameter]
+    public bool AllowDecimalPoint { get; set; }
+
+    [Parameter]
+    public bool InitialForcus { get; set; }
 
     [Parameter]
     public EventCallback<ChangeEventArgs> OnInput { get; set; }
 
     [Parameter]
     public EventCallback<FocusEventArgs> OnFocus { get; set; }
+
+    private ElementReference _ElementRef;
+
+    private string _Step = "1";
+
+    private bool _LastInitialFocus;
+
+    private bool _InitialFocused;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (this.AllowDecimalPoint)
+        {
+            var parts = this.Value?.Split('.') ?? [];
+            var hasDecimalPoint = parts.Length == 2;
+            var dicimalPartLen = (hasDecimalPoint ? parts[1] : "").Length;
+            this._Step = dicimalPartLen == 0 ? (hasDecimalPoint ? "0.1" : "1") : ("0." + new String('0', dicimalPartLen - 1) + "1");
+        }
+        else
+        {
+            this._Step = "1";
+        }
+
+        if (this._LastInitialFocus != this.InitialForcus)
+        {
+            this._InitialFocused = false;
+            this._LastInitialFocus = this.InitialForcus;
+        }
+    }
+
+    override protected async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (this.InitialForcus && !this._InitialFocused)
+        {
+            this._InitialFocused = true;
+            await this._ElementRef.FocusAsync();
+        }
+    }
 }
