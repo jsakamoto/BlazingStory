@@ -129,6 +129,21 @@ public class TypeUtilityTest
     }
 
     [Test]
+    public void TryConvertType_Double_from_Value_Test()
+    {
+        // Given
+        var targetType = typeof(double);
+        var typeStruct = TypeUtility.ExtractTypeStructure(targetType);
+
+        // When
+        TypeUtility.TryConvertType(targetType, typeStruct, "3.141592", out var result).IsTrue();
+
+        // Then
+        var doubleValue = result.IsInstanceOf<double>();
+        doubleValue.Is(3.141592);
+    }
+
+    [Test]
     public void GetOpenType_NonGetenricType_Test()
     {
         TypeUtility.GetOpenType(typeof(IPAddress)).Is(typeof(IPAddress));
@@ -162,5 +177,17 @@ public class TypeUtilityTest
     public void GetOpenType_DoubleTypeArgNestedTypes_Test()
     {
         TypeUtility.GetOpenType(typeof(Dictionary<int, List<IPAddress>>)).Is(typeof(Dictionary<,>));
+    }
+
+    [Test]
+    public void IsParsableType_for_int_Test()
+    {
+        TypeUtility.IsParsableType(typeof(int)).IsTrue();
+    }
+
+    [Test]
+    public void IsParsableType_for_string_Test()
+    {
+        TypeUtility.IsParsableType(typeof(TypeUtility)).IsFalse();
     }
 }
