@@ -1,4 +1,4 @@
-v.1.0.0-preview.39
+v.1.0.0-preview.40
 - Improve: Added support for float, decimal, and double numbers in parameter control. (Issue #50)
 
 v.1.0.0-preview.38
