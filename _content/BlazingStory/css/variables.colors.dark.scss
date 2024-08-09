@@ -1,0 +1,78 @@
+.preferes-color-scheme-dark {
+    // basic colors
+    $back-color: #222425;
+    --bs-back-color: #{$back-color};
+    --bs-dimmed-back-color: #{$back-color};
+    --bs-dimmed-neutral-back-color: #ecf4f9;
+    $accent-color: #029cfd; // rgb(2, 156, 253)
+    --bs-accent-color: #{$accent-color};
+    --bs-border-color: rgb(255 255 255 / 10%);
+    --bs-border-shadow: var(--bs-border-color) 0 -1px 0 0 inset;
+    --bs-layout-border-shadow: 0px 0 0px 1px rgba(255,255,255,.1);
+    //
+    --bs-hover-back-color: rgba(2,156,253,0.12);
+    --bs-hover-light-back-color: rgba(30,167,253,0.07);
+    //
+    --bs-text-color: #c9cdcf;
+    --bs-link-color: #6bc5fe;
+    $caption-text-color: #c9cdcf; // rgb(201, 205, 207)
+    --bs-caption-text-color: #{$caption-text-color};
+    --bs-caption-text-half-color1: #{rgba($caption-text-color, 0.75)};
+    --bs-caption-text-half-color2: #{rgba($caption-text-color, 0.5)};
+    --bs-dimmed-text-color: #73828c;
+    --bs-dimmed-hover-text-color: #5c6870;
+    // side bar
+    --bs-sidebar-header-title-color: #fff;
+    --bs-sidebar-nav-color: var(--bs-text-color);
+    --bs-sidebar-nav-active-color: #fff;
+    --bs-sidebar-nav-active-back-color: #1ea7fd;
+    --bs-focused-color: var(--bs-accent-color);
+    --bs-focused-half-color: #{rgba($accent-color, 0.15)};
+    --bs-chevron-color: rgba(121,129,134,0.6);
+    // tool bar
+    --bs-toolbar-back-color: #292c2e;
+    // add-on panel
+    --bs-add-on-panel-back-color: #1b1c1d;
+    --bs-add-on-panel-border-color: #27292a;
+    --bs-add-on-panel-badge-shadow: none;
+    // inputs
+    --bs-inputs-background: #1b1c1d;
+    --bs-inputs-text-color: #fff;
+    --bs-inputs-box-shadow: hsla(203, 50%, 30%, 0.2) 0 0 0 1px inset;
+    --bs-square-button-box-shadow: rgba(255,255,255,.1) 0 0 0 1px inset;
+    // icons
+    --bs-icon-folder-color: #ff4785;
+    --bs-icon-story-container-color: var(--bs-accent-color);
+    --bs-icon-story-color: #37d5d3;
+    --bs-icon-document-color: #ffae00;
+    --bs-keymap-text-color: #798186;
+    --bs-keymap-back-color: rgba(255,255,255,0.05);
+    // buttons
+    --bs-button-flagged-back-color: #{rgba($accent-color, 0.07)};
+    // toggle button
+    --bs-toggle-button-back-color: #2e3438;
+    --bs-toggle-button-shadow: rgba(255,255,255,.1) 0 0 0 1px;
+    // popup menu
+    --bs-popup-back-color: var(--bs-back-color);
+    --bs-popup-text-color: var(--bs-caption-text-color);
+    --bs-popup-hover-back-color: #{rgba($accent-color, 0.07)};
+    --bs-popup-active-text-color: var(--bs-accent-color);
+    --bs-popup-divider-color: rgba(255, 255, 255, 0.1);
+    // scroll bar
+    --bs-scrollbar-thumb-color: #ccc;
+    --bs-scrollbar-back-color: #e0e0e0;
+    // code
+    --bs-code-text-color: #ededed;
+    --bs-code-back-color: #262626;
+    --bs-code-copy-text-color: #c9cdcf;
+    --bs-code-copy-back-color: #1b1c1d;
+    // actions log
+    --bs-actions-log-text-color: #{$caption-text-color};
+    --bs-actions-log-repeat-text-color: #{$back-color};
+    --bs-actions-log-repeat-back-color: rgba(255,255,255,0.6);
+    --bs-actions-log-expander-color: rgba(255, 255, 255, 0.3);
+    --bs-actions-log-name-color: rgb(227, 110, 236);
+    --bs-actions-log-value-string-color: rgb(233, 63, 59);
+    --bs-actions-log-value-noobj-color: rgb(153, 128, 255);
+    --bs-actions-log-value-null-color: rgb(127, 127, 127);
+}

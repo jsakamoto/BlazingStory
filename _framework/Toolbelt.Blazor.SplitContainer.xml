@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Toolbelt.Blazor.SplitContainer</name>
+    </assembly>
+    <members>
+        <member name="T:Toolbelt.Blazor.Splitter.SplitterOrientation">
+            <summary>
+            Specifies the orientation of the spliter.
+            </summary>
+        </member>
+        <member name="F:Toolbelt.Blazor.Splitter.SplitterOrientation.Horizontal">
+            <summary>
+             The spliter is oriented horizontally.
+            </summary>
+        </member>
+        <member name="F:Toolbelt.Blazor.Splitter.SplitterOrientation.Vertical">
+            <summary>
+             The spliter is oriented vertically.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.Splitter.SplitContainer.Id">
+            <summary>
+            Gets or sets an id string applied for the "id" attribute of the split container element.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.Splitter.SplitContainer.Style">
+            <summary>
+            Gets or sets a CSS style string applied for the "style" attribute of the split container element.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.Splitter.SplitContainer.Class">
+            <summary>
+            Gets or sets a CSS class string applied for the "class" attribute of the split container element.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.Splitter.SplitContainer.FirstPane">
+            <summary>
+            The left or top pane in the SplitContainer.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.Splitter.SplitContainer.SecondPane">
+            <summary>
+            The right or bottom pane in the SplitContainer.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.Splitter.SplitContainer.Orientation">
+            <summary>
+            Determines if the spliter is vertical or horizontal.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.Splitter.SplitContainer.FirstPaneMinSize">
+            <summary>
+            Determines the minimum distance of pixels of the splitter from the left or the top edge of first pane.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.Splitter.SplitContainer.FirstPaneSize">
+            <summary>
+            Determines pixel distance of the splitter from the left or top edge.<br/>
+            You can specify the pane size to only either the <see cref="P:Toolbelt.Blazor.Splitter.SplitContainer.FirstPaneSize"/> or the <see cref="P:Toolbelt.Blazor.Splitter.SplitContainer.SecondPaneSize"/> parameter.
+            If you specify both the <see cref="P:Toolbelt.Blazor.Splitter.SplitContainer.FirstPaneSize"/> or the <see cref="P:Toolbelt.Blazor.Splitter.SplitContainer.SecondPaneSize"/> parameters, then the splitter won't work.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.Splitter.SplitContainer.FirstPaneSizeChanged">
+            <summary>
+            A callback that will be invoked when the size of the first pane is changed.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.Splitter.SplitContainer.SecondPaneMinSize">
+            <summary>
+            Determines the minimum distance of pixels of the splitter from the right or the bottom edge of second pane.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.Splitter.SplitContainer.SecondPaneSize">
+            <summary>
+            Determines pixel distance of the splitter from the right or bottom edge.<br/>
+            You can specify the pane size to only either the <see cref="P:Toolbelt.Blazor.Splitter.SplitContainer.FirstPaneSize"/> or the <see cref="P:Toolbelt.Blazor.Splitter.SplitContainer.SecondPaneSize"/> parameter.
+            If you specify both the <see cref="P:Toolbelt.Blazor.Splitter.SplitContainer.FirstPaneSize"/> or the <see cref="P:Toolbelt.Blazor.Splitter.SplitContainer.SecondPaneSize"/> parameters, then the splitter won't work.
+            </summary>
+        </member>
+        <member name="P:Toolbelt.Blazor.Splitter.SplitContainer.SecondPaneSizeChanged">
+            <summary>
+            A callback that will be invoked when the size of the second pane is changed.
+            </summary>
+        </member>
+        <member name="M:Toolbelt.Blazor.Splitter.SplitContainer.#ctor">
+            <summary>
+            Represents a component consisting of a movable bar that divides a container's display area into two resizable panes.
+            </summary>
+        </member>
+    </members>
+</doc>
