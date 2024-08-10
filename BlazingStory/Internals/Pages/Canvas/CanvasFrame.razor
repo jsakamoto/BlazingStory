@@ -125,7 +125,7 @@ else
         {
             var parameter = parameters.FirstOrDefault(p => p.Name == arg.Key);
             if (parameter == null) continue;
-            if (!TypeUtility.TryConvertType(parameter.Type, parameter.TypeStructure, arg.Value, out var value)) continue;
+            if (!TypeUtility.TryConvertType(parameter.TypeStructure, arg.Value, out var value)) continue;
 
             await this._Story.Context.AddOrUpdateArgumentAsync(arg.Key, value);
         }
