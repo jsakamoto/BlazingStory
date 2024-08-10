@@ -10,11 +10,10 @@ public class TypeUtilityTest
     public void TryConvertType_RenderFragment_Test()
     {
         // Given
-        var targetType = typeof(RenderFragment);
-        var targetTypeStruct = TypeUtility.ExtractTypeStructure(targetType);
+        var target = TypeUtility.ExtractTypeStructure(typeof(RenderFragment));
 
         // When
-        TypeUtility.TryConvertType(targetType, targetTypeStruct, "Hello, World.", out var result).IsTrue();
+        TypeUtility.TryConvertType(target, "Hello, World.", out var result).IsTrue();
 
         // Then
         var renderFragment = result.IsInstanceOf<RenderFragment>();
@@ -28,11 +27,10 @@ public class TypeUtilityTest
     public void TryConvertType_RenderFragmentT_Test()
     {
         // Given
-        var targetType = typeof(RenderFragment<DateTime>);
-        var targetTypeStruct = TypeUtility.ExtractTypeStructure(targetType);
+        var target = TypeUtility.ExtractTypeStructure(typeof(RenderFragment<DateTime>));
 
         // When
-        TypeUtility.TryConvertType(targetType, targetTypeStruct, "Tempura et dolor", out var result).IsTrue();
+        TypeUtility.TryConvertType(target, "Tempura et dolor", out var result).IsTrue();
 
         // Then
         var renderFragment = result.IsInstanceOf<RenderFragment<DateTime>>();
@@ -48,11 +46,10 @@ public class TypeUtilityTest
     public void TryConvertType_NullableEnum_from_Null_Test()
     {
         // Given
-        var targetType = typeof(EnumA?);
-        var typeStruct = TypeUtility.ExtractTypeStructure(targetType);
+        var target = TypeUtility.ExtractTypeStructure(typeof(EnumA?));
 
         // When
-        TypeUtility.TryConvertType(targetType, typeStruct, "(null)", out var result).IsTrue();
+        TypeUtility.TryConvertType(target, "(null)", out var result).IsTrue();
 
         // Then
         result.IsNull();
@@ -62,11 +59,10 @@ public class TypeUtilityTest
     public void TryConvertType_NullableEnum_from_Value_Test()
     {
         // Given
-        var targetType = typeof(EnumA?);
-        var typeStruct = TypeUtility.ExtractTypeStructure(targetType);
+        var target = TypeUtility.ExtractTypeStructure(typeof(EnumA?));
 
         // When
-        TypeUtility.TryConvertType(targetType, typeStruct, "ValueY", out var result).IsTrue();
+        TypeUtility.TryConvertType(target, "ValueY", out var result).IsTrue();
 
         // Then
         result.IsInstanceOf<EnumA>().Is(EnumA.ValueY);
@@ -76,11 +72,10 @@ public class TypeUtilityTest
     public void TryConvertType_NullableBool_from_Null_Test()
     {
         // Given
-        var targetType = typeof(bool?);
-        var typeStruct = TypeUtility.ExtractTypeStructure(targetType);
+        var target = TypeUtility.ExtractTypeStructure(typeof(bool?));
 
         // When
-        TypeUtility.TryConvertType(targetType, typeStruct, "(null)", out var result).IsTrue();
+        TypeUtility.TryConvertType(target, "(null)", out var result).IsTrue();
 
         // Then
         result.IsNull();
@@ -90,11 +85,10 @@ public class TypeUtilityTest
     public void TryConvertType_NullableBool_from_Value_Test()
     {
         // Given
-        var targetType = typeof(bool?);
-        var typeStruct = TypeUtility.ExtractTypeStructure(targetType);
+        var target = TypeUtility.ExtractTypeStructure(typeof(bool?));
 
         // When
-        TypeUtility.TryConvertType(targetType, typeStruct, "true", out var result).IsTrue();
+        TypeUtility.TryConvertType(target, "true", out var result).IsTrue();
 
         // Then
         result.IsInstanceOf<bool>().IsTrue();
@@ -104,11 +98,10 @@ public class TypeUtilityTest
     public void TryConvertType_NullableInt_from_Null_Test()
     {
         // Given
-        var targetType = typeof(int?);
-        var typeStruct = TypeUtility.ExtractTypeStructure(targetType);
+        var target = TypeUtility.ExtractTypeStructure(typeof(int?));
 
         // When
-        TypeUtility.TryConvertType(targetType, typeStruct, "(null)", out var result).IsTrue();
+        TypeUtility.TryConvertType(target, "(null)", out var result).IsTrue();
 
         // Then
         result.IsNull();
@@ -118,11 +111,10 @@ public class TypeUtilityTest
     public void TryConvertType_NullableInt_from_Value_Test()
     {
         // Given
-        var targetType = typeof(int?);
-        var typeStruct = TypeUtility.ExtractTypeStructure(targetType);
+        var target = TypeUtility.ExtractTypeStructure(typeof(int?));
 
         // When
-        TypeUtility.TryConvertType(targetType, typeStruct, "1024", out var result).IsTrue();
+        TypeUtility.TryConvertType(target, "1024", out var result).IsTrue();
 
         // Then
         result.IsInstanceOf<int>().Is(1024);
@@ -132,11 +124,10 @@ public class TypeUtilityTest
     public void TryConvertType_Double_from_Value_Test()
     {
         // Given
-        var targetType = typeof(double);
-        var typeStruct = TypeUtility.ExtractTypeStructure(targetType);
+        var target = TypeUtility.ExtractTypeStructure(typeof(double));
 
         // When
-        TypeUtility.TryConvertType(targetType, typeStruct, "3.141592", out var result).IsTrue();
+        TypeUtility.TryConvertType(target, "3.141592", out var result).IsTrue();
 
         // Then
         var doubleValue = result.IsInstanceOf<double>();

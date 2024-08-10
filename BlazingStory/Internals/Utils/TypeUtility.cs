@@ -85,12 +85,11 @@ internal static class TypeUtility
     /// Try to convert the given string to the given type.<br/>
     /// (Most cases, this method uses for deserialize URL query parameters of iframe to component parameters.)
     /// </summary>
-    /// <param name="targetType">The type to convert to.</param>
     /// <param name="targetTypeStructure">The structure of the type to convert to.</param>
     /// <param name="sourceString">The string to convert from.</param>
     /// <param name="convertedValue">The converted value if the conversion is successful.</param>
     /// <returns>True if the conversion is successful, otherwise false.</returns>
-    internal static bool TryConvertType(Type targetType, TypeStructure targetTypeStructure, string sourceString, out object? convertedValue)
+    internal static bool TryConvertType(TypeStructure targetTypeStructure, string sourceString, out object? convertedValue)
     {
         var primaryType = targetTypeStructure.PrimaryType;
         var isNullable = targetTypeStructure.IsNullable;
