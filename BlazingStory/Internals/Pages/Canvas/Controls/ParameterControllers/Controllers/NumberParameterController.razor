@@ -47,7 +47,7 @@ else
 
     private bool TryConvertType(object? value, out object? convertedValue)
     {
-        return TypeUtility.TryConvertType(this.Parameter.TypeStructure.PrimaryType, this.Parameter.TypeStructure, value?.ToString() ?? "", out convertedValue);
+        return TypeUtility.TryConvertType(this.Parameter.TypeStructure, value?.ToString() ?? "", out convertedValue);
     }
 
     protected override void OnParametersSet()

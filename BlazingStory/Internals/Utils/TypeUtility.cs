@@ -14,7 +14,7 @@ internal static class TypeUtility
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    internal static IEnumerable<string> GetTypeDisplayText(Type type)
+    internal static IEnumerable<string> GetTypeDisplayText([DynamicallyAccessedMembers(PublicConstructors | PublicMethods | Interfaces)] Type type)
     {
         var (isNullable, isGeneric, primaryType, secondaryTypes) = TypeUtility.ExtractTypeStructure(type);
         if (primaryType.IsEnum)
@@ -27,7 +27,9 @@ internal static class TypeUtility
         }
         else if (isGeneric)
         {
+#pragma warning disable IL2067 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The parameter of method does not have matching annotations.
             var typeArguments = string.Join(", ", secondaryTypes.SelectMany(t => GetTypeDisplayText(t)));
+#pragma warning restore IL2067 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The parameter of method does not have matching annotations.
             yield return GetTypeNameAsLangKeyword(primaryType) + "<" + typeArguments + ">" + (isNullable ? "?" : "");
         }
         else
@@ -39,11 +41,13 @@ internal static class TypeUtility
     /// <summary>
     /// Extracts type structure of the given type.
     /// </summary>
-    internal static TypeStructure ExtractTypeStructure(Type type)
+    internal static TypeStructure ExtractTypeStructure([DynamicallyAccessedMembers(PublicConstructors | PublicMethods | Interfaces)] Type type)
     {
         if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
         {
-            return new(isNullable: true, isGeneric: false, primaryType: type.GetGenericArguments().First(), secondaryTypes: Array.Empty<Type>());
+#pragma warning disable IL2072 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
+            return new(isNullable: true, isGeneric: false, primaryType: type.GetGenericArguments().First(), secondaryTypes: []);
+#pragma warning restore IL2072 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
         }
         else if (type.IsGenericType)
         {
@@ -81,12 +85,11 @@ internal static class TypeUtility
     /// Try to convert the given string to the given type.<br/>
     /// (Most cases, this method uses for deserialize URL query parameters of iframe to component parameters.)
     /// </summary>
-    /// <param name="targetType">The type to convert to.</param>
     /// <param name="targetTypeStructure">The structure of the type to convert to.</param>
     /// <param name="sourceString">The string to convert from.</param>
     /// <param name="convertedValue">The converted value if the conversion is successful.</param>
     /// <returns>True if the conversion is successful, otherwise false.</returns>
-    internal static bool TryConvertType(Type targetType, TypeStructure targetTypeStructure, string sourceString, out object? convertedValue)
+    internal static bool TryConvertType(TypeStructure targetTypeStructure, string sourceString, out object? convertedValue)
     {
         var primaryType = targetTypeStructure.PrimaryType;
         var isNullable = targetTypeStructure.IsNullable;
