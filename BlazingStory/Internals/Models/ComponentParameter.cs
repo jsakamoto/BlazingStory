@@ -4,6 +4,7 @@ using BlazingStory.Internals.Services.XmlDocComment;
 using BlazingStory.Internals.Utils;
 using BlazingStory.Types;
 using Microsoft.AspNetCore.Components;
+using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.Internals.Models;
 
@@ -17,6 +18,7 @@ public class ComponentParameter
 
     internal readonly string Name;
 
+    [DynamicallyAccessedMembers(PublicConstructors | PublicMethods | Interfaces)]
     internal readonly Type Type;
 
     internal readonly TypeStructure TypeStructure;
@@ -35,8 +37,10 @@ public class ComponentParameter
         this._PropertyInfo = propertyInfo;
         this._XmlDocComment = xmlDocComment;
         this.Name = propertyInfo.Name;
+#pragma warning disable IL2072, IL2074 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
         this.Type = propertyInfo.PropertyType;
         this.TypeStructure = TypeUtility.ExtractTypeStructure(propertyInfo.PropertyType);
+#pragma warning restore IL2072, IL2074 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
         this.Required = propertyInfo.GetCustomAttribute<EditorRequiredAttribute>() != null;
     }
 
