@@ -4,7 +4,7 @@
 
 ## 📝 Summary
 
-The clone of ["Storybook"](https://storybook.js.org/) for Blazor, a frontend workshop for building UI components and pages in isolation.
+The clone of ["Storybook"](https://storybook.js.org/) for Blazor, a front-end workshop for building UI components and pages in isolation.
 
 [![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/social-preview.png)](https://jsakamoto.github.io/BlazingStory/)
 
@@ -279,11 +279,11 @@ You can specify the initial value of the component parameter by using the `<Arg>
 
 ### Configure component parameters which type is `RenderFragment`
 
-Blazing Story supports the `RenderFragment` type parameter in its control panel. For example, if you have a story for a component such as having a `RenderFragment ChildContent` parameter, you can dynamically set text to that `ChildContent` parameter from the control panel UI at runtime.
+Blazing Story supports the `RenderFragment` type parameter in its control panel. For example, if you have a story for a component with a `RenderFragment ChildContent` parameter, you can dynamically set text or a `RenderTreeBuilder` to that `ChildContent` parameter from the control panel UI at runtime.
 
-(NOTICE: Currently, Blazing Story allows you to set only text to the `RenderFragment` type parameter in its control panel UI. You cannot set fragments consisting of other components or HTML tags to the `RenderFragment` type parameter. This is a limitation of Blazing Story.)
+**Notice:** Currently, Blazing Story allows you to set text or a `RenderTreeBuilder` to the `RenderFragment` type parameter in its control panel UI. However, you cannot set fragments consisting of other components or HTML tags to the `RenderFragment` type parameter if they contain an `EditForm` and/or `InputBase`. This is a limitation of Blazing Story.
 
-However, if you mark up the `ChildContent` parameter inside of the component's markup, you will not be able to set text to that parameter from the control panel UI. Because the `ChildContent` parameter is already set with the component's markup.
+However, if you define the `ChildContent` parameter inside the component's markup, you will not be able to set text for that parameter from the control panel UI, because the `ChildContent` parameter is already set within the component's markup.
 
 ```html
     ...
@@ -317,6 +317,28 @@ Instead, you should set the `ChildContent` parameter through the `<Arguments>` r
 @code
 {
     RenderFragment _childContent = @<text>Click me</text>;
+}
+```
+
+OR
+
+```html
+    <!-- 👍 DO THIS! -->
+    ...
+    <Story Name="Default">
+
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_childContent" />
+        </Arguments>
+
+        <Template>
+            <MyButton @attributes="context.Args">
+            </MyButton>
+        </Template>
+        ...
+@code
+{
+    RenderFragment _childContent = @<span>Click me</span>;
 }
 ```
 

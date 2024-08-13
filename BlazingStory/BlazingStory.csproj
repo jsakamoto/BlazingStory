@@ -36,7 +36,7 @@
     <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="5.0.0-preview.5" />
     <PackageReference Include="Toolbelt.Web.CssClassInlineBuilder" Version="3.1.0.1" />
     <PackageReference Include="Toolbelt.Blazor.SplitContainer" Version="1.1.2.1" />
-    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.9.5">
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.5.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

@@ -1,18 +1,44 @@
+@using Microsoft.AspNetCore.Components
+
 <label class="text-area-container">
-    <textarea class="bs-basic-inputs" placeholder="@this.PlaceHolder" @oninput="OnTextAreaInput" value="@(this.Value ?? "")"></textarea>
+    <textarea class="bs-basic-inputs" placeholder="@this.PlaceHolder" @oninput="OnTextAreaInput" @onchange="OnTextAreaChange" value="@(this.Value ?? "")"></textarea>
     <div class="bs-basic-inputs text-area-shadow">@((this._Value ?? "") + " ")</div>
 </label>
 
 @code
 {
+    /// <summary>
+    /// Gets or sets the value.
+    /// </summary>
+    /// <value>
+    /// The value.
+    /// </value>
     [Parameter]
     public string? Value { get; set; }
 
+    /// <summary>
+    /// Gets or sets the place holder.
+    /// </summary>
+    /// <value>
+    /// The place holder.
+    /// </value>
     [Parameter]
     public string? PlaceHolder { get; set; }
 
+    /// <summary>
+    /// Gets or sets the on input.
+    /// </summary>
+    /// <value>
+    /// The on input.
+    /// </value>
     [Parameter]
     public EventCallback<ChangeEventArgs> OnInput { get; set; }
+
+    /// <summary>
+    /// Gets or sets the on change.
+    /// </summary>
+    [Parameter]
+    public EventCallback<ChangeEventArgs> OnChange { get; set; }
 
     private string? _Value;
 
@@ -26,5 +52,11 @@
     {
         this._Value = args.Value?.ToString();
         await this.OnInput.InvokeAsync(args);
+    }
+
+    private async Task OnTextAreaChange(ChangeEventArgs args)
+    {
+        this._Value = args.Value?.ToString();
+        await this.OnChange.InvokeAsync(args);
     }
 }
