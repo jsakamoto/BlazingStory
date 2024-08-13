@@ -1,11 +1,14 @@
-﻿using BlazingStory.Internals.Utils;
+﻿using System.Net;
+using BlazingStory.Internals.Utils;
 using Microsoft.AspNetCore.Components;
-using System.Net;
 
 namespace BlazingStory.Test.Internals.Utils;
 
 public class TypeUtilityTest
 {
+    private enum EnumA
+    { ValueX, ValueY, ValueZ }
+
     [Test]
     public void TryConvertType_RenderFragment_Test()
     {
@@ -21,6 +24,8 @@ public class TypeUtilityTest
         using var ctx = new Bunit.TestContext();
         using var cut = ctx.Render(renderFragment);
         cut.Markup.Is("Hello, World.");
+
+        Assert.Pass();
     }
 
     [Test]
@@ -38,9 +43,9 @@ public class TypeUtilityTest
         using var ctx = new Bunit.TestContext();
         using var cut = ctx.Render(renderFragment.Invoke(default));
         cut.Markup.Is("Tempura et dolor");
-    }
 
-    private enum EnumA { ValueX, ValueY, ValueZ }
+        Assert.Pass();
+    }
 
     [Test]
     public void TryConvertType_NullableEnum_from_Null_Test()
@@ -53,6 +58,8 @@ public class TypeUtilityTest
 
         // Then
         result.IsNull();
+
+        Assert.Pass();
     }
 
     [Test]
@@ -66,6 +73,8 @@ public class TypeUtilityTest
 
         // Then
         result.IsInstanceOf<EnumA>().Is(EnumA.ValueY);
+
+        Assert.Pass();
     }
 
     [Test]
@@ -79,6 +88,8 @@ public class TypeUtilityTest
 
         // Then
         result.IsNull();
+
+        Assert.Pass();
     }
 
     [Test]
@@ -92,6 +103,8 @@ public class TypeUtilityTest
 
         // Then
         result.IsInstanceOf<bool>().IsTrue();
+
+        Assert.Pass();
     }
 
     [Test]
@@ -105,6 +118,8 @@ public class TypeUtilityTest
 
         // Then
         result.IsNull();
+
+        Assert.Pass();
     }
 
     [Test]
@@ -118,6 +133,8 @@ public class TypeUtilityTest
 
         // Then
         result.IsInstanceOf<int>().Is(1024);
+
+        Assert.Pass();
     }
 
     [Test]
@@ -132,53 +149,71 @@ public class TypeUtilityTest
         // Then
         var doubleValue = result.IsInstanceOf<double>();
         doubleValue.Is(3.141592);
+
+        Assert.Pass();
     }
 
     [Test]
     public void GetOpenType_NonGetenricType_Test()
     {
         TypeUtility.GetOpenType(typeof(IPAddress)).Is(typeof(IPAddress));
+
+        Assert.Pass();
     }
 
     [Test]
     public void GetOpenType_GetenricType_Test()
     {
         TypeUtility.GetOpenType(typeof(List<>)).Is(typeof(List<>));
+
+        Assert.Pass();
     }
 
     [Test]
     public void GetOpenType_SignleTypeArgType_Test()
     {
         TypeUtility.GetOpenType(typeof(List<IPAddress>)).Is(typeof(List<>));
+
+        Assert.Pass();
     }
 
     [Test]
     public void GetOpenType_SignleTypeArgNestedType_Test()
     {
         TypeUtility.GetOpenType(typeof(List<List<IPAddress>>)).Is(typeof(List<>));
+
+        Assert.Pass();
     }
 
     [Test]
     public void GetOpenType_DoubleTypeArgTypes_Test()
     {
         TypeUtility.GetOpenType(typeof(Dictionary<int, IPAddress>)).Is(typeof(Dictionary<,>));
+
+        Assert.Pass();
     }
 
     [Test]
     public void GetOpenType_DoubleTypeArgNestedTypes_Test()
     {
         TypeUtility.GetOpenType(typeof(Dictionary<int, List<IPAddress>>)).Is(typeof(Dictionary<,>));
+
+        Assert.Pass();
     }
 
     [Test]
     public void IsParsableType_for_int_Test()
     {
         TypeUtility.IsParsableType(typeof(int)).IsTrue();
+
+        Assert.Pass();
     }
 
     [Test]
     public void IsParsableType_for_string_Test()
     {
         TypeUtility.IsParsableType(typeof(TypeUtility)).IsFalse();
+
+        Assert.Pass();
     }
 }
