@@ -1,6 +1,3 @@
-@using BlazingStory.Internals.Pages.Settings.Panels;
-@inject NavigationManager NavigationManager
-
 <ToolBar>
     <TabButtonGroup>
         @foreach (var panel in _SettingsPanels)
@@ -37,6 +34,8 @@
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
 
+    [Inject] private NavigationManager? NavigationManager { get; set; }
+
     private static readonly (string Caption, QueryRoute Route)[] _SettingsPanels = new (string, QueryRoute)[]
     {
         ("About",              new("*", "about",         typeof(AboutPanel))),
@@ -46,7 +45,10 @@
 
     private void OnClickTabButton(QueryRoute route)
     {
-        this.NavigationManager.NavigateTo($"./?path=/settings/{route.Parameter}");
+        if (this.NavigationManager is not null)
+        {
+            this.NavigationManager.NavigateTo($"./?path=/settings/{route.Parameter}");
+        }
     }
 
     private bool IsActive(QueryRoute route)
@@ -56,7 +58,7 @@
 
     private void OnClickCloseButton()
     {
-        var navService = Services.GetRequiredService<NavigationService>();
+        var navService = this.Services.GetRequiredService<NavigationService>();
         navService.BackToLastNavigated();
     }
 }

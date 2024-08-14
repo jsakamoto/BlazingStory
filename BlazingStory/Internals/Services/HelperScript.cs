@@ -16,6 +16,18 @@ internal class HelperScript : IAsyncDisposable
         this._JSModule = new(() => jSRuntime, "helper.min.js");
     }
 
+    public async ValueTask<T> GetLocalStorageItemAsync<T>(string key, T defaultValue) where T : IParsable<T>
+    {
+        var stringValue = await this.GetLocalStorageItemAsync(key);
+
+        return T.TryParse(stringValue, null, out var value) ? value : defaultValue;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await this._JSModule.DisposeAsync();
+    }
+
     internal async ValueTask InvokeVoidAsync(string id, params object?[]? args)
     {
         await this._JSModule.InvokeVoidAsync(id, args);
@@ -39,7 +51,12 @@ internal class HelperScript : IAsyncDisposable
     internal async ValueTask<T> LoadObjectFromLocalStorageAsync<[DynamicallyAccessedMembers(PublicConstructors | PublicFields | PublicProperties)] T>(string key, T defaultObject)
     {
         var json = await this.GetLocalStorageItemAsync(key);
-        if (string.IsNullOrEmpty(json)) return defaultObject;
+
+        if (string.IsNullOrEmpty(json))
+        {
+            return defaultObject;
+        }
+
         return JsonSerializer.Deserialize<T?>(json, this.JsonSerializerOptions) ?? defaultObject;
     }
 
@@ -49,16 +66,5 @@ internal class HelperScript : IAsyncDisposable
 
     internal async ValueTask<string> GetLocalStorageItemAsync(string key, string defaultValue) => await this.InvokeAsync<string?>("getLocalStorageItem", key) ?? defaultValue;
 
-    public async ValueTask<T> GetLocalStorageItemAsync<T>(string key, T defaultValue) where T : IParsable<T>
-    {
-        var stringValue = await this.GetLocalStorageItemAsync(key);
-        return T.TryParse(stringValue, null, out var value) ? value : defaultValue;
-    }
-
     internal ValueTask SetupKeyDownReceiverAsync() => this.InvokeVoidAsync("setupMessageReceiverFromIFrame");
-
-    public async ValueTask DisposeAsync()
-    {
-        await this._JSModule.DisposeAsync();
-    }
 }

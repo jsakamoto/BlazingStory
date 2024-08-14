@@ -1,12 +1,13 @@
 @implements IDisposable
-@inject NavigationManager NavigationManager
-@inject ILogger<NavigationTree> Logger
 
 <div class="explorer-menu">
     <NavigationTreeItemComponent Item="NavigationRoot" SubHeading="true" />
 </div>
 
 @code {
+    [Parameter, EditorRequired]
+    public NavigationTreeItem NavigationRoot { get; set; } = new();
+
     [CascadingParameter]
     protected StoriesStore StoriesStore { get; init; } = default!;
 
@@ -16,31 +17,44 @@
     [CascadingParameter]
     protected IServiceProvider Services { get; init; } = default!;
 
-    private NavigationService? _NavigationService;
-
-    [Parameter, EditorRequired]
-    public NavigationTreeItem NavigationRoot { get; set; } = new();
+    [Inject] private NavigationManager? NavigationManager { get; set; }
+    [Inject] private ILogger<NavigationTree>? Logger { get; set; }
 
     private readonly Subscriptions _Subscriptions = new();
+    private NavigationService? _NavigationService;
+
+    public void Dispose()
+    {
+        if (this.NavigationManager != null)
+        {
+            this.NavigationManager.LocationChanged -= this.NavigationManager_LocationChanged;
+        }
+
+        this._Subscriptions.Dispose();
+    }
 
     protected override void OnInitialized()
     {
         this._NavigationService = this.Services.GetRequiredService<NavigationService>();
-        this.NavigationManager.LocationChanged += NavigationManager_LocationChanged;
+
+        if (this.NavigationManager != null)
+        {
+            this.NavigationManager.LocationChanged += this.NavigationManager_LocationChanged;
+        }
 
         var commandService = this.Services.GetRequiredService<CommandService>();
         this._Subscriptions.Add(
-            commandService.Subscribe(CommandType.PreviousComponent, OnPreviousComponent),
-            commandService.Subscribe(CommandType.NextComponent, OnNextComponent),
-            commandService.Subscribe(CommandType.PreviousStory, OnPreviousStory),
-            commandService.Subscribe(CommandType.NextStory, OnNextStory),
-            commandService.Subscribe(CommandType.CollapseAll, OnCollapseAll)
+            commandService.Subscribe(CommandType.PreviousComponent, this.OnPreviousComponent),
+            commandService.Subscribe(CommandType.NextComponent, this.OnNextComponent),
+            commandService.Subscribe(CommandType.PreviousStory, this.OnPreviousStory),
+            commandService.Subscribe(CommandType.NextStory, this.OnNextStory),
+            commandService.Subscribe(CommandType.CollapseAll, this.OnCollapseAll)
         );
     }
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender && this.NavigationManager != null)
         {
             this.NavigationManager_LocationChanged(this, new(this.NavigationManager.Uri, isNavigationIntercepted: true));
         }
@@ -72,26 +86,33 @@
         {
             item.ApplyExpansionRecursively(false);
         }
+
         return ValueTask.CompletedTask;
     }
 
     private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs args)
     {
-        if (this._NavigationService == null) return;
+        if (this._NavigationService == null)
+        {
+            return;
+        }
+
         if (!this._NavigationService.TryGetActiveNavigationItem(this.RouteData, out var activeItem, out var _))
         {
-            if (this.RouteData.View == "story") this._NavigationService.NotifyLastVisitedWasUnknown();
+            if (this.RouteData.View == "story")
+            {
+                this._NavigationService.NotifyLastVisitedWasUnknown();
+            }
+
             return;
         }
 
         this.NavigationRoot.EnsureExpandedTo(activeItem);
         this.StateHasChanged();
-        this._NavigationService.AddHistoryAsync(activeItem).AndLogException(this.Logger);
-    }
 
-    public void Dispose()
-    {
-        this.NavigationManager.LocationChanged -= this.NavigationManager_LocationChanged;
-        this._Subscriptions.Dispose();
+        if (this.Logger != null)
+        {
+            this._NavigationService.AddHistoryAsync(activeItem).AndLogException(this.Logger);
+        }
     }
 }

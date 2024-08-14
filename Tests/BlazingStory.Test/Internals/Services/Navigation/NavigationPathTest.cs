@@ -1,6 +1,7 @@
 ﻿using BlazingStory.Internals.Services.Navigation;
 
 namespace BlazingStory.Test.Internals.Services.Navigation;
+
 internal class NavigationPathTest
 {
     [Test]

@@ -24,7 +24,7 @@
         }
 </style>
 <div class="nothing-to-address" blazing-story>
-    <pre>Couldn't find story matching '@this.RouteData.Parameter'.</pre>
+    <pre>Couldn't find story matching '@this.RouteData?.Parameter'.</pre>
     <code>
         - Are you sure a story with that id exists?
         - Please check your stories field of your main.js config.
@@ -35,5 +35,5 @@
 @code
 {
     [CascadingParameter]
-    public required QueryRouteData RouteData { get; set; }
+    public QueryRouteData? RouteData { get; set; }
 }

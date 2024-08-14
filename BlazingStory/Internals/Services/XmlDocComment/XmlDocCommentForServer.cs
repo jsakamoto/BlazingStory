@@ -18,7 +18,11 @@ internal class XmlDocCommentForServer : XmlDocCommentBase
     protected override ValueTask<XDocument?> GetXmlDocCommentXDocAsync(Type type)
     {
         var assemblyName = type.Assembly.GetName().Name;
-        if (string.IsNullOrEmpty(assemblyName)) return ValueTask.FromResult(default(XDocument));
+
+        if (string.IsNullOrEmpty(assemblyName))
+        {
+            return ValueTask.FromResult(default(XDocument));
+        }
 
         try
         {
@@ -31,6 +35,7 @@ internal class XmlDocCommentForServer : XmlDocCommentBase
         catch (Exception ex)
         {
             this._Logger.LogError(ex, ex.Message);
+
             return ValueTask.FromResult(default(XDocument));
         }
     }

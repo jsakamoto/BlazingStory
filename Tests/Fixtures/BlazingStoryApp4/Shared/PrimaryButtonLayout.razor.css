@@ -1,0 +1,8 @@
+﻿.frame {
+    --color: green;
+    padding: 12px;
+}
+
+    .frame::after {
+        content: '<Story Layout="...">';
+    }

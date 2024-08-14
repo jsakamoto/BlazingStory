@@ -27,11 +27,12 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '8.0')) ">
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Markdig" Version="0.37.0" />
     <PackageReference Include="Toolbelt.Blazor.GetProperty.Script" Version="1.2.0" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="5.0.0-preview.5" />
     <PackageReference Include="Toolbelt.Web.CssClassInlineBuilder" Version="3.1.0.1" />

@@ -34,6 +34,7 @@
     <ProjectReference Include="..\..\BlazingStory\BlazingStory.csproj" />
     <ProjectReference Include="..\Fixtures\BlazingStoryApp1\BlazingStoryApp1.csproj" />
     <ProjectReference Include="..\Fixtures\BlazingStoryApp2\BlazingStoryApp2.csproj" />
+    <ProjectReference Include="..\Fixtures\BlazingStoryApp4\BlazingStoryApp4.csproj" />
   </ItemGroup>
 
   <Target Name="_ResolveCopyLocalNuGetPackageXmls" AfterTargets="ResolveReferences">

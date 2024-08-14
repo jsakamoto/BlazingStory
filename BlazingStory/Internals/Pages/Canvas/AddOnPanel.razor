@@ -1,5 +1,3 @@
-@using BlazingStory.Internals.Pages.Canvas.Actions
-@using BlazingStory.Internals.Pages.Canvas.Controls
 @implements IDisposable
 
 <div class="add-on-panel fill stack vertical">
@@ -17,8 +15,11 @@
 
         <Spacer />
 
-        <IconButton Icon="this.ToggleOrientationButtonIcon" Command="this._Commands[CommandType.AddonPanelOrientation]" />
-        <IconButton Icon="SvgIconType.CircleClose" Command="this._Commands[CommandType.AddonPanelVisible]" Title="Hide addons [{0}]" FlagStyle="false" />
+        @if (this._Commands is not null)
+        {
+            <IconButton Icon="this.ToggleOrientationButtonIcon" Command="this._Commands[CommandType.AddonPanelOrientation]" />
+            <IconButton Icon="SvgIconType.CircleClose" Command="this._Commands[CommandType.AddonPanelVisible]" Title="Hide addons [{0}]" FlagStyle="false" />
+        }
     </ToolBar>
 
     <div class="fill add-on-panel-content">
@@ -39,12 +40,16 @@
     public SplitterOrientation SplitterOrientation { get; set; }
 
     [CascadingParameter]
-    public required IServiceProvider Services { get; init; }
+    public IServiceProvider? Services { get; init; }
 
     [CascadingParameter]
-    public required CanvasPageContext CanvasPageContext { get; init; }
+    public CanvasPageContext? CanvasPageContext { get; init; }
 
-    private CommandService _Commands = default!;
+    private SvgIconType ToggleOrientationButtonIcon => this.SplitterOrientation switch
+    {
+        SplitterOrientation.Horizontal => SvgIconType.RightSidePane,
+        _ => SvgIconType.BottomSidePane
+    };
 
     private readonly Dictionary<string, object?> _AddonPanelParameters = new();
 
@@ -56,13 +61,17 @@
         //new InteractionsPanelDescriptor()
     };
 
+    private CommandService? _Commands;
     private AddonPanelDescriptor? _ActiveAddonPanelDescriptor;
 
-    private SvgIconType ToggleOrientationButtonIcon => this.SplitterOrientation switch
+    public void Dispose()
     {
-        SplitterOrientation.Horizontal => SvgIconType.RightSidePane,
-        _ => SvgIconType.BottomSidePane
-    };
+        this._AddonPanelDescriptors.ForEach(descriptor =>
+        {
+            descriptor.Updated -= this.Descriptor_Updated;
+            descriptor.Dispose();
+        });
+    }
 
     protected override void OnParametersSet()
     {
@@ -72,9 +81,9 @@
 
     protected override void OnInitialized()
     {
-        this._Commands = this.Services.GetRequiredService<CommandService>();
+        this._Commands = this.Services?.GetRequiredService<CommandService>();
         this._ActiveAddonPanelDescriptor = this._AddonPanelDescriptors.First();
-        this._AddonPanelDescriptors.ForEach(descriptor => descriptor.Updated += Descriptor_Updated);
+        this._AddonPanelDescriptors.ForEach(descriptor => descriptor.Updated += this.Descriptor_Updated);
     }
 
     private void Descriptor_Updated(object? sender, EventArgs args)
@@ -85,14 +94,5 @@
     private void OnSelectAddonPanel(AddonPanelDescriptor descriptor)
     {
         this._ActiveAddonPanelDescriptor = descriptor;
-    }
-
-    public void Dispose()
-    {
-        this._AddonPanelDescriptors.ForEach(descriptor =>
-        {
-            descriptor.Updated -= Descriptor_Updated;
-            descriptor.Dispose();
-        });
     }
 }

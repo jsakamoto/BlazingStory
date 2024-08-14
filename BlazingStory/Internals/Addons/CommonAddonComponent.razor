@@ -7,10 +7,10 @@
 @code
 {
     [CascadingParameter]
-    public required AddonsStore AddonsStore { get; init; }
+    public AddonsStore AddonsStore { get; init; } = default!;
 
     [CascadingParameter]
-    public required IServiceProvider Services { get; init; }
+    public IServiceProvider Services { get; init; } = default!;
 
     [Parameter, EditorRequired]
     public SvgIconType Icon { get; set; }
@@ -30,17 +30,15 @@
     [Parameter, EditorRequired]
     public AddonType AddonType { get; set; }
 
+    public RenderFragment? ToolbarContents => this._ToobarContentsRef?.ChildContent;
+    public IReadOnlyDictionary<string, object?> FrameArguments => this._FrameArguments;
+
+    private readonly Dictionary<string, object?> _FrameArguments = new();
     private HelperScript HelperScript = default!;
 
     private bool _Enable = false;
 
     private AddonToobarContents? _ToobarContentsRef;
-
-    public RenderFragment? ToolbarContents => this._ToobarContentsRef?.ChildContent;
-
-    private readonly Dictionary<string, object?> _FrameArguments = new();
-
-    public IReadOnlyDictionary<string, object?> FrameArguments => _FrameArguments;
 
     protected override void OnInitialized()
     {
@@ -50,8 +48,12 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender) return;
-        var enableStr = await this.HelperScript.GetLocalStorageItemAsync(StorageKey);
+        if (!firstRender)
+        {
+            return;
+        }
+
+        var enableStr = await this.HelperScript.GetLocalStorageItemAsync(this.StorageKey);
         this._Enable = bool.TryParse(enableStr, out var enable) ? enable : this._Enable;
         this.SetFrameArguments();
     }
@@ -60,7 +62,7 @@
     {
         this._Enable = !this._Enable;
         this.SetFrameArguments();
-        await this.HelperScript.SetLocalStorageItemAsync(StorageKey, this._Enable);
+        await this.HelperScript.SetLocalStorageItemAsync(this.StorageKey, this._Enable);
     }
 
     private void SetFrameArguments()

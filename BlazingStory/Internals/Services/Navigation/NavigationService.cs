@@ -27,6 +27,7 @@ internal class NavigationService
     internal NavigationTreeItem BuildNavigationTree(IEnumerable<StoryContainer> storyContainers, string? expandedNavigationPath)
     {
         this._Root = new NavigationTreeBuilder().Build(storyContainers, expandedNavigationPath);
+
         return this._Root;
     }
 
@@ -39,10 +40,17 @@ internal class NavigationService
 
     internal void NavigateToDefaultStory(QueryRouteData? routeData)
     {
-        if (this.TryGetActiveNavigationItem(routeData, out var _, out var storyItems)) return;
+        if (this.TryGetActiveNavigationItem(routeData, out var _, out var storyItems))
+        {
+            return;
+        }
 
         var firstStory = storyItems.FirstOrDefault();
-        if (firstStory == null) return;
+
+        if (firstStory == null)
+        {
+            return;
+        }
 
         this._Root.EnsureExpandedTo(firstStory);
         this.NavigateTo(firstStory);
@@ -56,34 +64,65 @@ internal class NavigationService
             .ToArray();
 
         var navigationPath = routeData?.Path;
-        if (string.IsNullOrEmpty(navigationPath)) return false;
+
+        if (string.IsNullOrEmpty(navigationPath))
+        {
+            return false;
+        }
 
         activeItem = navigatableItems.FirstOrDefault(item => item.NavigationPath == navigationPath);
-        if (activeItem == null) return false;
+
+        if (activeItem == null)
+        {
+            return false;
+        }
 
         return true;
     }
 
     internal void NavigateToNextComponentItem(QueryRouteData? routeData, bool navigateToNext)
     {
-        if (!this.TryGetActiveNavigationItem(routeData, out var activeItem, out var _)) return;
+        if (!this.TryGetActiveNavigationItem(routeData, out var activeItem, out var _))
+        {
+            return;
+        }
+
         var allComponents = this._Root.EnumAll().Where(item => item.Type is NavigationItemType.Component).ToList();
         var ativeComponentIndex = allComponents.FindIndex(item => item.EnumAll().Contains(activeItem));
         var nextComponentIndex = ativeComponentIndex + (navigateToNext ? +1 : -1);
-        if (nextComponentIndex < 0 || allComponents.Count <= nextComponentIndex) return;
+
+        if (nextComponentIndex < 0 || allComponents.Count <= nextComponentIndex)
+        {
+            return;
+        }
+
         var nextComponent = allComponents[nextComponentIndex];
         var nextItem = nextComponent.EnumAll().Where(item => item.Type is NavigationItemType.Story or NavigationItemType.Docs).FirstOrDefault();
-        if (nextItem == null) return;
+
+        if (nextItem == null)
+        {
+            return;
+        }
+
         this.NavigateTo(nextItem);
     }
 
     internal void NavigateToNextDocsOrStory(QueryRouteData? routeData, bool navigateToNext)
     {
-        if (!this.TryGetActiveNavigationItem(routeData, out var activeItem, out var _)) return;
+        if (!this.TryGetActiveNavigationItem(routeData, out var activeItem, out var _))
+        {
+            return;
+        }
+
         var allItems = this._Root.EnumAll().Where(item => item.Type is NavigationItemType.Docs or NavigationItemType.Story).ToList();
         var ativeIndex = allItems.FindIndex(item => item == activeItem);
         var nextIndex = ativeIndex + (navigateToNext ? +1 : -1);
-        if (nextIndex < 0 || allItems.Count <= nextIndex) return;
+
+        if (nextIndex < 0 || allItems.Count <= nextIndex)
+        {
+            return;
+        }
+
         var nextItem = allItems[nextIndex];
         this.NavigateTo(allItems[nextIndex]);
     }
@@ -126,9 +165,14 @@ internal class NavigationService
 
     internal IEnumerable<NavigationListItem> Search(IEnumerable<string>? keywords)
     {
-        if (keywords == null || keywords.Where(word => !string.IsNullOrEmpty(word)).Any() == false) return Enumerable.Empty<NavigationListItem>();
+        if (keywords == null || keywords.Where(word => !string.IsNullOrEmpty(word)).Any() == false)
+        {
+            return Enumerable.Empty<NavigationListItem>();
+        }
+
         var results = new List<NavigationListItem>();
         this.SearchCore(this._Root, keywords, results);
+
         return results;
     }
 

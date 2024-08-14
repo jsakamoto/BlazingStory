@@ -6,14 +6,18 @@ using BlazingStory.Types;
 namespace BlazingStory.Internals.Services;
 
 /// <summary>
-/// This class detects types of Stories Razor component (..stories.razor) and its <see cref="StoriesAttribute"/> from assemblies.
+/// This class detects types of Stories Razor component (..stories.razor) and its <see
+/// cref="StoriesAttribute" /> from assemblies.
 /// </summary>
 internal static class StoriesRazorDetector
 {
     /// <summary>
-    /// Gets a type of Stories Razor component (..stories.razor) and its <see cref="StoriesAttribute"/> from assemblies.
+    /// Gets a type of Stories Razor component (..stories.razor) and its <see
+    /// cref="StoriesAttribute" /> from assemblies.
     /// </summary>
-    /// <param name="assemblies">Assemblies to detect types of Stories Razor component (..stories.razor).</param>
+    /// <param name="assemblies">
+    /// Assemblies to detect types of Stories Razor component (..stories.razor).
+    /// </param>
     [UnconditionalSuppressMessage("Trimming", "IL2026")]
     internal static IEnumerable<StoriesRazorDescriptor> Detect(IEnumerable<Assembly>? assemblies)
     {
@@ -28,7 +32,12 @@ internal static class StoriesRazorDetector
         foreach (var type in types)
         {
             var storiesAttribute = type.GetCustomAttribute<StoriesAttribute>();
-            if (storiesAttribute == null) continue;
+
+            if (storiesAttribute == null)
+            {
+                continue;
+            }
+
             yield return (type, storiesAttribute);
         }
     }

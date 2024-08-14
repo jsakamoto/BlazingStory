@@ -14,15 +14,14 @@
 
 @code
 {
-    [CascadingParameter]
-    protected IServiceProvider Services { get; init; } = default!;
-
     [Parameter, EditorRequired]
     public string? SearchText { get; set; }
 
     [Parameter]
     public EventCallback ExitSearchView { get; set; }
 
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
 
     private NavigationService? _NavigationService;
 
@@ -39,10 +38,17 @@
     {
         base.OnParametersSet();
 
-        if (this._NavigationService == null) return;
+        if (this._NavigationService == null)
+        {
+            return;
+        }
 
         var seachKeywords = (this.SearchText ?? "").Split(' ').Select(word => word.Trim()).Where(word => !string.IsNullOrEmpty(word)).ToArray();
-        if (this._SearchKeywords.SequenceEqual(seachKeywords)) return;
+
+        if (this._SearchKeywords.SequenceEqual(seachKeywords))
+        {
+            return;
+        }
 
         this._SearchKeywords = seachKeywords;
         this._Results = this._NavigationService.Search(this._SearchKeywords);
@@ -53,5 +59,4 @@
         this._NavigationService?.NavigateTo(item);
         await this.ExitSearchView.InvokeAsync();
     }
-
 }

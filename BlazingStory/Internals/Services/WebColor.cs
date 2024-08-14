@@ -5,37 +5,17 @@ namespace BlazingStory.Internals.Services;
 
 internal class WebColor
 {
-    internal enum Type
-    {
-        Unknown,
-        Hex,
-        RGBA,
-        HSLA
-    }
-
     internal readonly double R;
-
     internal readonly double G;
-
     internal readonly double B;
-
     internal readonly double H;
-
     internal readonly double S;
-
     internal readonly double L;
-
     internal readonly double A;
-
     internal readonly string AlphaText;
-
     internal readonly string HexOrNameText;
-
     internal readonly string RGBAText;
-
     internal readonly string HSLAText;
-
-    internal string NormalizedHexText => $"#{Num2Hex(this.R)}{Num2Hex(this.G)}{Num2Hex(this.B)}";
 
     private WebColor(double r, double g, double b, double h, double s, double l, double a, string alphaText, string hexOrNameText, string rgbaText, string hslaText)
     {
@@ -52,21 +32,35 @@ internal class WebColor
         this.HSLAText = hslaText;
     }
 
-    private static string Num2Hex(double n) => ((byte)Math.Min(Math.Round(n), 255)).ToString("x2");
+    internal enum Type
+    {
+        Unknown,
+        Hex,
+        RGBA,
+        HSLA
+    }
+
+    internal string NormalizedHexText => $"#{Num2Hex(this.R)}{Num2Hex(this.G)}{Num2Hex(this.B)}";
 
     internal static (WebColor? color, Type type) Parse(string? colorText, string? originalColorText = null)
     {
-        if (colorText == null) return (null, Type.Unknown);
+        if (colorText == null)
+        {
+            return (null, Type.Unknown);
+        }
+
         colorText = colorText.Trim();
         originalColorText = originalColorText?.Trim();
 
         var matchHex = Regex.Match(colorText, @"(^#(?<R1>[0-9a-f]{2})(?<G1>[0-9a-f]{2})(?<B1>[0-9a-f]{2})$)|(^#(?<R2>[0-9a-f])(?<G2>[0-9a-f])(?<B2>[0-9a-f])$)", RegexOptions.IgnoreCase);
+
         if (matchHex.Success)
         {
             static int hex2int(string hex) => int.Parse(hex, NumberStyles.HexNumber);
             var r = hex2int(matchHex.Groups["R1"].Value + matchHex.Groups["R2"].Value + matchHex.Groups["R2"].Value);
             var g = hex2int(matchHex.Groups["G1"].Value + matchHex.Groups["G2"].Value + matchHex.Groups["G2"].Value);
             var b = hex2int(matchHex.Groups["B1"].Value + matchHex.Groups["B2"].Value + matchHex.Groups["B2"].Value);
+
             return (WebColor.FromHex(colorText, r, g, b, originalColorText), Type.Hex);
         }
 
@@ -74,38 +68,50 @@ internal class WebColor
         {
             var aText = m.Groups["A"].Success ? m.Groups["A"].Value : "1";
             var a = double.Parse(aText.TrimEnd('%'));
-            if (aText.EndsWith('%')) a /= 100.0;
+
+            if (aText.EndsWith('%'))
+            {
+                a /= 100.0;
+            }
+
             return (a, aText);
         }
 
         var matchRgba = Regex.Match(colorText, @"^rgba?\((?<R>\d+)[ ,]+(?<G>\d+)[ ,]+(?<B>\d+)([ ,]+(?<A>[\d\.]+%?))?\)", RegexOptions.IgnoreCase);
+
         if (matchRgba.Success)
         {
             var r = double.Parse(matchRgba.Groups["R"].Value);
             var g = double.Parse(matchRgba.Groups["G"].Value);
             var b = double.Parse(matchRgba.Groups["B"].Value);
             var (a, alphaText) = extractAlpha(matchRgba);
+
             return (WebColor.FromRGBA(colorText, r, g, b, a, alphaText, originalColorText), Type.RGBA);
         }
 
         var matchHsla = Regex.Match(colorText, @"^hsla?\((?<H>\d+)[ ,]+(?<S>\d+)%[ ,]+(?<L>\d+)%([ ,]+(?<A>[\d\.]+%?))?\)", RegexOptions.IgnoreCase);
+
         if (matchHsla.Success)
         {
             var h = double.Parse(matchHsla.Groups["H"].Value);
             var s = double.Parse(matchHsla.Groups["S"].Value);
             var l = double.Parse(matchHsla.Groups["L"].Value);
             var (a, alphaText) = extractAlpha(matchHsla);
+
             return (WebColor.FromHSLA(colorText, h, s, l, a, alphaText, originalColorText), Type.HSLA);
         }
 
         return (null, Type.Unknown);
     }
 
+    private static string Num2Hex(double n) => ((byte)Math.Min(Math.Round(n), 255)).ToString("x2");
+
     private static WebColor FromHex(string hexText, double r, double g, double b, string? originalColorText)
     {
         var (h, s, l) = RGBtoHSL(r, g, b);
         var rgbaText = BuildRGBAText(r, g, b, "1");
         var hslaText = BuildHSLAText(h, s, l, "1");
+
         return new WebColor(r, g, b, h, s, l, 1.0, "1", originalColorText ?? hexText, rgbaText, hslaText);
     }
 
@@ -114,6 +120,7 @@ internal class WebColor
         var (h, s, l) = RGBtoHSL(r, g, b);
         var hexOrNameText = originalColorText ?? BuildHexText(r, g, b, a);
         var hslaText = BuildHSLAText(h, s, l, alphaText);
+
         return new WebColor(r, g, b, h, s, l, a, alphaText, hexOrNameText, rgbaText, hslaText);
     }
 
@@ -122,6 +129,7 @@ internal class WebColor
         var (r, g, b) = HSLtoRGB(h, s, l);
         var hexOrNameText = originalColorText ?? BuildHexText(r, g, b, a);
         var rgbaText = BuildRGBAText(r, g, b, alphaText);
+
         return new WebColor(r, g, b, h, s, l, a, alphaText, hexOrNameText, rgbaText, hslaText);
     }
 
@@ -135,6 +143,7 @@ internal class WebColor
     private static string BuildRGBAText(double r, double g, double b, string alphaText)
     {
         static byte num2byte(double n) => ((byte)Math.Min(Math.Round(n), 255));
+
         return $"rgba({num2byte(r)}, {num2byte(g)}, {num2byte(b)}, {alphaText})";
     }
 
@@ -161,6 +170,7 @@ internal class WebColor
 
         var s = Math.Round(delta / (1 - (Math.Abs(max + min - 1))) * 100);
         var l = Math.Round((max + min) / 2 * 100);
+
         return (h, s, l);
     }
 
@@ -175,6 +185,7 @@ internal class WebColor
         if (s == 0)
         {
             var n = toByte(l);
+
             return (n, n, n);
         }
         else
@@ -184,11 +195,31 @@ internal class WebColor
 
             static double hueToRGB(double v1, double v2, double vH)
             {
-                if (vH < 0) vH += 1;
-                if (vH > 1) vH -= 1;
-                if ((6 * vH) < 1) return (v1 + (v2 - v1) * 6 * vH);
-                if ((2 * vH) < 1) return v2;
-                if ((3 * vH) < 2) return (v1 + (v2 - v1) * ((2.0f / 3) - vH) * 6);
+                if (vH < 0)
+                {
+                    vH += 1;
+                }
+
+                if (vH > 1)
+                {
+                    vH -= 1;
+                }
+
+                if ((6 * vH) < 1)
+                {
+                    return (v1 + (v2 - v1) * 6 * vH);
+                }
+
+                if ((2 * vH) < 1)
+                {
+                    return v2;
+                }
+
+                if ((3 * vH) < 2)
+                {
+                    return (v1 + (v2 - v1) * ((2.0f / 3) - vH) * 6);
+                }
+
                 return v1;
             }
 

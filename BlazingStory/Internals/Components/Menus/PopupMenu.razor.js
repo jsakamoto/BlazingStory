@@ -5,5 +5,7 @@ export const subscribeDocumentEvent = (eventType, dotnetObj, methodName, popupMe
         dotnetObj.invokeMethodAsync(methodName);
     };
     document.addEventListener(eventType, evendListener);
-    return ({ dispose: () => document.removeEventListener(eventType, evendListener) });
+    return {
+        dispose: () => document.removeEventListener(eventType, evendListener),
+    };
 };

@@ -1,6 +1,3 @@
-@using System.Reflection;
-@using BlazingStory.Internals.Types;
-
 <header>Blazing Story @VersionInfo.GetFormattedVersionText() - @VersionInfo.GetBuildTimestamp()</header>
 
 <section>
@@ -39,6 +36,7 @@
         var releaseNoteSections = new List<ReleaseNoteSection>();
         var currentVersion = "";
         var currentChangeLogs = new List<string>();
+
         foreach (var line in releaseNotesLines)
         {
             if (line.StartsWith("v."))

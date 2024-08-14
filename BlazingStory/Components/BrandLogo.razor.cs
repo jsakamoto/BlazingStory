@@ -1,8 +1,11 @@
-﻿namespace BlazingStory.Components;
+﻿using Microsoft.AspNetCore.Components;
+
+namespace BlazingStory.Components;
 
 /// <summary>
 /// The default implementation of the brand logo of the Blazing Story app.
 /// </summary>
-public partial class BrandLogo
+/// <seealso cref="Microsoft.AspNetCore.Components.ComponentBase" />
+public partial class BrandLogo : ComponentBase
 {
 }

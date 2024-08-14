@@ -1,6 +1,3 @@
-@using System.Web;
-@inject NavigationManager NavigationManager
-
 <CascadingValue Value="_RouteData">
     @ChildContent
 </CascadingValue>
@@ -9,17 +6,24 @@
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
+    [Inject] private NavigationManager? NavigationManager { get; set; }
+
     private QueryRouteData _RouteData = new(view: "", parameter: "");
 
     protected override void OnInitialized()
     {
-        this.NavigationManager.LocationChanged += NavigationManager_LocationChanged;
-        NavigationManager_LocationChanged(this, new LocationChangedEventArgs(this.NavigationManager.Uri, false));
+        if (this.NavigationManager is not null)
+        {
+            this.NavigationManager.LocationChanged += this.NavigationManager_LocationChanged;
+
+            this.NavigationManager_LocationChanged(this, new LocationChangedEventArgs(this.NavigationManager.Uri, false));
+        }
     }
 
     private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs args)
     {
         var newRouteData = new QueryRouteData(new Uri(args.Location), queryName: "path");
+
         if (this._RouteData != newRouteData)
         {
             this._RouteData = newRouteData;

@@ -8,5 +8,5 @@ internal class BlazingStoryOptions
     /// <summary>
     /// [Preview feature] Gets or sets whether to enable hot reloading. (default: false)
     /// </summary>
-    public bool EnableHotReloading { get; set; }
+    public bool EnableHotReloading { get; set; } = false;
 }

@@ -1,38 +1,43 @@
 @inherits ParameterControllerBase
-@{
+
+@if (this.Parameter != null)
+{
     var nullable = this.Parameter.TypeStructure.IsNullable;
-}
-@if (this.Value is Unknown || (!nullable && this.Value is null))
-{
-    <SquareButton Text="Set number" OnClick="ChangeToNonNull" />
-}
-else if (nullable)
-{
-    <div class="number-parameter-controller">
 
-        <NullInputRadio Name="@(this.Key + "-value-type")" Checked="_NoValue" OnChange="() => this.OnInputAsync(null)" />
+    @if (this.Value is Unknown || (!nullable && this.Value is null))
+    {
+        <SquareButton Text="Set number" OnClick="ChangeToNonNull" />
+    }
+    else if (nullable)
+    {
+        var isNull = this.Value == null;
 
-        <label class="input-value">
-            <input type="radio" name="@(this.Key + "-value-type")" checked="@(!_NoValue)" @onchange="ChangeToNonNull" />
-            <NumberInput Value="@_NumText"
-                         PlaceHolder="Edit number..."
-                         AllowDecimalPoint="_AllowDecimalPoint"
-                         Required="!_NoValue"
-                         InitialForcus="_InitialFocus"
-                         OnInput="OnInputNumValue"
-                         OnFocus="ChangeToNonNull" />
-        </label>
+        <div class="number-parameter-controller">
 
-    </div>
-}
-else
-{
-    <NumberInput Value="@_NumText"
-                 PlaceHolder="Edit number..."
-                 AllowDecimalPoint="_AllowDecimalPoint"
-                 Required
-                 InitialForcus="_InitialFocus"
-                 OnInput="OnInputNumValue" />
+            <NullInputRadio Name="@(this.Key + "-value-type")" Checked="_NoValue" OnChange="() => OnInputAsync(null)" />
+
+            <label class="input-value">
+                <input type="radio" name="@(this.Key + "-value-type")" checked="@(!_NoValue)" @onchange="ChangeToNonNull" />
+                <NumberInput Value="@_NumText"
+                             PlaceHolder="Edit number..."
+                             AllowDecimalPoint="_AllowDecimalPoint"
+                             Required="!_NoValue"
+                             InitialForcus="_InitialFocus"
+                             OnInput="OnInputNumValue"
+                             OnFocus="ChangeToNonNull" />
+            </label>
+
+        </div>
+    }
+    else
+    {
+        <NumberInput Value="@_NumText"
+                     PlaceHolder="Edit number..."
+                     AllowDecimalPoint="_AllowDecimalPoint"
+                     Required
+                     InitialForcus="_InitialFocus"
+                     OnInput="OnInputNumValue" />
+    }
 }
 
 @code
@@ -45,24 +50,37 @@ else
 
     private bool _AllowDecimalPoint;
 
-    private bool TryConvertType(object? value, out object? convertedValue)
-    {
-        return TypeUtility.TryConvertType(this.Parameter.TypeStructure, value?.ToString() ?? "", out convertedValue);
-    }
-
     protected override void OnParametersSet()
     {
-        base.OnParametersSet();
-        this._NumText = TryConvertType(this.Value, out var n) ? n?.ToString() : this._NumText;
-        this._AllowDecimalPoint = TypeUtility.IsDecimalPointType(this.Parameter.TypeStructure.PrimaryType);
-        this._NoValue = this.Value is null || this.Value is Unknown;
-        if (this._InitialFocus && this._NoValue) this._InitialFocus = false;
+        if (this.Parameter != null)
+        {
+            base.OnParametersSet();
+            this._NumText = this.TryConvertType(this.Value, out var n) ? n?.ToString() : this._NumText;
+            this._AllowDecimalPoint = TypeUtility.IsDecimalPointType(this.Parameter.TypeStructure.PrimaryType);
+            this._NoValue = this.Value is null || this.Value is Unknown;
+            if (this._InitialFocus && this._NoValue) this._InitialFocus = false;
+        }
+    }
+
+    private bool TryConvertType(object? value, out object? convertedValue)
+    {
+        if (this.Parameter == null)
+        {
+            convertedValue = null;
+            return false;
+        }
+
+        return this.Parameter.TypeStructure.TryConvertType(value?.ToString() ?? "", out convertedValue);
     }
 
     private async Task OnInputNumValue(ChangeEventArgs arg)
     {
         this._NumText = arg.Value?.ToString();
-        if (TryConvertType(arg.Value, out var n)) await this.OnInputAsync(n);
+
+        if (this.TryConvertType(arg.Value, out var n))
+        {
+            await this.OnInputAsync(n);
+        }
     }
 
     private async Task ChangeToNonNull()

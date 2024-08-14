@@ -57,12 +57,7 @@
 @code
 {
     [CascadingParameter]
-    public required AddonsStore AddonsStore { get; init; }
-
-    [CascadingParameter]
-    internal IServiceProvider Services { get; init; } = default!;
-
-    private AddonToobarContents? _ToobarContentsRef;
+    public AddonsStore AddonsStore { get; init; } = default!;
 
     public AddonType AddonType { get; } = AddonType.CanvasPage;
 
@@ -72,7 +67,13 @@
 
     public IReadOnlyDictionary<string, object?> FrameArguments { get; } = new Dictionary<string, object?>();
 
-    private HelperScript HelperScript = default!;
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
+    private bool Active => this._CurrentState.Size != SizeType.None;
+    private string DisplayName => this.SizeTypeToDetail[this._CurrentState.Size].DisplayName;
+
+    private const string StorageKey = "Addons.ChangeSize.State";
 
     private readonly IReadOnlyDictionary<SizeType, (string DisplayName, int ShrotSide, int LongSide)> SizeTypeToDetail = new Dictionary<SizeType, (string, int, int)>
         {
@@ -82,30 +83,9 @@
             [SizeType.Tablet] = ("Tablet", 834, 1112),
         };
 
-    private class SizeState
-    {
-        public SizeType Size = SizeType.None;
-        public Orientation Orientation = Orientation.Portrait;
-    }
-
-    private const string StorageKey = "Addons.ChangeSize.State";
-
+    private AddonToobarContents? _ToobarContentsRef;
+    private HelperScript HelperScript = default!;
     private SizeState _CurrentState = new();
-
-    private bool Active => this._CurrentState.Size != SizeType.None;
-
-    private string DisplayName => this.SizeTypeToDetail[this._CurrentState.Size].DisplayName;
-
-
-    private (int Size1, int Size2) GetSizes()
-    {
-        var sizeDetail = this.SizeTypeToDetail[this._CurrentState.Size];
-        var orientation = this._CurrentState.Orientation;
-        return (
-            Size1: orientation == Orientation.Portrait ? sizeDetail.ShrotSide : sizeDetail.LongSide,
-            Size2: orientation == Orientation.Portrait ? sizeDetail.LongSide : sizeDetail.ShrotSide
-        );
-    }
 
     protected override void OnInitialized()
     {
@@ -115,13 +95,32 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender) return;
+        if (!firstRender)
+        {
+            return;
+        }
+
         this._CurrentState = await this.HelperScript.LoadObjectFromLocalStorageAsync(StorageKey, this._CurrentState);
+    }
+
+    private (int Size1, int Size2) GetSizes()
+    {
+        var sizeDetail = this.SizeTypeToDetail[this._CurrentState.Size];
+        var orientation = this._CurrentState.Orientation;
+
+        return (
+            Size1: orientation == Orientation.Portrait ? sizeDetail.ShrotSide : sizeDetail.LongSide,
+            Size2: orientation == Orientation.Portrait ? sizeDetail.LongSide : sizeDetail.ShrotSide
+        );
     }
 
     private async Task OnClickSize(SizeType size)
     {
-        if (size == SizeType.None) await Task.Delay(10);
+        if (size == SizeType.None)
+        {
+            await Task.Delay(10);
+        }
+
         this._CurrentState.Size = size;
         await this.UpdateSize();
     }
@@ -136,5 +135,11 @@
     {
         await this.HelperScript.SaveObjectToLocalStorageAsync(StorageKey, this._CurrentState);
         this.AddonsStore.FrameArgumentsHasChanged();
+    }
+
+    private class SizeState
+    {
+        public SizeType Size = SizeType.None;
+        public Orientation Orientation = Orientation.Portrait;
     }
 }

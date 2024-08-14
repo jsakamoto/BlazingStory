@@ -16,4 +16,3 @@ internal record DotNetSDKVersion(string Version, string RollForward, bool AllowP
         return JsonSerializer.Serialize(new { SDK = this }, options);
     }
 }
-

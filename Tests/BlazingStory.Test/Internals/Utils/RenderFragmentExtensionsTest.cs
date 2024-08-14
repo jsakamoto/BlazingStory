@@ -134,17 +134,25 @@ public class RenderFragmentExtensionsTest
     public void ToString_For_RenderFragment_With_Dynamic_Attributes_Test()
     {
         // Given
-        var attributes = new Dictionary<string, object?>
+        var attributes = new List<KeyValuePair<string, object>>
         {
-            { "class", "dynamic-class" },
-            { "style", "color: red;" }
+            new("class", "dynamic-class"),
+            new("style", "color: red;")
         };
 
         RenderFragment renderFragment = (builder) =>
         {
             builder.OpenElement(0, "span");
-            builder.AddMultipleAttributes(1, attributes);
-            builder.AddContent(2, "Dynamic content");
+
+            if (attributes != null)
+            {
+                builder.AddMultipleAttributes(1, attributes);
+                builder.AddContent(2, "Dynamic content");
+            }
+            else
+            {
+                builder.AddContent(1, "Default content");
+            }
             builder.CloseElement();
         };
 

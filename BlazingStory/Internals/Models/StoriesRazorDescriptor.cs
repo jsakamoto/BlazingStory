@@ -5,7 +5,6 @@ namespace BlazingStory.Internals.Models;
 internal class StoriesRazorDescriptor
 {
     internal readonly Type TypeOfStoriesRazor;
-
     internal readonly StoriesAttribute StoriesAttribute;
 
     public StoriesRazorDescriptor(Type typeOfStoriesRazor, StoriesAttribute storiesAttribute)

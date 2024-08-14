@@ -1,6 +1,6 @@
-@using System.Web;
+@using System.Web
+
 @implements IDisposable
-@inject NavigationManager NavigationManager
 
 <CascadingValue Value="_RouteData">
     @ChildContent
@@ -10,12 +10,25 @@
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
+    [Inject] private NavigationManager? NavigationManager { get; set; }
+
     private QueryRouteData _RouteData = new(view: "", parameter: "");
+
+    public void Dispose()
+    {
+        if (this.NavigationManager is not null)
+        {
+            this.NavigationManager.LocationChanged -= this.NavigationManager_LocationChanged;
+        }
+    }
 
     protected override void OnInitialized()
     {
-        this.NavigationManager.LocationChanged += NavigationManager_LocationChanged;
-        NavigationManager_LocationChanged(this, new LocationChangedEventArgs(this.NavigationManager.Uri, false));
+        if (this.NavigationManager is not null)
+        {
+            this.NavigationManager.LocationChanged += this.NavigationManager_LocationChanged;
+            this.NavigationManager_LocationChanged(this, new LocationChangedEventArgs(this.NavigationManager.Uri, false));
+        }
     }
 
     private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs args)
@@ -25,15 +38,11 @@
         var id = queryStrings["id"] ?? "";
 
         var newRouteData = new QueryRouteData(view: viewMode, parameter: id);
+
         if (this._RouteData != newRouteData)
         {
             this._RouteData = newRouteData;
             this.StateHasChanged();
         }
-    }
-
-    public void Dispose()
-    {
-        this.NavigationManager.LocationChanged -= NavigationManager_LocationChanged;
     }
 }

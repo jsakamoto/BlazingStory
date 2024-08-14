@@ -6,26 +6,15 @@ public class NavigationHistory
 {
     private const int MAX_HISTORY_ITEMS = 8;
 
+    private const string StorageKey = "SideBar.NavigationHistory";
     private readonly HelperScript _HelperScript;
 
     private LinkedList<NavigationListItem> _HistoryItems = new();
-
-    private const string StorageKey = "SideBar.NavigationHistory";
-
     private bool _Initialized = false;
 
     internal NavigationHistory(HelperScript helperScript)
     {
         this._HelperScript = helperScript;
-    }
-
-    private async ValueTask EnsureInitializeAsync()
-    {
-        if (!this._Initialized)
-        {
-            this._Initialized = true;
-            this._HistoryItems = await this._HelperScript.LoadObjectFromLocalStorageAsync(StorageKey, new LinkedList<NavigationListItem>());
-        }
     }
 
     internal async ValueTask<IEnumerable<NavigationListItem>> GetItemsAsync()
@@ -36,10 +25,17 @@ public class NavigationHistory
 
     internal async ValueTask AddAsync(NavigationTreeItem root, NavigationTreeItem active)
     {
-        if (active.Type is not NavigationItemType.Docs and not NavigationItemType.Story) return;
+        if (active.Type is not NavigationItemType.Docs and not NavigationItemType.Story)
+        {
+            return;
+        }
 
         var componentItem = root.FindParentOf(active);
-        if (componentItem == null) return;
+
+        if (componentItem == null)
+        {
+            return;
+        }
 
         await this.EnsureInitializeAsync();
         var nextId = Enumerable.Range(0, int.MaxValue).Where(n => this._HistoryItems.All(item => item.Id != n)).First();
@@ -65,9 +61,17 @@ public class NavigationHistory
         };
 
         var latestHistoryItem = this._HistoryItems.FirstOrDefault();
-        if (historyItem.Equals(latestHistoryItem)) return;
 
-        while (this._HistoryItems.Count >= MAX_HISTORY_ITEMS) this._HistoryItems.RemoveLast();
+        if (historyItem.Equals(latestHistoryItem))
+        {
+            return;
+        }
+
+        while (this._HistoryItems.Count >= MAX_HISTORY_ITEMS)
+        {
+            this._HistoryItems.RemoveLast();
+        }
+
         this._HistoryItems.AddFirst(historyItem);
 
         await this._HelperScript.SaveObjectToLocalStorageAsync(StorageKey, this._HistoryItems);
@@ -78,5 +82,14 @@ public class NavigationHistory
         await this.EnsureInitializeAsync();
         this._HistoryItems.Clear();
         await this._HelperScript.SaveObjectToLocalStorageAsync(StorageKey, this._HistoryItems);
+    }
+
+    private async ValueTask EnsureInitializeAsync()
+    {
+        if (!this._Initialized)
+        {
+            this._Initialized = true;
+            this._HistoryItems = await this._HelperScript.LoadObjectFromLocalStorageAsync(StorageKey, new LinkedList<NavigationListItem>());
+        }
     }
 }

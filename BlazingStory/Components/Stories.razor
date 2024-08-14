@@ -1,17 +1,37 @@
-@using System.Diagnostics.CodeAnalysis;
-@typeparam TComponent where TComponent: notnull
+@typeparam TComponent where TComponent : notnull
 @attribute [CascadingTypeParameter(nameof(TComponent))]
 
 <div class="display:none;">
-    <CascadingValue Value="this._StoryContainer">
-        <CascadingValue Value="this._ComponentParameters">
-            @ChildContent
-        </CascadingValue>
+    <CascadingValue Value="this">
+        @ChildContent
     </CascadingValue>
 </div>
 
 @code
 {
+    /// <summary>
+    /// A type of the layout component to use when displaying these stories.
+    /// </summary>
+    [Parameter]
+    public Type? Layout { get; set; }
+
+    /// <summary>
+    /// This is the content of the story. It can be a single story or multiple stories.
+    /// </summary>
+    /// <value>
+    /// The content of the child.
+    /// </value>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to show all properties for all stories. If set to
+    /// true, all properties will be shown for all stories. If set to false, only properties that
+    /// are different from the default values will be shown.
+    /// </summary>
+    [Parameter]
+    public bool ShowAllPropertiesForAllStories { get; set; } = true;
+
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
 
@@ -21,25 +41,21 @@
     [CascadingParameter]
     internal StoriesRazorDescriptor StoriesRazorDescriptor { get; init; } = default!;
 
-    /// <summary>
-    /// A type of the layout component to use when displaying these stories.
-    /// </summary>
-    [Parameter]
-    public Type? Layout { get; set; }
+    [CascadingParameter]
+    internal IEnumerable<ComponentParameter> ComponentParameters { get; set; } = Enumerable.Empty<ComponentParameter>();
 
-    [Parameter]
-    public RenderFragment? ChildContent { get; set; }
+    [CascadingParameter]
+    internal StoryContainer? StoryContainer { get; set; }
 
-    private StoryContainer? _StoryContainer;
-
-    private IEnumerable<ComponentParameter> _ComponentParameters = Enumerable.Empty<ComponentParameter>();
+    [CascadingParameter]
+    internal List<ArgProp> ArgProps { get; set; } = new();
 
     protected override void OnInitialized()
     {
-        this._StoryContainer = new StoryContainer(typeof(TComponent), this.Layout, this.StoriesRazorDescriptor, this.Services);
-        this.StoriesStore.RegisterStoryContainer(this._StoryContainer);
+        this.StoryContainer = new StoryContainer(typeof(TComponent), this.Layout, this.StoriesRazorDescriptor, this.Services);
+        this.StoriesStore.RegisterStoryContainer(this.StoryContainer);
 
         var xmlDocComment = this.Services.GetRequiredService<IXmlDocComment>();
-        this._ComponentParameters = ParameterExtractor.GetParametersFromComponentType(typeof(TComponent), xmlDocComment);
+        this.ComponentParameters = this.ShowAllPropertiesForAllStories ? ParameterExtractor.GetParametersFromComponentType(typeof(TComponent), xmlDocComment) : Enumerable.Empty<ComponentParameter>();
     }
 }

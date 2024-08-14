@@ -10,17 +10,14 @@ namespace BlazingStory.Internals.Models;
 /// </summary>
 internal class StoryContainer
 {
+    internal MarkupString? Summary { get; private set; }
+    internal MarkupString? Remarks { get; private set; }
     internal readonly Type TargetComponentType;
-
     internal readonly string Title;
-
-    internal MarkupString Summary { get; private set; } = default;
-
     internal readonly List<Story> Stories = new();
 
     /// <summary>
-    /// Gets a navigation path string for this story container (component).<br/>
-    /// (ex. "examples-ui-button")
+    /// Gets a navigation path string for this story container (component). <br /> (ex. "examples-ui-button")
     /// </summary>
     internal readonly string NavigationPath;
 
@@ -30,16 +27,24 @@ internal class StoryContainer
     internal readonly Type? Layout;
 
     private readonly StoriesRazorDescriptor _StoriesRazorDescriptor;
-
     private readonly IXmlDocComment _XmlDocComment;
 
     /// <summary>
-    /// Initialize a new instance of <see cref="StoryContainer"/>.
+    /// Initialize a new instance of <see cref="StoryContainer" />.
     /// </summary>
-    /// <param name="componentType">A type of target UI component in this stories</param>
-    /// <param name="layout">A type of the layout component to use when displaying these stories.</param>
-    /// <param name="storiesRazorDescriptor">A descriptor of a type of Stories Razor component (..stories.razor) and its <see cref="StoriesAttribute"/>.</param>
-    /// <param name="services">A service provider for getting a <see cref="IXmlDocComment"/> service.</param>
+    /// <param name="componentType">
+    /// A type of target UI component in this stories
+    /// </param>
+    /// <param name="layout">
+    /// A type of the layout component to use when displaying these stories.
+    /// </param>
+    /// <param name="storiesRazorDescriptor">
+    /// A descriptor of a type of Stories Razor component (..stories.razor) and its <see
+    /// cref="StoriesAttribute" />.
+    /// </param>
+    /// <param name="services">
+    /// A service provider for getting a <see cref="IXmlDocComment" /> service.
+    /// </param>
     public StoryContainer(Type componentType, Type? layout, StoriesRazorDescriptor storiesRazorDescriptor, IServiceProvider services)
     {
         this._StoriesRazorDescriptor = storiesRazorDescriptor ?? throw new ArgumentNullException(nameof(storiesRazorDescriptor));
@@ -50,10 +55,11 @@ internal class StoryContainer
         this._XmlDocComment = services.GetRequiredService<IXmlDocComment>();
     }
 
-    internal void RegisterStory(string name, StoryContext storyContext, Type? storiesLayout, Type? storyLayout, RenderFragment<StoryContext> renderFragment)
+    internal void RegisterStory(string name, StoryContext storyContext, Type? storiesLayout, Type? storyLayout, RenderFragment<StoryContext> renderFragment, string? description)
     {
-        var newStory = new Story(this._StoriesRazorDescriptor, this.TargetComponentType, name, storyContext, storiesLayout, storyLayout, renderFragment);
+        var newStory = new Story(this._StoriesRazorDescriptor, this.TargetComponentType, name, storyContext, storiesLayout, storyLayout, renderFragment, description);
         var index = this.Stories.FindIndex(story => story.Name == name);
+
         if (index == -1)
         {
             this.Stories.Add(newStory);
@@ -61,7 +67,8 @@ internal class StoryContainer
         else
         {
             var story = this.Stories[index];
-            if (Object.ReferenceEquals(story.RenderFragment, renderFragment) == false)
+
+            if (Object.ReferenceEquals(story.RenderFragmentStoryContext, renderFragment) == false)
             {
                 this.Stories[index] = newStory;
             }
@@ -73,8 +80,24 @@ internal class StoryContainer
     /// </summary>
     internal async ValueTask UpdateSummaryFromXmlDocCommentAsync()
     {
-        if (this.TargetComponentType == null) return;
+        if (this.TargetComponentType == null)
+        {
+            return;
+        }
+
         this.Summary = await this._XmlDocComment.GetSummaryOfTypeAsync(this.TargetComponentType);
     }
 
+    /// <summary>
+    /// Update remarks property text of this parameter by reading a XML document comment file.
+    /// </summary>
+    internal async ValueTask UpdateRemarksFromXmlDocCommentAsync()
+    {
+        if (this.TargetComponentType == null)
+        {
+            return;
+        }
+
+        this.Remarks = await this._XmlDocComment.GetRemarksOfTypeAsync(this.TargetComponentType);
+    }
 }

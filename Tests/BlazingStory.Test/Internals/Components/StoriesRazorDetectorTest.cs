@@ -45,4 +45,28 @@ internal class StoriesRazorDetectorTest
         // Then
         storiesStore.StoryContainers.Count().Is(7);
     }
+
+    [Test]
+    public async Task Detect_Test_ThrowException()
+    {
+        // Given
+        await using var host = new TestHost();
+        var storiesStore = new StoriesStore();
+        using var ctx = new Bunit.TestContext();
+        ctx.RenderTree.Add<CascadingValue<IServiceProvider>>(p => p.Add(p => p.Value, host.Services));
+
+        // When
+        try
+        {
+            var cut = ctx.RenderComponent<BlazingStory.Internals.Components.StoriesRazorDetector>(builder => builder
+            .Add(_ => _.Assemblies, [
+                typeof(BlazingStoryApp4.App).Assembly,
+            ])
+            .Add(_ => _.StoriesStore, storiesStore));
+        }
+        catch (Exception ex)
+        {
+            ex.Message.Is((new InvalidOperationException("The Stories cascading parameter is required.")).Message);
+        }
+    }
 }

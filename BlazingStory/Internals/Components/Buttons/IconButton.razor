@@ -12,7 +12,7 @@ else
 {
     <a class="icon-button @GetCssClass()" title="@this.GetTitleText()" @onclick="this.ClickHandler" href="@this.Href" target="@this.Target">
         <SvgIcon Type="Icon" />
-        @if (!string.IsNullOrEmpty (this.Text))
+        @if (!string.IsNullOrEmpty(this.Text))
         {
             <span class="text">@this.Text</span>
         }
@@ -20,33 +20,93 @@ else
 }
 
 @code {
+    /// <summary>
+    /// Gets or sets the icon.
+    /// </summary>
+    /// <value>
+    /// The icon.
+    /// </value>
     [Parameter]
     public SvgIconType Icon { get; set; }
 
+    /// <summary>
+    /// Gets or sets the text.
+    /// </summary>
+    /// <value>
+    /// The text.
+    /// </value>
     [Parameter]
     public string? Text { get; set; }
 
+    /// <summary>
+    /// Gets or sets the on click.
+    /// </summary>
+    /// <value>
+    /// The on click.
+    /// </value>
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+    /// <summary>
+    /// Gets or sets the title.
+    /// </summary>
+    /// <value>
+    /// The title.
+    /// </value>
     [Parameter]
     public string? Title { get; set; }
 
+    /// <summary>
+    /// Gets or sets the class.
+    /// </summary>
+    /// <value>
+    /// The class.
+    /// </value>
     [Parameter]
     public string? Class { get; set; }
 
+    /// <summary>
+    /// Gets or sets the command.
+    /// </summary>
+    /// <value>
+    /// The command.
+    /// </value>
     [Parameter]
     public Command? Command { get; set; }
 
+    /// <summary>
+    /// Gets or sets the href.
+    /// </summary>
+    /// <value>
+    /// The href.
+    /// </value>
     [Parameter]
     public string? Href { get; set; }
 
+    /// <summary>
+    /// Gets or sets the target.
+    /// </summary>
+    /// <value>
+    /// The target.
+    /// </value>
     [Parameter]
     public string? Target { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether [flag style].
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if [flag style]; otherwise, <c>false</c>.
+    /// </value>
     [Parameter]
     public bool FlagStyle { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether this <see cref="IconButton" /> is active.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if active; otherwise, <c>false</c>.
+    /// </value>
     [Parameter]
     public bool Active { get; set; }
 

@@ -11,7 +11,11 @@ public class CanvasPageContext
 
     public T GetRequiredItem<T>()
     {
-        if (!this._Items.TryGetValue(typeof(T), out var item)) throw new InvalidOperationException();
+        if (!this._Items.TryGetValue(typeof(T), out var item))
+        {
+            throw new InvalidOperationException();
+        }
+
         return (T)item!;
     }
 }

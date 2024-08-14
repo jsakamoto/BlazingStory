@@ -2,4 +2,12 @@
     header {
         color: var(--bs-sidebar-header-title-color);
     }
+
+    img {
+        max-width: 100%;
+    }
+
+    pre {
+        text-wrap: wrap;
+    }
 }

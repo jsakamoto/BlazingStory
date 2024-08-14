@@ -1,3 +1,11 @@
+v.1.0.0-preview.42
+- Improve: Added support for the text type to include a dropdown list of predefined values.
+- Improve: Added the option to apply theming to the BlazingStoryApp component.
+- Improve: Added the option to display either all properties of a component or only those used in Args.
+- Improve: Introduced the ability to add descriptions to stories.
+- Improve: If class has remarks, they will be displayed in the docs.
+- Fix: Resolved an issue where publishing and using the app in other applications like Supernova caused parameters to be added to the URL. These parameters are used in the real Storybook.js but not in BlazingStory.
+
 v.1.0.0-preview.41
 - Improve: Enabled the full usage of RenderFragment (note: this is not fully supported with EditForm and/or InputBase).
 

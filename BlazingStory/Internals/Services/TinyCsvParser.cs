@@ -13,11 +13,15 @@ internal class TinyCsvParser
     {
         foreach (var line in lines)
         {
-            if (string.IsNullOrEmpty(line.Trim())) continue;
+            if (string.IsNullOrEmpty(line.Trim()))
+            {
+                continue;
+            }
 
             var state = State.Default;
             var colValues = new List<string>();
             var text = new List<char>();
+
             foreach (var c in line.Append(','))
             {
                 switch (state)
@@ -26,11 +30,13 @@ internal class TinyCsvParser
                         if (c == '"') state = State.OutQuote;
                         else text.Add(c);
                         break;
+
                     case State.OutQuote:
                         if (c == '"') { state = State.InQuote; text.Add(c); }
                         else if (c == ',') { state = State.Default; colValues.Add(new string(text.ToArray())); text.Clear(); }
                         else throw new FormatException($"Expected ',', but was '{c}'.");
                         break;
+
                     default:
                         if (c == '"') state = State.InQuote;
                         else if (c == ',') { colValues.Add(new string(text.ToArray())); text.Clear(); }
@@ -38,6 +44,7 @@ internal class TinyCsvParser
                         break;
                 }
             }
+
             yield return colValues;
         }
     }

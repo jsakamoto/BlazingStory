@@ -1,0 +1,7 @@
+﻿.frame {
+    --color: darkred;
+}
+
+    .frame::after {
+        content: '<BlazingStoryApp DefaultLayout="...">';
+    }

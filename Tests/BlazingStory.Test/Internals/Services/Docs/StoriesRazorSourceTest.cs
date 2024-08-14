@@ -63,7 +63,7 @@ internal class StoriesRazorSourceTest
         await story.Context.AddOrUpdateArgumentAsync(nameof(Button.Bold), true);
         await story.Context.AddOrUpdateArgumentAsync(nameof(Button.Color), ButtonColor.Default);
 
-        // When 
+        // When
         var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
 
         // Then
@@ -85,7 +85,7 @@ internal class StoriesRazorSourceTest
         await story.Context.AddOrUpdateArgumentAsync(nameof(Button.Text), "Hello, World");
         await story.Context.AddOrUpdateArgumentAsync(nameof(Button.Bold), false);
 
-        // When 
+        // When
         var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
 
         // Then
@@ -104,7 +104,7 @@ internal class StoriesRazorSourceTest
         var sourceText = "<Button Text=\"One+One=Two\" @attributes=\"context.Args\"></Button>";
         var story = TestHelper.CreateStory<Button>();
 
-        // When 
+        // When
         var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
 
         // Then
@@ -120,7 +120,7 @@ internal class StoriesRazorSourceTest
         await story.Context.AddOrUpdateArgumentAsync(nameof(Rating.Rate), 3);
         await story.Context.AddOrUpdateArgumentAsync(nameof(Rating.Color), "gold");
 
-        // When 
+        // When
         var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
 
         // Then
@@ -139,7 +139,7 @@ internal class StoriesRazorSourceTest
         await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.Number1), 123);
         await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.ChildContent), "Mazie errata suitor");
 
-        // When 
+        // When
         var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
 
         // Then
@@ -165,7 +165,7 @@ internal class StoriesRazorSourceTest
         await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.ChildContent), "Sed cilia invading");
         await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.Template1), "Labore dolor stet sed");
 
-        // When 
+        // When
         var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
 
         // Then
@@ -196,7 +196,7 @@ internal class StoriesRazorSourceTest
         await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.ChildContent), "Vero aliquot dolor");
         await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.Template1), "Kasid nullar lorem junto");
 
-        // When 
+        // When
         var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
 
         // Then
@@ -225,7 +225,7 @@ internal class StoriesRazorSourceTest
         await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.ChildContent), "Kasdan sed et");
         await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.Template1), "Diam rivière magna");
 
-        // When 
+        // When
         var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
 
         // Then
@@ -245,7 +245,7 @@ internal class StoriesRazorSourceTest
         var story = TestHelper.CreateStory<SampleComponent>();
         await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.Template1), "Sit sed no");
 
-        // When 
+        // When
         var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
 
         // Then
@@ -265,7 +265,7 @@ internal class StoriesRazorSourceTest
         var story = TestHelper.CreateStory<SampleComponent>();
         await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.Template1), "Ea et herderite");
 
-        // When 
+        // When
         var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
 
         // Then
@@ -282,7 +282,7 @@ internal class StoriesRazorSourceTest
         var story = TestHelper.CreateStory<SampleGenericComponent<string>>();
         await story.Context.AddOrUpdateArgumentAsync(nameof(SampleGenericComponent<string>.ItemTemplate), "Ipsum tempol taction");
 
-        // When 
+        // When
         var codeText = StoriesRazorSource.UpdateSourceTextWithArgument(story, sourceText);
 
         // Then

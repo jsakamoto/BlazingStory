@@ -1,5 +1,3 @@
-@using Microsoft.AspNetCore.Components
-
 <label class="text-area-container">
     <textarea class="bs-basic-inputs" placeholder="@this.PlaceHolder" @oninput="OnTextAreaInput" @onchange="OnTextAreaChange" value="@(this.Value ?? "")"></textarea>
     <div class="bs-basic-inputs text-area-shadow">@((this._Value ?? "") + " ")</div>

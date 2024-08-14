@@ -36,11 +36,8 @@
 
 @code
 {
-    [CascadingParameter]
-    internal IServiceProvider Services { get; init; } = default!;
-
     [Parameter, EditorRequired]
-    public required Story Story { get; set; }
+    public Story? Story { get; set; }
 
     [Parameter]
     public bool EnableZoom { get; set; }
@@ -48,22 +45,34 @@
     [Parameter]
     public IReadOnlyDictionary<string, object?>? Globals { get; set; }
 
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
     private PreviewFrame? _PreviewFrame;
 
     private bool _ShowCode = false;
 
     private async void OnClickZoomIn()
     {
-        if (this._PreviewFrame != null) await this._PreviewFrame.ZoomInAsync();
+        if (this._PreviewFrame != null)
+        {
+            await this._PreviewFrame.ZoomInAsync();
+        }
     }
 
     private async void OnClickZoomOut()
     {
-        if (this._PreviewFrame != null) await this._PreviewFrame.ZoomOutAsync();
+        if (this._PreviewFrame != null)
+        {
+            await this._PreviewFrame.ZoomOutAsync();
+        }
     }
 
     private async void OnClickResetZoom()
     {
-        if (this._PreviewFrame != null) await this._PreviewFrame.ResetZoomAsync();
+        if (this._PreviewFrame != null)
+        {
+            await this._PreviewFrame.ResetZoomAsync();
+        }
     }
 }

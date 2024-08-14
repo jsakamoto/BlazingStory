@@ -1,30 +1,20 @@
-﻿@using System.Diagnostics.CodeAnalysis;
-@typeparam TComponent where TComponent: notnull
+﻿@typeparam TComponent where TComponent : notnull
 @attribute [CascadingTypeParameter(nameof(TComponent))]
 
 <div class="display:none;">
-    <CascadingValue Value="this._StoryContext">
+    <CascadingValue Value="this">
         @Arguments
     </CascadingValue>
 </div>
 
 @code
 {
-    [CascadingParameter]
-    internal IServiceProvider Services { get; init; } = default!;
-
-    [CascadingParameter]
-    internal StoriesStore StoriesStore { get; init; } = default!;
-
-    [CascadingParameter]
-    internal StoryContainer? StoryContainer { get; set; }
-
-    [CascadingParameter]
-    internal StoriesRazorDescriptor StoriesRazorDescriptor { get; init; } = default!;
-
-    [CascadingParameter]
-    internal IEnumerable<ComponentParameter>? ComponentParameters { get; set; }
-
+    /// <summary>
+    /// The name of the story that will be shown in the sidebar navigation tree.
+    /// </summary>
+    /// <value>
+    /// The name.
+    /// </value>
     [Parameter, EditorRequired]
     public string Name { get; set; } = "";
 
@@ -34,37 +24,103 @@
     [Parameter]
     public Type? Layout { get; set; }
 
+    /// <summary>
+    /// The arguments are the parameters that will be passed to the component when rendering the story.
+    /// </summary>
+    /// <value>
+    /// The arguments.
+    /// </value>
     [Parameter]
     public RenderFragment? Arguments { get; set; }
 
+    /// <summary>
+    /// The template is the content of the story.
+    /// </summary>
+    /// <value>
+    /// The template.
+    /// </value>
     [Parameter, EditorRequired]
     public RenderFragment<StoryContext>? Template { get; set; }
 
-    private StoryContext? _StoryContext;
+    /// <summary>
+    /// Show all properties for this story. If set to true, all properties will be shown for this
+    /// story. If set to false, only properties that are different from the default values will be shown.
+    /// </summary>
+    [Parameter]
+    public bool ShowAllProperties { get; set; } = false;
+
+    /// <summary>
+    /// The description of the story.
+    /// </summary>
+    [Parameter]
+    public string? Description { get; set; }
+
+    [CascadingParameter]
+    internal Stories<TComponent>? Stories { get; set; }
+
+    internal StoryContext? StoryContext;
 
     protected override void OnInitialized()
     {
-        if (this.Template == null) throw new InvalidOperationException($"The Template parameter is required.");
-
-        var xmlDocComment = this.Services.GetRequiredService<IXmlDocComment>();
-        this._StoryContext = new(this.ComponentParameters ?? ParameterExtractor.GetParametersFromComponentType(typeof(TComponent), xmlDocComment));
-
-        if (this.StoryContainer == null)
+        if (this.Template == null)
         {
-            this.StoryContainer = new StoryContainer(typeof(TComponent), null, this.StoriesRazorDescriptor, this.Services);
-            this.StoriesStore.RegisterStoryContainer(this.StoryContainer);
+            throw new InvalidOperationException($"The Template parameter is required.");
         }
 
-        this.StoryContainer.RegisterStory(this.Name, this._StoryContext, this.StoryContainer.Layout, this.Layout, this.Template);
+        if (this.Stories == null)
+        {
+            throw new InvalidOperationException($"The Stories cascading parameter is required.");
+        }
+
+        var xmlDocComment = this.Stories.Services.GetRequiredService<IXmlDocComment>();
+
+        if (this.Stories.ShowAllPropertiesForAllStories || this.ShowAllProperties)
+        {
+            if (this.Stories.ComponentParameters is null || !this.Stories.ComponentParameters.Any())
+            {
+                this.Stories.ComponentParameters = ParameterExtractor.GetParametersFromComponentType(typeof(TComponent), xmlDocComment);
+            }
+
+            foreach (var arg in this.Stories.ArgProps)
+            {
+                var param = this.Stories.ComponentParameters.FirstOrDefault(x => x.Name.Equals(arg.Name));
+
+                if (param is not null)
+                {
+                    param.Control = arg.Control;
+                    param.Options = arg.Options;
+                }
+            }
+
+            this.StoryContext = new(this.Stories.ComponentParameters);
+        }
+        else
+        {
+            this.StoryContext = new(Enumerable.Empty<ComponentParameter>());
+        }
+
+        if (this.Stories.StoryContainer == null)
+        {
+            this.Stories.StoryContainer = new StoryContainer(typeof(TComponent), null, this.Stories.StoriesRazorDescriptor, this.Stories.Services);
+            this.Stories.StoriesStore.RegisterStoryContainer(this.Stories.StoryContainer);
+        }
+
+        this.Stories.StoryContainer.RegisterStory(this.Name, this.StoryContext, this.Stories.StoryContainer.Layout, this.Layout, this.Template, this.Description);
     }
 
     /// <summary>
-    /// When this story should be rendered, notify it to the canvas frame (preview frame inside the ifrmae) through the <see cref="StoryContext"/>.
+    /// When this story should be rendered, notify it to the canvas frame (preview frame inside the
+    /// iframe) through the <see cref="Types.StoryContext" />.
     /// </summary>
     protected override bool ShouldRender()
     {
         var shouldRender = base.ShouldRender();
-        if (shouldRender) this._StoryContext?.InvokeShouldRender();
+
+        if (shouldRender)
+        {
+            this.StoryContext?.InvokeShouldRender();
+        }
+
         return shouldRender;
     }
 }

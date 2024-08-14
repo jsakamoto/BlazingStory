@@ -7,18 +7,19 @@ public class StoriesStore
 {
     private readonly List<StoryContainer> _StoryContainers = new();
 
-    internal IEnumerable<StoryContainer> StoryContainers => this._StoryContainers;
-
     internal StoriesStore()
     {
     }
 
+    internal IEnumerable<StoryContainer> StoryContainers => this._StoryContainers;
+
     internal void RegisterStoryContainer(StoryContainer storyContainer)
     {
         var index = this._StoryContainers.FindIndex(container => container.Title == storyContainer.Title);
+
         if (index != -1)
         {
-            if (Object.ReferenceEquals(this._StoryContainers[index], storyContainer) == false)
+            if (!ReferenceEquals(this._StoryContainers[index], storyContainer))
             {
                 this._StoryContainers[index] = storyContainer;
             }
@@ -35,7 +36,7 @@ public class StoriesStore
     }
 
     /// <summary>
-    /// Try to find a story by navigationn path, such as "examples-ui-button--default".
+    /// Try to find a story by navigation path, such as "examples-ui-button--default".
     /// </summary>
     internal bool TryGetStoryByPath(string navigationPath, [NotNullWhen(true)] out Story? story)
     {
@@ -44,9 +45,9 @@ public class StoriesStore
     }
 
     /// <summary>
-    /// Try to find a component by navigationn path, such as "examples-ui-button".
+    /// Try to find a component by navigation path, such as "examples-ui-button".
     /// </summary>
-    internal bool TryGetComponentByPath(string navigationPath, [NotNullWhen(true)] out StoryContainer? component)
+    internal bool TryGetStoryContainerByPath(string navigationPath, [NotNullWhen(true)] out StoryContainer? component)
     {
         component = this._StoryContainers.FirstOrDefault(c => c.NavigationPath == navigationPath);
         return component != null;

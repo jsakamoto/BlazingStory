@@ -1,5 +1,4 @@
 @implements IAsyncDisposable
-@inject IJSRuntime JSRuntime
 
 @if (this.Visible)
 {
@@ -16,23 +15,23 @@
 
 @code
 {
-    [CascadingParameter]
-    internal IServiceProvider Services { get; init; } = default!;
-
     [Parameter]
     public Story? Story { get; set; }
 
     [Parameter]
     public bool Visible { get; set; }
 
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
+    [Inject] private IJSRuntime? JSRuntime { get; set; }
+
+    private readonly JSModule _JSModule;
     private string? _SourceCodeText = null;
 
     private string? _CodeText;
 
     private bool _Copied = false;
-
-    private readonly JSModule _JSModule;
-
     private ElementReference _CodeElementRef;
 
     private bool _PrevVisible = false;
@@ -46,11 +45,25 @@
         this._JSModule = new(() => this.JSRuntime, "prism.js");
     }
 
+    public async ValueTask DisposeAsync()
+    {
+        if (this.Story != null)
+        {
+            this.Story.Context.ArgumentChanged -= this.Context_ArgumentChanged;
+        }
+
+        await this._JSModule.DisposeAsync();
+    }
+
     protected override async Task OnParametersSetAsync()
     {
         base.OnParametersSet();
 
-        if (!this._PrevVisible && this.Visible) this._RenderGen++;
+        if (!this._PrevVisible && this.Visible)
+        {
+            this._RenderGen++;
+        }
+
         this._PrevVisible = this.Visible;
 
         if (this.Visible == true && this._SourceCodeText == null && this.Story != null)
@@ -62,7 +75,11 @@
 
     protected override void OnInitialized()
     {
-        if (this.Story == null) throw new InvalidOperationException("Story is required");
+        if (this.Story == null)
+        {
+            throw new InvalidOperationException("Story is required");
+        }
+
         this.Story.Context.ArgumentChanged += this.Context_ArgumentChanged;
     }
 
@@ -70,7 +87,7 @@
     {
         if (this.Visible && this._HighlightedGen != this._RenderGen)
         {
-            await this._JSModule.InvokeVoidAsync("highlightElement", _CodeElementRef);
+            await this._JSModule.InvokeVoidAsync("highlightElement", this._CodeElementRef);
             this._HighlightedGen = this._RenderGen;
         }
     }
@@ -80,31 +97,34 @@
         this.UpdateCodeTextWithArgument();
         this._RenderGen++;
         this.StateHasChanged();
+
         return ValueTask.CompletedTask;
     }
 
     private void UpdateCodeTextWithArgument()
     {
         this._CodeText = this._SourceCodeText;
-        if (this.Story == null || this._SourceCodeText == null) return;
-        this._CodeText = StoriesRazorSource.UpdateSourceTextWithArgument(Story, this._SourceCodeText);
+
+        if (this.Story == null || this._SourceCodeText == null)
+        {
+            return;
+        }
+
+        this._CodeText = StoriesRazorSource.UpdateSourceTextWithArgument(this.Story, this._SourceCodeText);
     }
 
     private async Task OnClickCopyButton()
     {
-        if (this._CodeText == null) return;
+        if (this._CodeText == null)
+        {
+            return;
+        }
 
-        await Services.GetRequiredService<HelperScript>().CopyTextToClipboardAsync(this._CodeText);
+        await this.Services.GetRequiredService<HelperScript>().CopyTextToClipboardAsync(this._CodeText);
         this._Copied = true;
         this.StateHasChanged();
 
         await Task.Delay(1500);
         this._Copied = false;
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (this.Story != null) this.Story.Context.ArgumentChanged -= this.Context_ArgumentChanged;
-        await _JSModule.DisposeAsync();
     }
 }

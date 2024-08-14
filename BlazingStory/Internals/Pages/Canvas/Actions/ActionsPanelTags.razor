@@ -12,7 +12,8 @@
             <span>&#123;</span>
             @foreach (var property in value.EnumerateObject().Select((prop, index) => (Name: prop.Name, Value: prop.Value, Index: index)))
         {
-        if (property.Index > 0) {
+        if (property.Index > 0)
+        {
             @ActionsPanelTags.Separator(",")
         }
             <span class="property-name">@property.Name</span>
@@ -26,8 +27,10 @@
     {
         <span>(@value.EnumerateArray().Count())</span>
         <span>&#91;</span>
-        @foreach (var element in value.EnumerateArray().Select((element, index) => (Value: element, Index: index))) {
-    if (element.Index > 0) {
+        @foreach (var element in value.EnumerateArray().Select((element, index) => (Value: element, Index: index)))
+    {
+    if (element.Index > 0)
+    {
         @ActionsPanelTags.Separator(",")
     }
         @RenderLogValue(element.Value)

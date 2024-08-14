@@ -9,14 +9,14 @@ public class ComponentActionLogs : IEnumerable<ComponentActionLog>
 
     internal event EventHandler? Updated;
 
-    private void NotifyUpdated()
-    {
-        this.Updated?.Invoke(this, EventArgs.Empty);
-    }
+    public IEnumerator<ComponentActionLog> GetEnumerator() => this._actionLogs.GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
     internal void Add(string name, string argsJson)
     {
         var lastLog = this._actionLogs.FirstOrDefault();
+
         if (lastLog != null && lastLog.Name == name && lastLog.ArgsJson == argsJson)
         {
             lastLog.Repeat++;
@@ -25,6 +25,7 @@ public class ComponentActionLogs : IEnumerable<ComponentActionLog>
         {
             this._actionLogs.Insert(0, new ComponentActionLog(name, argsJson));
         }
+
         this.NotifyUpdated();
     }
 
@@ -34,7 +35,8 @@ public class ComponentActionLogs : IEnumerable<ComponentActionLog>
         this.NotifyUpdated();
     }
 
-    public IEnumerator<ComponentActionLog> GetEnumerator() => this._actionLogs.GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+    private void NotifyUpdated()
+    {
+        this.Updated?.Invoke(this, EventArgs.Empty);
+    }
 }

@@ -8,12 +8,6 @@ namespace BlazingStory.Test.Internals.Services;
 
 internal class XmlDocCommentTest
 {
-    private static TestHost CreateTestHost() => new(services =>
-    {
-        services.AddSingleton(_ => XmlDocCommentLoaderFromOutDir.CreateHttpClient());
-        services.AddSingleton<IXmlDocComment, XmlDocCommentForWasm>();
-    });
-
     [Test]
     public async Task GetSummaryOfProperty_Test()
     {
@@ -41,4 +35,10 @@ internal class XmlDocCommentTest
         // Then
         summary.Value.Is("A base class for text input components.");
     }
+
+    private static TestHost CreateTestHost() => new(services =>
+            {
+                services.AddSingleton(_ => XmlDocCommentLoaderFromOutDir.CreateHttpClient());
+                services.AddSingleton<IXmlDocComment, XmlDocCommentForWasm>();
+            });
 }

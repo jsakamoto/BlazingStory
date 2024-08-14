@@ -2,8 +2,6 @@
 @typeparam TIndexPage where TIndexPage : ComponentBase
 @typeparam TIFramePage where TIFramePage : ComponentBase
 
-@inject NavigationManager NavigationManager
-
 @if (this._RequestForIFrameHtml)
 {
     <DynamicComponent Type="typeof(TIFramePage)"></DynamicComponent>
@@ -15,13 +13,24 @@ else
 
 @code
 {
+    [Inject] private NavigationManager? NavigationManager { get; set; }
+
     private bool _RequestForIFrameHtml = false;
 
-    override protected void OnInitialized()
+    protected override void OnInitialized()
     {
-        if (!Uri.TryCreate(this.NavigationManager.Uri, UriKind.Absolute, out var uri)) return;
-        
+        if (this.NavigationManager == null)
+        {
+            throw new InvalidOperationException("NavigationManager is not injected.");
+        }
+
+        if (!Uri.TryCreate(this.NavigationManager.Uri, UriKind.Absolute, out var uri))
+        {
+            return;
+        }
+
         var iframePath = this.NavigationManager.ToAbsoluteUri("iframe.html").AbsolutePath;
+
         this._RequestForIFrameHtml = uri.AbsolutePath == iframePath;
     }
 }

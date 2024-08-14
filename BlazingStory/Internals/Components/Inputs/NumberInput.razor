@@ -47,7 +47,8 @@
             var parts = this.Value?.Split('.') ?? [];
             var hasDecimalPoint = parts.Length == 2;
             var dicimalPartLen = (hasDecimalPoint ? parts[1] : "").Length;
-            this._Step = dicimalPartLen == 0 ? (hasDecimalPoint ? "0.1" : "1") : ("0." + new String('0', dicimalPartLen - 1) + "1");
+            var decimalValue = hasDecimalPoint ? "0.1" : "1";
+            this._Step = dicimalPartLen == 0 ? decimalValue : ("0." + new String('0', dicimalPartLen - 1) + "1");
         }
         else
         {
@@ -61,7 +62,7 @@
         }
     }
 
-    override protected async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (this.InitialForcus && !this._InitialFocused)
         {
