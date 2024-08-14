@@ -1,5 +1,4 @@
 @implements IAsyncDisposable
-@inject IJSRuntime JSRuntime
 
 <span class="bs-basic-inputs-holder color-input-holder">
     <input class="bs-basic-inputs color-input" type="text" value="@this.Value" placeholder="@this.PlaceHolder" @oninput="OnInputInternal" />
@@ -24,28 +23,49 @@
     [Parameter]
     public EventCallback<ChangeEventArgs> OnInput { get; set; }
 
+    [Inject] private IJSRuntime? JSRuntime { get; set; }
+
     private string _HexColorText => this._CurrentColor?.NormalizedHexText ?? "#000000";
 
+    private readonly JSModule _JSModule;
     private WebColor? _CurrentColor = null;
 
     private WebColor.Type _CurrentColorType = WebColor.Type.Unknown;
 
-    private readonly JSModule _JSModule;
-
     public ColorInput()
     {
-        this._JSModule = new(()=>this.JSRuntime, "Internals/Components/Inputs/ColorInput.razor.js");
+        this._JSModule = new(() => this.JSRuntime, "Internals/Components/Inputs/ColorInput.razor.js");
+    }
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        var valueParameter = parameters.GetValueOrDefault(nameof(this.Value), default(string));
+        var valueHasChanged = this.Value != valueParameter;
+        await base.SetParametersAsync(parameters);
+
+        if (valueHasChanged)
+        {
+            await this.Parse(valueParameter);
+            this.StateHasChanged();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await this._JSModule.DisposeAsync();
     }
 
     private async ValueTask Parse(string? colorText)
     {
         var (color, type) = WebColor.Parse(colorText);
+
         if (color == null)
         {
             var computedColorText = await this.GetComputedColorAsync(colorText);
             (color, _) = WebColor.Parse(computedColorText, colorText);
             type = WebColor.Type.Hex;
         }
+
         this._CurrentColor = color;
         this._CurrentColorType = type;
     }
@@ -53,18 +73,6 @@
     private ValueTask<string?> GetComputedColorAsync(string? colorText)
     {
         return this._JSModule.InvokeAsync<string?>("getComputedColor", colorText);
-    }
-
-    public override async Task SetParametersAsync(ParameterView parameters)
-    {
-        var valueParameter = parameters.GetValueOrDefault(nameof(Value), default(string));
-        var valueHasChanged = this.Value != valueParameter;
-        await base.SetParametersAsync(parameters);
-        if (valueHasChanged)
-        {
-            await this.Parse(valueParameter);
-            this.StateHasChanged();
-        }
     }
 
     private async Task OnInputInternal(ChangeEventArgs args)
@@ -78,7 +86,8 @@
     {
         var currentType = this._CurrentColorType;
         await this.Parse(args.Value as string);
-        if (_CurrentColor != null)
+
+        if (this._CurrentColor != null)
         {
             this._CurrentColorType = currentType;
             args.Value = currentType switch
@@ -88,6 +97,7 @@
                 _ => this._CurrentColor.HexOrNameText
             };
         }
+
         this.Value = args.Value as string;
         await this.OnInput.InvokeAsync(args);
     }
@@ -100,23 +110,20 @@
             {
                 case WebColor.Type.RGBA:
                     this._CurrentColorType = WebColor.Type.HSLA;
-                    this.Value = _CurrentColor.HSLAText;
+                    this.Value = this._CurrentColor.HSLAText;
                     break;
+
                 case WebColor.Type.HSLA:
                     this._CurrentColorType = WebColor.Type.Hex;
-                    this.Value = _CurrentColor.HexOrNameText;
+                    this.Value = this._CurrentColor.HexOrNameText;
                     break;
+
                 default:
                     this._CurrentColorType = WebColor.Type.RGBA;
-                    this.Value = _CurrentColor.RGBAText;
+                    this.Value = this._CurrentColor.RGBAText;
                     break;
             }
             await this.OnInput.InvokeAsync(new() { Value = this.Value });
         }
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await _JSModule.DisposeAsync();
     }
 }

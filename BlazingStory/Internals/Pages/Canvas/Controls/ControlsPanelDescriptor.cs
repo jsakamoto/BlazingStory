@@ -8,7 +8,7 @@ internal class ControlsPanelDescriptor : AddonPanelDescriptor
     {
     }
 
-    internal override void SetParameters(Story? story, IServiceProvider services, CanvasPageContext canvasPageContext)
+    internal override void SetParameters(Story? story, IServiceProvider? services, CanvasPageContext? canvasPageContext)
     {
         base.SetParameters(story, services, canvasPageContext);
 

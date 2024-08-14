@@ -8,33 +8,26 @@ namespace BlazingStory.Internals.Services.XmlDocComment;
 /// </summary>
 internal class XmlDocCommentForWasm : XmlDocCommentBase
 {
+    /// <summary>
+    /// Cache period in seconds.
+    /// </summary>
+    private const double CachePeriodSec = 180.0;
+
     private readonly HttpClient _HttpClient;
 
     private readonly ILogger<XmlDocCommentForWasm> _Logger;
 
     private readonly SemaphoreSlim _Syncer = new SemaphoreSlim(1);
 
-    private class XmlDocCommentCacheEntity
-    {
-        public DateTime TimestampUTC = DateTime.UtcNow;
-
-        public readonly XDocument? XmlDoc;
-
-        public XmlDocCommentCacheEntity(XDocument? xmlDoc) { this.XmlDoc = xmlDoc; }
-    }
-
-    /// <summary>
-    /// Cache period in seconds.
-    /// </summary>
-    private const double CachePeriodSec = 180.0;
-
     private readonly Dictionary<string, XmlDocCommentCacheEntity> _XmlDocCommentCache = new();
 
     /// <summary>
-    /// initialize new instance of <see cref="XmlDocCommentForWasm"/>
+    /// initialize new instance of <see cref="XmlDocCommentForWasm" />
     /// </summary>
-    /// <param name="httpClient"></param>
-    /// <param name="logger"></param>
+    /// <param name="httpClient">
+    /// </param>
+    /// <param name="logger">
+    /// </param>
     public XmlDocCommentForWasm(HttpClient httpClient, ILogger<XmlDocCommentForWasm> logger)
     {
         this._HttpClient = httpClient;
@@ -44,12 +37,18 @@ internal class XmlDocCommentForWasm : XmlDocCommentBase
     protected override async ValueTask<XDocument?> GetXmlDocCommentXDocAsync(Type type)
     {
         await this._Syncer.WaitAsync();
+
         try
         {
             var assemblyName = type.Assembly.GetName().Name;
-            if (string.IsNullOrEmpty(assemblyName)) return null;
+
+            if (string.IsNullOrEmpty(assemblyName))
+            {
+                return null;
+            }
 
             var xdocComment = default(XDocument);
+
             if (this._XmlDocCommentCache.TryGetValue(assemblyName, out var cacheEntity) && (DateTime.UtcNow - cacheEntity.TimestampUTC).TotalSeconds < CachePeriodSec)
             {
                 cacheEntity.TimestampUTC = DateTime.UtcNow;
@@ -71,8 +70,23 @@ internal class XmlDocCommentForWasm : XmlDocCommentBase
 
                 this._XmlDocCommentCache[assemblyName] = new(xdocComment);
             }
+
             return xdocComment;
         }
-        finally { this._Syncer.Release(); }
+        finally
+        {
+            this._Syncer.Release();
+        }
+    }
+
+    private class XmlDocCommentCacheEntity
+    {
+        public readonly XDocument? XmlDoc;
+        public DateTime TimestampUTC = DateTime.UtcNow;
+
+        public XmlDocCommentCacheEntity(XDocument? xmlDoc)
+        {
+            this.XmlDoc = xmlDoc;
+        }
     }
 }

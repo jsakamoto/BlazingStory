@@ -24,11 +24,11 @@
 
 @code
 {
-    [CascadingParameter]
-    protected IServiceProvider Services { get; init; } = default!;
-
     [Parameter]
     public EventCallback ExitHistoryView { get; set; }
+
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
 
     private NavigationService? _NavigationService;
 
@@ -40,9 +40,19 @@
         this._HistoryItems = await this._NavigationService.GetHistoryItemsAsync();
     }
 
-    private SvgIconType GetIconType(NavigationItemType itemType) => itemType switch { NavigationItemType.Component => SvgIconType.Component, NavigationItemType.Story => SvgIconType.Component, _ => SvgIconType.Document };
+    private SvgIconType GetIconType(NavigationItemType itemType) => itemType switch
+    {
+        NavigationItemType.Component => SvgIconType.Component,
+        NavigationItemType.Story => SvgIconType.Component,
+        _ => SvgIconType.Document
+    };
 
-    private string GetCssClass(NavigationItemType itemType) => itemType switch { NavigationItemType.Component => "type-component", NavigationItemType.Story => "type-component", _ => "type-docs" };
+    private string GetCssClass(NavigationItemType itemType) => itemType switch
+    {
+        NavigationItemType.Component => "type-component",
+        NavigationItemType.Story => "type-component",
+        _ => "type-docs"
+    };
 
     private async Task OnClickHistoryItem(NavigationListItem historyItem)
     {
@@ -57,7 +67,11 @@
 
     private async Task ClearHistory()
     {
-        if (this._NavigationService == null) return;
+        if (this._NavigationService == null)
+        {
+            return;
+        }
+
         await this._NavigationService.ClearHistoryAsync();
         await this.ExitHistoryView.InvokeAsync();
     }

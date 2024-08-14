@@ -1,8 +1,3 @@
-@using System.Diagnostics
-@using System.Reflection
-@using System.Runtime.CompilerServices
-@using System.Runtime.Versioning
-
 <div class="settings-about-panel">
 
     <header>
@@ -10,4 +5,23 @@
         Blazing Story @VersionInfo.GetVersionText()
     </header>
 
+    <section>
+        <BlazingStory.Internals.Components.Markdown.MarkdownDisplay MarkdownString="@this._ReadmeMd" />
+    </section>
 </div>
+
+@code
+{
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
+    private string? _ReadmeMd;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var webAssets = this.Services.GetRequiredService<WebAssets>();
+        var readmeMd = await webAssets.GetStringAsync("_content/BlazingStory/README.txt");
+
+        this._ReadmeMd = readmeMd;
+    }
+}

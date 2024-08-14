@@ -42,4 +42,3 @@ internal class SampleComponent
             XmlDocComment.Dummy);
     }
 }
-

@@ -1,0 +1,7 @@
+﻿.frame {
+    --color: blue;
+}
+
+    .frame::after {
+        content: '<Stories Layout="...">';
+    }

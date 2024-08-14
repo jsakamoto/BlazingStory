@@ -2,19 +2,18 @@
 
 public class NavigationListItem : INavigationPath
 {
-    public required int Id;
-
-    public required string Caption;
-
-    public required NavigationItemType Type;
-
     /// <summary>
-    /// Gets a navigation path string for the item.<br/>
-    /// (ex. "/story/example-button--primary", "/docs/example-button--docs")
+    /// Gets a navigation path string for the item. <br /> (ex. "/story/example-button--primary", "/docs/example-button--docs")
     /// </summary>
-    public required string NavigationPath { get; init; }
+    public string? NavigationPath { get; init; }
 
-    public required IEnumerable<string> Segments;
+    public int Id;
+
+    public string? Caption;
+
+    public NavigationItemType Type;
+
+    public IEnumerable<string>? Segments;
 
     internal static NavigationListItem CreateFrom(int id, NavigationTreeItem treeItem)
     {
@@ -29,12 +28,18 @@ public class NavigationListItem : INavigationPath
     }
 
     /// <summary>
-    /// Compares the equality of two <see cref="NavigationListItem"/>, except the <see cref="Id"/> field.
+    /// Compares the equality of two <see cref="NavigationListItem" />, except the <see cref="Id" /> field.
     /// </summary>
-    /// <param name="other">The other <see cref="NavigationListItem"/> to compare.</param>
+    /// <param name="other">
+    /// The other <see cref="NavigationListItem" /> to compare.
+    /// </param>
     internal bool Equals(NavigationListItem? other)
     {
-        if (other == null) return false;
+        if (other == null)
+        {
+            return false;
+        }
+
         return this.NavigationPath == other.NavigationPath && this.Caption == other.Caption && this.Type == other.Type;
     }
 }

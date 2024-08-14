@@ -1160,23 +1160,6 @@ a.icon-button {
 }
 .canvas-container .canvas-frame-viewport {
   position: relative;
-  /*        .canvas-frame-content {
-              position: absolute;
-              inset: 0;
-              overflow: auto;
-              display: grid;
-              justify-items: center;
-              align-items: center;
-
-              .canvas-frame {
-                  transition: width .3s,height .3s;
-                  box-sizing: content-box;
-                  border: none;
-                  width: 100%;
-                  height: 100%;
-              }
-          }
-  */
 }
 
 .canvas-page-container.splitter-orientation-vertical .add-on-container {
@@ -1481,6 +1464,32 @@ a.icon-button {
   font-size: 14px;
   line-height: 24px;
 }
+.docs-page .docs-main .docs-contents > blockquote {
+  font-family: "Nunito Sans", -apple-system, ".SFNSText-Regular", "San Francisco", BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  margin: 16px 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-overflow-scrolling: touch;
+  border-left: 4px solid #D9E8F2;
+  padding: 0 15px;
+  color: #5C6870;
+}
+.docs-page .docs-main .docs-contents > blockquote > p > a {
+  font-family: "Nunito Sans", -apple-system, ".SFNSText-Regular", "San Francisco", BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-overflow-scrolling: touch;
+  font-size: inherit;
+  line-height: 24px;
+  color: #029CFD;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
 .docs-page .docs-main .docs-contents > .first-story {
   margin: 25px 0 40px 0;
 }
@@ -1558,4 +1567,10 @@ a.icon-button {
 
 .settings-about-panel header {
   color: var(--bs-sidebar-header-title-color);
+}
+.settings-about-panel img {
+  max-width: 100%;
+}
+.settings-about-panel pre {
+  text-wrap: wrap;
 }

@@ -20,29 +20,41 @@
 
 @code
 {
-    [CascadingParameter]
-    protected IServiceProvider Services { get; init; } = default!;
-
     [Parameter]
     public bool SearchMode { get; set; } = false;
 
     [Parameter]
     public EventCallback<bool> SearchModeChanged { get; set; }
 
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
     private string? _SearchText;
 
     private HotKeysContext? _HotKeysContext;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (this._HotKeysContext is not null)
+        {
+            await this._HotKeysContext.DisposeAsync();
+        }
+    }
 
     private async Task OnFocus()
     {
         this.SearchMode = true;
         await this.SearchModeChanged.InvokeAsync(this.SearchMode);
 
-        if (this._HotKeysContext is not null) await this._HotKeysContext.DisposeAsync();
+        if (this._HotKeysContext is not null)
+        {
+            await this._HotKeysContext.DisposeAsync();
+        }
+
         this._HotKeysContext = this.Services
             .GetRequiredService<HotKeys>()
             .CreateContext()
-            .Add(Code.Escape, OnEscapeKeyPressed, exclude: Exclude.None);
+            .Add(Code.Escape, this.OnEscapeKeyPressed, exclude: Exclude.None);
     }
 
     private async Task OnCleared()
@@ -66,16 +78,16 @@
     private async Task ExitSearchMode()
     {
         this.SearchMode = false;
-        if (this._HotKeysContext is not null) await this._HotKeysContext.DisposeAsync();
+
+        if (this._HotKeysContext is not null)
+        {
+            await this._HotKeysContext.DisposeAsync();
+        }
+
         this._HotKeysContext = null;
         await this.SearchModeChanged.InvokeAsync(this.SearchMode);
 
         var helperScript = this.Services.GetRequiredService<HelperScript>();
         await helperScript.InvokeVoidAsync("releaseFocus");
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (this._HotKeysContext is not null) await this._HotKeysContext.DisposeAsync();
     }
 }

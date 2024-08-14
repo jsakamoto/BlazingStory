@@ -4,12 +4,30 @@
 
 @code
 {
+    /// <summary>
+    /// Gets or sets the class.
+    /// </summary>
+    /// <value>
+    /// The class.
+    /// </value>
     [Parameter]
     public string? Class { get; set; }
 
+    /// <summary>
+    /// Gets or sets the on click.
+    /// </summary>
+    /// <value>
+    /// The on click.
+    /// </value>
     [Parameter]
-    public EventCallback OnClick { get; set; }
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+    /// <summary>
+    /// Gets or sets the content of the child.
+    /// </summary>
+    /// <value>
+    /// The content of the child.
+    /// </value>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 }

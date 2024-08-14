@@ -20,11 +20,6 @@ internal static class TestHelper
         return new(typeof(object), new(title));
     }
 
-    internal static class StoryContext
-    {
-        internal static BlazingStory.Types.StoryContext CreateEmpty() => new(Enumerable.Empty<ComponentParameter>());
-    }
-
     internal static Story CreateStory<TComponent>(string title = "", string name = "")
     {
         var parameters = ParameterExtractor.GetParametersFromComponentType(typeof(TComponent), XmlDocComment.Dummy);
@@ -47,7 +42,9 @@ internal static class TestHelper
         options.WhenDisposing = XProcessTerminate.EntireProcessTree;
     }
 
-    /// <summary>Get an available TCP v4 port number.</summary>
+    /// <summary>
+    /// Get an available TCP v4 port number.
+    /// </summary>
     internal static int GetAvailableTCPv4Port()
     {
         var listener = new TcpListener(IPAddress.Loopback, 0);
@@ -55,5 +52,10 @@ internal static class TestHelper
         var port = ((IPEndPoint)listener.LocalEndpoint).Port;
         listener.Stop();
         return port;
+    }
+
+    internal static class StoryContext
+    {
+        internal static BlazingStory.Types.StoryContext CreateEmpty() => new(Enumerable.Empty<ComponentParameter>());
     }
 }

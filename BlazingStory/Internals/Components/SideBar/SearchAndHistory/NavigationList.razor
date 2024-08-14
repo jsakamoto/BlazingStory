@@ -1,10 +1,14 @@
-@using BlazingStory.Internals.Utils.TextSearch;
 <div class="navigation-list">
     <div class="navigation-list-items">
         @if (this.Items != null)
         {
             @foreach (var item in this.Items)
             {
+                @if (item?.Segments == null || item.Segments.Count() == 0)
+                {
+                    continue;
+                }
+
                 var title = string.Join(" / ", item.Segments.Append(item.Caption));
                 var id = $"p:{item.Id}";
                 var iconType = this.GetIconType(item.Type);
@@ -64,8 +68,19 @@
 
     public NavigationList()
     {
-        this.GetIconType = itemType => itemType switch { NavigationItemType.Component => SvgIconType.Component, NavigationItemType.Story => SvgIconType.BookmarkHollow, _ => SvgIconType.Document };
-        this.GetCssClass = itemType => itemType switch { NavigationItemType.Component => "type-component", NavigationItemType.Story => "type-story", _ => "type-docs" };
+        this.GetIconType = itemType => itemType switch
+        {
+            NavigationItemType.Component => SvgIconType.Component,
+            NavigationItemType.Story => SvgIconType.BookmarkHollow,
+            _ => SvgIconType.Document
+        };
+
+        this.GetCssClass = itemType => itemType switch
+        {
+            NavigationItemType.Component => "type-component",
+            NavigationItemType.Story => "type-story",
+            _ => "type-docs"
+        };
     }
 
     public bool IsSelected(string id) => this._LastHoveredId == id;
@@ -74,5 +89,4 @@
     {
         this._LastHoveredId = id;
     }
-
 }

@@ -1,0 +1,88 @@
+﻿@implements IAddonComponent
+@typeparam TEnum where TEnum : struct, Enum
+
+<AddonToobarContents @ref="_ToobarContentsRef">
+    <PopupMenu MarginTop="6">
+        <Trigger>
+            <IconButton Icon="SvgIconType.Pencil" Title="Change the Theme of the preview" Text="@($"{this._ThemeMode} Theme")" Active="true" />
+        </Trigger>
+        <MenuItems>
+            @foreach (var theme in Enum.GetValues(typeof(TEnum)).Cast<TEnum>())
+            {
+                <MenuItem Active="@(this._ThemeMode.Equals(theme))" OnClick="() => OnClickBackground(theme)">
+                    <span>@theme.ToString()</span>
+                </MenuItem>
+            }
+        </MenuItems>
+    </PopupMenu>
+
+</AddonToobarContents>
+
+@code{
+    [CascadingParameter]
+    public AddonsStore AddonsStore { get; init; } = default!;
+
+    public AddonType AddonType { get; } = AddonType.CanvasPage | AddonType.DocsPage;
+
+    public int ToolbuttonOrder { get; } = 600;
+
+    public RenderFragment? ToolbarContents => this._ToobarContentsRef?.ChildContent;
+
+    public IReadOnlyDictionary<string, object?> FrameArguments => this._FrameArguments;
+
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
+    public readonly Dictionary<string, object?> _FrameArguments = [];
+
+    private AddonToobarContents? _ToobarContentsRef;
+    private HelperScript HelperScript = default!;
+
+    private TEnum _ThemeMode = default;
+
+    protected override void OnInitialized()
+    {
+        this.HelperScript = this.Services.GetRequiredService<HelperScript>();
+        this.AddonsStore.RegisterAddon(this);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        var themeModeStr = await this.HelperScript.GetLocalStorageItemAsync(StorageKeys.ThemeMode);
+        if (Enum.TryParse<TEnum>(themeModeStr, out var themeMode))
+        {
+            this._ThemeMode = themeMode;
+        }
+        else
+        {
+            // Provide a sensible default value for _ThemeMode
+            this._ThemeMode = default;
+        }
+
+        this.SetFrameArguments();
+    }
+
+    private async Task OnClickBackground(TEnum theme)
+    {
+        this._ThemeMode = theme;
+        await this.HelperScript.SetLocalStorageItemAsync(StorageKeys.ThemeMode, this._ThemeMode.ToString());
+
+        this.SetFrameArguments();
+    }
+
+    private void SetFrameArguments()
+    {
+        this._FrameArguments["theme.value"] = this._ThemeMode.ToString();
+        this.AddonsStore.FrameArgumentsHasChanged();
+    }
+
+    private static class StorageKeys
+    {
+        public const string ThemeMode = "Addons.Theme.Mode";
+    }
+}

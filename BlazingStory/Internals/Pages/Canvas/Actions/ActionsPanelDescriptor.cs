@@ -11,12 +11,22 @@ internal class ActionsPanelDescriptor : AddonPanelDescriptor
     {
     }
 
-    internal override void SetParameters(Story? story, IServiceProvider services, CanvasPageContext canvasPageContext)
+    internal override void SetParameters(Story? story, IServiceProvider? services, CanvasPageContext? canvasPageContext)
     {
         base.SetParameters(story, services, canvasPageContext);
         this.UnsubscribeActionLogsEvent();
-        this._ActionLogs = canvasPageContext.GetRequiredItem<ComponentActionLogs>();
-        this._ActionLogs.Updated += this.ActionLogs_Updated;
+        this._ActionLogs = canvasPageContext?.GetRequiredItem<ComponentActionLogs>();
+
+        if (this._ActionLogs != null)
+        {
+            this._ActionLogs.Updated += this.ActionLogs_Updated;
+        }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        this.UnsubscribeActionLogsEvent();
     }
 
     private void ActionLogs_Updated(object? sender, EventArgs e)
@@ -32,11 +42,5 @@ internal class ActionsPanelDescriptor : AddonPanelDescriptor
             this._ActionLogs.Updated -= this.ActionLogs_Updated;
             this._ActionLogs = null;
         }
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        base.Dispose(disposing);
-        this.UnsubscribeActionLogsEvent();
     }
 }

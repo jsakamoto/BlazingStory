@@ -1,10 +1,28 @@
-@using System.Linq.Expressions
-@using Microsoft.AspNetCore.Components.Rendering
+@using System.Net
+@using BlazingStory.Internals.Utils
+
 @inherits ParameterControllerBase
 
-<TextArea PlaceHolder="Edit string..." Value="@StringValue" OnInput="@((args) => OnInputAsync(args.Value))" />
+<TextArea PlaceHolder="Edit string..."
+          Value="@StringValue"
+          OnChange="@(async (args) => await UpdateRenderFragmentAsync(args.Value?.ToString()))" />
 
 @code
 {
-    private string? StringValue => RenderFragmentKit.TryToString(this.Value, out var str) ? str : this.Value?.ToString();
+    private string? StringValue;
+
+    protected override void OnParametersSet()
+    {
+        var markupString = this.Value?.ToMarkupString();
+        this.StringValue = WebUtility.HtmlDecode(markupString);
+    }
+
+    private async Task UpdateRenderFragmentAsync(string? internalValue)
+    {
+        this.StringValue = internalValue;
+
+        var fragment = internalValue.ToRenderFragment();
+
+        await this.OnInputAsync(fragment);
+    }
 }

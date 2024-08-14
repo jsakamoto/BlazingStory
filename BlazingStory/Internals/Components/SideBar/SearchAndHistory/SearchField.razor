@@ -16,9 +16,6 @@
 
 @code
 {
-    [CascadingParameter]
-    protected IServiceProvider Services { get; init; } = default!;
-
     [Parameter]
     public string? SearchText { get; set; }
 
@@ -31,23 +28,29 @@
     [Parameter]
     public EventCallback Cleared { get; set; }
 
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
+    private bool _SearchBoxHasText => !string.IsNullOrEmpty(this.SearchText);
+    private string SearchBoxPlaceHolder => this._SearchBoxHasFocus ? "Type to find..." : "Find components";
+
     private ElementReference _InputElement;
 
     private bool _SearchBoxHasFocus = false;
-
-    private bool _SearchBoxHasText => !string.IsNullOrEmpty(this.SearchText);
-
-    private string SearchBoxPlaceHolder => this._SearchBoxHasFocus ? "Type to find..." : "Find components";
-
     private HotKeyCombo? _GoSearchHotKey;
 
     protected override void OnInitialized()
     {
         var commandService = this.Services.GetRequiredService<CommandService>();
         var goSearchCommand = commandService[CommandType.GoSearch];
-        if (goSearchCommand == null) return;
+
+        if (goSearchCommand == null)
+        {
+            return;
+        }
+
         this._GoSearchHotKey = goSearchCommand.HotKey;
-        goSearchCommand.Subscribe(OnGoSearchCommand);
+        goSearchCommand.Subscribe(this.OnGoSearchCommand);
     }
 
     private async Task OnInputSearchText(ChangeEventArgs args)
@@ -59,15 +62,15 @@
     private async Task OnFocusSearchBox()
     {
         await this.Focus.InvokeAsync();
-        _SearchBoxHasFocus = true;
+        this._SearchBoxHasFocus = true;
     }
 
-    private void OnBlurSearchBox() => _SearchBoxHasFocus = false;
+    private void OnBlurSearchBox() => this._SearchBoxHasFocus = false;
 
     private async ValueTask OnGoSearchCommand()
     {
         await Task.Delay(100);
-        await _InputElement.FocusAsync();
+        await this._InputElement.FocusAsync();
     }
 
     private async Task ClearSearchText()

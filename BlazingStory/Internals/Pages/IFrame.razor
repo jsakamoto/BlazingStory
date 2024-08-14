@@ -1,6 +1,5 @@
 @page "/iframe.html"
 @layout NullLayout
-@inject IJSRuntime JSRuntime
 
 <IdQueryRouter>
     <CanvasFrame />
@@ -8,9 +7,15 @@
 
 @code
 {
+    [Inject] private IJSRuntime? JSRuntime { get; set; }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender) return;
+        if (!firstRender || this.JSRuntime is null)
+        {
+            return;
+        }
+
         await using var module = await this.JSRuntime.ImportAsync("Internals/Pages/IFrame.razor.js");
         await module.InvokeVoidAsync("initializeCanvasFrame");
     }

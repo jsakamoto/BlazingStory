@@ -1,6 +1,6 @@
+@using System.Text.RegularExpressions
+
 @implements IDisposable
-@using System.Text.RegularExpressions;
-@using BlazingStory.Internals.Pages.Canvas.Controls
 
 @{
     var frameArguments = this.AddonsStore.GetFrameArguments(AddonType.DocsPage);
@@ -44,9 +44,22 @@
                 <h1>@this._StoryComponent.Title.Split('/').Last()</h1>
 
                 <!-- Summary from the XML document comment -->
-                <p class="summary">
-                    @this._StoryComponent.Summary
-                </p>
+                @if (this._StoryComponent.Summary != null)
+                {
+                    <p class="summary">
+                        @this._StoryComponent.Summary
+                    </p>
+                }
+
+                <!-- Remarks from the XML document comment -->
+                @if (this._StoryComponent.Remarks != null)
+                {
+                    <blockquote>
+                        <p class="remarks">
+                            @this._StoryComponent.Remarks
+                        </p>
+                    </blockquote>
+                }
 
                 @if (firstStory != null)
                 {
@@ -65,6 +78,11 @@
 
                         <h3>@story.Name</h3>
 
+                        @if (!string.IsNullOrWhiteSpace(story.Description))
+                        {
+                            <p>@story.Description</p>
+                        }
+
                         <StoryPreview Story="story" EnableZoom="false" Globals="frameArguments" />
                     </div>
                 }
@@ -73,7 +91,7 @@
     </div>
 </div>
 
-@code
+@code 
 {
     [CascadingParameter]
     protected AddonsStore AddonsStore { get; init; } = default!;
@@ -90,6 +108,7 @@
     [CascadingParameter]
     protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
 
+    private readonly Subscriptions _Subscriptions = new();
     private string? _CurrentNavigationPath;
 
     private string _PageTitle = "";
@@ -98,7 +117,19 @@
 
     private (Command? ToolbarVisible, Command? ShowSidebar, Command? Fullscreen) _Commands = default;
 
-    private readonly Subscriptions _Subscriptions = new();
+    public void Dispose()
+    {
+        this.AddonsStore.OnFrameArgumentsChanged -= this.AddonsStore_OnFrameArgumentsChanged;
+        this._Subscriptions.Dispose();
+
+        if (this._StoryComponent != null)
+        {
+            foreach (var story in this._StoryComponent.Stories)
+            {
+                story.Context.ArgumentChanged -= this.Context_ArgumentChanged;
+            }
+        }
+    }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -108,20 +139,32 @@
         {
             if (this._StoryComponent != null)
             {
-                foreach (var story in this._StoryComponent.Stories) story.Context.ArgumentChanged -= this.Context_ArgumentChanged;
+                foreach (var story in this._StoryComponent.Stories)
+                {
+                    story.Context.ArgumentChanged -= this.Context_ArgumentChanged;
+                }
+
                 this._StoryComponent = null;
             }
 
             this._CurrentNavigationPath = this.RouteData.Parameter;
             var navigationPath = Regex.Replace(this.RouteData.Parameter, "--docs$", "");
-            if (!this.StoriesStore.TryGetComponentByPath(navigationPath, out var component)) return;
+
+            if (!this.StoriesStore.TryGetStoryContainerByPath(navigationPath, out var component))
+            {
+                return;
+            }
 
             this._StoryComponent = component;
             this._PageTitle = string.Join(" / ", component.Title.Split('/')) + " - Docs - " + this.BlazingStoryApp.Title;
 
-            foreach (var story in this._StoryComponent.Stories) story.Context.ArgumentChanged += this.Context_ArgumentChanged;
+            foreach (var story in this._StoryComponent.Stories)
+            {
+                story.Context.ArgumentChanged += this.Context_ArgumentChanged;
+            }
 
             await this._StoryComponent.UpdateSummaryFromXmlDocCommentAsync();
+            await this._StoryComponent.UpdateRemarksFromXmlDocCommentAsync();
         }
     }
 
@@ -152,15 +195,5 @@
     {
         this._Commands.ToolbarVisible?.ToggleFlag();
         await ValueTask.CompletedTask;
-    }
-
-    public void Dispose()
-    {
-        this.AddonsStore.OnFrameArgumentsChanged -= AddonsStore_OnFrameArgumentsChanged;
-        this._Subscriptions.Dispose();
-        if (this._StoryComponent != null)
-        {
-            foreach (var story in this._StoryComponent.Stories) story.Context.ArgumentChanged -= this.Context_ArgumentChanged;
-        }
     }
 }

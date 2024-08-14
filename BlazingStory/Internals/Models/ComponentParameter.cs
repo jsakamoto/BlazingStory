@@ -10,37 +10,34 @@ namespace BlazingStory.Internals.Models;
 
 public class ComponentParameter
 {
-    private readonly Type _ComponentType;
-
-    private readonly PropertyInfo _PropertyInfo;
-
-    private readonly IXmlDocComment _XmlDocComment;
-
+    internal MarkupString Summary { get; private set; } = default;
     internal readonly string Name;
 
     [DynamicallyAccessedMembers(PublicConstructors | PublicMethods | Interfaces)]
     internal readonly Type Type;
 
     internal readonly TypeStructure TypeStructure;
-
-    internal MarkupString Summary { get; private set; } = default;
-
     internal readonly bool Required;
-
     internal ControlType Control = ControlType.Default;
-
     internal object? DefaultValue = null;
+    internal string[]? Options = null;
 
+    private readonly Type _ComponentType;
+
+    private readonly PropertyInfo _PropertyInfo;
+
+    private readonly IXmlDocComment _XmlDocComment;
+
+    [SuppressMessage("Trimming", "IL2074:Value stored in field does not satisfy 'DynamicallyAccessedMembersAttribute' requirements. The return value of the source method does not have matching annotations.", Justification = "<Pending>")]
+    [SuppressMessage("Trimming", "IL2072:Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.", Justification = "<Pending>")]
     internal ComponentParameter(Type componentType, PropertyInfo propertyInfo, IXmlDocComment xmlDocComment)
     {
         this._ComponentType = componentType;
         this._PropertyInfo = propertyInfo;
         this._XmlDocComment = xmlDocComment;
         this.Name = propertyInfo.Name;
-#pragma warning disable IL2072, IL2074 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
         this.Type = propertyInfo.PropertyType;
         this.TypeStructure = TypeUtility.ExtractTypeStructure(propertyInfo.PropertyType);
-#pragma warning restore IL2072, IL2074 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
         this.Required = propertyInfo.GetCustomAttribute<EditorRequiredAttribute>() != null;
     }
 
@@ -60,6 +57,7 @@ internal static class ComponentParameterExtensions
     public static bool TryGetByName(this IEnumerable<ComponentParameter> componentParameters, string name, [NotNullWhen(true)] out ComponentParameter? parameter)
     {
         parameter = componentParameters.FirstOrDefault(p => p.Name == name);
+
         return parameter != null;
     }
 }

@@ -3,7 +3,7 @@
 
     @*
     The `@key` directive is used to force the re-rendering of the select element when the `_NoSelected` field changes.
-    This is necessary because once any available options are selected, adding the `selected` attribute to the disabled 
+    This is necessary because once any available options are selected, adding the `selected` attribute to the disabled
     option element for the purpose of restoring the initial state never affects the select element.
     *@
     <select @key="_NoSelected" class="bs-basic-inputs" @onchange="this.OnChange">

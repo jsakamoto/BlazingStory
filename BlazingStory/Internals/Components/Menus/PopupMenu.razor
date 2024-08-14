@@ -1,5 +1,4 @@
 @implements IAsyncDisposable
-@inject IJSRuntime JSRuntime
 
 <div @ref="this._PopupMenuElement" class="popup-menu @Class">
 
@@ -39,16 +38,16 @@
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
 
+    [Inject] private IJSRuntime? JSRuntime { get; set; }
+
+    private string _PopupStylesString => $"margin-top:{this.MarginTop}px;";
+
+    private readonly JSModule _JSModule;
     private HotKeysContext? _HotKeysContext;
 
     private ElementReference _PopupMenuElement;
 
     private bool _PopupShown = false;
-
-    private string _PopupStylesString => $"margin-top:{this.MarginTop}px;";
-
-    private readonly JSModule _JSModule;
-
     private DotNetObjectReference<PopupMenu> _This;
 
     private IJSObjectReference? _EventSubscriber;
@@ -57,6 +56,27 @@
     {
         this._This = DotNetObjectReference.Create(this);
         this._JSModule = new(() => this.JSRuntime, "Internals/Components/Menus/PopupMenu.razor.js");
+    }
+
+    [JSInvokable(nameof(ClosePopup))]
+    public async ValueTask ClosePopup()
+    {
+        await this.UnsubscribeEventAsync();
+
+        if (this._PopupShown == false)
+        {
+            return;
+        }
+
+        this._PopupShown = false;
+        this.StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await this.UnsubscribeEventAsync();
+        await this._JSModule.DisposeAsync();
+        this._This?.Dispose();
     }
 
     private async Task OpenPopup()
@@ -68,32 +88,20 @@
         }
 
         this._EventSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeDocumentEvent", "pointerdown", this._This, nameof(ClosePopup), this._PopupMenuElement);
-        this._HotKeysContext = this.Services.GetRequiredService<HotKeys>().CreateContext().Add(Code.Escape, ClosePopup);
+        this._HotKeysContext = this.Services.GetRequiredService<HotKeys>().CreateContext().Add(Code.Escape, this.ClosePopup);
         this._PopupShown = true;
-    }
-
-    [JSInvokable(nameof(ClosePopup))]
-    public async ValueTask ClosePopup()
-    {
-        await this.UnsubscribeEventAsync();
-        if (this._PopupShown == false) return;
-        this._PopupShown = false;
-        this.StateHasChanged();
     }
 
     private async ValueTask UnsubscribeEventAsync()
     {
-        if (this._HotKeysContext is not null) await this._HotKeysContext.DisposeAsync();
+        if (this._HotKeysContext is not null)
+        {
+            await this._HotKeysContext.DisposeAsync();
+        }
+
         this._HotKeysContext = null;
 
         await this._EventSubscriber.DisposeIfConnectedAsync("dispose");
         this._EventSubscriber = null;
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await this.UnsubscribeEventAsync();
-        await this._JSModule.DisposeAsync();
-        this._This?.Dispose();
     }
 }

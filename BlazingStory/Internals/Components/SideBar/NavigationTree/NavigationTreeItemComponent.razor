@@ -1,6 +1,4 @@
-﻿@inject NavigationManager NavigationManager
-
-<div class="navigation-tree">
+﻿<div class="navigation-tree">
     @if (this.Item != null)
     {
         @foreach (var item in this.Item.SubItems)
@@ -62,9 +60,6 @@
     [CascadingParameter]
     public QueryRouteData? RouteData { get; set; }
 
-    [CascadingParameter]
-    protected IServiceProvider Services { get; init; } = default!;
-
     [Parameter, EditorRequired]
     public NavigationTreeItem? Item { get; set; }
 
@@ -77,23 +72,14 @@
     [Parameter]
     public EventCallback ExpansionChanged { get; set; }
 
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
     private NavigationService? _NavigationService;
 
     protected override void OnInitialized()
     {
         this._NavigationService = this.Services.GetRequiredService<NavigationService>();
-    }
-
-    private async Task ToggleItemExpansion(NavigationTreeItem item)
-    {
-        item.Expanded = !item.Expanded;
-        await ExpansionChanged.InvokeAsync();
-
-        if (item.Type == NavigationItemType.Component && item.Expanded && item.SubItems.Any())
-        {
-            var storyItemOf1st = item.SubItems.First();
-            this._NavigationService?.NavigateTo(storyItemOf1st);
-        }
     }
 
     private static SvgIconType GetIconType(NavigationTreeItem item)
@@ -105,5 +91,17 @@
             NavigationItemType.Story => SvgIconType.BookmarkHollow,
             _ => SvgIconType.Folder
         };
+    }
+
+    private async Task ToggleItemExpansion(NavigationTreeItem item)
+    {
+        item.Expanded = !item.Expanded;
+        await this.ExpansionChanged.InvokeAsync();
+
+        if (item.Type == NavigationItemType.Component && item.Expanded && item.SubItems.Any())
+        {
+            var storyItemOf1st = item.SubItems.First();
+            this._NavigationService?.NavigateTo(storyItemOf1st);
+        }
     }
 }

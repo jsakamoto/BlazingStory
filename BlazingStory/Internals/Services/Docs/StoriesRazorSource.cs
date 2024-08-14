@@ -24,13 +24,22 @@ internal static class StoriesRazorSource
     {
         var assemblyOfStoriesRazor = story.StoriesRazorDescriptor.TypeOfStoriesRazor.Assembly;
         var projectMetadata = assemblyOfStoriesRazor.GetCustomAttribute<ProjectMetaDataAttribute>();
-        if (projectMetadata == null) return ValueTask.FromResult("");
+
+        if (projectMetadata == null)
+        {
+            return ValueTask.FromResult("");
+        }
 
         var relativePathOfRazor = story.StoriesRazorDescriptor.StoriesAttribute.FilePath.Substring(projectMetadata.ProjectDir.Length).TrimStart('/', '\\');
         var resName = string.Join('.', relativePathOfRazor.Split('/', '\\').Prepend(projectMetadata.RootNamespace));
 
         using var resStream = assemblyOfStoriesRazor.GetManifestResourceStream(resName);
-        if (resStream == null) return ValueTask.FromResult("");
+
+        if (resStream == null)
+        {
+            return ValueTask.FromResult("");
+        }
+
         using var reader = new StreamReader(resStream);
         var sourceOfRazor = reader.ReadToEnd();
         resStream.Dispose();
@@ -41,6 +50,25 @@ internal static class StoriesRazorSource
     }
 
     /// <summary>
+    /// Updates the source code of the given story with the arguments of the given story.
+    /// </summary>
+    /// <param name="story">
+    /// The story to update the source code.
+    /// </param>
+    /// <param name="codeText">
+    /// The source code of the story to update.
+    /// </param>
+    /// <returns>
+    /// </returns>
+    internal static string UpdateSourceTextWithArgument(Story story, string codeText)
+    {
+        var componentTagPattern = CreateComponentTagPattern(story);
+        var context = new UpdateSourceContext(story.Context.Parameters, componentTagPattern);
+
+        return UpdateSourceTextWithArgument(context, codeText, story.Context.Args, hasAtAttributeOnce: false);
+    }
+
+    /// <summary>
     /// Gets the source code of the given story from the given source code of the razor file.
     /// </summary>
     private static string GetSourceOfStory(string sourceOfRazor, string storyName)
@@ -48,26 +76,49 @@ internal static class StoriesRazorSource
         const string closeStory = "</Story>";
         const string openTemplate = "<Template>";
         const string closeTemplate = "</Template>";
+
         foreach (Match openStoryMatch in Regex.Matches(sourceOfRazor, "<Story[ \t]+[^>]+>"))
         {
             var nameAttrMatch = Regex.Match(openStoryMatch.Value, @"[ \t]+Name=((""(?<n1>[^""]+)"")|('(?<n2>[^']+)')|((?<n3>[^ \t]+)))");
-            if (!nameAttrMatch.Success) continue;
+
+            if (!nameAttrMatch.Success)
+            {
+                continue;
+            }
+
             var name =
                 nameAttrMatch.Groups["n1"].Success ? nameAttrMatch.Groups["n1"].Value :
                 nameAttrMatch.Groups["n2"].Success ? nameAttrMatch.Groups["n2"].Value :
                 nameAttrMatch.Groups["n3"].Value;
-            if (name != storyName) continue;
+
+            if (name != storyName)
+            {
+                continue;
+            }
 
             var closeStoryIndex = sourceOfRazor.IndexOf(closeStory, openStoryMatch.Index + openStoryMatch.Length);
-            if (closeStoryIndex == -1) continue;
+
+            if (closeStoryIndex == -1)
+            {
+                continue;
+            }
 
             var openTemplateIndex = sourceOfRazor.IndexOf(openTemplate, openStoryMatch.Index + openStoryMatch.Length, closeStoryIndex - (openStoryMatch.Index + openStoryMatch.Length));
-            if (openTemplateIndex == -1) continue;
+
+            if (openTemplateIndex == -1)
+            {
+                continue;
+            }
 
             var closeTemplateIndex = sourceOfRazor.IndexOf(closeTemplate, openTemplateIndex + openTemplate.Length, closeStoryIndex - (openTemplateIndex + openTemplate.Length));
-            if (closeTemplateIndex == -1) continue;
+
+            if (closeTemplateIndex == -1)
+            {
+                continue;
+            }
 
             var templateContents = sourceOfRazor.Substring(openTemplateIndex + openTemplate.Length, closeTemplateIndex - (openTemplateIndex + openTemplate.Length));
+
             return Deindent(templateContents);
         }
         return "";
@@ -82,11 +133,21 @@ internal static class StoriesRazorSource
         var lines = text.Split('\n').Select(s => s.TrimEnd('\r')).ToList();
 
         // Remove empty lines at the beginning and the end
-        while (lines.Any() && Regex.IsMatch(lines.First(), @"^[ \t]*$")) lines.RemoveAt(0);
+        while (lines.Any() && Regex.IsMatch(lines.First(), @"^[ \t]*$"))
+        {
+            lines.RemoveAt(0);
+        }
+
         for (var i = lines.Count - 1; i >= 0; i--)
         {
-            if (Regex.IsMatch(lines[i], @"^[ \t]*$")) lines.RemoveAt(i);
-            else break;
+            if (Regex.IsMatch(lines[i], @"^[ \t]*$"))
+            {
+                lines.RemoveAt(i);
+            }
+            else
+            {
+                break;
+            }
         }
 
         // Find the minimum indent of all lines
@@ -96,35 +157,6 @@ internal static class StoriesRazorSource
 
         // Remove the minimum indent from all lines
         return string.Join('\n', lines.Select(line => line.Substring(Math.Min(line.Length, indentToTrim))));
-    }
-
-    internal class UpdateSourceContext
-    {
-        public readonly IEnumerable<ComponentParameter> Parameters;
-        public readonly string ComponentTagPattern;
-        public UpdateSourceContext(IEnumerable<ComponentParameter> parameters, string componentTagPattern)
-        {
-            this.Parameters = parameters;
-            this.ComponentTagPattern = componentTagPattern;
-        }
-
-        public bool IsRenderFragmentParam(string paramName)
-        {
-            return this.Parameters.TryGetByName(paramName, out var paramInfo) && RenderFragmentKit.IsRenderFragment(paramInfo.Type);
-        }
-    }
-
-    /// <summary>
-    /// Updates the source code of the given story with the arguments of the given story.
-    /// </summary>
-    /// <param name="story">The story to update the source code.</param>
-    /// <param name="codeText">The source code of the story to update.</param>
-    /// <returns></returns>
-    internal static string UpdateSourceTextWithArgument(Story story, string codeText)
-    {
-        var componentTagPattern = CreateComponentTagPattern(story);
-        var context = new UpdateSourceContext(story.Context.Parameters, componentTagPattern);
-        return UpdateSourceTextWithArgument(context, codeText, story.Context.Args, hasAtAttributeOnce: false);
     }
 
     private static string CreateComponentTagPattern(Story story)
@@ -139,56 +171,56 @@ internal static class StoriesRazorSource
             {
                 list.Add(list.Any() ? fragment + "\\." + list.Last() : fragment); return list;
             });
+
         return $"({string.Join('|', componentTagCandidates)})";
-    }
-
-    internal class TagMatch
-    {
-        public readonly Match OpenTag;
-        public readonly Group Attrs;
-        public readonly Match? CloseTag;
-        public readonly Match ArgsAttr;
-        public readonly MatchCollection Parameters;
-
-        public TagMatch(Match openTag, Group attrs, Match? closeTag, Match argsAttr, MatchCollection parameters)
-        {
-            this.OpenTag = openTag;
-            this.Attrs = attrs;
-            this.CloseTag = closeTag;
-            this.ArgsAttr = argsAttr;
-            this.Parameters = parameters;
-        }
     }
 
     private static bool TryTagMatch(UpdateSourceContext context, string codeText, bool hasAtAttributeOnce, [NotNullWhen(true)] out TagMatch? tagMatch)
     {
         tagMatch = null;
         var openTag = Regex.Match(codeText, $"(?<indent>[ \\t]*)<(?<tagName>{context.ComponentTagPattern})((?<attrs>\\s+[^>]*))?>");
-        if (!openTag.Success) return false;
+
+        if (!openTag.Success)
+        {
+            return false;
+        }
+
         var attrs = openTag.Groups["attrs"];
         var closeTag = attrs.Value.EndsWith('/') ? null : Regex.Match(codeText, $"</{openTag.Groups["tagName"].Value}>");
 
         var argsAttr = Regex.Match(attrs.Value, "@attributes=(\"\\w+\\.Args\"|'\\w+\\.Args')");
-        if (!argsAttr.Success && !hasAtAttributeOnce) return false;
+
+        if (!argsAttr.Success && !hasAtAttributeOnce)
+        {
+            return false;
+        }
+
         var parameters = Regex.Matches(attrs.Value, "(?<gap>\\s+)(?<name>[@\\w]+)=(?<quote>\"|')");
 
         tagMatch = new TagMatch(openTag, attrs, closeTag, argsAttr, parameters);
+
         return true;
     }
 
     private static string UpdateSourceTextWithArgument(UpdateSourceContext context, string codeText, Arguments args, bool hasAtAttributeOnce = true)
     {
-        // "        <ButtonComponent       Text="Hello" @attributes=\"context.Args\" />"
-        //  ~~~~~~~~ ~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        //  ↑ indent  ↑ tagName                    ↑ attrs
-        if (!TryTagMatch(context, codeText, hasAtAttributeOnce, out var tagMatch)) return codeText;
+        // " <ButtonComponent Text="Hello" @attributes=\"context.Args\" />" ~~~~~~~~ ~~~~~~~~~~~~~~~
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ↑ indent ↑ tagName ↑ attrs
+        if (!TryTagMatch(context, codeText, hasAtAttributeOnce, out var tagMatch))
+        {
+            return codeText;
+        }
 
         // Update parameters
         if (tagMatch.ArgsAttr.Success)
         {
             for (var i = 0; i < tagMatch.Parameters.Count; i++)
             {
-                if (!TryUpdateCodeText(context, codeText, tagMatch, args, i, out var updatedCodeText, out var nextArgs)) continue;
+                if (!TryUpdateCodeText(context, codeText, tagMatch, args, i, out var updatedCodeText, out var nextArgs))
+                {
+                    continue;
+                }
+
                 return UpdateSourceTextWithArgument(context, updatedCodeText, nextArgs);
             }
         }
@@ -227,10 +259,14 @@ internal static class StoriesRazorSource
 
             return true;
         }
-
         else
         {
-            if (!args.TryGetValue(paramName.Value, out var value)) { updatedCodeText = null; nextArgs = null; return false; }
+            if (!args.TryGetValue(paramName.Value, out var value))
+            {
+                updatedCodeText = null;
+                nextArgs = null;
+                return false;
+            }
 
             if (context.IsRenderFragmentParam(paramName.Value))
             {
@@ -266,16 +302,23 @@ internal static class StoriesRazorSource
             .Select(arg => arg.Key)
             .ToHashSet();
 
-        if (!childContentIsEmpty && !renderFragmentKeys.Any()) return codeText;
+        if (!childContentIsEmpty && !renderFragmentKeys.Any())
+        {
+            return codeText;
+        }
 
         var indent = tagMatch.OpenTag.Groups["indent"].Value;
         var indentChild = indent + "    ";
         var childContentLines = new StringBuilder();
+
         foreach (var arg in renderFragmentArgs)
         {
-            if (renderFragmentKeys.Contains(arg.Key)) continue;
+            if (renderFragmentKeys.Contains(arg.Key))
+            {
+                continue;
+            }
 
-            var text = RenderFragmentKit.TryToString(arg.Value, out var t) ? t : arg.Value?.ToString() ?? "";
+            var text = arg.Value.TryToString(out var t) ? t : arg.Value?.ToString() ?? "";
 
             if (arg.Key == "ChildContent" && renderFragmentArgs.Length == 1)
             {
@@ -316,8 +359,16 @@ internal static class StoriesRazorSource
     {
         foreach (var param in context.Parameters)
         {
-            if (RenderFragmentKit.IsRenderFragment(param.Type)) continue;
-            if (!args.TryGetValue(param.Name, out var value)) continue;
+            if (param.Type.IsRenderFragment())
+            {
+                continue;
+            }
+
+            if (!args.TryGetValue(param.Name, out var value))
+            {
+                continue;
+            }
+
             yield return ConvertArgToString(param.Name, value);
         }
     }
@@ -332,5 +383,40 @@ internal static class StoriesRazorSource
         };
 
         return $"{name}={quote}{HtmlEncoder.Default.Encode(valueString)}{quote}";
+    }
+
+    internal class UpdateSourceContext
+    {
+        public readonly IEnumerable<ComponentParameter> Parameters;
+        public readonly string ComponentTagPattern;
+
+        public UpdateSourceContext(IEnumerable<ComponentParameter> parameters, string componentTagPattern)
+        {
+            this.Parameters = parameters;
+            this.ComponentTagPattern = componentTagPattern;
+        }
+
+        public bool IsRenderFragmentParam(string paramName)
+        {
+            return this.Parameters.TryGetByName(paramName, out var paramInfo) && paramInfo.Type.IsRenderFragment();
+        }
+    }
+
+    internal class TagMatch
+    {
+        public readonly Match OpenTag;
+        public readonly Group Attrs;
+        public readonly Match? CloseTag;
+        public readonly Match ArgsAttr;
+        public readonly MatchCollection Parameters;
+
+        public TagMatch(Match openTag, Group attrs, Match? closeTag, Match argsAttr, MatchCollection parameters)
+        {
+            this.OpenTag = openTag;
+            this.Attrs = attrs;
+            this.CloseTag = closeTag;
+            this.ArgsAttr = argsAttr;
+            this.Parameters = parameters;
+        }
     }
 }

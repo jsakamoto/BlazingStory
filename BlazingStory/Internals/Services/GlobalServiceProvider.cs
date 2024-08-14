@@ -1,5 +1,4 @@
-﻿
-namespace BlazingStory.Internals.Services;
+﻿namespace BlazingStory.Internals.Services;
 
 internal class GlobalServiceProvider : IServiceProvider
 {

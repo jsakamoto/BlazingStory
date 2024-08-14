@@ -22,8 +22,6 @@ internal class CommandSet<TKey> : IDisposable, IEnumerable<(TKey Type, Command C
 
     private bool _Initialized = false;
 
-    public Command? this[TKey type] => this._Commands[(object)type] as Command;
-
     internal CommandSet(string storageKey, HotKeysContext hotKeysContext, HelperScript helperScript, ILogger logger)
     {
         this._StorageKey = storageKey;
@@ -32,42 +30,26 @@ internal class CommandSet<TKey> : IDisposable, IEnumerable<(TKey Type, Command C
         this._Logger = logger;
     }
 
-    internal async ValueTask EnsureInitializedAsync(Func<IEnumerable<(TKey Type, Command Command)>> getCommandEntries)
-    {
-        if (this._Initialized) return;
-        this._Initialized = true;
-
-        var commandStates = await this._HelperScript.LoadObjectFromLocalStorageAsync(this._StorageKey, new Dictionary<TKey, CommandState>());
-        foreach (var (type, command) in getCommandEntries())
-        {
-            if (commandStates.TryGetValue(type, out var state)) state.Apply(command);
-            command.StateChanged += this.Command_StateChanged;
-            this._Commands.Add(type, command);
-
-            if (command.HotKey != null) this._HotKeysContext.Add(command.HotKey.Modifiers, command.HotKey.Code, command.InvokeAsync);
-        }
-    }
+    public Command? this[TKey type] => this._Commands[(object)type] as Command;
 
     public IDisposable Subscribe(TKey type, ValueTaskCallback callBack)
     {
-        if (this[type] is not Command command) throw new KeyNotFoundException();
+        if (this[type] is not Command command)
+        {
+            throw new KeyNotFoundException();
+        }
+
         return command.Subscribe(callBack);
     }
 
     public IDisposable Subscribe(TKey type, ValueTaskCallback<Command> callBack)
     {
-        if (this[type] is not Command command) throw new KeyNotFoundException();
-        return command.Subscribe(callBack);
-    }
+        if (this[type] is not Command command)
+        {
+            throw new KeyNotFoundException();
+        }
 
-    private void Command_StateChanged(object? sender, EventArgs e)
-    {
-        var commandStates = this._Commands.Keys
-            .Cast<TKey>()
-            .ToDictionary(key => key, key => new CommandState(this[key]!));
-        this._HelperScript
-            .SaveObjectToLocalStorageAsync(this._StorageKey, commandStates)
-            .AndLogException(this._Logger);
+        return command.Subscribe(callBack);
     }
 
     IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
@@ -83,5 +65,43 @@ internal class CommandSet<TKey> : IDisposable, IEnumerable<(TKey Type, Command C
         {
             cmd.StateChanged -= this.Command_StateChanged;
         }
+    }
+
+    internal async ValueTask EnsureInitializedAsync(Func<IEnumerable<(TKey Type, Command Command)>> getCommandEntries)
+    {
+        if (this._Initialized)
+        {
+            return;
+        }
+
+        this._Initialized = true;
+
+        var commandStates = await this._HelperScript.LoadObjectFromLocalStorageAsync(this._StorageKey, new Dictionary<TKey, CommandState>());
+
+        foreach (var (type, command) in getCommandEntries())
+        {
+            if (commandStates.TryGetValue(type, out var state))
+            {
+                state.Apply(command);
+            }
+
+            command.StateChanged += this.Command_StateChanged;
+            this._Commands.Add(type, command);
+
+            if (command.HotKey != null)
+            {
+                this._HotKeysContext.Add(command.HotKey.Modifiers, command.HotKey.Code, command.InvokeAsync);
+            }
+        }
+    }
+
+    private void Command_StateChanged(object? sender, EventArgs e)
+    {
+        var commandStates = this._Commands.Keys
+            .Cast<TKey>()
+            .ToDictionary(key => key, key => new CommandState(this[key]!));
+        this._HelperScript
+            .SaveObjectToLocalStorageAsync(this._StorageKey, commandStates)
+            .AndLogException(this._Logger);
     }
 }

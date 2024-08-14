@@ -1,0 +1,23 @@
+﻿@if (RenderedHtml != null)
+{
+    <div>
+        @((MarkupString)RenderedHtml)
+    </div>
+}
+
+@code {
+    private string RenderedHtml = string.Empty;
+
+    [Parameter]
+    public string? MarkdownString { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (!string.IsNullOrWhiteSpace(this.MarkdownString))
+        {
+            this.RenderedHtml = Markdig.Markdown.ToHtml(this.MarkdownString);
+        }
+    }
+}

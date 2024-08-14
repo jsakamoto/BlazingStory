@@ -11,7 +11,7 @@
 
         <div class="action-log-parent">
 
-            <span class="@CssClass("action-args-node", new{ 
+            <span class="@CssClass("action-args-node", new{
                 Expanded = this._IsExpanded,
                 NoChildren = this.Value.ValueKind is not JsonValueKind.Object and not JsonValueKind.Array
             })" @onclick="OnClickNodeIcon">

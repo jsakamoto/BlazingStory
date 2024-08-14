@@ -22,14 +22,26 @@
     public Story? Story { get; set; }
 
     [CascadingParameter]
-    public required CanvasPageContext CanvasPageContext { get; init; }
+    public CanvasPageContext? CanvasPageContext { get; init; }
 
     private ComponentActionLogs? _ActionLogs;
 
+    public void Dispose()
+    {
+        if (this._ActionLogs != null)
+        {
+            this._ActionLogs.Updated -= this.ActionLogs_Updated;
+        }
+    }
+
     protected override void OnInitialized()
     {
-        this._ActionLogs = this.CanvasPageContext.GetRequiredItem<ComponentActionLogs>();
-        this._ActionLogs.Updated += ActionLogs_Updated;
+        this._ActionLogs = this.CanvasPageContext?.GetRequiredItem<ComponentActionLogs>();
+
+        if (this._ActionLogs != null)
+        {
+            this._ActionLogs.Updated += this.ActionLogs_Updated;
+        }
     }
 
     private void ActionLogs_Updated(object? sender, EventArgs e)
@@ -40,10 +52,5 @@
     private void OnClickClear()
     {
         this._ActionLogs?.Clear();
-    }
-
-    public void Dispose()
-    {
-        if (this._ActionLogs != null) this._ActionLogs.Updated -= ActionLogs_Updated;
     }
 }

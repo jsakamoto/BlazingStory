@@ -6,10 +6,9 @@ namespace BlazingStory.Internals.Utils;
 internal class TypeStructure
 {
     internal readonly bool IsNullable;
-
     internal readonly bool IsGeneric;
 
-    [DynamicallyAccessedMembers(PublicConstructors | PublicMethods| Interfaces)]
+    [DynamicallyAccessedMembers(PublicConstructors | PublicMethods | Interfaces)]
     internal readonly Type PrimaryType;
 
     internal readonly Type[] SecondaryTypes;

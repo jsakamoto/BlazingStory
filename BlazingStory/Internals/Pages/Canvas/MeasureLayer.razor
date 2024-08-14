@@ -1,6 +1,6 @@
 @using static System.Math
+
 @implements IAsyncDisposable
-@inject IJSRuntime JSRuntime
 
 <div style="position:fixed; top:0; left:0; bottom:0; right:0; pointer-events:none; overflow:hidden !important; @(ResetCss)">
 
@@ -35,32 +35,11 @@
 
 @code
 {
-    private static class BackColors
-    {
-        public const string Content = "#6fa8dca8";
-        public const string Padding = "#93c47d8c";
-        public const string Margin = "#f6b26ba8";
-    }
-
-    private static class NumTextColors
-    {
-        public const string Content = "#6fa8dc";
-        public const string Padding = "#93c47d";
-        public const string Margin = "#f6b26b";
-    }
-
-    private static class NumTextMetric
-    {
-        public const int Gap = 6;
-        public const int HorizontalPadding = 6;
-        public const int VerticalPadding = 3;
-        public const int HorizontalSize = 7;
-        public const int VerticalSize = 16;
-    }
+    [Inject] private IJSRuntime? JSRuntime { get; set; }
 
     private static readonly string ResetCss =
         "border:none !important;" +
-        "border-radisu:0 !important;" +
+        "border-radius:0 !important;" +
         "outline:none !important;" +
         "margin:0 0 0 0 !important;" +
         "padding:0 0 0 0 !important;" +
@@ -73,47 +52,7 @@
 
     private IJSObjectReference? _EventMonitorSubscriber;
 
-    public struct DOMRect
-    {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Width { get; set; }
-        public double Height { get; set; }
-        public readonly static DOMRect Empty = new();
-    }
-
-    public struct SpacingSize
-    {
-        public double Top { get; set; }
-        public double Left { get; set; }
-        public double Bottom { get; set; }
-        public double Right { get; set; }
-    }
-
-    public class Measurement
-    {
-        public DOMRect Boundary { get; set; }
-        public SpacingSize Padding { get; set; }
-        public SpacingSize Margin { get; set; }
-    }
-
     private Measurement? _Measurement;
-
-    private class StyleSet
-    {
-        public string Top = "";
-        public string Left = "";
-        public string Bottom = "";
-        public string Right = "";
-    }
-
-    private class DOMRectSet
-    {
-        public DOMRect Top;
-        public DOMRect Left;
-        public DOMRect Bottom;
-        public DOMRect Right;
-    }
 
     private string _ContentAreaStyle = "";
 
@@ -129,19 +68,11 @@
 
     private string _ContentSizeText = "";
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender) return;
-
-        await using var module = await this.JSRuntime.ImportAsync("Internals/Pages/Canvas/MeasureLayer.razor.js");
-        this._This = DotNetObjectReference.Create(this);
-        this._EventMonitorSubscriber = await module.InvokeAsync<IJSObjectReference>("subscribeTargetElementChanged", this._This);
-    }
-
     [JSInvokable(nameof(TargetElementChanged))]
     public void TargetElementChanged(Measurement? measurement)
     {
         this._Measurement = measurement;
+
         if (measurement == null)
         {
             this.StateHasChanged();
@@ -178,9 +109,28 @@
         this.StateHasChanged();
     }
 
+    public async ValueTask DisposeAsync()
+    {
+        await this._EventMonitorSubscriber.DisposeIfConnectedAsync("dispose");
+        this._This?.Dispose();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || this.JSRuntime is null)
+        {
+            return;
+        }
+
+        await using var module = await this.JSRuntime.ImportAsync("Internals/Pages/Canvas/MeasureLayer.razor.js");
+        this._This = DotNetObjectReference.Create(this);
+        this._EventMonitorSubscriber = await module.InvokeAsync<IJSObjectReference>("subscribeTargetElementChanged", this._This);
+    }
+
     private static string GetContentSizeStyle(string contentSizeText, in DOMRect contentRect, in DOMRect boundary)
     {
         var rect = GetTextRect(contentSizeText);
+
         if (rect.Width >= contentRect.Width || rect.Height >= contentRect.Height)
         {
             rect.X = boundary.X + boundary.Width + NumTextMetric.Gap;
@@ -191,6 +141,7 @@
             rect.X = contentRect.X + (contentRect.Width - rect.Width) / 2;
             rect.Y = contentRect.Y + (contentRect.Height - rect.Height) / 2;
         }
+
         return GetNumberStyle(rect, NumTextColors.Content);
     }
 
@@ -242,7 +193,10 @@
 
     private static string GetNumberStyle(in DOMRect rect, string background)
     {
-        if (rect.Equals(DOMRect.Empty)) return "display:none !important;";
+        if (rect.Equals(DOMRect.Empty))
+        {
+            return "display:none !important;";
+        }
 
         return GetSpacingStyle(rect, background) +
             "font:600 12px monospace !important; border-radius:3px !important; color:#000 !important;" +
@@ -258,7 +212,11 @@
                 Bottom = ComputeNumTextRect(spacing.Bottom, centerX, centerY: boundary.Y + boundary.Height + spacing.Bottom / 2.0),
                 Right = ComputeNumTextRect(spacing.Right, centerX: boundary.X + boundary.Width + spacing.Right / 2.0, centerY)
             };
-        if (coRectSet == null) return rectSet;
+
+        if (coRectSet == null)
+        {
+            return rectSet;
+        }
 
         RelocateNumTextRect(ref rectSet.Top, coRectSet.Top, vertical: true, delta: -1, limit: coRectSet.Top.Y - rectSet.Top.Height);
         RelocateNumTextRect(ref rectSet.Bottom, coRectSet.Bottom, vertical: true, delta: +1, limit: coRectSet.Bottom.Y + coRectSet.Bottom.Height);
@@ -270,7 +228,10 @@
 
     private static void RelocateNumTextRect(ref DOMRect rect, in DOMRect coRect, bool vertical, int delta, double limit)
     {
-        if (rect.Equals(DOMRect.Empty) || coRect.Equals(DOMRect.Empty)) return;
+        if (rect.Equals(DOMRect.Empty) || coRect.Equals(DOMRect.Empty))
+        {
+            return;
+        }
 
         if (vertical)
         {
@@ -291,7 +252,11 @@
     private static DOMRect ComputeNumTextRect(double num, double centerX, double centerY)
     {
         var roundNum = Round(num);
-        if (roundNum == 0.0) return DOMRect.Empty;
+
+        if (roundNum == 0.0)
+        {
+            return DOMRect.Empty;
+        }
 
         var rect = GetTextRect(roundNum.ToString());
         rect.X = centerX - rect.Width / 2.0;
@@ -303,6 +268,7 @@
     private static DOMRect GetTextRect(string text)
     {
         var textLen = text.Length;
+
         return new DOMRect
             {
                 Width = textLen * NumTextMetric.HorizontalSize + NumTextMetric.HorizontalPadding * 2,
@@ -310,9 +276,67 @@
             };
     }
 
-    public async ValueTask DisposeAsync()
+    public struct DOMRect
     {
-        await this._EventMonitorSubscriber.DisposeIfConnectedAsync("dispose");
-        this._This?.Dispose();
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Width { get; set; }
+        public double Height { get; set; }
+
+        public static readonly DOMRect Empty = new();
+    }
+
+    public struct SpacingSize
+    {
+        public double Top { get; set; }
+        public double Left { get; set; }
+        public double Bottom { get; set; }
+        public double Right { get; set; }
+    }
+
+    public class Measurement
+    {
+        public DOMRect Boundary { get; set; }
+        public SpacingSize Padding { get; set; }
+        public SpacingSize Margin { get; set; }
+    }
+
+    private static class BackColors
+    {
+        public const string Content = "#6fa8dca8";
+        public const string Padding = "#93c47d8c";
+        public const string Margin = "#f6b26ba8";
+    }
+
+    private static class NumTextColors
+    {
+        public const string Content = "#6fa8dc";
+        public const string Padding = "#93c47d";
+        public const string Margin = "#f6b26b";
+    }
+
+    private static class NumTextMetric
+    {
+        public const int Gap = 6;
+        public const int HorizontalPadding = 6;
+        public const int VerticalPadding = 3;
+        public const int HorizontalSize = 7;
+        public const int VerticalSize = 16;
+    }
+
+    private class StyleSet
+    {
+        public string Top = "";
+        public string Left = "";
+        public string Bottom = "";
+        public string Right = "";
+    }
+
+    private class DOMRectSet
+    {
+        public DOMRect Top;
+        public DOMRect Left;
+        public DOMRect Bottom;
+        public DOMRect Right;
     }
 }

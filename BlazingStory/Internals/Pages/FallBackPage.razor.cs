@@ -1,4 +1,11 @@
-@code
+﻿using BlazingStory.Internals.Models;
+using BlazingStory.Internals.Services.Navigation;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace BlazingStory.Internals.Pages;
+
+public partial class FallBackPage : ComponentBase
 {
     [CascadingParameter]
     protected IServiceProvider Services { get; init; } = default!;

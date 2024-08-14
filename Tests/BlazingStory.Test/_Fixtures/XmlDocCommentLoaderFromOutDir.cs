@@ -8,6 +8,18 @@ namespace BlazingStory.Test._Fixtures;
 internal class XmlDocCommentLoaderFromOutDir
 {
     /// <summary>
+    /// Creates a <see cref="HttpClient" /> for test that loads XML documentation file from the test
+    /// output directory..
+    /// </summary>
+    /// <returns>
+    /// A <see cref="HttpClient" /> for test that loads XML documentation file from the test output directory.
+    /// </returns>
+    public static HttpClient CreateHttpClient()
+    {
+        return new HttpClient(new XmlDocCommentMessageHandler()) { BaseAddress = new Uri("http://localhost/") };
+    }
+
+    /// <summary>
     /// This class is used to load XML documentation from the test output directory.
     /// </summary>
     private class XmlDocCommentMessageHandler : HttpMessageHandler
@@ -19,14 +31,5 @@ internal class XmlDocCommentLoaderFromOutDir
             var xdocPath = Path.Combine(outDir, fileName);
             return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(File.ReadAllText(xdocPath)) });
         }
-    }
-
-    /// <summary>
-    /// Creates a <see cref="HttpClient"/> for test that loads XML documentation file from the test output directory..
-    /// </summary>
-    /// <returns>A <see cref="HttpClient"/> for test that loads XML documentation file from the test output directory.</returns>
-    public static HttpClient CreateHttpClient()
-    {
-        return new HttpClient(new XmlDocCommentMessageHandler()) { BaseAddress = new Uri("http://localhost/") };
     }
 }

@@ -1,7 +1,4 @@
 ﻿@inherits LayoutComponentBase
-@using Toolbelt.Blazor.HotKeys2
-@inject NavigationManager NavigationManager
-@inject IJSRuntime JSRuntime
 
 <HeadContent>
     @{
@@ -39,19 +36,22 @@
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
 
+    [Inject] private NavigationManager? NavigationManager { get; set; }
+
+    [Inject] private IJSRuntime? JSRuntime { get; set; }
+
+    private string SideBarSizeKeyName => this.GetType().Name + "." + nameof(_SideBarSize);
+
+    private readonly Subscriptions _Subscriptions = new();
     private bool _Ready = false;
 
     private HelperScript HelperScript = default!;
 
     private int _SideBarSize = 210;
-
-    private string SideBarSizeKeyName => this.GetType().Name + "." + nameof(_SideBarSize);
-
     private Command? _SideBarVisibleCommand;
 
     private Command? _GoFullScreenCommand;
-
-    private readonly Subscriptions _Subscriptions = new();
+    private SidBarVisibilityStates _SidBarVisibilityState = SidBarVisibilityStates.SidebarShown;
 
     private enum SidBarVisibilityStates
     {
@@ -60,8 +60,6 @@
         SidebarHiding,
         SidebarHidden,
     }
-
-    private SidBarVisibilityStates _SidBarVisibilityState = SidBarVisibilityStates.SidebarShown;
 
     protected override void OnInitialized()
     {
@@ -78,9 +76,9 @@
             this._GoFullScreenCommand = commandService[CommandType.GoFullScreen]!;
             this._Subscriptions.Add(this._SideBarVisibleCommand.Subscribe(this.OnToggleSideBarVisible));
             this._Subscriptions.Add(this._GoFullScreenCommand.Subscribe(this.OnToggleFullscreen));
-            this._Subscriptions.Add(commandService.Subscribe(CommandType.AboutYourBlazingStory, () => { this.NavigationManager.NavigateTo("./?path=/settings/about"); return ValueTask.CompletedTask; }));
-            this._Subscriptions.Add(commandService.Subscribe(CommandType.ReleaseNotes, () => { this.NavigationManager.NavigateTo("./?path=/settings/release-notes"); return ValueTask.CompletedTask; }));
-            this._Subscriptions.Add(commandService.Subscribe(CommandType.KeyboardShortcuts, () => { this.NavigationManager.NavigateTo("./?path=/settings/shortcuts"); return ValueTask.CompletedTask; }));
+            this._Subscriptions.Add(commandService.Subscribe(CommandType.AboutYourBlazingStory, () => { this.NavigationManager?.NavigateTo("./?path=/settings/about"); return ValueTask.CompletedTask; }));
+            this._Subscriptions.Add(commandService.Subscribe(CommandType.ReleaseNotes, () => { this.NavigationManager?.NavigateTo("./?path=/settings/release-notes"); return ValueTask.CompletedTask; }));
+            this._Subscriptions.Add(commandService.Subscribe(CommandType.KeyboardShortcuts, () => { this.NavigationManager?.NavigateTo("./?path=/settings/shortcuts"); return ValueTask.CompletedTask; }));
             this._SidBarVisibilityState = this.GetSidebarVisible() ? SidBarVisibilityStates.SidebarShown : SidBarVisibilityStates.SidebarHidden;
 
             this._Ready = true;
@@ -90,7 +88,6 @@
             this._SideBarSize = await this.HelperScript.GetLocalStorageItemAsync(this.SideBarSizeKeyName, this._SideBarSize);
             this.StateHasChanged();
         }
-
         else
         {
             if (this._SidBarVisibilityState == SidBarVisibilityStates.SidebarHiding)
@@ -128,6 +125,7 @@
             (CommandType.NextStory, new(new(ModCode.Alt, Code.ArrowRight), "Next story")),
             (CommandType.CollapseAll, new(new(ModCode.Ctrl|ModCode.Shift, Code.ArrowUp), "Collapse all"))
         });
+
         return commandServce;
     }
 
@@ -142,7 +140,11 @@
 
     private async ValueTask ToggleSideBarVisibliy(Command? command)
     {
-        if (command == null) return;
+        if (command == null)
+        {
+            return;
+        }
+
         command.ToggleFlag();
         this._SidBarVisibilityState = this.GetSidebarVisible() ? SidBarVisibilityStates.SidebarShowing : SidBarVisibilityStates.SidebarHiding;
         await ValueTask.CompletedTask;
