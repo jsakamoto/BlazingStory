@@ -1,3 +1,6 @@
+v.1.0.0-preview.41
+- Improve: Make the numeric parameter control keep precision when the input value is spinning up and down. (Issue #50)
+
 v.1.0.0-preview.40
 - Improve: Added support for float, decimal, and double numbers in parameter control. (Issue #50)
 

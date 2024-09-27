@@ -1,4 +1,4 @@
-﻿using Toolbelt.Blazor.Splitter;
+﻿using Toolbelt.Blazor.Splitter.V2;
 
 namespace BlazingStory.Internals.Pages.Canvas;
 

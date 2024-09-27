@@ -39,15 +39,33 @@
 
     private bool _InitialFocused;
 
+    private string? _PrevValue;
+
+    private int _PrevDecimalPartLen = 1;
+
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
         if (this.AllowDecimalPoint)
         {
+            if (this._PrevValue == this.Value) return;
+
             var parts = this.Value?.Split('.') ?? [];
             var hasDecimalPoint = parts.Length == 2;
-            var dicimalPartLen = (hasDecimalPoint ? parts[1] : "").Length;
-            this._Step = dicimalPartLen == 0 ? (hasDecimalPoint ? "0.1" : "1") : ("0." + new String('0', dicimalPartLen - 1) + "1");
+            var decimalPartLen = (hasDecimalPoint ? parts[1] : "").Length;
+
+            if (decimalPartLen < this._PrevDecimalPartLen && decimal.TryParse(this._PrevValue, out var prevValue) && decimal.TryParse(this.Value, out var value))
+            {
+                var stepValue = decimal.Parse(this._Step);
+                if (prevValue + stepValue == value || prevValue - stepValue == value)
+                {
+                    decimalPartLen = this._PrevDecimalPartLen;
+                }
+            }
+
+            this._Step = decimalPartLen == 0 ? (hasDecimalPoint ? "0.1" : "1") : ("0." + new String('0', decimalPartLen - 1) + "1");
+            this._PrevValue = this.Value;
+            this._PrevDecimalPartLen = decimalPartLen;
         }
         else
         {
