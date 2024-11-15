@@ -8,6 +8,7 @@ internal class BuildXmlDocCommentTest
 {
     [Parallelizable(ParallelScope.Self)]
     [TestCase("net8.0", "8.0.0", false)]
+    [TestCase("net9.0", "9.0.0", true)]
     public async Task DotNetRun_Test(string targetFramework, string SDKVersion, bool allowPrerelease)
     {
         // Given
@@ -38,6 +39,7 @@ internal class BuildXmlDocCommentTest
 
     [Parallelizable(ParallelScope.Self)]
     [TestCase("net8.0", "8.0.0", false)]
+    [TestCase("net9.0", "9.0.0", true)]
     public async Task Publish_Test(string targetFramework, string SDKVersion, bool allowPrerelease)
     {
         // Given

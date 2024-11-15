@@ -37,7 +37,7 @@
   This target is used to add the XML Doc Comment files to the Blazor WebAssembly Static Web Assets.
   This is required to support the "Details" descriptions in the "Docs" pages.
   -->
-  <Target Name="_AddXmlDocCommentToBlazorWasmStaticWebAssets" BeforeTargets="_AddBlazorWasmStaticWebAssets" AfterTargets="_ResolveBlazorWasmOutputs">
+  <Target Name="_AddXmlDocCommentToBlazorWasmStaticWebAssets" BeforeTargets="_AddBlazorWasmStaticWebAssets;ResolveProjectStaticWebAssets" AfterTargets="_ResolveBlazorWasmOutputs">
 
     <ItemGroup>
 
@@ -64,36 +64,30 @@
 
     </ItemGroup>
 
-    <!-- 
-    [.NET 8.0 SDK Support]
-    Before .NET 8.0 SDK, the Blazor WebAssembly Static Web Assets are defined by the "BlazorWebAssemblyResource" trait and by the "_BlazorStaticWebAsset" item name.
-    But .NET 8.0 or later, those are defined by the "WasmResource" trait and by the "WasmStaticWebAsset" item name.
-    -->
-    <PropertyGroup>
-      <_XmlDocCommentAssetTraitName>BlazorWebAssemblyResource</_XmlDocCommentAssetTraitName>
-      <_XmlDocCommentAssetItemName>_BlazorStaticWebAsset</_XmlDocCommentAssetItemName>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" $(NETCoreSdkVersion.StartsWith('8.0')) " >
-      <_XmlDocCommentAssetTraitName>WasmResource</_XmlDocCommentAssetTraitName>
-      <_XmlDocCommentAssetItemName>WasmStaticWebAsset</_XmlDocCommentAssetItemName>
-    </PropertyGroup>
-
     <DefineStaticWebAssets
       CandidateAssets="@(_XmlDocComment)"
       SourceId="$(PackageId)"
       SourceType="Computed"
       AssetKind="Build"
       AssetRole="Primary"
-      AssetTraitName="$(_XmlDocCommentAssetTraitName)"
+      AssetTraitName="WasmResource"
       CopyToOutputDirectory="PreserveNewest"
       CopyToPublishDirectory="Never"
       ContentRoot="$(OutputPath)wwwroot"
       BasePath="$(StaticWebAssetBasePath)"
     >
-      <Output TaskParameter="Assets" ItemName="$(_XmlDocCommentAssetItemName)" />
+      <Output TaskParameter="Assets" ItemName="_BS_XmlDocCommentAsset" />
     </DefineStaticWebAssets>
-  
+
+    <!--<Copy
+      SourceFiles="@(_BS_XmlDocCommentAsset->'%(OriginalItemSpec)')"
+      DestinationFiles="@(_BS_XmlDocCommentAsset->'%(ContentRoot)%(RelativePath)')"
+      />-->
+
+    <ItemGroup>
+      <WasmStaticWebAsset Include="@(_BS_XmlDocCommentAsset)"/>
+      <_BS_XmlDocCommentAsset Remove="@(_BS_XmlDocCommentAsset)" />
+    </ItemGroup>
   </Target>
 
   <Target Name="_AddXmlDocCommentToPublishContents"
