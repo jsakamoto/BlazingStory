@@ -37,7 +37,10 @@
   This target is used to add the XML Doc Comment files to the Blazor WebAssembly Static Web Assets.
   This is required to support the "Details" descriptions in the "Docs" pages.
   -->
-  <Target Name="_AddXmlDocCommentToBlazorWasmStaticWebAssets" BeforeTargets="_AddBlazorWasmStaticWebAssets;ResolveProjectStaticWebAssets" AfterTargets="_ResolveBlazorWasmOutputs">
+  <Target Name="_AddXmlDocCommentToBlazorWasmStaticWebAssets" 
+          BeforeTargets="_AddBlazorWasmStaticWebAssets" 
+          AfterTargets="_ResolveBlazorWasmOutputs"
+          DependsOnTargets="CoreCompile">
 
     <ItemGroup>
 
