@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "BlazorToDoApp.Client": {
+    "https": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
