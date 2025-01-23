@@ -1,7 +1,7 @@
 ﻿namespace BlazorToDoApp.Components.Atoms;
 
 /// <summary>
-/// 中にアイコンを表示する、円形のボタン
+/// A circular button that displays an icon inside
 /// </summary>
 public partial class IconButton
 {

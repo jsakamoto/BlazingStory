@@ -14,7 +14,7 @@
     private readonly ToDoItem toDoItem = new();
 
     /// <summary>
-    /// 追加ボタンがクリックされたときに、ToDo のタイトル文字列を引数に呼び出されるコールバックを取得または設定します。
+    /// Gets or sets the callback that is invoked when the add button is clicked, with the ToDo title string as an argument.
     /// </summary>
     [Parameter]
     public EventCallback<string> OnClickAdd { get; set; }

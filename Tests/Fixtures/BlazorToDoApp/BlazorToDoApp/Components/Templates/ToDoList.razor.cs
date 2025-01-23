@@ -1,7 +1,7 @@
 ﻿namespace BlazorToDoApp.Components.Templates;
 
 /// <summary>
-/// ToDo アイテムのコレクションをリスト形式で表示するコンポーネント
+/// Component that displays a collection of ToDo items in a list format
 /// </summary>
 public partial class ToDoList
 {
