@@ -21,5 +21,7 @@ jobs:
             9.0.x
 
       # Invoke tests
-      - name: Invoke tests
-        run: dotnet test -p:TypeScriptCompileBlocked=true
+      - name: Invoke tests on net8.0
+        run: dotnet run --project ./Tests/BlazingStory.Test -f net8.0 --noresult --labels=All
+      - name: Invoke tests on net9.0
+        run: dotnet run --project ./Tests/BlazingStory.Test -f net9.0 --noresult --labels=All
