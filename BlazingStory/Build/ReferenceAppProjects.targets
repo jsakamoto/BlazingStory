@@ -7,145 +7,9 @@
     </ItemGroup>
   </Target>
 
-  <UsingTask TaskName="_BS_BundleAppProjectsScopedCss" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
-    <ParameterGroup>
-      <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
-      <ReferencedAppProjects ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
-      <ProjectBundle ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
-    </ParameterGroup>
-    <Task>
-      <Using Namespace="System" />
-      <Using Namespace="System.IO" />
-      <Using Namespace="System.Linq" />
-      <Using Namespace="System.Numerics" />
-      <Using Namespace="System.Security.Cryptography" />
-      <Using Namespace="Microsoft.Build.Framework" />
-      <Code Type="Fragment" Language="cs">
-        <![CDATA[
-      static string GetPath(ITaskItem item) => item.GetMetadata("RootDir") + item.GetMetadata("Directory");
-      
-      static byte[] ComputeHash(ITaskItem item) {
-          var contentBytes = File.ReadAllBytes(item.GetMetadata("OriginalItemSpec"));
-          using var sha256 = SHA256.Create();
-          return sha256.ComputeHash(contentBytes);
-      }
-
-      static string ToBase36(byte[] hash)
-      {
-	      var array = new char[10];
-          var buff = new byte[10];
-          Array.Copy(hash, buff, 10);
-          var dividend = BigInteger.Abs(new BigInteger(buff));
-	      for (var i = 0; i < 10; i++)
-	      {
-		      dividend = BigInteger.DivRem(dividend, 36, out var remainder);
-		      array[i] = "0123456789abcdefghijklmnopqrstuvwxyz"[(int)remainder];
-	      }
-	      return new string(array);
-      }
-
-      var projectBundle = new List<ITaskItem>();
-      foreach (var appProj in this.ReferencedAppProjects) {
-        var appName = appProj.GetMetadata("Filename");
-        var stylesCssName = appName + ".styles.css";
-        var stylesCssItem = this.Items.FirstOrDefault(item => item.GetMetadata("RelativePath") == stylesCssName);
-        if (stylesCssItem == null) continue;
-        
-        var bundleScpCssName = appProj.GetMetadata("Filename") + ".bundle.scp.css";
-        var bundleScpCssDir = Path.GetFullPath(GetPath(stylesCssItem) + "../projectbundle/");
-        var bundleScpCssPath = bundleScpCssDir + bundleScpCssName;
-
-        var bundleScpCss = new TaskItem(bundleScpCssPath);
-        bundleScpCss.SetMetadata("OriginalItemSpec", bundleScpCssPath);
-        bundleScpCss.SetMetadata("BasePath", "_content/" + appName);
-        bundleScpCss.SetMetadata("RelativePath", bundleScpCssName);
-        bundleScpCss.SetMetadata("ContentRoot", bundleScpCssDir);
-        bundleScpCss.SetMetadata("MSBuildSourceProjectFile", appProj.GetMetadata("MSBuildSourceProjectFile"));
-        bundleScpCss.SetMetadata("Source", appName);
-        bundleScpCss.SetMetadata("SourceId", appName);
-
-        bundleScpCss.SetMetadata("GetBuildAssetsTargets", "GetCurrentProjectBuildStaticWebAssetItems");
-        bundleScpCss.SetMetadata("AssetMode", "Reference");
-        bundleScpCss.SetMetadata("AssetKind", "All");
-        bundleScpCss.SetMetadata("GetPublishAssetsTargets", "ComputeReferencedStaticWebAssetsPublishManifest;GetCurrentProjectPublishStaticWebAssetItems");
-        bundleScpCss.SetMetadata("Version", "2");
-        bundleScpCss.SetMetadata("ResultType", "StaticWebAsset");
-        bundleScpCss.SetMetadata("MSBuildSourceTargetName", "GetCurrentProjectBuildStaticWebAssetItems");
-        bundleScpCss.SetMetadata("SourceType", "Project");
-        bundleScpCss.SetMetadata("AssetRole", "Primary");
-        bundleScpCss.SetMetadata("AssetTraitValue", "ProjectBundle");
-        bundleScpCss.SetMetadata("AssetTraitName", "ScopedCss");
-        bundleScpCss.SetMetadata("CopyToPublishDirectory", "PreserveNewest");
-        
-        var hash = ComputeHash(bundleScpCss);
-        bundleScpCss.SetMetadata("Integrity", Convert.ToBase64String(hash));
-        bundleScpCss.SetMetadata("Fingerprint", ToBase36(hash));
-
-        projectBundle.Add(bundleScpCss);
-      }
-      
-      this.ProjectBundle = projectBundle.ToArray();
-      ]]>
-      </Code>
-    </Task>
-  </UsingTask>
-
-  <UsingTask TaskName="_BS_PruneReferencedAppProjectsItems" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
-    <ParameterGroup>
-      <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
-      <ReferencedAppProjects ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
-      <PrunedItems ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
-      <PruneByPath ParameterType="System.Boolean" />
-    </ParameterGroup>
-    <Task>
-      <Using Namespace="System.Linq" />
-      <Code Type="Fragment" Language="cs">
-        <![CDATA[
-      static string GetPath(ITaskItem item) => item.GetMetadata("RootDir") + item.GetMetadata("Directory");
-      var prunedItems = new List<ITaskItem>();
-
-      // Prune the assets of the referenced app projects for each app project.
-      foreach (var appProj in this.ReferencedAppProjects) 
-      {
-        var appName = appProj.GetMetadata("Filename");
-        var appBasePath = "_content/" + appName;
-
-        var assets = this.Items
-        
-          // Filter the assets of the current app project in a loop.
-          .Where(item => item.GetMetadata("SourceId") == appName)
-          .Where(item => item.GetMetadata("AssetKind") == "All")
-
-          // Exclude the framework files that are under the "_framework" folder, such as "_framework/blazor.webassembly.js", "_framework/blazor.boot.json", etc.
-          .Where(item => item.GetMetadata("RelativePath")?.StartsWith("_framework/") != true)
-
-          // Exclude the app-bundled scoped css files, such as "*.styles.css", not "*.bundle.scp.css".
-          .Where(item => item.GetMetadata("AssetTraitName") == "ScopedCss" ? item.GetMetadata("AssetTraitValue") == "ProjectBundle" : true)
-
-          .ToArray();
-
-        // Relocate the assets of the refereincing app project under the "_content/{appName}/" folder.
-        // (As an exception, the assets of the .js files are relocated under the root folder.)
-        foreach (var asset in assets) {
-          var isJs = asset.GetMetadata("OriginalItemSpec").EndsWith(".js");
-          asset.SetMetadata("BasePath",  isJs ? "/" : appBasePath);
-        }
-
-        prunedItems.AddRange(assets);
-      }
-      
-      var appNames = this.ReferencedAppProjects.Select(item => item.GetMetadata("Filename")).ToArray();
-      var appDirs = this.ReferencedAppProjects.Select(item => GetPath(item)).ToArray();
-      var otherAssets = this.PruneByPath 
-        ? this.Items.Where(item => !appDirs.Any(dir => GetPath(item).StartsWith(dir))).ToArray()
-        : this.Items.Where(item => !appNames.Any(name => item.GetMetadata("SourceId") == name)).ToArray();
-      prunedItems.AddRange(otherAssets);
-      
-      this.PrunedItems = prunedItems.ToArray();
-      ]]>
-      </Code>
-    </Task>
-  </UsingTask>
+  <Import Project="$(MSBuildThisFileDirectory)CustomTasks\_BS_BundleAppProjectsScopedCss.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)CustomTasks\_BS_FilterAndRebaseItems.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)CustomTasks\_BS_FilterAndRebaseStaticWebAssetEndPoints.targets" />
 
   <!--
   *** FOR BUILD - Bundle Scoped Css of App Projects ***
@@ -156,16 +20,19 @@
     This target does not affect Blazor Server projects.
   -->
   <Target Name="_BS_Build_BundleScopedCssOfAppProjects"
-          AfterTargets="ResolveReferencedProjectsStaticWebAssets"
-          BeforeTargets="UpdateLegacyPackageScopedCssBundles"
-          DependsOnTargets="_BS_ResolveReferencedAppProject">
+    AfterTargets="ResolveReferencedProjectsStaticWebAssets"
+    BeforeTargets="UpdateLegacyPackageScopedCssBundles"
+    DependsOnTargets="_BS_ResolveReferencedAppProject">
     <_BS_BundleAppProjectsScopedCss Items="@(StaticWebAsset)" ReferencedAppProjects="@(_BS_ReferencedAppProject)">
       <Output TaskParameter="ProjectBundle" ItemName="_BS_ProjectBundle" />
+      <Output TaskParameter="ProjectEndpoints" ItemName="_BS_ProjectEndpoint" />
     </_BS_BundleAppProjectsScopedCss>
     <ItemGroup>
       <_ReferencedProjectBuildStaticWebAssetsItems Include="@(_BS_ProjectBundle)" />
       <StaticWebAsset Include="@(_BS_ProjectBundle)" KeepMetadata="@(_StaticWebAssetCanonicalMetadata)" />
+      <StaticWebAssetEndpoint Include="@(_BS_ProjectEndpoint)" />
       <_BS_ProjectBundle Remove="@(_BS_ProjectBundle)" />
+      <_BS_ProjectEndpoint Remove="@(_BS_ProjectEndpoint)" />
     </ItemGroup>
   </Target>
 
@@ -180,11 +47,11 @@
     This target does not affect Blazor Server projects.
   -->
   <Target Name="_BS_Build_RemoveAppProjectsStaticWebAssets"
-          BeforeTargets="GenerateStaticWebAssetsManifest"
-          DependsOnTargets="$(GenerateStaticWebAssetsManifestDependsOn);_BS_ResolveReferencedAppProject">
-    <_BS_PruneReferencedAppProjectsItems Items="@(StaticWebAsset)" ReferencedAppProjects="@(_BS_ReferencedAppProject)">
+    AfterTargets="ResolveReferencedProjectsStaticWebAssets"
+    DependsOnTargets="_BS_ResolveReferencedAppProject;_BS_Build_BundleScopedCssOfAppProjects">
+    <_BS_FilterAndRebaseItems Items="@(StaticWebAsset)" ReferencedAppProjects="@(_BS_ReferencedAppProject)">
       <Output TaskParameter="PrunedItems" ItemName="_BS_PrunedStaticWebAsset" />
-    </_BS_PruneReferencedAppProjectsItems>
+    </_BS_FilterAndRebaseItems>
     <ItemGroup>
       <StaticWebAsset Remove="@(StaticWebAsset)" />
       <StaticWebAsset Include="@(_BS_PrunedStaticWebAsset)" />
@@ -192,27 +59,16 @@
     </ItemGroup>
   </Target>
 
-  <!-- 
-  *** FOR PUBLISH - Remove App Projects Static Web Assets ***
-
-  If you don't have this target, *.razor.js files in referenced app projects are deployed under the "_content/{appName}/" folders.
-  It will cause the HTTP 404 error for importing those .js file from those app's code.
-
-  * On Blazor WebAssembly projects
-    If you don't have this target, you will see the following error when you build Blazor WebAssembly projects.
-    Microsoft.NET.Sdk.StaticWebAssets.Publish.targets(25,5): error : Conflicting assets with the same target path '_framework/blazor.webassembly.js'. 
-    For assets '...\blazor.webassembly.js' and '...\blazor.webassembly.js' from different projects. 
-  -->
-  <Target Name="_BS_Publish_RemoveAppProjectsStaticWebAssets"
-          BeforeTargets="GeneratePublishWasmBootJson;GenerateStaticWebAssetsPublishManifest"
-          DependsOnTargets="_BS_ResolveReferencedAppProject">
-    <_BS_PruneReferencedAppProjectsItems Items="@(StaticWebAsset)" ReferencedAppProjects="@(_BS_ReferencedAppProject)">
-      <Output TaskParameter="PrunedItems" ItemName="_BS_PrunedStaticWebAsset" />
-    </_BS_PruneReferencedAppProjectsItems>
+  <Target Name="_BS_Build_Remove_and_Rebase_AppProjects_StaticWebAssetEndPoints"
+    AfterTargets="ResolveReferencedProjectsStaticWebAssets"
+    DependsOnTargets="_BS_Build_RemoveAppProjectsStaticWebAssets">
+    <_BS_FilterAndRebaseStaticWebAssetEndPoints Items="@(StaticWebAssetEndPoint)" ReferencedAppProjects="@(_BS_ReferencedAppProject)">
+      <Output TaskParameter="PrunedItems" ItemName="_BS_PrunedStaticWebAssetEndPoint" />
+    </_BS_FilterAndRebaseStaticWebAssetEndPoints>
     <ItemGroup>
-      <StaticWebAsset Remove="@(StaticWebAsset)" />
-      <StaticWebAsset Include="@(_BS_PrunedStaticWebAsset)" />
-      <_BS_PrunedStaticWebAsset Remove="@(_BS_PrunedStaticWebAsset)" />
+      <StaticWebAssetEndPoint Remove="@(StaticWebAssetEndPoint)" />
+      <StaticWebAssetEndPoint Include="@(_BS_PrunedStaticWebAssetEndPoint)" />
+      <_BS_PrunedStaticWebAssetEndPoint Remove="@(_BS_PrunedStaticWebAssetEndPoint)" />
     </ItemGroup>
   </Target>
 
@@ -225,9 +81,9 @@
     Remove referenced app projects' {appName}.exe from the output folder.
   -->
   <Target Name="_BS_Build_OmmitAppHostBinary" AfterTargets="GetCopyToOutputDirectoryItems">
-    <_BS_PruneReferencedAppProjectsItems Items="@(_SourceItemsToCopyToOutputDirectory)" ReferencedAppProjects="@(_BS_ReferencedAppProject)" PruneByPath="true">
+    <_BS_FilterAndRebaseItems Items="@(_SourceItemsToCopyToOutputDirectory)" ReferencedAppProjects="@(_BS_ReferencedAppProject)" PruneByPath="true">
       <Output TaskParameter="PrunedItems" ItemName="_BS_PrunedItem" />
-    </_BS_PruneReferencedAppProjectsItems>
+    </_BS_FilterAndRebaseItems>
     <ItemGroup>
       <_SourceItemsToCopyToOutputDirectory Remove="@(_SourceItemsToCopyToOutputDirectory)" />
       <_SourceItemsToCopyToOutputDirectory Include="@(_BS_PrunedItem)" />
@@ -244,9 +100,9 @@
     Remove referenced app projects' {appName}.exe from the publish folder.
   -->
   <Target Name="_BS_Publish_OmmitAppHostBinary" AfterTargets="GetCopyToPublishDirectoryItems">
-    <_BS_PruneReferencedAppProjectsItems Items="@(_SourceItemsToCopyToPublishDirectoryAlways)" ReferencedAppProjects="@(_BS_ReferencedAppProject)" PruneByPath="true">
+    <_BS_FilterAndRebaseItems Items="@(_SourceItemsToCopyToPublishDirectoryAlways)" ReferencedAppProjects="@(_BS_ReferencedAppProject)" PruneByPath="true">
       <Output TaskParameter="PrunedItems" ItemName="_BS_PrunedItem" />
-    </_BS_PruneReferencedAppProjectsItems>
+    </_BS_FilterAndRebaseItems>
     <ItemGroup>
       <_SourceItemsToCopyToPublishDirectoryAlways Remove="@(_SourceItemsToCopyToPublishDirectoryAlways)" />
       <_SourceItemsToCopyToPublishDirectoryAlways Include="@(_BS_PrunedItem)" />
@@ -262,20 +118,76 @@
     error NETSDK1152: Found multiple publish output files with the same relative path: .../abc/appsettings.Development.json, .../xyz/appsettings.Development.json, etc...
   -->
   <Target Name="_BS_Publish_RemoveAppProjectsContent"
-          AfterTargets="GetCopyToPublishDirectoryItems"
-          BeforeTargets="_ComputeCopyToPublishDirectoryItems"
-          DependsOnTargets="_BS_ResolveReferencedAppProject">
-    <_BS_PruneReferencedAppProjectsItems
+    AfterTargets="GetCopyToPublishDirectoryItems"
+    BeforeTargets="_ComputeCopyToPublishDirectoryItems"
+    DependsOnTargets="_BS_ResolveReferencedAppProject">
+    <_BS_FilterAndRebaseItems
       Items="@(_SourceItemsToCopyToPublishDirectory)"
       ReferencedAppProjects="@(_BS_ReferencedAppProject)"
       PruneByPath="true">
       <Output TaskParameter="PrunedItems" ItemName="_BS_PrunedSourceItemsToCopyToPublishDirectory" />
-    </_BS_PruneReferencedAppProjectsItems>
+    </_BS_FilterAndRebaseItems>
     <ItemGroup>
       <_SourceItemsToCopyToPublishDirectory Remove="@(_SourceItemsToCopyToPublishDirectory)" />
       <_SourceItemsToCopyToPublishDirectory Include="@(_BS_PrunedSourceItemsToCopyToPublishDirectory)" />
       <_BS_PrunedSourceItemsToCopyToPublishDirectory Remove="@(_BS_PrunedSourceItemsToCopyToPublishDirectory)" />
     </ItemGroup>
+  </Target>
+
+  <!-- 
+  *** FOR PUBLISH - Preserve StaticWebAssetEndPoint before ComputeReferencedProjectsPublishAssets ***
+  * On Blazor Server projects
+    The ComputeReferencedProjectsPublishAssets target reconstructs StaticWebAsset and StaticWebAssetEndpoint items, causing some of StaticWebAssetEndpoint to be lost.
+    To address this, this target saves StaticWebAssetEndpoint to other items just before ComputeReferencedProjectsPublishAssets.
+    A subsequent target will restore them using the duplicated items.  -->
+  <Target Name="_BS_Publish_Reserve_StaticWebAssetEndPoints"
+    BeforeTargets="ComputeReferencedProjectsPublishAssets">
+    <ItemGroup>
+      <_BS_ReservedStaticWebAssetEndPoint Include="@(StaticWebAssetEndPoint)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- 
+  *** FOR PUBLISH - Fix StaticWebAsset and StaticWebAssetEndPoint after ComputeReferencedProjectsPublishAssets ***
+  * On Blazor Server projects
+    The ComputeReferencedProjectsPublishAssets target reconstructs and breaks StaticWebAsset and StaticWebAssetEndpoint items.
+    To recover from that, this target, which runs after ComputeReferencedProjectsPublishAssets, fixes StaticWebAsset and StaticWebAssetEndpoint items.
+  -->
+  <Target Name="_BS_Publish_Remove_and_Rebase_AppProjects_StaticWebAssetEndPoints"
+    AfterTargets="ComputeReferencedProjectsPublishAssets">
+
+    <!-- Include a copy of StaticWebAssetEndpoint items saved just before ComputeReferencedProjectsPublishAssets target in the current StaticWebAssetEndpoint items.
+         Becuase some of StaticWebAssetEndpoint items are lost in ComputeReferencedProjectsPublishAssets target. -->
+    <ItemGroup>
+      <StaticWebAssetEndPoint Include="@(_BS_ReservedStaticWebAssetEndPoint)" />
+      <_BS_ReservedStaticWebAssetEndPoint Remove="@(_BS_ReservedStaticWebAssetEndPoint)" />
+    </ItemGroup>
+
+    <!-- Fix StaticWebAsset items.
+         - Remove StaticWebAsset items coming from referenced Blazor WebAssembly projects and whose path starts with "_framework".
+         - Fix the path of StaticWebAsset items from referenced Blazor WebAssembly projects to start with "_content/{project name}/". -->
+    <_BS_FilterAndRebaseItems Items="@(StaticWebAsset)" ReferencedAppProjects="@(_BS_ReferencedAppProject)">
+      <Output TaskParameter="PrunedItems" ItemName="_BS_PrunedStaticWebAsset" />
+    </_BS_FilterAndRebaseItems>
+    <ItemGroup>
+      <StaticWebAsset Remove="@(StaticWebAsset)" />
+      <StaticWebAsset Include="@(_BS_PrunedStaticWebAsset)" />
+      <_BS_PrunedStaticWebAsset Remove="@(_BS_PrunedStaticWebAsset)" />
+    </ItemGroup>
+
+    <!-- Fix StaticWebAssetEndPoint items.
+         - Remove StaticWebAssetEndPoint items coming from referenced Blazor WebAssembly projects and whose path starts with "_framework".
+         - Fix the path of StaticWebAssetEndPoint items from referenced Blazor WebAssembly projects to start with "_content/{project name}/". 
+         - Eliminate duplicates from StaticWebAssetEndpoint items, where duplicates are determined by both ItemSpec and AssetFile. -->
+    <_BS_FilterAndRebaseStaticWebAssetEndPoints Items="@(StaticWebAssetEndPoint)" ReferencedAppProjects="@(_BS_ReferencedAppProject)">
+      <Output TaskParameter="PrunedItems" ItemName="_BS_PrunedStaticWebAssetEndPoint" />
+    </_BS_FilterAndRebaseStaticWebAssetEndPoints>
+    <ItemGroup>
+      <StaticWebAssetEndPoint Remove="@(StaticWebAssetEndPoint)" />
+      <StaticWebAssetEndPoint Include="@(_BS_PrunedStaticWebAssetEndPoint)" />
+      <_BS_PrunedStaticWebAssetEndPoint Remove="@(_BS_PrunedStaticWebAssetEndPoint)" />
+    </ItemGroup>
+
   </Target>
 
 </Project>
