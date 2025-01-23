@@ -2,12 +2,14 @@
 
 <div style="display:none;">
     <CascadingValue Value="this.StoriesStore">
+        @{ #pragma warning disable IL2111 }
         @foreach (var storiesRazor in this._StoriesRazors)
         {
             <CascadingValue @key="storiesRazor.TypeOfStoriesRazor.FullName" Value="storiesRazor">
                 <DynamicComponent Type="storiesRazor.TypeOfStoriesRazor" />
             </CascadingValue>
         }
+        @{ #pragma warning restore IL2111 }
     </CascadingValue>
 </div>
 

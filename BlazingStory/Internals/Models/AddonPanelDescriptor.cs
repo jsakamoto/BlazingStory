@@ -1,4 +1,6 @@
-﻿using BlazingStory.Internals.Pages.Canvas;
+﻿using System.Diagnostics.CodeAnalysis;
+using BlazingStory.Internals.Pages.Canvas;
+using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.Internals.Models;
 
@@ -8,11 +10,12 @@ public class AddonPanelDescriptor : IDisposable
 
     internal string Badge { get; private set; } = "";
 
+    [DynamicallyAccessedMembers(All)]
     internal readonly Type PanelComponentType;
 
     internal event EventHandler? Updated;
 
-    internal AddonPanelDescriptor(string name, Type panelComponentType)
+    internal AddonPanelDescriptor(string name, [DynamicallyAccessedMembers(All)] Type panelComponentType)
     {
         this.Name = name;
         this.PanelComponentType = panelComponentType;

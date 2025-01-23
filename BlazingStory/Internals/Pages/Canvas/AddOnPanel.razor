@@ -22,10 +22,12 @@
     </ToolBar>
 
     <div class="fill add-on-panel-content">
+        @{ #pragma warning disable IL2111 }
         @if (_ActiveAddonPanelDescriptor != null)
         {
             <DynamicComponent Type="_ActiveAddonPanelDescriptor.PanelComponentType" Parameters="_AddonPanelParameters" />
         }
+        @{ #pragma warning restore IL2111 }
     </div>
 
 </div>

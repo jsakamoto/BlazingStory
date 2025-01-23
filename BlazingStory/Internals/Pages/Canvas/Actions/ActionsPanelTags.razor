@@ -3,8 +3,8 @@
 @code
 {
     public static RenderFragment<string> Separator => (string text) => @<span class="separator" bs-actions-panel-tags>@text</span>;
-
-    public static RenderFragment<JsonElement> RenderLogValue => (JsonElement value) =>
+#pragma warning disable IL2026
+    public static RenderFragment<JsonElement> RenderLogValue => [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(JsonElement))] (JsonElement value) =>
     @<text>
         @if (value.ValueKind == JsonValueKind.Object)
     {
@@ -39,5 +39,5 @@
         <span class="@CssClass("action-value", new{value.ValueKind})" bs-actions-panel-tags>@JsonSerializer.Serialize(value)</span>
     }
     </text>;
-
+#pragma warning restore IL2026
 }

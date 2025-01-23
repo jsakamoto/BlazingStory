@@ -1,4 +1,6 @@
 @using System.Diagnostics.CodeAnalysis;
+@using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
+
 @typeparam TComponent where TComponent: notnull
 @attribute [CascadingTypeParameter(nameof(TComponent))]
 
@@ -24,6 +26,7 @@
     /// <summary>
     /// A type of the layout component to use when displaying these stories.
     /// </summary>
+    [DynamicallyAccessedMembers(All)]
     [Parameter]
     public Type? Layout { get; set; }
 

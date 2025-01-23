@@ -19,7 +19,9 @@ internal static class StoriesRazorDetector
     {
         return (assemblies ?? Enumerable.Empty<Assembly>())
             .SelectMany(assembly => Extract(assembly.GetTypes()))
+#pragma warning disable IL2077
             .Select(t => new StoriesRazorDescriptor(t.Type, t.Attribute))
+#pragma warning restore IL2077
             .ToArray();
     }
 

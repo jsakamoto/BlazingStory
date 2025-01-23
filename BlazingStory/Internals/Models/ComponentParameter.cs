@@ -18,7 +18,7 @@ public class ComponentParameter
 
     internal readonly string Name;
 
-    [DynamicallyAccessedMembers(PublicConstructors | PublicMethods | Interfaces)]
+    [DynamicallyAccessedMembers(PublicConstructors | PublicMethods | Interfaces | PublicProperties)]
     internal readonly Type Type;
 
     internal readonly TypeStructure TypeStructure;

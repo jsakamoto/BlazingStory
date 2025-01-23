@@ -3,12 +3,14 @@
 @using System.Reflection
 @using System.Linq.Expressions
 @using System.Text.Json
+@using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
 
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 @inject ILogger<CanvasFrame> Logger
 @inject NavigationManager NavigationManager
 
+@{ #pragma warning disable IL2111 }
 @if (this._Story == null)
 {
     <CanvasFrameNothingToAddress />
@@ -25,6 +27,7 @@ else
         </LayoutView>
     </LayoutView>
 }
+@{ #pragma warning restore IL2111 }
 
 @if (this._EnableMeasure)
 {
@@ -187,14 +190,18 @@ else
                 var typeOfArgs = parameter.Type.GenericTypeArguments.First();
 
                 var eventArgsParam = Expression.Parameter(typeOfArgs, "eventArgs");
+#pragma warning disable IL2060
                 var monitorHandler = _EventTArgMonitorHandlerMethod.Value.MakeGenericMethod(typeOfArgs);
+#pragma warning restore IL2060
                 var callBody = Expression.Call(Expression.Constant(this), monitorHandler, Expression.Constant(parameter.Name), eventArgsParam);
 
                 var monitorHandlerLambdaType = typeof(Func<,>).MakeGenericType(typeOfArgs, typeof(Task));
                 var monitorHandlerLambda = Expression.Lambda(monitorHandlerLambdaType, callBody, eventArgsParam);
                 var monitorHandlerDelegate = monitorHandlerLambda.Compile();
 
+#pragma warning disable IL2060
                 var eventCallbackCreate = _EventCallbackCreateMethod.Value.MakeGenericMethod(typeOfArgs) ?? throw new InvalidOperationException();
+#pragma warning restore IL2060
 
                 var eventCallback = eventCallbackCreate.Invoke(EventCallback.Factory, new object[] { this, monitorHandlerDelegate });
                 await this._Story.Context.AddOrUpdateArgumentAsync(parameter.Name, eventCallback);
@@ -207,9 +214,11 @@ else
         await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, "void");
     }
 
-    private async Task EventTArgMonitorHandler<TArgs>(string name, TArgs eventArgs)
+    private async Task EventTArgMonitorHandler<[DynamicallyAccessedMembers(All)] TArgs>(string name, TArgs eventArgs)
     {
+#pragma warning disable IL2026
         var json = JsonSerializer.Serialize(eventArgs, new JsonSerializerOptions { WriteIndented = true });
+#pragma warning restore IL2026
         await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, json);
     }
 

@@ -1,5 +1,7 @@
-﻿using BlazingStory.Types;
+﻿using System.Diagnostics.CodeAnalysis;
+using BlazingStory.Types;
 using Microsoft.AspNetCore.Components;
+using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.Internals.Models;
 
@@ -24,13 +26,15 @@ public class Story
 
     internal readonly StoryContext Context;
 
+    [DynamicallyAccessedMembers(All)]
     internal readonly Type? StoriesLayout;
 
+    [DynamicallyAccessedMembers(All)]
     internal readonly Type? StoryLayout;
 
     internal readonly RenderFragment<StoryContext> RenderFragment;
 
-    internal Story(StoriesRazorDescriptor storiesRazorDescriptor, Type componentType, string name, StoryContext context, Type? storiesLayout, Type? storyLayout, RenderFragment<StoryContext> renderFragment)
+    internal Story(StoriesRazorDescriptor storiesRazorDescriptor, Type componentType, string name, StoryContext context, [DynamicallyAccessedMembers(All)] Type? storiesLayout, [DynamicallyAccessedMembers(All)] Type? storyLayout, RenderFragment<StoryContext> renderFragment)
     {
         this.StoriesRazorDescriptor = storiesRazorDescriptor ?? throw new ArgumentNullException(nameof(storiesRazorDescriptor));
         this.Title = this.StoriesRazorDescriptor.StoriesAttribute.Title ?? throw new ArgumentNullException(nameof(storiesRazorDescriptor));

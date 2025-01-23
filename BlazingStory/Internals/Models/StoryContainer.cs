@@ -1,7 +1,9 @@
-﻿using BlazingStory.Internals.Services.XmlDocComment;
+﻿using System.Diagnostics.CodeAnalysis;
+using BlazingStory.Internals.Services.XmlDocComment;
 using BlazingStory.Types;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.Internals.Models;
 
@@ -10,6 +12,7 @@ namespace BlazingStory.Internals.Models;
 /// </summary>
 internal class StoryContainer
 {
+    [DynamicallyAccessedMembers(All)]
     internal readonly Type TargetComponentType;
 
     internal readonly string Title;
@@ -27,6 +30,7 @@ internal class StoryContainer
     /// <summary>
     /// The type of the layout component to use when displaying these stories.
     /// </summary>
+    [DynamicallyAccessedMembers(All)]
     internal readonly Type? Layout;
 
     private readonly StoriesRazorDescriptor _StoriesRazorDescriptor;
@@ -40,7 +44,7 @@ internal class StoryContainer
     /// <param name="layout">A type of the layout component to use when displaying these stories.</param>
     /// <param name="storiesRazorDescriptor">A descriptor of a type of Stories Razor component (..stories.razor) and its <see cref="StoriesAttribute"/>.</param>
     /// <param name="services">A service provider for getting a <see cref="IXmlDocComment"/> service.</param>
-    public StoryContainer(Type componentType, Type? layout, StoriesRazorDescriptor storiesRazorDescriptor, IServiceProvider services)
+    public StoryContainer([DynamicallyAccessedMembers(All)] Type componentType, [DynamicallyAccessedMembers(All)] Type? layout, StoriesRazorDescriptor storiesRazorDescriptor, IServiceProvider services)
     {
         this._StoriesRazorDescriptor = storiesRazorDescriptor ?? throw new ArgumentNullException(nameof(storiesRazorDescriptor));
         this.TargetComponentType = componentType;
@@ -50,7 +54,7 @@ internal class StoryContainer
         this._XmlDocComment = services.GetRequiredService<IXmlDocComment>();
     }
 
-    internal void RegisterStory(string name, StoryContext storyContext, Type? storiesLayout, Type? storyLayout, RenderFragment<StoryContext> renderFragment)
+    internal void RegisterStory(string name, StoryContext storyContext, [DynamicallyAccessedMembers(All)] Type? storiesLayout, [DynamicallyAccessedMembers(All)] Type? storyLayout, RenderFragment<StoryContext> renderFragment)
     {
         var newStory = new Story(this._StoriesRazorDescriptor, this.TargetComponentType, name, storyContext, storiesLayout, storyLayout, renderFragment);
         var index = this.Stories.FindIndex(story => story.Name == name);

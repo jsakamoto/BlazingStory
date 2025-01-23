@@ -4,6 +4,7 @@
 
 @inject NavigationManager NavigationManager
 
+@{ #pragma warning disable IL2111 }
 @if (this._RequestForIFrameHtml)
 {
     <DynamicComponent Type="typeof(TIFramePage)"></DynamicComponent>
@@ -12,6 +13,7 @@ else
 {
     <DynamicComponent Type="typeof(TIndexPage)"></DynamicComponent>
 }
+@{ #pragma warning restore IL2111 }
 
 @code
 {

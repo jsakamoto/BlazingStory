@@ -1,8 +1,13 @@
+@using System.Diagnostics.CodeAnalysis
 @using System.Reflection
 @using System.Runtime.InteropServices
 @using BlazingStory.Internals.Services.XmlDocComment;
+@using BlazingStory.Internals.Types
 @using Toolbelt.Blazor.Extensions.DependencyInjection
+@using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+
 @implements IAsyncDisposable
+
 @inject IServiceProvider GlobalServices
 @inject IJSRuntime JSRuntime
 @inject ILoggerFactory LoggerFactory
@@ -47,10 +52,12 @@
     <CascadingValue Value="this._AddonsStore">
 
         <div style="display:none;">
+            @{ #pragma warning disable IL2111 }
             @foreach (var addonType in this._AddonsTypes)
             {
                 <DynamicComponent @key="addonType" Type="addonType" />
             }
+            @{ #pragma warning restore IL2111 }
         </div>
 
         <div class="color-scheme-container preferes-color-scheme-@this._PreferesColorScheme" style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >=2 ? 1 : 0); visibility: @(this._InitLevel >= 1 ? "visible" : "hidden");">
@@ -63,9 +70,11 @@
                         </Found>
                         <NotFound>
                             <PageTitle>Not found</PageTitle>
+                            @{ #pragma warning disable IL2111 }
                             <LayoutView Layout="@typeof(MainLayout)">
                                 <p role="alert" style="padding:12px 32px;">Sorry, there's nothing at this address.</p>
                             </LayoutView>
+                            @{ #pragma warning restore IL2111 }
                         </NotFound>
                     </Router>
 
@@ -94,6 +103,7 @@
     /// <summary>
     /// A type of the default layout component to use when displaying a story.
     /// </summary>
+    [DynamicallyAccessedMembers(All)]
     [Parameter]
     public Type? DefaultLayout { get; set; }
 
@@ -147,22 +157,25 @@
     public BlazingStoryApp()
     {
         this._JSModule = new(() => this.JSRuntime, "Components/BlazingStoryApp.razor.js");
+#pragma warning disable IL2111
         this._RefThis = DotNetObjectReference.Create(this);
+#pragma warning restore IL2111
     }
 
-    private readonly IEnumerable<Type> _AddonsTypes = new Type[]
-    {
-        typeof(BlazingStory.Internals.Addons.Background.BackgroundAddon),
-        typeof(BlazingStory.Internals.Addons.Grid.GridAddon),
-        typeof(BlazingStory.Internals.Addons.ChangeSize.ChangeSizeAddon),
-        typeof(BlazingStory.Internals.Addons.Measure.MeasureAddon),
-        typeof(BlazingStory.Internals.Addons.Outlines.OutlinesAddon),
-    };
+    private readonly List<Type> _AddonsTypes = [];
 
     protected override void OnInitialized()
     {
+        this.RegisterAddon<BlazingStory.Internals.Addons.Background.BackgroundAddon>();
+        this.RegisterAddon<BlazingStory.Internals.Addons.Grid.GridAddon>();
+        this.RegisterAddon<BlazingStory.Internals.Addons.ChangeSize.ChangeSizeAddon>();
+        this.RegisterAddon<BlazingStory.Internals.Addons.Measure.MeasureAddon>();
+        this.RegisterAddon<BlazingStory.Internals.Addons.Outlines.OutlinesAddon>();
+
         this._ServiceScope = this.ConfigureServices();
     }
+
+    private void RegisterAddon<[DynamicallyAccessedMembers(All)] TAddon>() => this._AddonsTypes.Add(typeof(TAddon));
 
     private AsyncServiceScope ConfigureServices()
     {

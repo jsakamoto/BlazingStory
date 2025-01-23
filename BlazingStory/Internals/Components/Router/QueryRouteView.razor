@@ -4,10 +4,12 @@
         .Where(r => r.Parameter == this.RouteData?.Parameter || r.Parameter == "*")
         .FirstOrDefault();
 }
+@{ #pragma warning disable IL2111 }
 @if (route != null)
 {
     <DynamicComponent @key="@(route.ViewName+ "|" + route.Parameter)" Type="route.ViewComponent" />
 }
+@{ #pragma warning restore IL2111 }
 
 @code {
     [CascadingParameter]
