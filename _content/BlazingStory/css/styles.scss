@@ -1,0 +1,65 @@
+﻿@import "variables.scss";
+@import "variables.colors.light.scss";
+@import "variables.colors.dark.scss";
+
+@import "basic-styles.scss";
+@import "basic-styles-inputs.scss";
+@import "basic-styles-splitcontainer.scss";
+@import "basic-styless-scrollbar.scss";
+
+@import "../../Components/BlazingStoryApp.razor.scss";
+@import "../../Components/BrandLogo.razor.scss";
+
+@import "../../Internals/Pages/Layouts/MainLayout.razor.scss";
+
+@import "../../Internals/Components/SideBar/SideBar.razor.scss";
+@import "../../Internals/Components/SideBar/SettingsMenu.razor.scss";
+@import "../../Internals/Components/SideBar/SearchAndHistory/SearchAndHistory.razor.scss";
+@import "../../Internals/Components/SideBar/SearchAndHistory/SearchField.razor.scss";
+@import "../../Internals/Components/SideBar/SearchAndHistory/History.razor.scss";
+@import "../../Internals/Components/SideBar/SearchAndHistory/SearchResult.razor.scss";
+@import "../../Internals/Components/SideBar/SearchAndHistory/NavigationList.razor.scss";
+@import "../../Internals/Components/SideBar/NavigationTree/NavigationTreeItemComponent.razor.scss";
+
+@import "../../Internals/Components/ToolBar/ToolBar.razor.scss";
+@import "../../Internals/Components/ToolBar/TabButtonGroup.razor.scss";
+@import "../../Internals/Components/ToolBar/TabButton.razor.scss";
+@import "../../Internals/Components/ToolBar/Separator.razor.scss";
+
+@import "../../Internals/Components/Icons/Badge.razor.scss";
+@import "../../Internals/Components/Icons/SvgIcon.razor.scss";
+@import "../../Internals/Components/Icons/KeyMap.razor.scss";
+@import "../../Internals/Components/Icons/UnderConstruction.razor.scss";
+
+@import "../../Internals/Components/Buttons/CornerButton.razor.scss";
+@import "../../Internals/Components/Buttons/IconButton.razor.scss";
+@import "../../Internals/Components/Buttons/SquareButton.razor.scss";
+@import "../../Internals/Components/Buttons/ToggleButton.razor.scss";
+
+@import "../../Internals/Components/Inputs/ColorInput.razor.scss";
+@import "../../Internals/Components/Inputs/NullInputRadio.razor.scss";
+@import "../../Internals/Components/Inputs/NumberInput.razor.scss";
+@import "../../Internals/Components/Inputs/Select.razor.scss";
+@import "../../Internals/Components/Inputs/TextArea.razor.scss";
+
+@import "../../Internals/Components/Menus/PopupMenu.razor.scss";
+@import "../../Internals/Components/Menus/MenuItem.razor.scss";
+@import "../../Internals/Components/Menus/MenuItemDivider.razor.scss";
+@import "../../Internals/Components/Menus/CommandMenuItem.razor.scss";
+
+@import "../../Internals/Components/Preview/PreviewFrame.razor.scss";
+
+@import "../../Internals/Pages/Index.razor.scss";
+@import "../../Internals/Pages/Canvas/CanvasPage.razor.scss";
+@import "../../Internals/Pages/Canvas/AddOnPanel.razor.scss";
+@import "../../Internals/Pages/Canvas/Controls/ControlsPanel.razor.scss";
+@import "../../Internals/Pages/Canvas/Controls/ParameterControllers/Controllers/BoolParameterController.razor.scss";
+@import "../../Internals/Pages/Canvas/Controls/ParameterControllers/Controllers/NumberParameterController.razor.scss";
+@import "../../Internals/Pages/Canvas/Actions/ActionsPanel.razor.scss";
+@import "../../Internals/Pages/Canvas/Actions/ActionsPanelLogLine.razor.scss";
+@import "../../Internals/Pages/Canvas/Actions/ActionsPanelTags.razor.scss";
+@import "../../Internals/Pages/Docs/CodeView.razor.scss";
+@import "../../Internals/Pages/Docs/DocsPage.razor.scss";
+@import "../../Internals/Pages/Docs/StoryPreview.razor.scss";
+@import "../../Internals/Pages/Settings/SettingsPage.razor.scss";
+@import "../../Internals/Pages/Settings/Panels/AboutPanel.razor.scss";
