@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>StoryServerApp</title>
     <base href="@(new Uri(NavigationManager.BaseUri).AbsolutePath)" />
+@*#if (Framework != "net8.0")*@
+    <ImportMap />
+@*#endif*@
     <!--
     DON'T PUT ANY ADDITIONAL CSS OR JAVASCRIPT LINKS IN THIS FILE.
     Please do that in the "IFramePage.razor" instead.
