@@ -1,3 +1,6 @@
+v.1.0.0-preview.42
+- Update: Add support for .NET 9
+
 v.1.0.0-preview.41
 - Improve: Make the numeric parameter control keep precision when the input value is spinning up and down. (Issue #50)
 

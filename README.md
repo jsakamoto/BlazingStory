@@ -486,7 +486,7 @@ Therefore, the hot reloading feature is still a preview feature. We are working 
 
 ## 📌 System Requirements
 
-.NET SDK ver.7 or later
+.NET SDK ver.8 or later
 
 ## 🙇 Disclaimer
 
