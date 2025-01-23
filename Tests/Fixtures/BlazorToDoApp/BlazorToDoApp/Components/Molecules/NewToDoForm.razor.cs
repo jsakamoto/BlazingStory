@@ -1,7 +1,7 @@
 ﻿namespace BlazorToDoApp.Components.Molecules;
 
 /// <summary>
-/// 新しい ToDo を作成するフォームコンポーネント
+/// Form component to create a new ToDo
 /// </summary>
 public partial class NewToDoForm
 {

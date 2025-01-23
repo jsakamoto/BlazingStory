@@ -1,0 +1,105 @@
+<Project>
+
+    <UsingTask TaskName="_BS_FilterAndRebaseStaticWebAssetEndPoints" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+        <ParameterGroup>
+            <!-- Input parameters -->
+            <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+            <ReferencedAppProjects ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+            <!-- Outout parameters -->
+            <PrunedItems ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
+        </ParameterGroup>
+        <Task>
+            <Using Namespace="System.Linq" />
+            <Using Namespace="System.Text.RegularExpressions" />
+            <Code Type="Fragment" Language="cs"><![CDATA[
+
+var reservedMetadata = new HashSet<string> { "FullPath", "RootDir", "Filename", "Extension", "RelativeDir", "Directory", "RecursiveDir", "Identity", "ModifiedTime", "CreatedTime", "AccessedTime", "DefiningProjectFullPath", "DefiningProjectDirectory", "DefiningProjectName", "DefiningProjectExtension" };
+
+static string GetPath(ITaskItem item) => item.GetMetadata("RootDir") + item.GetMetadata("Directory");
+
+var prunedItems = new List<ITaskItem>();
+
+// Prune the assets of the referenced app projects for each app project.
+foreach (var appProj in this.ReferencedAppProjects)
+{
+    var appName = appProj.GetMetadata("Filename");
+    var appBasePath = "_content/" + appName + "/";
+    var appProjDir = GetPath(appProj);
+
+    var filteredItems = this.Items
+    
+        // Filter the assets of the current app project in a loop.
+        .Where(item => item.GetMetadata("AssetFile").StartsWith(appProjDir))
+
+        // Exclude the framework files that are under the "_framework" folder, such as "_framework/blazor.webassembly.js", "_framework/blazor.boot.json", etc.
+        .Where(item => !item.ItemSpec.StartsWith("_framework/"))
+
+        // Exclude the app-bundled scoped css files, such as "*.styles.css", not "*.bundle.scp.css".
+        // (and also, exclude the gzip and brotli compressed files.)
+        .Where(item => !item.ItemSpec.EndsWith(".styles.css"))
+        .Where(item => !item.ItemSpec.EndsWith(".styles.css.gz"))
+        .Where(item => !item.ItemSpec.EndsWith(".styles.css.br"))
+
+        .ToArray();
+
+    // Relocate the assets of the refereincing app project under the "_content/{appName}/" folder.
+    // (As an exception, the assets of the .js files are relocated under the root folder.)
+    var relocaltedItems = filteredItems.Select(item => 
+    {
+        if (item.ItemSpec.StartsWith("_content/")) return item;
+        if (item.ItemSpec.EndsWith(".js")) return item;
+
+        var relocatedItem = new TaskItem(appBasePath + item.ItemSpec);
+        foreach (string metadataName in item.MetadataNames)
+        {
+            if (reservedMetadata.Contains(metadataName)) continue;
+            relocatedItem.SetMetadata(metadataName, item.GetMetadata(metadataName));
+        }
+
+        // If the EndpointProperties metadata exists, retrieve it. The value of this metadata is a JSON string. 
+        // Use a regular expression to replace the Value of entries with Name = Label.
+        // Specifically, replace the Value of entries with Name = Label (e.g., "assets/bg.png") by prepending appBasePath to it.
+        // After the replacement, set the modified JSON string back to the EndpointProperties metadata.
+        // Example of EndpointProperties metadata: 
+        // [{"Name":"fingerprint","Value":"x2rx4ajns0"},{"Name":"integrity","Value":"sha256-WeOKCkI7IdJHs2kCqsKgLfiWX4/sNPbaRUspOLefkCY="},{"Name":"label","Value":"assets/bg.png"}]
+
+        if (relocatedItem.GetMetadata("EndpointProperties") is string endpointProperties)
+        {
+            endpointProperties = Regex.Replace(endpointProperties, @"""Name"":""label"",""Value"":""([^""]+)""", match => 
+            {
+                var value = match.Groups[1].Value;
+                return $@"""Name"":""label"",""Value"":""{appBasePath}{value}""";
+            });
+            relocatedItem.SetMetadata("EndpointProperties", endpointProperties);
+        }
+
+        return relocatedItem;
+    });
+
+    prunedItems.AddRange(relocaltedItems);
+}
+
+// Gather the other static web asset endpoints that belong with non-application project, such as Razor Class Libraries.    
+var appProjDirs = this.ReferencedAppProjects.Select(appProj => GetPath(appProj)).ToArray();
+var otherItems = this.Items.Where(item => !appProjDirs.Any(appProjDir => item.GetMetadata("AssetFile").StartsWith(appProjDir))).ToArray();
+prunedItems.AddRange(otherItems);
+
+// Create a new set with duplicates removed by its ItemSpec and AssetFile from the prunedItems.
+// In the case of duplicates, keep the first item found.
+var reservedItems = new HashSet<string>();
+var distinctItems = new List<ITaskItem>();
+foreach (var item in prunedItems)
+{
+    var itemIdentity = item.ItemSpec + "|" + item.GetMetadata("AssetFile");
+    if (reservedItems.Contains(itemIdentity)) continue;
+    reservedItems.Add(itemIdentity);
+    distinctItems.Add(item);
+}
+
+this.PrunedItems = distinctItems.OrderBy(item => item.ItemSpec).ThenBy(item => item.GetMetadata("AssetFile")).ToArray();
+
+        ]]></Code>
+        </Task>
+    </UsingTask>
+
+</Project>

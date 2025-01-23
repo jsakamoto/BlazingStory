@@ -1,0 +1,125 @@
+<Project>
+
+    <UsingTask TaskName="_BS_BundleAppProjectsScopedCss" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+        <ParameterGroup>
+            <!-- Input parameteres -->
+            <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+            <ReferencedAppProjects ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+            <!-- Output parameters -->
+            <ProjectBundle ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
+            <ProjectEndpoints ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
+        </ParameterGroup>
+        <Task>
+            <Using Namespace="System" />
+            <Using Namespace="System.IO" />
+            <Using Namespace="System.Linq" />
+            <Using Namespace="System.Numerics" />
+            <Using Namespace="System.Security.Cryptography" />
+            <Using Namespace="Microsoft.Build.Framework" />
+            <Code Type="Fragment" Language="cs"><![CDATA[
+
+static string GetPath(ITaskItem item) => item.GetMetadata("RootDir") + item.GetMetadata("Directory");
+    
+static byte[] ComputeHash(ITaskItem item) {
+    var contentBytes = File.ReadAllBytes(item.GetMetadata("OriginalItemSpec"));
+    using var sha256 = SHA256.Create();
+    return sha256.ComputeHash(contentBytes);
+}
+
+static string ToBase36(byte[] hash)
+{
+    var array = new char[10];
+    var buff = new byte[10];
+    Array.Copy(hash, buff, 10);
+    var dividend = BigInteger.Abs(new BigInteger(buff));
+    for (var i = 0; i < 10; i++)
+    {
+        dividend = BigInteger.DivRem(dividend, 36, out var remainder);
+        array[i] = "0123456789abcdefghijklmnopqrstuvwxyz"[(int)remainder];
+    }
+    return new string(array);
+}
+
+var projectBundle = new List<ITaskItem>();
+var projectEndpoints = new List<ITaskItem>();
+foreach (var appProj in this.ReferencedAppProjects)
+{
+    // Try to find "<Project Name>.styles.css" from StaticWebAsset items
+    var appName = appProj.GetMetadata("Filename");
+    var stylesCssName = appName + ".styles.css";
+    var stylesCssItem = this.Items.FirstOrDefault(item => Path.GetFileName(item.GetMetadata("OriginalItemSpec")) == stylesCssName);
+    if (stylesCssItem == null) continue;
+
+    // Build a new StaticAsset item of "<Project Name>.bundle.scp.css" from the "<Project Name>.styles.css"
+    var bundleScpCssName = appName + ".bundle.scp.css";
+    var bundleScpCssDir = Path.GetFullPath(GetPath(stylesCssItem) + "../projectbundle/");
+    var bundleScpCssPath = bundleScpCssDir + bundleScpCssName;
+    var relPathHasFingerprint = stylesCssItem.GetMetadata("RelativePath").EndsWith("#[.{fingerprint}]?.styles.css");
+    var relPath = relPathHasFingerprint ? appName + "#[.{fingerprint}]!.bundle.scp.css" : bundleScpCssName;
+
+    var bundleScpCss = new TaskItem(bundleScpCssPath);
+    bundleScpCss.SetMetadata("OriginalItemSpec", bundleScpCssPath);
+    bundleScpCss.SetMetadata("BasePath", "_content/" + appName);
+    bundleScpCss.SetMetadata("RelativePath", relPath);
+    bundleScpCss.SetMetadata("ContentRoot", bundleScpCssDir);
+    bundleScpCss.SetMetadata("MSBuildSourceProjectFile", appProj.GetMetadata("MSBuildSourceProjectFile"));
+    bundleScpCss.SetMetadata("Source", appName);
+    bundleScpCss.SetMetadata("SourceId", appName);
+
+    bundleScpCss.SetMetadata("GetBuildAssetsTargets", "GetCurrentProjectBuildStaticWebAssetItems");
+    bundleScpCss.SetMetadata("AssetMode", "Reference");
+    bundleScpCss.SetMetadata("AssetKind", "All");
+    bundleScpCss.SetMetadata("GetPublishAssetsTargets", "ComputeReferencedStaticWebAssetsPublishManifest;GetCurrentProjectPublishStaticWebAssetItems");
+    bundleScpCss.SetMetadata("Version", "2");
+    bundleScpCss.SetMetadata("ResultType", "StaticWebAsset");
+    bundleScpCss.SetMetadata("MSBuildSourceTargetName", "GetCurrentProjectBuildStaticWebAssetItems");
+    bundleScpCss.SetMetadata("SourceType", "Project");
+    bundleScpCss.SetMetadata("AssetRole", "Primary");
+    bundleScpCss.SetMetadata("AssetTraitValue", "ProjectBundle");
+    bundleScpCss.SetMetadata("AssetTraitName", "ScopedCss");
+    bundleScpCss.SetMetadata("CopyToPublishDirectory", "PreserveNewest");
+    
+    var hash = default(byte[]);
+    var integrity = stylesCssItem.GetMetadata("Integrity");
+    var fingerprint = stylesCssItem.GetMetadata("Fingerprint");
+    if (string.IsNullOrEmpty(integrity) || string.IsNullOrEmpty(fingerprint)) hash = ComputeHash(bundleScpCss);
+    if (string.IsNullOrEmpty(integrity)) integrity = Convert.ToBase64String(hash);
+    if (string.IsNullOrEmpty(fingerprint)) fingerprint = ToBase36(hash);
+
+    bundleScpCss.SetMetadata("Integrity", integrity);
+    bundleScpCss.SetMetadata("Fingerprint", fingerprint);
+
+    projectBundle.Add(bundleScpCss);
+    
+    // Build a new StaticWebAssetEndpoint item
+
+    var fileInfo = new System.IO.FileInfo(bundleScpCssPath);
+    var resHeaderFormat = "[{{\"Name\":\"Accept-Ranges\",\"Value\":\"bytes\"}},{{\"Name\":\"Cache-Control\",\"Value\":\"{0}\"}},{{\"Name\":\"Content-Length\",\"Value\":\"{1}\"}},{{\"Name\":\"Content-Type\",\"Value\":\"text/css\"}},{{\"Name\":\"ETag\",\"Value\":\"\\u0022{2}\\u0022\"}},{{\"Name\":\"Last-Modified\",\"Value\":\"{3:R}\"}}]";
+    var encodedIntegrity = integrity.Replace("+", "\\u002B").Replace("/", "\\u002F");
+
+    // for "_content/<Project Name>/<Project Name>.bundle.scp.css"
+    var bundleEndpointIdentity = string.Format("_content/{0}/{0}.bundle.scp.css", appName);
+    var bundleEndpoint = new TaskItem(bundleEndpointIdentity);
+    bundleEndpoint.SetMetadata("AssetFile", bundleScpCssPath);
+    bundleEndpoint.SetMetadata("Selectors", "[]");
+    bundleEndpoint.SetMetadata("ResponseHeaders", string.Format(resHeaderFormat, "no-cache", fileInfo.Length, integrity, fileInfo.LastWriteTimeUtc));
+    bundleEndpoint.SetMetadata("EndpointProperties", string.Format("[{{\"Name\":\"integrity\",\"Value\":\"sha256-{0}\"}}]", encodedIntegrity));
+    projectEndpoints.Add(bundleEndpoint);
+
+    // for "_content/<ProjectName>/<Project Name>.<Fingerprint>.bundle.scp.css)
+    var fingerPrintBundleEndpoint = new TaskItem(string.Format("_content/{0}/{0}.{1}.bundle.scp.css", appName, fingerprint));
+    fingerPrintBundleEndpoint.SetMetadata("AssetFile", bundleScpCssPath);
+    fingerPrintBundleEndpoint.SetMetadata("Selectors", "[]");
+    fingerPrintBundleEndpoint.SetMetadata("ResponseHeaders", string.Format(resHeaderFormat, "max-age=31536000, immutable", fileInfo.Length, integrity, fileInfo.LastWriteTimeUtc));
+    fingerPrintBundleEndpoint.SetMetadata("EndpointProperties", string.Format("[{{\"Name\":\"fingerprint\",\"Value\":\"{0}\"}},{{\"Name\":\"integrity\",\"Value\":\"sha256-{1}\"}},{{\"Name\":\"label\",\"Value\":\"{2}\"}}]", fingerprint, encodedIntegrity, bundleEndpointIdentity));
+    projectEndpoints.Add(fingerPrintBundleEndpoint);
+}
+    
+this.ProjectBundle = projectBundle.ToArray();
+this.ProjectEndpoints = projectEndpoints.ToArray();
+
+        ]]></Code>
+        </Task>
+    </UsingTask>
+
+</Project>

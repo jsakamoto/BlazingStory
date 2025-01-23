@@ -6,25 +6,25 @@
 @code
 {
     /// <summary>
-    /// 表示するアイコンの種類を取得または設定します。
+    /// Gets or sets the type of icon to display.
     /// </summary>
     [Parameter, EditorRequired]
     public Icon Icon { get; set; } = Icon.Add;
 
     /// <summary>
-    /// このコンポーネントがレンダリングする button 要素の type 属性に設定するボタン種別を取得または設定します。
+    /// Gets or sets the button type to be set in the type attribute of the button element rendered by this component.
     /// </summary>
     [Parameter]
     public ButtonType Type { get; set; } = ButtonType.Button;
 
     /// <summary>
-    /// ボタンの背景色を HTML のカラーコード指定で取得または設定します。
+    /// Gets or sets the background color of the button specified in HTML color code.
     /// </summary>
     [Parameter]
     public string? Color { get; set; }
 
     /// <summary>
-    /// ボタンがクリックされたときに呼び出されるコールバックを取得または設定します。
+    /// Gets or sets the callback to be called when the button is clicked.
     /// </summary>
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }

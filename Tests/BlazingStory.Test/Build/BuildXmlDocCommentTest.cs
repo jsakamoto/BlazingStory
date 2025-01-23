@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿#if NET9_0
+using System.Xml.Linq;
 using BlazingStory.Test._Fixtures;
 using Toolbelt.Diagnostics;
 
@@ -8,7 +9,7 @@ internal class BuildXmlDocCommentTest
 {
     [Parallelizable(ParallelScope.Self)]
     [TestCase("net8.0", "8.0.0", false)]
-    [TestCase("net9.0", "9.0.0", true)]
+    [TestCase("net9.0", "9.0.0", false)]
     public async Task DotNetRun_Test(string targetFramework, string SDKVersion, bool allowPrerelease)
     {
         // Given
@@ -39,7 +40,7 @@ internal class BuildXmlDocCommentTest
 
     [Parallelizable(ParallelScope.Self)]
     [TestCase("net8.0", "8.0.0", false)]
-    [TestCase("net9.0", "9.0.0", true)]
+    [TestCase("net9.0", "9.0.0", false)]
     public async Task Publish_Test(string targetFramework, string SDKVersion, bool allowPrerelease)
     {
         // Given
@@ -66,3 +67,4 @@ internal class BuildXmlDocCommentTest
         (xdocCommentForLib.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("RazorClassLib1");
     }
 }
+#endif
