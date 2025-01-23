@@ -47,9 +47,6 @@
   </UsingTask>
 
   <Target Name="_BS_GenerateVersionInfoClass" Inputs="../VersionInfo.props" Outputs="VersionInfo.cs">
-    <Message Importance="high" Text=""/>
-    <Message Importance="high" Text="==== GenerateVersionInfoClass ===="/>
-    <Message Importance="high" Text=""/>
     <_BS_GetFormattedVersionText VersionText="$(Version)">
       <Output TaskParameter="EscapedVersionText" PropertyName="_BS_EscapedVersionText" />
       <Output TaskParameter="FormattedVersionText" PropertyName="_BS_FormattedVersionText" />
