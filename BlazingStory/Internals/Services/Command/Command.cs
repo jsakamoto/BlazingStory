@@ -15,8 +15,6 @@ public class Command
 
     private bool? _Flag;
 
-    internal string? GetTitleText() => string.IsNullOrEmpty(this._HotKey?.Code.ToString()) ? this.Title : $"{this.Title} [{this.GetHotKeyName()}]";
-
     private readonly Dictionary<Guid, ValueTaskCallback<Command>> _Subscribers = new();
 
     internal event EventHandler? StateChanged;
@@ -30,11 +28,11 @@ public class Command
         this._Flag = flag;
     }
 
-    internal string GetHotKeyName()
-    {
-        var hotKeyName = (string?)this.HotKey?.Code;
-        return hotKeyName?.StartsWith("Key") == true ? hotKeyName[3..] : hotKeyName ?? "";
-    }
+    /// <summary>Returns the key name of the hot key, like "⌃ ⇧ F1".</summary>
+    internal string GetHotKeyName() => this._HotKey?.ToString() ?? string.Empty;
+
+    /// <summary>Returns the title text of the command, like "Command [⌃ ⇧ F1]".</summary>
+    internal string? GetTitleText() => string.IsNullOrEmpty(this.GetHotKeyName()) ? this.Title : $"{this.Title} [{this.GetHotKeyName()}]";
 
     internal IDisposable Subscribe(ValueTaskCallback callBack)
     {
