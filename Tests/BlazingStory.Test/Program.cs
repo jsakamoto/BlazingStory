@@ -1,1 +1,0 @@
-﻿return new NUnitLite.AutoRun().Execute(args);
