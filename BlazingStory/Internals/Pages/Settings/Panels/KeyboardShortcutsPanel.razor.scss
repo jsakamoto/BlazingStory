@@ -1,0 +1,30 @@
+.settings-keyboard-shortcuts-panel {
+    header {
+        color: var(--bs-sidebar-header-title-color);
+    }
+
+    .command-list {
+        font-size: calc(var(--bs-text-size) + 1px);
+
+        .header-row {
+            font-weight: bold;
+            margin: 10px 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr 12px;
+        }
+
+        .command-row {
+            padding: 6px 0px;
+            border-top: 1px solid var(--bs-border-color);
+            display: grid;
+            grid-template-columns: 1fr 1fr 0px;
+        }
+
+        .header-row, .command-row {
+
+            .shortcuts, .command-key {
+                justify-self: end;
+            }
+        }
+    }
+}

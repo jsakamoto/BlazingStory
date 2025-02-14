@@ -1,0 +1,66 @@
+<input type="text"
+       value="@_keyText"
+       placeholder="Type keys"
+       readonly
+       class="@CssClass("hotkey-editor-input", new{ invalid = !_isValid })"
+       @onfocus="OnFocus"
+       @onblur="OnBlur"
+       @onkeydown="OnKeyDown"
+       @onkeydown:preventDefault />
+
+@code
+{
+    [Parameter, EditorRequired]
+    public required HotKeyCombo HotKey { get; set; }
+
+    [Parameter]
+    public EventCallback<HotKeyCombo> HotKeyChanged { get; set; }
+
+    [Parameter]
+    public Func<HotKeyCombo, bool>? Validate { get; set; }
+
+    private HotKeyCombo? _currentHotKey;
+
+    private string? _keyText;
+
+    private bool _isValid = true;
+
+    override protected void OnInitialized()
+    {
+        _keyText = this.HotKey.ToString();
+    }
+
+    private void OnFocus()
+    {
+        _currentHotKey = null;
+        _keyText = "";
+    }
+
+    private void OnBlur()
+    {
+        _keyText = this.HotKey.ToString();
+        _isValid = true;
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs args)
+    {
+        const string modCodes = "AltLeft|AltRight|ControlLeft|ControlRight|ShiftLeft|ShiftRight|MetaLeft|MetaRight";
+        if (modCodes.Contains(args.Code)) return;
+
+        var modCodeFlags =
+            (args.AltKey ? ModCode.Alt : ModCode.None) |
+            (args.CtrlKey ? ModCode.Ctrl : ModCode.None) |
+            (args.ShiftKey ? ModCode.Shift : ModCode.None) |
+            (args.MetaKey ? ModCode.Meta : ModCode.None);
+
+        _currentHotKey = new HotKeyCombo(modCodeFlags, new Code(args.Code));
+        _keyText = _currentHotKey.ToString();
+
+        _isValid = this.Validate?.Invoke(_currentHotKey) ?? true;
+
+        if (_isValid)
+        {
+            await this.HotKeyChanged.InvokeAsync(_currentHotKey);
+        }
+    }
+}

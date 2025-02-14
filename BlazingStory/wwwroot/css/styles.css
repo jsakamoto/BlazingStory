@@ -1051,6 +1051,44 @@ a.icon-button {
   visibility: hidden;
 }
 
+.hotkey-editor-input {
+  text-align: center;
+  padding: 6px 4px;
+  width: 80px;
+  line-height: 20px;
+  height: 32px;
+  background-color: var(--bs-inputs-background);
+  color: var(--bs-inputs-text-color);
+  font-size: var(--bs-text-size);
+  appearance: none;
+  outline: none;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 4px;
+  box-shadow: var(--bs-inputs-box-shadow);
+  transition: border 200ms ease-in-out, box-shadow 200ms ease-out, opacity 200ms ease-out;
+}
+.hotkey-editor-input:focus {
+  border-color: var(--bs-focused-color);
+  box-shadow: 0 0 0 1px var(--bs-focused-half-color);
+}
+.hotkey-editor-input.invalid {
+  --bs-invalid-color: rgb(255, 68, 0);
+  border-color: var(--bs-invalid-color);
+  box-shadow: 0 0 0 0 var(--bs-invalid-color);
+  animation: 700ms ease-out 0s 1 normal none running animation-invalid-hotkey;
+}
+
+@keyframes animation-invalid-hotkey {
+  0%, 100% {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  12.5%, 62.5% {
+    transform: translate3d(-4px, 0px, 0px);
+  }
+  37.5%, 87.5% {
+    transform: translate3d(4px, 0px, 0px);
+  }
+}
 .popup-menu-trigger {
   display: inline-flex;
   flex-direction: column;
@@ -1558,4 +1596,26 @@ a.icon-button {
 
 .settings-about-panel header {
   color: var(--bs-sidebar-header-title-color);
+}
+
+.settings-keyboard-shortcuts-panel header {
+  color: var(--bs-sidebar-header-title-color);
+}
+.settings-keyboard-shortcuts-panel .command-list {
+  font-size: calc(var(--bs-text-size) + 1px);
+}
+.settings-keyboard-shortcuts-panel .command-list .header-row {
+  font-weight: bold;
+  margin: 10px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 12px;
+}
+.settings-keyboard-shortcuts-panel .command-list .command-row {
+  padding: 6px 0px;
+  border-top: 1px solid var(--bs-border-color);
+  display: grid;
+  grid-template-columns: 1fr 1fr 0px;
+}
+.settings-keyboard-shortcuts-panel .command-list .header-row .shortcuts, .settings-keyboard-shortcuts-panel .command-list .header-row .command-key, .settings-keyboard-shortcuts-panel .command-list .command-row .shortcuts, .settings-keyboard-shortcuts-panel .command-list .command-row .command-key {
+  justify-self: end;
 }
