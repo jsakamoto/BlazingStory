@@ -23,6 +23,10 @@
         }
     </div>
 
+    <div>
+        <SquareButton Text="Restore defaults" OnClick="RestoreDefaults" ButtonStyle="ButtonStyle.Slim" />
+    </div>
+
 </div>
 
 @code
@@ -68,6 +72,14 @@
             .Where(cmd => cmd != command)
             .FirstOrDefault(cmd => cmd.HotKey?.ToString() == newHotKey.ToString());
         return conflict is null;
+    }
+
+    private void RestoreDefaults()
+    {
+        foreach (var command in _commands)
+        {
+            command.ResetHotKey();
+        }
     }
 
     public async ValueTask DisposeAsync()
