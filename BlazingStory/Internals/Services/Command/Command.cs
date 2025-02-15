@@ -13,6 +13,8 @@ public class Command
 
     private HotKeyCombo? _HotKey;
 
+    private readonly HotKeyCombo? _DefaultHotKey;
+
     private bool? _Flag;
 
     private readonly Dictionary<Guid, ValueTaskCallback<Command>> _Subscribers = new();
@@ -24,6 +26,7 @@ public class Command
     public Command(HotKeyCombo? hotKey, string? title = null, bool? flag = null)
     {
         this._HotKey = hotKey;
+        this._DefaultHotKey = hotKey;
         this.Title = title;
         this._Flag = flag;
     }
@@ -71,4 +74,6 @@ public class Command
     {
         if (callBack.Target is IHandleEvent handleEvent) { await handleEvent.HandleEventAsync(EventCallbackWorkItem.Empty, null); }
     }
+
+    internal void ResetHotKey() => this.HotKey = this._DefaultHotKey;
 }
