@@ -12,7 +12,8 @@
   --bs-dimmed-back-color: #ecf4f9;
   --bs-dimmed-neutral-back-color: #ecf4f9;
   --bs-accent-color: #029cfd;
-  --bs-border-color: rgb(0 0 0 / 10%);
+  --bs-invalid-color: rgb(255, 68, 0);
+  --bs-border-color: rgba(38, 85, 115, 0.15);
   --bs-border-shadow: var(--bs-border-color) 0 -1px 0 0 inset;
   --bs-layout-border-shadow: 0 1px 3px 1px rgb(0 0 0 / 5%), 0px 0 0px 1px rgb(0 0 0 / 5%);
   --bs-hover-back-color: rgba(2,156,253,0.12);
@@ -47,7 +48,7 @@
   --bs-keymap-back-color: rgba(0,0,0,0.05);
   --bs-button-flagged-back-color: rgba(2, 156, 253, 0.07);
   --bs-toggle-button-back-color: var(--bs-inputs-background);
-  --bs-toggle-button-shadow: rgba(38,85,115,0.3) 0 0 2px;
+  --bs-toggle-button-shadow: rgba(38, 85, 115, 0.3) 0 0 2px;
   --bs-popup-back-color: rgba(255,255,255,0.95);
   --bs-popup-text-color: var(--bs-caption-text-color);
   --bs-popup-hover-back-color: rgba(2, 156, 253, 0.07);
@@ -61,7 +62,7 @@
   --bs-code-copy-back-color: #1b1c1d;
   --bs-actions-log-text-color: #2e3438;
   --bs-actions-log-repeat-text-color: #ffffff;
-  --bs-actions-log-repeat-back-color: rgba(38,85,115,0.65);
+  --bs-actions-log-repeat-back-color: rgba(38, 85, 115, 0.65);
   --bs-actions-log-expander-color: rgba(38, 85, 115, 0.35);
   --bs-actions-log-name-color: rgb(136, 19, 145);
   --bs-actions-log-value-string-color: rgb(196, 26, 22);
@@ -74,9 +75,10 @@
   --bs-dimmed-back-color: #222425;
   --bs-dimmed-neutral-back-color: #ecf4f9;
   --bs-accent-color: #029cfd;
+  --bs-invalid-color: rgb(255, 68, 0);
   --bs-border-color: rgb(255 255 255 / 10%);
   --bs-border-shadow: var(--bs-border-color) 0 -1px 0 0 inset;
-  --bs-layout-border-shadow: 0px 0 0px 1px rgba(255,255,255,.1);
+  --bs-layout-border-shadow: 0px 0 0px 1px rgba(255, 255, 255, 0.1);
   --bs-hover-back-color: rgba(2,156,253,0.12);
   --bs-hover-light-back-color: rgba(30,167,253,0.07);
   --bs-text-color: #c9cdcf;
@@ -123,7 +125,7 @@
   --bs-code-copy-back-color: #1b1c1d;
   --bs-actions-log-text-color: #c9cdcf;
   --bs-actions-log-repeat-text-color: #222425;
-  --bs-actions-log-repeat-back-color: rgba(255,255,255,0.6);
+  --bs-actions-log-repeat-back-color: rgba(255, 255, 255, 0.6);
   --bs-actions-log-expander-color: rgba(255, 255, 255, 0.3);
   --bs-actions-log-name-color: rgb(227, 110, 236);
   --bs-actions-log-value-string-color: rgb(233, 63, 59);
@@ -1069,19 +1071,16 @@ a.icon-button {
   font-size: var(--bs-text-size);
   appearance: none;
   outline: none;
-  border: 1px solid var(--bs-border-color);
+  border: 0px none;
   border-radius: 4px;
-  box-shadow: var(--bs-inputs-box-shadow);
+  box-shadow: var(--bs-border-color) 0px 0px 0px 1px inset;
   transition: border 200ms ease-in-out, box-shadow 200ms ease-out, opacity 200ms ease-out;
 }
 .hotkey-editor-input input:focus {
-  border-color: var(--bs-focused-color);
-  box-shadow: 0 0 0 1px var(--bs-focused-half-color);
+  box-shadow: var(--bs-accent-color) 0px 0px 0px 1px inset;
 }
 .hotkey-editor-input input.invalid {
-  --bs-invalid-color: rgb(255, 68, 0);
-  border-color: var(--bs-invalid-color);
-  box-shadow: 0 0 0 0 var(--bs-invalid-color);
+  box-shadow: var(--bs-invalid-color) 0px 0px 0px 1px inset;
 }
 .hotkey-editor-input input.invalid-animation {
   animation: 700ms ease-out 0s 1 normal none running animation-invalid-hotkey;
@@ -1635,6 +1634,7 @@ a.icon-button {
   color: var(--bs-sidebar-header-title-color);
 }
 .settings-keyboard-shortcuts-panel .command-list {
+  margin-top: 30px;
   font-size: calc(var(--bs-text-size) + 1px);
 }
 .settings-keyboard-shortcuts-panel .command-list .header-row, .settings-keyboard-shortcuts-panel .command-list .command-row {

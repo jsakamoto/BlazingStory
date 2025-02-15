@@ -13,20 +13,17 @@
         font-size: var(--bs-text-size);
         appearance: none;
         outline: none;
-        border: 1px solid var(--bs-border-color);
+        border: 0px none;
         border-radius: 4px;
-        box-shadow: var(--bs-inputs-box-shadow);
+        box-shadow: var(--bs-border-color) 0px 0px 0px 1px inset;
         transition: border 200ms ease-in-out, box-shadow 200ms ease-out, opacity 200ms ease-out;
 
         &:focus {
-            border-color: var(--bs-focused-color);
-            box-shadow: 0 0 0 1px var(--bs-focused-half-color);
+            box-shadow: var(--bs-accent-color) 0px 0px 0px 1px inset;
         }
 
         &.invalid {
-            --bs-invalid-color: rgb(255, 68, 0);
-            border-color: var(--bs-invalid-color);
-            box-shadow: 0 0 0 0 var(--bs-invalid-color);
+            box-shadow: var(--bs-invalid-color) 0px 0px 0px 1px inset;
         }
 
         &.invalid-animation {
