@@ -23,7 +23,11 @@ public class NavigationListItem : INavigationPath
             Id = id,
             Type = treeItem.Type,
             Caption = treeItem.Caption,
-            NavigationPath = treeItem.NavigationPath,
+            NavigationPath = treeItem.NavigationPath switch
+            {
+                "" => treeItem.SubItems.First(item => item.Type is NavigationItemType.Docs or NavigationItemType.Story).NavigationPath,
+                _ => treeItem.NavigationPath
+            },
             Segments = treeItem.PathSegments
         };
     }
