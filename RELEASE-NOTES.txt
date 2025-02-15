@@ -1,3 +1,8 @@
+v.1.0.0-preview.43
+- Enhancement: The Keyboard Shortcuts page is now available.
+- Fix: The search view did not close after clicking a search result.
+- Fix: Clicking a component in the search results always directs to the first component's documentation page.
+
 v.1.0.0-preview.42
 - Update: Add support for .NET 9
 
