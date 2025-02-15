@@ -16,4 +16,8 @@
     &:focus {
         box-shadow: rgb(30 167 253) 0 0 0 1px inset;
     }
+
+    &.button-style-slim {
+        padding: 8px 10px;
+    }
 }

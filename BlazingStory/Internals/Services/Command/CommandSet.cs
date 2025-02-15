@@ -7,12 +7,12 @@ using Toolbelt.Blazor.HotKeys2;
 
 namespace BlazingStory.Internals.Services.Command;
 
-internal class CommandSet<TKey> : IDisposable, IEnumerable<(TKey Type, Command Command)>
+internal class CommandSet<TKey> : IAsyncDisposable, IEnumerable<(TKey Type, Command Command)>
     where TKey : struct, Enum
 {
     private readonly string _StorageKey;
 
-    private readonly HotKeysContext _HotKeysContext;
+    private readonly HotKeys _HotKeys;
 
     private readonly HelperScript _HelperScript;
 
@@ -22,12 +22,14 @@ internal class CommandSet<TKey> : IDisposable, IEnumerable<(TKey Type, Command C
 
     private bool _Initialized = false;
 
+    private HotKeysContext? _HotKeysContext;
+
     public Command? this[TKey type] => this._Commands[(object)type] as Command;
 
-    internal CommandSet(string storageKey, HotKeysContext hotKeysContext, HelperScript helperScript, ILogger logger)
+    internal CommandSet(string storageKey, HotKeys hotKeys, HelperScript helperScript, ILogger logger)
     {
         this._StorageKey = storageKey;
-        this._HotKeysContext = hotKeysContext;
+        this._HotKeys = hotKeys;
         this._HelperScript = helperScript;
         this._Logger = logger;
     }
@@ -43,9 +45,9 @@ internal class CommandSet<TKey> : IDisposable, IEnumerable<(TKey Type, Command C
             if (commandStates.TryGetValue(type, out var state)) state.Apply(command);
             command.StateChanged += this.Command_StateChanged;
             this._Commands.Add(type, command);
-
-            if (command.HotKey != null) this._HotKeysContext.Add(command.HotKey.Modifiers, command.HotKey.Code, command.InvokeAsync);
         }
+
+        await this.ConfigureHotKeys();
     }
 
     public IDisposable Subscribe(TKey type, ValueTaskCallback callBack)
@@ -68,6 +70,19 @@ internal class CommandSet<TKey> : IDisposable, IEnumerable<(TKey Type, Command C
         this._HelperScript
             .SaveObjectToLocalStorageAsync(this._StorageKey, commandStates)
             .AndLogException(this._Logger);
+        this.ConfigureHotKeys()
+            .AndLogException(this._Logger);
+    }
+
+    private async ValueTask ConfigureHotKeys()
+    {
+        var previousHotKeysContext = this._HotKeysContext;
+        this._HotKeysContext = this._HotKeys.CreateContext();
+        foreach (var (type, command) in this)
+        {
+            if (command.HotKey != null) this._HotKeysContext.Add(command.HotKey.Modifiers, command.HotKey.Code, command.InvokeAsync);
+        }
+        if (previousHotKeysContext is not null) await previousHotKeysContext.DisposeAsync();
     }
 
     IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
@@ -77,11 +92,12 @@ internal class CommandSet<TKey> : IDisposable, IEnumerable<(TKey Type, Command C
         return this._Commands.Keys.Cast<TKey>().Select(key => (key, this[key]!)).GetEnumerator();
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         foreach (var cmd in this._Commands.Values.Cast<Command>())
         {
             cmd.StateChanged -= this.Command_StateChanged;
         }
+        if (this._HotKeysContext is not null) await this._HotKeysContext.DisposeAsync();
     }
 }

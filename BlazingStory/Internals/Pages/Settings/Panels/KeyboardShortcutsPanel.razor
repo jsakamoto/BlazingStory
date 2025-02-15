@@ -1,3 +1,88 @@
-<header>Keyboard shortcuts</header>
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
 
-<UnderConstruction />
+<div class="settings-keyboard-shortcuts-panel">
+
+    <header>Keyboard shortcuts</header>
+
+    <div class="command-list" @ref="_commandListElementRef">
+
+        <div class="header-row">
+            <div class="commands">Commands</div>
+            <div class="shortcuts">Shortcut</div>
+        </div>
+
+        @foreach (var command in _commands)
+        {
+            <div class="command-row">
+                <div class="command-name">@command.Title</div>
+                <div class="command-key">
+                    <HotKeyEditorInput @bind-HotKey="command.HotKey" Validate="@((hotKey) => OnValidate(command, hotKey))" />
+                </div>
+            </div>
+        }
+    </div>
+
+    <div>
+        <SquareButton Text="Restore defaults" OnClick="RestoreDefaults" ButtonStyle="ButtonStyle.Slim" />
+    </div>
+
+</div>
+
+@code
+{
+    [CascadingParameter]
+    public required IServiceProvider ServiceProvider { get; init; }
+
+    private IEnumerable<Command> _commands = Enumerable.Empty<Command>();
+
+    private static readonly IEnumerable<CommandType> _excludeCommands = new[]
+    {
+        CommandType.AboutYourBlazingStory,
+        CommandType.ReleaseNotes,
+    };
+
+    private ElementReference _commandListElementRef;
+
+    private IJSObjectReference? _keyHandler;
+
+    override protected void OnInitialized()
+    {
+        var commandService = this.ServiceProvider.GetRequiredService<CommandService>();
+        _commands = commandService.Commands
+            .Where(cmdSet => _excludeCommands.Contains(cmdSet.Type) is not true)
+            .Select(cmdSet => cmdSet.Command)
+            .Where(cmd => string.IsNullOrEmpty(cmd.HotKey?.Code) is not true)
+            .ToArray();
+    }
+
+    override protected async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await using var module = new JSModule(() => this.JSRuntime, "Internals/Pages/Settings/Panels/KeyboardShortcutsPanel.razor.js");
+            _keyHandler = await module.InvokeAsync<IJSObjectReference>("init", _commandListElementRef);
+        }
+    }
+
+    private bool OnValidate(Command command, HotKeyCombo newHotKey)
+    {
+        var conflict = _commands
+            .Where(cmd => cmd != command)
+            .FirstOrDefault(cmd => cmd.HotKey?.ToString() == newHotKey.ToString());
+        return conflict is null;
+    }
+
+    private void RestoreDefaults()
+    {
+        foreach (var command in _commands)
+        {
+            command.ResetHotKey();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _keyHandler.DisposeIfConnectedAsync("dispose");
+    }
+}

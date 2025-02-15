@@ -13,9 +13,9 @@ public class Command
 
     private HotKeyCombo? _HotKey;
 
-    private bool? _Flag;
+    private readonly HotKeyCombo? _DefaultHotKey;
 
-    internal string? GetTitleText() => string.IsNullOrEmpty(this._HotKey?.Code.ToString()) ? this.Title : $"{this.Title} [{this.GetHotKeyName()}]";
+    private bool? _Flag;
 
     private readonly Dictionary<Guid, ValueTaskCallback<Command>> _Subscribers = new();
 
@@ -26,15 +26,16 @@ public class Command
     public Command(HotKeyCombo? hotKey, string? title = null, bool? flag = null)
     {
         this._HotKey = hotKey;
+        this._DefaultHotKey = hotKey;
         this.Title = title;
         this._Flag = flag;
     }
 
-    internal string GetHotKeyName()
-    {
-        var hotKeyName = (string?)this.HotKey?.Code;
-        return hotKeyName?.StartsWith("Key") == true ? hotKeyName[3..] : hotKeyName ?? "";
-    }
+    /// <summary>Returns the key name of the hot key, like "⌃ ⇧ F1".</summary>
+    internal string GetHotKeyName() => this._HotKey?.ToString() ?? string.Empty;
+
+    /// <summary>Returns the title text of the command, like "Command [⌃ ⇧ F1]".</summary>
+    internal string? GetTitleText() => string.IsNullOrEmpty(this.GetHotKeyName()) ? this.Title : $"{this.Title} [{this.GetHotKeyName()}]";
 
     internal IDisposable Subscribe(ValueTaskCallback callBack)
     {
@@ -73,4 +74,6 @@ public class Command
     {
         if (callBack.Target is IHandleEvent handleEvent) { await handleEvent.HandleEventAsync(EventCallbackWorkItem.Empty, null); }
     }
+
+    internal void ResetHotKey() => this.HotKey = this._DefaultHotKey;
 }

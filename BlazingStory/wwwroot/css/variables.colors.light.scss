@@ -4,9 +4,10 @@
     --bs-back-color: #{$back-color};
     --bs-dimmed-back-color: #ecf4f9;
     --bs-dimmed-neutral-back-color: #ecf4f9;
-    $accent-color: #029cfd;
+    $accent-color: #029cfd; // rgb(2, 156, 253)
     --bs-accent-color: #{$accent-color};
-    --bs-border-color: rgb(0 0 0 / 10%);
+    --bs-invalid-color: rgb(255, 68, 0);
+    --bs-border-color: rgba(38, 85, 115, 0.15);
     --bs-border-shadow: var(--bs-border-color) 0 -1px 0 0 inset;
     --bs-layout-border-shadow: 0 1px 3px 1px rgb(0 0 0 / 5%), 0px 0 0px 1px rgb(0 0 0 / 5%);
     //
@@ -51,7 +52,7 @@
     --bs-button-flagged-back-color: #{rgba($accent-color, 0.07)};
     // toggle button
     --bs-toggle-button-back-color: var(--bs-inputs-background);
-    --bs-toggle-button-shadow: rgba(38,85,115,0.3) 0 0 2px;
+    --bs-toggle-button-shadow: rgba(38, 85, 115, 0.3) 0 0 2px;
     // popup menu
     --bs-popup-back-color: rgba(255,255,255,0.95);
     --bs-popup-text-color: var(--bs-caption-text-color);
@@ -69,7 +70,7 @@
     // actions log
     --bs-actions-log-text-color: #{$caption-text-color};
     --bs-actions-log-repeat-text-color: #ffffff;
-    --bs-actions-log-repeat-back-color: rgba(38,85,115,0.65);
+    --bs-actions-log-repeat-back-color: rgba(38, 85, 115, 0.65);
     --bs-actions-log-expander-color: rgba(38, 85, 115, 0.35);
     --bs-actions-log-name-color: rgb(136, 19, 145);
     --bs-actions-log-value-string-color: rgb(196, 26, 22);

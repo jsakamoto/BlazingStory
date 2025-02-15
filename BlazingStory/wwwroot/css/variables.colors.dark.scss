@@ -6,9 +6,10 @@
     --bs-dimmed-neutral-back-color: #ecf4f9;
     $accent-color: #029cfd; // rgb(2, 156, 253)
     --bs-accent-color: #{$accent-color};
+    --bs-invalid-color: rgb(255, 68, 0);
     --bs-border-color: rgb(255 255 255 / 10%);
     --bs-border-shadow: var(--bs-border-color) 0 -1px 0 0 inset;
-    --bs-layout-border-shadow: 0px 0 0px 1px rgba(255,255,255,.1);
+    --bs-layout-border-shadow: 0px 0 0px 1px rgba(255, 255, 255, 0.1);
     //
     --bs-hover-back-color: rgba(2,156,253,0.12);
     --bs-hover-light-back-color: rgba(30,167,253,0.07);
@@ -69,7 +70,7 @@
     // actions log
     --bs-actions-log-text-color: #{$caption-text-color};
     --bs-actions-log-repeat-text-color: #{$back-color};
-    --bs-actions-log-repeat-back-color: rgba(255,255,255,0.6);
+    --bs-actions-log-repeat-back-color: rgba(255, 255, 255, 0.6);
     --bs-actions-log-expander-color: rgba(255, 255, 255, 0.3);
     --bs-actions-log-name-color: rgb(227, 110, 236);
     --bs-actions-log-value-string-color: rgb(233, 63, 59);

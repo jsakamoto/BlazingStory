@@ -1,4 +1,4 @@
-<button class="square-button" @onclick="@(() => this.OnClick.InvokeAsync())">@Text</button>
+<button class="@CssClass("square-button", new { ButtonStyle })" @onclick="@(() => this.OnClick.InvokeAsync())">@Text</button>
 
 @code
 {
@@ -7,4 +7,7 @@
 
     [Parameter]
     public EventCallback OnClick { get; set; }
+
+    [Parameter]
+    public ButtonStyle ButtonStyle { get; set; } = ButtonStyle.Default;
 }

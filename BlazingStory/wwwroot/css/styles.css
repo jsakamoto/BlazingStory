@@ -12,7 +12,8 @@
   --bs-dimmed-back-color: #ecf4f9;
   --bs-dimmed-neutral-back-color: #ecf4f9;
   --bs-accent-color: #029cfd;
-  --bs-border-color: rgb(0 0 0 / 10%);
+  --bs-invalid-color: rgb(255, 68, 0);
+  --bs-border-color: rgba(38, 85, 115, 0.15);
   --bs-border-shadow: var(--bs-border-color) 0 -1px 0 0 inset;
   --bs-layout-border-shadow: 0 1px 3px 1px rgb(0 0 0 / 5%), 0px 0 0px 1px rgb(0 0 0 / 5%);
   --bs-hover-back-color: rgba(2,156,253,0.12);
@@ -47,7 +48,7 @@
   --bs-keymap-back-color: rgba(0,0,0,0.05);
   --bs-button-flagged-back-color: rgba(2, 156, 253, 0.07);
   --bs-toggle-button-back-color: var(--bs-inputs-background);
-  --bs-toggle-button-shadow: rgba(38,85,115,0.3) 0 0 2px;
+  --bs-toggle-button-shadow: rgba(38, 85, 115, 0.3) 0 0 2px;
   --bs-popup-back-color: rgba(255,255,255,0.95);
   --bs-popup-text-color: var(--bs-caption-text-color);
   --bs-popup-hover-back-color: rgba(2, 156, 253, 0.07);
@@ -61,7 +62,7 @@
   --bs-code-copy-back-color: #1b1c1d;
   --bs-actions-log-text-color: #2e3438;
   --bs-actions-log-repeat-text-color: #ffffff;
-  --bs-actions-log-repeat-back-color: rgba(38,85,115,0.65);
+  --bs-actions-log-repeat-back-color: rgba(38, 85, 115, 0.65);
   --bs-actions-log-expander-color: rgba(38, 85, 115, 0.35);
   --bs-actions-log-name-color: rgb(136, 19, 145);
   --bs-actions-log-value-string-color: rgb(196, 26, 22);
@@ -74,9 +75,10 @@
   --bs-dimmed-back-color: #222425;
   --bs-dimmed-neutral-back-color: #ecf4f9;
   --bs-accent-color: #029cfd;
+  --bs-invalid-color: rgb(255, 68, 0);
   --bs-border-color: rgb(255 255 255 / 10%);
   --bs-border-shadow: var(--bs-border-color) 0 -1px 0 0 inset;
-  --bs-layout-border-shadow: 0px 0 0px 1px rgba(255,255,255,.1);
+  --bs-layout-border-shadow: 0px 0 0px 1px rgba(255, 255, 255, 0.1);
   --bs-hover-back-color: rgba(2,156,253,0.12);
   --bs-hover-light-back-color: rgba(30,167,253,0.07);
   --bs-text-color: #c9cdcf;
@@ -123,7 +125,7 @@
   --bs-code-copy-back-color: #1b1c1d;
   --bs-actions-log-text-color: #c9cdcf;
   --bs-actions-log-repeat-text-color: #222425;
-  --bs-actions-log-repeat-back-color: rgba(255,255,255,0.6);
+  --bs-actions-log-repeat-back-color: rgba(255, 255, 255, 0.6);
   --bs-actions-log-expander-color: rgba(255, 255, 255, 0.3);
   --bs-actions-log-name-color: rgb(227, 110, 236);
   --bs-actions-log-value-string-color: rgb(233, 63, 59);
@@ -901,6 +903,9 @@ a.icon-button {
 .square-button:focus {
   box-shadow: rgb(30, 167, 253) 0 0 0 1px inset;
 }
+.square-button.button-style-slim {
+  padding: 8px 10px;
+}
 
 .toggle-button {
   cursor: pointer;
@@ -1049,6 +1054,71 @@ a.icon-button {
 }
 .text-area-container .text-area-shadow {
   visibility: hidden;
+}
+
+.hotkey-editor-input {
+  display: inline-block;
+  position: relative;
+}
+.hotkey-editor-input input {
+  text-align: center;
+  padding: 6px 4px;
+  width: 80px;
+  line-height: 20px;
+  height: 32px;
+  background-color: var(--bs-inputs-background);
+  color: var(--bs-inputs-text-color);
+  font-size: var(--bs-text-size);
+  appearance: none;
+  outline: none;
+  border: 0px none;
+  border-radius: 4px;
+  box-shadow: var(--bs-border-color) 0px 0px 0px 1px inset;
+  transition: border 200ms ease-in-out, box-shadow 200ms ease-out, opacity 200ms ease-out;
+}
+.hotkey-editor-input input:focus {
+  box-shadow: var(--bs-accent-color) 0px 0px 0px 1px inset;
+}
+.hotkey-editor-input input.invalid {
+  box-shadow: var(--bs-invalid-color) 0px 0px 0px 1px inset;
+}
+.hotkey-editor-input input.invalid-animation {
+  animation: 700ms ease-out 0s 1 normal none running animation-invalid-hotkey;
+}
+@keyframes animation-invalid-hotkey {
+  0%, 100% {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  12.5%, 62.5% {
+    transform: translate3d(-4px, 0px, 0px);
+  }
+  37.5%, 87.5% {
+    transform: translate3d(4px, 0px, 0px);
+  }
+}
+.hotkey-editor-input .valid-check {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -32px;
+  opacity: 0;
+}
+.hotkey-editor-input .valid-check .svg-icon {
+  vertical-align: middle;
+  --bs-svg-icon-size: 16px;
+  color: rgb(102, 191, 60);
+}
+.hotkey-editor-input .valid-check.valid-animation {
+  opacity: 1;
+  animation: 2s ease 0s 1 normal forwards running animation-valid-hotkey;
+}
+@keyframes animation-valid-hotkey {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .popup-menu-trigger {
@@ -1558,4 +1628,29 @@ a.icon-button {
 
 .settings-about-panel header {
   color: var(--bs-sidebar-header-title-color);
+}
+
+.settings-keyboard-shortcuts-panel header {
+  color: var(--bs-sidebar-header-title-color);
+}
+.settings-keyboard-shortcuts-panel .command-list {
+  margin-top: 30px;
+  font-size: calc(var(--bs-text-size) + 1px);
+}
+.settings-keyboard-shortcuts-panel .command-list .header-row, .settings-keyboard-shortcuts-panel .command-list .command-row {
+  display: grid;
+  align-items: center;
+}
+.settings-keyboard-shortcuts-panel .command-list .header-row .shortcuts, .settings-keyboard-shortcuts-panel .command-list .header-row .command-key, .settings-keyboard-shortcuts-panel .command-list .command-row .shortcuts, .settings-keyboard-shortcuts-panel .command-list .command-row .command-key {
+  justify-self: end;
+}
+.settings-keyboard-shortcuts-panel .command-list .header-row {
+  font-weight: bold;
+  margin: 10px 0;
+  grid-template-columns: 1fr 1fr 12px;
+}
+.settings-keyboard-shortcuts-panel .command-list .command-row {
+  padding: 6px 0px;
+  border-top: 1px solid var(--bs-border-color);
+  grid-template-columns: 1fr 1fr;
 }
