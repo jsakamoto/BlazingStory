@@ -1055,6 +1055,10 @@ a.icon-button {
 }
 
 .hotkey-editor-input {
+  display: inline-block;
+  position: relative;
+}
+.hotkey-editor-input input {
   text-align: center;
   padding: 6px 4px;
   width: 80px;
@@ -1070,19 +1074,18 @@ a.icon-button {
   box-shadow: var(--bs-inputs-box-shadow);
   transition: border 200ms ease-in-out, box-shadow 200ms ease-out, opacity 200ms ease-out;
 }
-.hotkey-editor-input:focus {
+.hotkey-editor-input input:focus {
   border-color: var(--bs-focused-color);
   box-shadow: 0 0 0 1px var(--bs-focused-half-color);
 }
-.hotkey-editor-input.invalid {
+.hotkey-editor-input input.invalid {
   --bs-invalid-color: rgb(255, 68, 0);
   border-color: var(--bs-invalid-color);
   box-shadow: 0 0 0 0 var(--bs-invalid-color);
 }
-.hotkey-editor-input.invalid-animation {
+.hotkey-editor-input input.invalid-animation {
   animation: 700ms ease-out 0s 1 normal none running animation-invalid-hotkey;
 }
-
 @keyframes animation-invalid-hotkey {
   0%, 100% {
     transform: translate3d(0px, 0px, 0px);
@@ -1094,6 +1097,31 @@ a.icon-button {
     transform: translate3d(4px, 0px, 0px);
   }
 }
+.hotkey-editor-input .valid-check {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -32px;
+  opacity: 0;
+}
+.hotkey-editor-input .valid-check .svg-icon {
+  vertical-align: middle;
+  --bs-svg-icon-size: 16px;
+  color: rgb(102, 191, 60);
+}
+.hotkey-editor-input .valid-check.valid-animation {
+  opacity: 1;
+  animation: 2s ease 0s 1 normal forwards running animation-valid-hotkey;
+}
+@keyframes animation-valid-hotkey {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 .popup-menu-trigger {
   display: inline-flex;
   flex-direction: column;
@@ -1624,12 +1652,5 @@ a.icon-button {
 .settings-keyboard-shortcuts-panel .command-list .command-row {
   padding: 6px 0px;
   border-top: 1px solid var(--bs-border-color);
-  grid-template-columns: 1fr 1fr 0px;
-}
-.settings-keyboard-shortcuts-panel .command-list .command-row .command-key-valid {
-  margin: 0px 0 0 10px;
-}
-.settings-keyboard-shortcuts-panel .command-list .command-row .command-key-valid .svg-icon {
-  --bs-svg-icon-size: 16px;
-  color: rgb(102, 191, 60);
+  grid-template-columns: 1fr 1fr;
 }

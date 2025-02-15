@@ -1,13 +1,18 @@
-<input type="text"
-       value="@_keyText"
-       placeholder="Type keys"
-       readonly
-       class="@CssClass("hotkey-editor-input", new { invalid = !_isValid, invalidAnimation = _invalidAnimation })"
-       @onanimationend="OnAnimationEnd"
-       @onfocus="OnFocus"
-       @onblur="OnBlur"
-       @onkeydown="OnKeyDown"
-       @onkeydown:preventDefault />
+<div class="hotkey-editor-input">
+    <input type="text"
+           value="@_keyText"
+           placeholder="Type keys"
+           readonly
+           class="@CssClass(new { invalid = !_isValid, invalidAnimation = _invalidAnimation })"
+           @onfocus="OnFocus"
+           @onblur="OnBlur"
+           @onkeydown="OnKeyDown"
+           @onkeydown:preventDefault />
+
+    <div class="@CssClass("valid-check", new { validAnimation = _validAnimation })">
+        <SvgIcon Type="SvgIconType.Check" />
+    </div>
+</div>
 
 @code
 {
@@ -27,8 +32,10 @@
     private string? _keyText;
 
     private bool _isValid = true;
-    
+
     private bool _invalidAnimation = false;
+
+    private bool _validAnimation = false;
 
     override protected void OnInitialized()
     {
@@ -77,18 +84,17 @@
 
         if (_isValid)
         {
+            _validAnimation = false;
             _lastValidHotKey = _currentHotKey;
             await this.HotKeyChanged.InvokeAsync(_currentHotKey);
+            await Task.Delay(100);
+            _validAnimation = true;
         }
         else
         {
+            _invalidAnimation = false;
+            await Task.Delay(100);
             _invalidAnimation = true;
         }
-    }
-
-    private void OnAnimationEnd()
-    {
-        _invalidAnimation = false;
-        Console.WriteLine("Animation end");
     }
 }

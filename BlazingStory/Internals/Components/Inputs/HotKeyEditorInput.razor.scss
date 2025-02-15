@@ -1,46 +1,79 @@
 .hotkey-editor-input {
-    text-align: center;
-    padding: 6px 4px;
-    width: 80px;
-    line-height: 20px;
-    height: 32px;
-    background-color: var(--bs-inputs-background);
-    color: var(--bs-inputs-text-color);
-    font-size: var(--bs-text-size);
-    appearance: none;
-    outline: none;
-    border: 1px solid var(--bs-border-color);
-    border-radius: 4px;
-    box-shadow: var(--bs-inputs-box-shadow);
-    transition: border 200ms ease-in-out, box-shadow 200ms ease-out, opacity 200ms ease-out;
+    display: inline-block;
+    position: relative;
 
-    &:focus {
-        border-color: var(--bs-focused-color);
-        box-shadow: 0 0 0 1px var(--bs-focused-half-color);
+    input {
+        text-align: center;
+        padding: 6px 4px;
+        width: 80px;
+        line-height: 20px;
+        height: 32px;
+        background-color: var(--bs-inputs-background);
+        color: var(--bs-inputs-text-color);
+        font-size: var(--bs-text-size);
+        appearance: none;
+        outline: none;
+        border: 1px solid var(--bs-border-color);
+        border-radius: 4px;
+        box-shadow: var(--bs-inputs-box-shadow);
+        transition: border 200ms ease-in-out, box-shadow 200ms ease-out, opacity 200ms ease-out;
+
+        &:focus {
+            border-color: var(--bs-focused-color);
+            box-shadow: 0 0 0 1px var(--bs-focused-half-color);
+        }
+
+        &.invalid {
+            --bs-invalid-color: rgb(255, 68, 0);
+            border-color: var(--bs-invalid-color);
+            box-shadow: 0 0 0 0 var(--bs-invalid-color);
+        }
+
+        &.invalid-animation {
+            animation: 700ms ease-out 0s 1 normal none running animation-invalid-hotkey;
+
+            @keyframes animation-invalid-hotkey {
+                0%, 100% {
+                    transform: translate3d(0px, 0px, 0px);
+                }
+
+                12.5%, 62.5% {
+                    transform: translate3d(-4px, 0px, 0px);
+                }
+
+                37.5%, 87.5% {
+                    transform: translate3d(4px, 0px, 0px);
+                }
+            }
+        }
     }
 
-    &.invalid {
-        --bs-invalid-color: rgb(255, 68, 0);
-        border-color: var(--bs-invalid-color);
-        box-shadow: 0 0 0 0 var(--bs-invalid-color);
-    }
+    .valid-check {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: -32px;
+        opacity: 0;
 
-    &.invalid-animation {
-        animation: 700ms ease-out 0s 1 normal none running animation-invalid-hotkey;
-    }
-}
+        .svg-icon {
+            vertical-align: middle;
+            --bs-svg-icon-size: 16px;
+            color: rgb(102, 191, 60);
+        }
 
-@keyframes animation-invalid-hotkey {
+        &.valid-animation {
+            opacity: 1;
+            animation: 2s ease 0s 1 normal forwards running animation-valid-hotkey;
 
-    0%, 100% {
-        transform: translate3d(0px, 0px, 0px);
-    }
+            @keyframes animation-valid-hotkey {
+                0% {
+                    opacity: 1;
+                }
 
-    12.5%, 62.5% {
-        transform: translate3d(-4px, 0px, 0px);
-    }
-
-    37.5%, 87.5% {
-        transform: translate3d(4px, 0px, 0px);
+                100% {
+                    opacity: 0;
+                }
+            }
+        }
     }
 }
