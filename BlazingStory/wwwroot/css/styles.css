@@ -901,6 +901,9 @@ a.icon-button {
 .square-button:focus {
   box-shadow: rgb(30, 167, 253) 0 0 0 1px inset;
 }
+.square-button.button-style-slim {
+  padding: 8px 10px;
+}
 
 .toggle-button {
   cursor: pointer;
@@ -1075,6 +1078,8 @@ a.icon-button {
   --bs-invalid-color: rgb(255, 68, 0);
   border-color: var(--bs-invalid-color);
   box-shadow: 0 0 0 0 var(--bs-invalid-color);
+}
+.hotkey-editor-input.invalid-animation {
   animation: 700ms ease-out 0s 1 normal none running animation-invalid-hotkey;
 }
 
@@ -1604,18 +1609,27 @@ a.icon-button {
 .settings-keyboard-shortcuts-panel .command-list {
   font-size: calc(var(--bs-text-size) + 1px);
 }
+.settings-keyboard-shortcuts-panel .command-list .header-row, .settings-keyboard-shortcuts-panel .command-list .command-row {
+  display: grid;
+  align-items: center;
+}
+.settings-keyboard-shortcuts-panel .command-list .header-row .shortcuts, .settings-keyboard-shortcuts-panel .command-list .header-row .command-key, .settings-keyboard-shortcuts-panel .command-list .command-row .shortcuts, .settings-keyboard-shortcuts-panel .command-list .command-row .command-key {
+  justify-self: end;
+}
 .settings-keyboard-shortcuts-panel .command-list .header-row {
   font-weight: bold;
   margin: 10px 0;
-  display: grid;
   grid-template-columns: 1fr 1fr 12px;
 }
 .settings-keyboard-shortcuts-panel .command-list .command-row {
   padding: 6px 0px;
   border-top: 1px solid var(--bs-border-color);
-  display: grid;
   grid-template-columns: 1fr 1fr 0px;
 }
-.settings-keyboard-shortcuts-panel .command-list .header-row .shortcuts, .settings-keyboard-shortcuts-panel .command-list .header-row .command-key, .settings-keyboard-shortcuts-panel .command-list .command-row .shortcuts, .settings-keyboard-shortcuts-panel .command-list .command-row .command-key {
-  justify-self: end;
+.settings-keyboard-shortcuts-panel .command-list .command-row .command-key-valid {
+  margin: 0px 0 0 10px;
+}
+.settings-keyboard-shortcuts-panel .command-list .command-row .command-key-valid .svg-icon {
+  --bs-svg-icon-size: 16px;
+  color: rgb(102, 191, 60);
 }

@@ -23,6 +23,9 @@
         --bs-invalid-color: rgb(255, 68, 0);
         border-color: var(--bs-invalid-color);
         box-shadow: 0 0 0 0 var(--bs-invalid-color);
+    }
+
+    &.invalid-animation {
         animation: 700ms ease-out 0s 1 normal none running animation-invalid-hotkey;
     }
 }

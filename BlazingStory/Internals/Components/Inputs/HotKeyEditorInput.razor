@@ -2,7 +2,8 @@
        value="@_keyText"
        placeholder="Type keys"
        readonly
-       class="@CssClass("hotkey-editor-input", new{ invalid = !_isValid })"
+       class="@CssClass("hotkey-editor-input", new { invalid = !_isValid, invalidAnimation = _invalidAnimation })"
+       @onanimationend="OnAnimationEnd"
        @onfocus="OnFocus"
        @onblur="OnBlur"
        @onkeydown="OnKeyDown"
@@ -19,15 +20,31 @@
     [Parameter]
     public Func<HotKeyCombo, bool>? Validate { get; set; }
 
+    private HotKeyCombo? _lastValidHotKey;
+
     private HotKeyCombo? _currentHotKey;
 
     private string? _keyText;
 
     private bool _isValid = true;
+    
+    private bool _invalidAnimation = false;
 
     override protected void OnInitialized()
     {
         _keyText = this.HotKey.ToString();
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (_lastValidHotKey?.ToString() != this.HotKey.ToString())
+        {
+            _lastValidHotKey = this.HotKey;
+            _keyText = this.HotKey.ToString();
+            _isValid = true;
+        }
     }
 
     private void OnFocus()
@@ -60,7 +77,18 @@
 
         if (_isValid)
         {
+            _lastValidHotKey = _currentHotKey;
             await this.HotKeyChanged.InvokeAsync(_currentHotKey);
         }
+        else
+        {
+            _invalidAnimation = true;
+        }
+    }
+
+    private void OnAnimationEnd()
+    {
+        _invalidAnimation = false;
+        Console.WriteLine("Animation end");
     }
 }
