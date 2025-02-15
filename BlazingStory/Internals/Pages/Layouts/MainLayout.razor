@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @using Toolbelt.Blazor.HotKeys2
+@using static Toolbelt.Blazor.HotKeys2.ModCode
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
@@ -114,19 +115,19 @@
         {
             (CommandType.AboutYourBlazingStory, new(default, "About your Blazing Story")),
             (CommandType.ReleaseNotes, new(default, "Release notes")),
-            (CommandType.KeyboardShortcuts, new(new(ModCode.Ctrl|ModCode.Shift, Code.Comma), "Keyboard shortcuts")),
+            (CommandType.KeyboardShortcuts, new(new(Ctrl | Shift, Code.Comma), "Keyboard shortcuts")),
 
-            (CommandType.SideBarVisible,new(new(Code.S), "Show sidebar", flag: true)),
-            (CommandType.ToolBarVisible,new(new(Code.T), "Show toolbar", flag: true)),
-            (CommandType.AddonPanelVisible, new(new(Code.A), "Show addons", flag: true)),
-            (CommandType.AddonPanelOrientation, new(new(Code.D), "Change addons orientation")),
-            (CommandType.GoFullScreen, new(new(Code.F), "Go full screen", flag: false)),
-            (CommandType.GoSearch, new(new(Code.Slash), "Search")),
-            (CommandType.PreviousComponent, new(new(ModCode.Alt, Code.ArrowUp), "Previous component")),
-            (CommandType.NextComponent, new(new(ModCode.Alt, Code.ArrowDown), "Next component")),
-            (CommandType.PreviousStory, new(new(ModCode.Alt, Code.ArrowLeft), "Previous story")),
-            (CommandType.NextStory, new(new(ModCode.Alt, Code.ArrowRight), "Next story")),
-            (CommandType.CollapseAll, new(new(ModCode.Ctrl|ModCode.Shift, Code.ArrowUp), "Collapse all"))
+            (CommandType.SideBarVisible,new(new(Alt, Code.S), "Show sidebar", flag: true)),
+            (CommandType.ToolBarVisible,new(new(Alt, Code.T), "Show toolbar", flag: true)),
+            (CommandType.AddonPanelVisible, new(new(Alt, Code.A), "Show addons", flag: true)),
+            (CommandType.AddonPanelOrientation, new(new(Alt, Code.D), "Change addons orientation")),
+            (CommandType.GoFullScreen, new(new(Alt, Code.F), "Go full screen", flag: false)),
+            (CommandType.GoSearch, new(new(Ctrl, Code.K), "Search")),
+            (CommandType.PreviousComponent, new(new(Alt, Code.ArrowUp), "Previous component")),
+            (CommandType.NextComponent, new(new(Alt, Code.ArrowDown), "Next component")),
+            (CommandType.PreviousStory, new(new(Alt, Code.ArrowLeft), "Previous story")),
+            (CommandType.NextStory, new(new(Alt, Code.ArrowRight), "Next story")),
+            (CommandType.CollapseAll, new(new(Ctrl | Shift, Code.ArrowUp), "Collapse all"))
         });
         return commandServce;
     }
