@@ -214,7 +214,7 @@ else
         await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, "void");
     }
 
-    private async Task EventTArgMonitorHandler<[DynamicallyAccessedMembers(All)] TArgs>(string name, TArgs eventArgs)
+    internal async Task EventTArgMonitorHandler<[DynamicallyAccessedMembers(All)] TArgs>(string name, TArgs eventArgs)
     {
 #pragma warning disable IL2026
         var json = JsonSerializer.Serialize(eventArgs, new JsonSerializerOptions { WriteIndented = true });
