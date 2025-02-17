@@ -3,6 +3,7 @@
 @using System.Reflection
 @using System.Linq.Expressions
 @using System.Text.Json
+@using System.Text.Json.Serialization
 @using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
 
 @implements IAsyncDisposable
@@ -217,7 +218,12 @@ else
     internal async Task EventTArgMonitorHandler<[DynamicallyAccessedMembers(All)] TArgs>(string name, TArgs eventArgs)
     {
 #pragma warning disable IL2026
-        var json = JsonSerializer.Serialize(eventArgs, new JsonSerializerOptions { WriteIndented = true });
+        var json = JsonSerializer.Serialize(eventArgs, new JsonSerializerOptions 
+        { 
+            WriteIndented = true, 
+            ReferenceHandler = ReferenceHandler.Preserve,
+            Converters = { new RenderFragmentJsonConverter(), new ActionJsonConverter() }
+        });
 #pragma warning restore IL2026
         await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, json);
     }
