@@ -87,6 +87,9 @@ public class CanvasFrameTest
         public RenderFragment Fragment { get; init; } = builder => { builder.AddMarkupContent(0, "<div>Test</div>"); };
         public RenderFragment<int> FragmentWithArg { get; init; } = (int n) => builder => { builder.AddMarkupContent(0, $"<div>{n}</div>"); };
         public Action SystemAction { get; init; } = () => { };
+        public Action<int, string> SystemActionWithArg { get; init; } = (int n, string s) => { };
+        public Func<bool> SystemFunc { get; init; } = () => true;
+        public Func<int, string, bool> SystemFuncWithArg { get; init; } = (int n, string s) => false;
         public Circular CircularObject { get; init; } = new();
     }
 
@@ -115,14 +118,14 @@ public class CanvasFrameTest
             "OnTest",
             """
             {
-              "Fragment": "Serialization of Microsoft.AspNetCore.Components.RenderFragment is not supported.",
-              "FragmentWithArg": "Serialization of Microsoft.AspNetCore.Components.RenderFragment<T> is not supported.",
-              "SystemAction": "Serialization of System.Action is not supported.",
+              "Fragment": "Serialization of type 'RenderFragment' is not supported.",
+              "FragmentWithArg": "Serialization of type 'RenderFragment<int>' is not supported.",
+              "SystemAction": "Serialization of type 'Action' is not supported.",
+              "SystemActionWithArg": "Serialization of type 'Action<int, string>' is not supported.",
+              "SystemFunc": "Serialization of type 'Func<bool>' is not supported.",
+              "SystemFuncWithArg": "Serialization of type 'Func<int, string, bool>' is not supported.",
               "CircularObject": {
-                "$id": "1",
-                "SelfReference": {
-                  "$ref": "1"
-                }
+                "SelfReference": "Serialization of cyclic references is not supported."
               }
             }
             """);
