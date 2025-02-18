@@ -32,9 +32,9 @@ public class CustomStore
     /// <summary>
     /// Try to find a component by navigationn path, such as "examples-ui-button".
     /// </summary>
-    internal bool TryGetComponentByPath(string navigationPath, [NotNullWhen(true)] out CustomContainer? component)
+    internal bool TryGetCustomContainerByPath(string navigationPath, [NotNullWhen(true)] out CustomContainer? customContainer)
     {
-        component = this._CustomContainers.FirstOrDefault(c => c.NavigationPath == navigationPath);
-        return component != null;
+        customContainer = this._CustomContainers.FirstOrDefault(c => c.NavigationPath == navigationPath);
+        return customContainer != null;
     }
 }

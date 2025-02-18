@@ -72,7 +72,7 @@ internal class NavigationService
         var nextComponentIndex = ativeComponentIndex + (navigateToNext ? +1 : -1);
         if (nextComponentIndex < 0 || allComponents.Count <= nextComponentIndex) return;
         var nextComponent = allComponents[nextComponentIndex];
-        var nextItem = nextComponent.EnumAll().Where(item => item.Type is NavigationItemType.Story or NavigationItemType.Docs).FirstOrDefault();
+        var nextItem = nextComponent.EnumAll().Where(item => item.Type is NavigationItemType.Story or NavigationItemType.Docs or NavigationItemType.Custom).FirstOrDefault();
         if (nextItem == null) return;
         this.NavigateTo(nextItem);
     }
@@ -80,7 +80,7 @@ internal class NavigationService
     internal void NavigateToNextDocsOrStory(QueryRouteData? routeData, bool navigateToNext)
     {
         if (!this.TryGetActiveNavigationItem(routeData, out var activeItem, out var _)) return;
-        var allItems = this._Root.EnumAll().Where(item => item.Type is NavigationItemType.Docs or NavigationItemType.Story).ToList();
+        var allItems = this._Root.EnumAll().Where(item => item.Type is NavigationItemType.Docs or NavigationItemType.Story or NavigationItemType.Custom).ToList();
         var ativeIndex = allItems.FindIndex(item => item == activeItem);
         var nextIndex = ativeIndex + (navigateToNext ? +1 : -1);
         if (nextIndex < 0 || allItems.Count <= nextIndex) return;
@@ -134,7 +134,7 @@ internal class NavigationService
 
     private void SearchCore(NavigationTreeItem item, IEnumerable<string> keywords, List<NavigationListItem> results)
     {
-        if (item.Type is NavigationItemType.Component or NavigationItemType.Docs or NavigationItemType.Story)
+        if (item.Type is NavigationItemType.Component or NavigationItemType.Docs or NavigationItemType.Story or NavigationItemType.Custom)
         {
             if (keywords.Any(word => item.Caption.Contains(word, StringComparison.InvariantCultureIgnoreCase)))
             {

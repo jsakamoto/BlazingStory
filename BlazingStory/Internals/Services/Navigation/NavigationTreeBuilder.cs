@@ -80,6 +80,7 @@ internal class NavigationTreeBuilder
             var customNode = this.CreateOrGetNavigationTreeItem(root, pathSegments: Enumerable.Empty<string>(), segments);
             customNode.Type = NavigationItemType.Custom;
             customNode.Caption = segments.LastOrDefault("Custom");
+            customNode.NavigationPath = "/custom/" + page.NavigationPath;
         }
     }
 

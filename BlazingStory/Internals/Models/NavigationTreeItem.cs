@@ -10,7 +10,7 @@ public class NavigationTreeItem : INavigationPath
     /// Gets a navigation path string for the item.<br/>
     /// (ex. "/story/example-button--primary", "/docs/example-button--docs")
     /// </summary>
-    public string NavigationPath { get; init; } = "";
+    public string NavigationPath { get; set; } = "";
 
     internal IEnumerable<string> PathSegments { get; set; } = Enumerable.Empty<string>();
 

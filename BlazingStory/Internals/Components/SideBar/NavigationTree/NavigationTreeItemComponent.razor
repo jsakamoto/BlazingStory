@@ -9,7 +9,7 @@
             var href = this._NavigationService?.GetNavigationUrl(item);
             var style = $"padding-left: calc({this.IndentLevel} * var(--bs-sidebar-nav-indent-size));";
             var tabIndex = this.SubHeading ? "unset" : "-1";
-            var active = (item.Type is NavigationItemType.Docs or NavigationItemType.Story) && (this.RouteData?.RouteToStoryOrDocs == true) && (this.RouteData?.Path == item.NavigationPath);
+            var active = (item.Type is NavigationItemType.Docs or NavigationItemType.Story or NavigationItemType.Custom) && (this.RouteData?.RouteToStoryOrDocs == true) && (this.RouteData?.Path == item.NavigationPath);
 
             <div @key="key" class="navigation-tree-item @CssClass(new {item.Expanded, Type = item.Type.ToString(), active })">
 

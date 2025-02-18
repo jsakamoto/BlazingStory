@@ -1,0 +1,39 @@
+﻿@using System.Text.RegularExpressions
+@implements IDisposable
+@if (this._CustomPage?.CustomRazorDescriptor != null)
+{
+    <DynamicComponent Type="this._CustomPage.CustomRazorDescriptor.TypeOfCustomRazor" />
+}
+
+@code {
+    [CascadingParameter]
+    protected CustomStore CustomStore { get; init; } = default!;
+
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
+    [CascadingParameter]
+    protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
+
+    [CascadingParameter]
+    protected QueryRouteData RouteData { get; init; } = default!;
+
+    private readonly Subscriptions _Subscriptions = new();
+
+    private string _PageTitle = "Custom page title";
+
+    private CustomContainer? _CustomPage;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var navigationPath = Regex.Replace(this.RouteData.Parameter, "--custom$", "");
+        if (!this.CustomStore.TryGetCustomContainerByPath(navigationPath, out var customPage)) return;
+        this._PageTitle = customPage.Title;
+        this._CustomPage = customPage;
+    }
+
+    public void Dispose()
+    {
+        this._Subscriptions.Dispose();
+    }
+}
