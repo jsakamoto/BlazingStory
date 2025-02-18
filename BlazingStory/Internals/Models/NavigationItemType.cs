@@ -5,5 +5,6 @@ public enum NavigationItemType
     Container,
     Component,
     Story,
-    Docs
+    Docs,
+    Custom
 }

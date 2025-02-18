@@ -16,6 +16,27 @@ internal class NavigationTreeBuilder
     internal NavigationTreeItem Build(IEnumerable<StoryContainer> components, string? expandedNavigationPath)
     {
         var root = new NavigationTreeItem { Type = NavigationItemType.Container };
+
+        this.BuildStories(components, root);
+
+        root.SortSubItemsRecurse();
+
+        if (!string.IsNullOrEmpty(expandedNavigationPath))
+        {
+            var expansionPath = new Stack<NavigationTreeItem>();
+            if (FindExpansionPathTo(expansionPath, root, expandedNavigationPath))
+            {
+                foreach (var expansion in expansionPath) { expansion.Expanded = true; }
+            }
+        }
+
+        root.SubItems.ForEach(story => story.Expanded = true);
+
+        return root;
+    }
+
+    private void BuildStories(IEnumerable<StoryContainer> components, NavigationTreeItem root){
+        // TODO: extract to method
         foreach (var component in components)
         {
             var segments = component.Title.Split('/');
@@ -45,21 +66,6 @@ internal class NavigationTreeBuilder
                 });
             componentNode.SubItems.AddRange(storyNodes);
         }
-
-        root.SortSubItemsRecurse();
-
-        if (!string.IsNullOrEmpty(expandedNavigationPath))
-        {
-            var expansionPath = new Stack<NavigationTreeItem>();
-            if (FindExpansionPathTo(expansionPath, root, expandedNavigationPath))
-            {
-                foreach (var expansion in expansionPath) { expansion.Expanded = true; }
-            }
-        }
-
-        root.SubItems.ForEach(story => story.Expanded = true);
-
-        return root;
     }
 
     private NavigationTreeItem CreateOrGetNavigationTreeItem(NavigationTreeItem item, IEnumerable<string> pathSegments, IEnumerable<string> segments)
