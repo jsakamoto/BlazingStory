@@ -13,11 +13,12 @@ internal class NavigationTreeBuilder
     /// <param name="components">A collection of <see cref="StoryContainer"/> that is the source of the navigation item tree</param>
     /// <param name="expandedNavigationPath">A navigation path string to specify the tree item node that should be expanded (ex."/story/examples-button--primary")</param>
     /// <returns></returns>
-    internal NavigationTreeItem Build(IEnumerable<StoryContainer> components, string? expandedNavigationPath)
+    internal NavigationTreeItem Build(IEnumerable<StoryContainer> components, IEnumerable<CustomContainer> customPages, string? expandedNavigationPath)
     {
         var root = new NavigationTreeItem { Type = NavigationItemType.Container };
 
         this.BuildStories(components, root);
+        this.BuildCustom(customPages, root);
 
         root.SortSubItemsRecurse();
 
@@ -35,7 +36,8 @@ internal class NavigationTreeBuilder
         return root;
     }
 
-    private void BuildStories(IEnumerable<StoryContainer> components, NavigationTreeItem root){
+    private void BuildStories(IEnumerable<StoryContainer> components, NavigationTreeItem root)
+    {
         // TODO: extract to method
         foreach (var component in components)
         {
@@ -65,6 +67,19 @@ internal class NavigationTreeBuilder
                     Caption = story.Name
                 });
             componentNode.SubItems.AddRange(storyNodes);
+        }
+    }
+
+    private void BuildCustom(IEnumerable<CustomContainer> customPages, NavigationTreeItem root)
+    {
+        Console.WriteLine($"Adding custom pages ({customPages.Count()})");
+        foreach (var page in customPages)
+        {
+            Console.WriteLine($"Adding page: {page.Title}");
+            var segments = page.Title.Split('/');
+            var customNode = this.CreateOrGetNavigationTreeItem(root, pathSegments: Enumerable.Empty<string>(), segments);
+            customNode.Type = NavigationItemType.Custom;
+            customNode.Caption = segments.LastOrDefault("Custom");
         }
     }
 

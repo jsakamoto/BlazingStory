@@ -19,7 +19,7 @@ internal class NavigationTreeBuilderTest
         var storyContainers = Array.Empty<StoryContainer>();
 
         // When
-        var root = builder.Build(storyContainers, null);
+        var root = builder.Build(storyContainers, [], null);
 
         // Then
         root.Type.Is(NavigationItemType.Container);
@@ -43,7 +43,7 @@ internal class NavigationTreeBuilderTest
         };
 
         // When
-        var root = builder.Build(storyContainers, expandedNavigationPath: "/story/examples-button--primary");
+        var root = builder.Build(storyContainers, [], expandedNavigationPath: "/story/examples-button--primary");
 
         // Then
         root.Type.Is(NavigationItemType.Container);
@@ -124,7 +124,7 @@ internal class NavigationTreeBuilderTest
         };
 
         // When
-        var root = builder.Build(storyContainers, null);
+        var root = builder.Build(storyContainers, [], null);
 
         // Then
         var componentsNode = root.SubItems[0];
@@ -160,7 +160,7 @@ internal class NavigationTreeBuilderTest
 
         // When
         var builder = new NavigationTreeBuilder();
-        var root = builder.Build(storyContainers, expandedNavigationPath: null);
+        var root = builder.Build(storyContainers, [], expandedNavigationPath: null);
 
         // Then
         root.SubItems.Select(node => node.Caption).Is("Examples", "UI Components"); // The 1st level nodes were sorted.

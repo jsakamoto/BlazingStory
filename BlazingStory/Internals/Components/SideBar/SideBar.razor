@@ -35,6 +35,9 @@
     protected StoriesStore StoriesStore { get; init; } = default!;
 
     [CascadingParameter]
+    protected CustomStore CustomStore {get; init; } = default!;
+
+    [CascadingParameter]
     protected QueryRouteData RouteData { get; init; } = default!;
 
     [CascadingParameter]
@@ -51,6 +54,6 @@
     {
         var expandedNavigationPath = this.RouteData.RouteToStoryOrDocs ? this.RouteData.Parameter : null;
         var navigationService = this.Services.GetRequiredService<NavigationService>();
-        this._NavigationRoot = navigationService.BuildNavigationTree(this.StoriesStore.StoryContainers, expandedNavigationPath);
+        this._NavigationRoot = navigationService.BuildNavigationTree(this.StoriesStore.StoryContainers, this.CustomStore.CustomContainers, expandedNavigationPath);
     }
 }

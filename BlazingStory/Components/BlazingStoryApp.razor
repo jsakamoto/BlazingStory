@@ -15,19 +15,19 @@
 
 <style>
     .default-background {
-        position: fixed;
-        inset: 0;
-        background-color: #f6f9fc;
+    position: fixed;
+    inset: 0;
+    background-color: #f6f9fc;
     }
 
     @@media (prefers-color-scheme: dark) {
-        .default-background {
-            background-color: #222425;
-        }
+    .default-background {
+    background-color: #222425;
+    }
     }
 
     .default-background.init-level-3 {
-        display: none;
+    display: none;
     }
 </style>
 
@@ -39,7 +39,7 @@
 *@
 <style>
     html:not(._blazing_story_ready_for_visible) {
-        overflow: hidden;
+    overflow: hidden;
     }
 </style>
 
@@ -48,7 +48,6 @@
 <CascadingValue TValue="IServiceProvider" Value="this._ServiceScope?.ServiceProvider">
 
     <StoriesRazorDetector Assemblies="this.Assemblies" StoriesStore="this._StoriesStore" />
-
     <CascadingValue Value="this._AddonsStore">
 
         <div style="display:none;">
@@ -62,22 +61,24 @@
 
         <div class="color-scheme-container preferes-color-scheme-@this._PreferesColorScheme" style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >=2 ? 1 : 0); visibility: @(this._InitLevel >= 1 ? "visible" : "hidden");">
             <CascadingValue Value="this._StoriesStore">
-                <CascadingValue Value="this">
+                <CascadingValue Value="this._CustomStore">
+                    <CascadingValue Value="this">
 
-                    <Router AppAssembly="@typeof(BlazingStoryApp).Assembly">
-                        <Found Context="routeData">
-                            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-                        </Found>
-                        <NotFound>
-                            <PageTitle>Not found</PageTitle>
-                            @{ #pragma warning disable IL2111 }
-                            <LayoutView Layout="@typeof(MainLayout)">
-                                <p role="alert" style="padding:12px 32px;">Sorry, there's nothing at this address.</p>
-                            </LayoutView>
-                            @{ #pragma warning restore IL2111 }
-                        </NotFound>
-                    </Router>
+                        <Router AppAssembly="@typeof(BlazingStoryApp).Assembly">
+                            <Found Context="routeData">
+                                <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                            </Found>
+                            <NotFound>
+                                <PageTitle>Not found</PageTitle>
+                                @{ #pragma warning disable IL2111 }
+                                <LayoutView Layout="@typeof(MainLayout)">
+                                    <p role="alert" style="padding:12px 32px;">Sorry, there's nothing at this address.</p>
+                                </LayoutView>
+                                @{ #pragma warning restore IL2111 }
+                            </NotFound>
+                        </Router>
 
+                    </CascadingValue>
                 </CascadingValue>
             </CascadingValue>
         </div>
@@ -136,6 +137,8 @@
 
     private readonly StoriesStore _StoriesStore = new();
 
+    private readonly CustomStore _CustomStore = new();
+
     private readonly AddonsStore _AddonsStore = new();
 
     private bool _firstRendered = false;
@@ -172,10 +175,22 @@
         this.RegisterAddon<BlazingStory.Internals.Addons.Measure.MeasureAddon>();
         this.RegisterAddon<BlazingStory.Internals.Addons.Outlines.OutlinesAddon>();
 
+		this.RegisterCustomPages();
+
         this._ServiceScope = this.ConfigureServices();
     }
 
     private void RegisterAddon<[DynamicallyAccessedMembers(All)] TAddon>() => this._AddonsTypes.Add(typeof(TAddon));
+
+    private void RegisterCustomPages()
+    {
+        var customRazors = CustomRazorDetector.Detect(this.Assemblies);
+		foreach (var customRazor in customRazors)
+		{
+			var container = new CustomContainer(customRazor, GlobalServices);
+			this._CustomStore.RegisterCustomContainer(container);
+		}
+    }
 
     private AsyncServiceScope ConfigureServices()
     {
