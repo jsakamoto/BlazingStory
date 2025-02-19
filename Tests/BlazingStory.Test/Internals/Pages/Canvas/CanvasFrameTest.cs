@@ -97,9 +97,18 @@ public class CanvasFrameTest
     {
         public Circular SelfReference { get; set; }
 
+        public List<Circular?> SelfReferenceList { get; set; }
+
+        public Dictionary<string, Circular?> SelfReferenceDictionary { get; set; }
+
         public Circular()
         {
             this.SelfReference = this;
+            this.SelfReferenceList = [null, this, null];
+            this.SelfReferenceDictionary = new() {
+                { "Null", null },
+                { "Self", this }
+            };
         }
     }
 
@@ -125,7 +134,16 @@ public class CanvasFrameTest
               "SystemFunc": "Serialization of type 'Func<bool>' is not supported.",
               "SystemFuncWithArg": "Serialization of type 'Func<int, string, bool>' is not supported.",
               "CircularObject": {
-                "SelfReference": "Serialization of cyclic references is not supported."
+                "SelfReference": "Serialization of cyclic references is not supported.",
+                "SelfReferenceList": [
+                  null,
+                  "Serialization of cyclic references is not supported.",
+                  null
+                ],
+                "SelfReferenceDictionary": {
+                  "Null": null,
+                  "Self": "Serialization of cyclic references is not supported."
+                }
               }
             }
             """);
