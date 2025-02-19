@@ -1571,6 +1571,16 @@ a.icon-button {
   border-bottom-right-radius: 4px;
 }
 
+.custom-page {
+  position: absolute;
+  inset: 0;
+  color: var(--bs-text-color);
+}
+.custom-page .custom-main {
+  padding: 4rem 20px;
+  overflow: auto;
+}
+
 .story-preview {
   position: relative;
   margin: 16px 0 40px 0;
