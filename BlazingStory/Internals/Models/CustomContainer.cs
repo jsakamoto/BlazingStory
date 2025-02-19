@@ -1,5 +1,4 @@
 ﻿using BlazingStory.Types;
-using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Internals.Models;
 
@@ -22,7 +21,7 @@ internal class CustomContainer
     /// Initialize a new instance of <see cref="CustomContainer"/>.
     /// </summary>
     /// <param name="customRazorDescriptor">A descriptor of a type of Custom Razor component (..custom.razor) and its <see cref="CustomAttribute"/>.</param>
-    public CustomContainer(CustomRazorDescriptor customRazorDescriptor, IServiceProvider services)
+    public CustomContainer(CustomRazorDescriptor customRazorDescriptor)
     {
         this.CustomRazorDescriptor = customRazorDescriptor ?? throw new ArgumentNullException(nameof(customRazorDescriptor));
         this.Title = this.CustomRazorDescriptor.CustomAttribute.Title ?? throw new ArgumentNullException(nameof(customRazorDescriptor)); ;

@@ -17,12 +17,29 @@ internal static class CustomRazorDetector
     [UnconditionalSuppressMessage("Trimming", "IL2026")]
     internal static IEnumerable<CustomRazorDescriptor> Detect(IEnumerable<Assembly>? assemblies)
     {
-        return (assemblies ?? Enumerable.Empty<Assembly>())
+        return (assemblies ?? [])
             .SelectMany(assembly => Extract(assembly.GetTypes()))
 #pragma warning disable IL2077
             .Select(t => new CustomRazorDescriptor(t.Type, t.Attribute))
 #pragma warning restore IL2077
             .ToArray();
+    }
+
+
+
+    /// <summary>
+    /// Detects types of custom Razor component and its <see cref="CustomAttribute"/> from assemblies and register them to the provided store.
+    /// </summary>
+    /// <param name="assemblies"></param>
+    /// <param name="store"></param>
+    public static void DetectAndRegisterToStore(IEnumerable<Assembly>? assemblies, CustomStore store)
+    {
+        var descriptors = Detect(assemblies);
+        foreach (var descriptor in descriptors)
+        {
+            var container = new CustomContainer(descriptor);
+            store.RegisterCustomContainer(container);
+        }
     }
 
     private static IEnumerable<(Type Type, CustomAttribute Attribute)> Extract(IEnumerable<Type> types)
@@ -34,4 +51,6 @@ internal static class CustomRazorDetector
             yield return (type, customAttribute);
         }
     }
+
+
 }

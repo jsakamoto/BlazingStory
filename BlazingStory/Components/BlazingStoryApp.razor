@@ -175,22 +175,13 @@
         this.RegisterAddon<BlazingStory.Internals.Addons.Measure.MeasureAddon>();
         this.RegisterAddon<BlazingStory.Internals.Addons.Outlines.OutlinesAddon>();
 
-		this.RegisterCustomPages();
+        CustomRazorDetector.DetectAndRegisterToStore(Assemblies, _CustomStore);
 
         this._ServiceScope = this.ConfigureServices();
     }
 
     private void RegisterAddon<[DynamicallyAccessedMembers(All)] TAddon>() => this._AddonsTypes.Add(typeof(TAddon));
 
-    private void RegisterCustomPages()
-    {
-        var customRazors = CustomRazorDetector.Detect(this.Assemblies);
-		foreach (var customRazor in customRazors)
-		{
-			var container = new CustomContainer(customRazor, GlobalServices);
-			this._CustomStore.RegisterCustomContainer(container);
-		}
-    }
 
     private AsyncServiceScope ConfigureServices()
     {
