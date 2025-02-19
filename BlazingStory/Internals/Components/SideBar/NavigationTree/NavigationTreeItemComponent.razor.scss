@@ -48,8 +48,8 @@
             background-color: var(--bs-focused-half-color);
         }
     }
-    /* for Active Story or Docs */
-    .type-story, .type-docs {
+    /* for Active Story, Docs and Custom */
+    .type-story, .type-docs, .type-custom {
         &.active > .caption {
             a {
                 color: var(--bs-sidebar-nav-active-color);
@@ -85,7 +85,7 @@
         transform: rotateZ(90deg);
     }
 
-    .type-story, .type-docs {
+    .type-story, .type-docs, .type-custom {
         & > .caption .chevron {
             visibility: hidden;
         }
@@ -188,5 +188,9 @@
 
     .type-story > .caption .action svg {
         color: var(--bs-icon-story-color);
+    }
+
+    .type-custom > .caption .action svg {
+        color: var(--bs-icon-custom-color);    
     }
 }

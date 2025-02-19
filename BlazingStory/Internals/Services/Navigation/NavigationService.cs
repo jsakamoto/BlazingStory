@@ -52,7 +52,7 @@ internal class NavigationService
     {
         activeItem = null;
         navigatableItems = this._Root.EnumAll()
-            .Where(item => item.Type is NavigationItemType.Story or NavigationItemType.Docs)
+            .Where(item => item.Type is NavigationItemType.Story or NavigationItemType.Docs or NavigationItemType.Custom)
             .ToArray();
 
         var navigationPath = routeData?.Path;
