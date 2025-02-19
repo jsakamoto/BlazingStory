@@ -72,10 +72,8 @@ internal class NavigationTreeBuilder
 
     private void BuildCustom(IEnumerable<CustomContainer> customPages, NavigationTreeItem root)
     {
-        Console.WriteLine($"Adding custom pages ({customPages.Count()})");
         foreach (var page in customPages)
         {
-            Console.WriteLine($"Adding page: {page.Title}");
             var segments = page.Title.Split('/');
             var customNode = this.CreateOrGetNavigationTreeItem(root, pathSegments: Enumerable.Empty<string>(), segments);
             customNode.Type = NavigationItemType.Custom;

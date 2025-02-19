@@ -17,27 +17,20 @@ internal static class CustomRazorDetector
     [UnconditionalSuppressMessage("Trimming", "IL2026")]
     internal static IEnumerable<CustomRazorDescriptor> Detect(IEnumerable<Assembly>? assemblies)
     {
-        Console.WriteLine("Starting detecting custom pages");
-        var detected = (assemblies ?? Enumerable.Empty<Assembly>())
+        return (assemblies ?? Enumerable.Empty<Assembly>())
             .SelectMany(assembly => Extract(assembly.GetTypes()))
 #pragma warning disable IL2077
             .Select(t => new CustomRazorDescriptor(t.Type, t.Attribute))
 #pragma warning restore IL2077
             .ToArray();
-
-        Console.WriteLine($"Detected {detected.Count()}");
-        return detected;
-
     }
 
     private static IEnumerable<(Type Type, CustomAttribute Attribute)> Extract(IEnumerable<Type> types)
     {
-        Console.WriteLine("Extracting custom page info");
         foreach (var type in types)
         {
             var customAttribute = type.GetCustomAttribute<CustomAttribute>();
             if (customAttribute == null) continue;
-            Console.WriteLine($"Extract {customAttribute.FilePath}, {customAttribute.Title}");
             yield return (type, customAttribute);
         }
     }
