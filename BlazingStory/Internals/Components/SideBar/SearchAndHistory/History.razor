@@ -40,9 +40,20 @@
         this._HistoryItems = await this._NavigationService.GetHistoryItemsAsync();
     }
 
-    private SvgIconType GetIconType(NavigationItemType itemType) => itemType switch { NavigationItemType.Component => SvgIconType.Component, NavigationItemType.Story => SvgIconType.Component, _ => SvgIconType.Document };
+    private SvgIconType GetIconType(NavigationItemType itemType) => itemType switch 
+    { 
+        NavigationItemType.Component => SvgIconType.Component,
+        NavigationItemType.Story => SvgIconType.Component,
+		NavigationItemType.Custom => SvgIconType.Document,
+        _ => SvgIconType.Document
+    };
 
-    private string GetCssClass(NavigationItemType itemType) => itemType switch { NavigationItemType.Component => "type-component", NavigationItemType.Story => "type-component", _ => "type-docs" };
+    private string GetCssClass(NavigationItemType itemType) => itemType switch 
+    {
+        NavigationItemType.Component => "type-component",
+        NavigationItemType.Story => "type-component",
+        NavigationItemType.Custom => "type-custom",
+        _ => "type-docs" };
 
     private async Task OnClickHistoryItem(NavigationListItem historyItem)
     {

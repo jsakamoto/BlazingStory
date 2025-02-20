@@ -481,6 +481,9 @@ button {
 .navigation-list .navigation-list-items .item.type-docs .svg-icon {
   color: var(--bs-icon-document-color);
 }
+.navigation-list .navigation-list-items .item.type-custom .svg-icon {
+  color: var(--bs-icon-custom-color);
+}
 .navigation-list .navigation-list-items .item .label {
   flex: 1;
   display: flex;
