@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -10,15 +12,11 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
 {
     public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => throw new NotSupportedException();
 
-    private readonly List<object> _visited = new();
+    private readonly Stack<object> _visited;
 
-    public JsonFallbackConverter()
+    public JsonFallbackConverter(Stack<object>? visited = null)
     {
-    }
-
-    public JsonFallbackConverter(List<object> visited)
-    {
-        this._visited = visited;
+        this._visited = visited ?? new();
     }
 
     [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
@@ -30,7 +28,16 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
             return;
         }
 
-        if (value.GetType().IsClass) this._visited.Add(value);
+        var isClass = value.GetType().IsClass;
+        if (isClass)
+        {
+            if (this._visited.Any(visited => Object.ReferenceEquals(visited, value)))
+            {
+                writer.WriteStringValue("Serialization of cyclic references is not supported.");
+                return;
+            }
+            this._visited.Push(value);
+        }
 
         writer.WriteStartObject();
 
@@ -39,16 +46,12 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
         foreach (var property in properties)
         {
             writer.WritePropertyName(property.Name);
+
             var propValue = property.GetValue(value);
-            var isUserDefinedClass = TypeUtility.IsUserDefinedReferenceType(property.PropertyType);
 
             if (propValue == null)
             {
                 writer.WriteNullValue();
-            }
-            else if (isUserDefinedClass && this._visited.Any(visited => Object.ReferenceEquals(visited, propValue)))
-            {
-                writer.WriteStringValue("Serialization of cyclic references is not supported.");
             }
             else if (IsUnsupportedType(property.PropertyType))
             {
@@ -56,24 +59,36 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
                 writer.WriteStringValue($"Serialization of type '{TypeUtility.GetTypeDisplayText(property.PropertyType).First()}' is not supported.");
 #pragma warning restore IL2072 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
             }
+            else if (propValue is string s)
+            {
+                writer.WriteStringValue(s);
+            }
+            else if (propValue is IDictionary dictionary)
+            {
+                writer.WriteStartObject();
+                foreach (DictionaryEntry entry in dictionary)
+                {
+                    writer.WritePropertyName(entry.Key.ToString() ?? "");
+                    var valueType = entry.Value?.GetType() ?? typeof(object);
+                    JsonSerializer.Serialize(writer, entry.Value, valueType, this.PrepareJsonSerializerOptions(options, valueType));
+                }
+                writer.WriteEndObject();
+            }
+            else if (propValue is IEnumerable enumerable)
+            {
+                writer.WriteStartArray();
+                foreach (var item in enumerable)
+                {
+                    var valueType = item?.GetType() ?? typeof(object);
+                    JsonSerializer.Serialize(writer, item, valueType, this.PrepareJsonSerializerOptions(options, valueType));
+                }
+                writer.WriteEndArray();
+            }
             else
             {
                 try
                 {
-                    if (isUserDefinedClass)
-                    {
-#pragma warning disable IL2075, IL2076
-                        // Create JsonFallbackConverter<T> instance. The type parameter T comes from the property type.
-                        var jsonConverterType = typeof(JsonFallbackConverter<>).MakeGenericType(property.PropertyType);
-#pragma warning restore IL2075, IL2076
-                        if (!options.Converters.Any(converter => converter.GetType().FullName == jsonConverterType.FullName))
-                        {
-                            var jsonSerializer = (JsonConverter?)Activator.CreateInstance(jsonConverterType, this._visited);
-                            options = new JsonSerializerOptions(options);
-                            options.Converters.Add(jsonSerializer!);
-                        }
-                    }
-                    JsonSerializer.Serialize(writer, propValue, property.PropertyType, options);
+                    JsonSerializer.Serialize(writer, propValue, property.PropertyType, this.PrepareJsonSerializerOptions(options, property.PropertyType));
                 }
                 catch (Exception)
                 {
@@ -85,11 +100,29 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
         }
 
         writer.WriteEndObject();
+        if (isClass) this._visited.Pop();
+    }
+
+    private JsonSerializerOptions PrepareJsonSerializerOptions(JsonSerializerOptions options, Type valueType)
+    {
+        if (TypeUtility.IsUserDefinedReferenceType(valueType))
+        {
+#pragma warning disable IL2070, IL2071
+            var jsonConverterType = typeof(JsonFallbackConverter<>).MakeGenericType(valueType);
+#pragma warning restore IL2070, IL2071
+            if (!options.Converters.Any(converter => converter.GetType().FullName == jsonConverterType.FullName))
+            {
+                var jsonSerializer = (JsonConverter?)Activator.CreateInstance(jsonConverterType, this._visited);
+                options = new JsonSerializerOptions(options);
+                options.Converters.Add(jsonSerializer!);
+            }
+        }
+        return options;
     }
 
     private static bool IsUnsupportedType(Type type)
     {
         return typeof(Delegate).IsAssignableFrom(type) ||
-               typeof(System.Linq.Expressions.Expression).IsAssignableFrom(type);
+               typeof(Expression).IsAssignableFrom(type);
     }
 }
