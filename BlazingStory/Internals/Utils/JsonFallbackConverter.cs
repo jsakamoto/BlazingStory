@@ -19,7 +19,9 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
         this._visited = visited ?? new();
     }
 
-    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
+    private const string _fallbackMessageFormat = "Serialization of {0} is not supported.";
+
+#pragma warning disable IL2026, IL2027, IL2072
     public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
     {
         if (value == null)
@@ -33,7 +35,7 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
         {
             if (this._visited.Any(visited => Object.ReferenceEquals(visited, value)))
             {
-                writer.WriteStringValue("Serialization of cyclic references is not supported.");
+                writer.WriteStringValue(string.Format(_fallbackMessageFormat, "cyclic references"));
                 return;
             }
             this._visited.Push(value);
@@ -55,9 +57,7 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
             }
             else if (IsUnsupportedType(property.PropertyType))
             {
-#pragma warning disable IL2072 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
-                writer.WriteStringValue($"Serialization of type '{TypeUtility.GetTypeDisplayText(property.PropertyType).First()}' is not supported.");
-#pragma warning restore IL2072 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
+                writer.WriteStringValue(string.Format(_fallbackMessageFormat, $"type '{TypeUtility.GetTypeDisplayText(property.PropertyType).First()}'"));
             }
             else if (propValue is string s)
             {
@@ -92,9 +92,7 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
                 }
                 catch (Exception)
                 {
-#pragma warning disable IL2072 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
-                    writer.WriteStringValue($"Serialization of type '{TypeUtility.GetTypeDisplayText(property.PropertyType).First()}' is not supported.");
-#pragma warning restore IL2072 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
+                    writer.WriteStringValue(string.Format(_fallbackMessageFormat, $"type '{TypeUtility.GetTypeDisplayText(property.PropertyType).First()}'"));
                 }
             }
         }
@@ -102,6 +100,7 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
         writer.WriteEndObject();
         if (isClass) this._visited.Pop();
     }
+#pragma warning restore IL2026, IL2027, IL2072
 
     private JsonSerializerOptions PrepareJsonSerializerOptions(JsonSerializerOptions options, Type valueType)
     {

@@ -218,14 +218,7 @@ else
 
     internal async Task EventTArgMonitorHandler<[DynamicallyAccessedMembers(PublicProperties)] TArgs>(string name, TArgs eventArgs)
     {
-#pragma warning disable IL2026
-        var json = JsonSerializer.Serialize(eventArgs, new JsonSerializerOptions 
-        { 
-            WriteIndented = true, 
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-            Converters = { new JsonFallbackConverter<TArgs>() }
-        });
-#pragma warning restore IL2026
+        var json = JsonFallbackSerializer.Serialize(eventArgs);
         await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, json);
     }
 
