@@ -20,7 +20,7 @@ internal class CustomContainer
     /// <summary>
     /// Initialize a new instance of <see cref="CustomContainer"/>.
     /// </summary>
-    /// <param name="customRazorDescriptor">A descriptor of a type of Custom Razor component (..custom.razor) and its <see cref="CustomAttribute"/>.</param>
+    /// <param name="customRazorDescriptor">A descriptor of a type of Custom Razor component and its <see cref="CustomAttribute"/>.</param>
     public CustomContainer(CustomRazorDescriptor customRazorDescriptor)
     {
         this.CustomRazorDescriptor = customRazorDescriptor ?? throw new ArgumentNullException(nameof(customRazorDescriptor));

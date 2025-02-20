@@ -38,7 +38,6 @@ internal class NavigationTreeBuilder
 
     private void BuildStories(IEnumerable<StoryContainer> components, NavigationTreeItem root)
     {
-        // TODO: extract to method
         foreach (var component in components)
         {
             var segments = component.Title.Split('/');
