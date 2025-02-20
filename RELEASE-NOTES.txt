@@ -1,3 +1,6 @@
+v.1.0.0-preview.44
+- Fix: The Action log panel crashes when the event argument type has the unsupported type of properties or cyclic reference.
+
 v.1.0.0-preview.43
 - Enhancement: The Keyboard Shortcuts page is now available.
 - Fix: The search view did not close after clicking a search result.
