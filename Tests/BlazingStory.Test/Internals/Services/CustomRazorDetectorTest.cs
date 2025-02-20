@@ -25,7 +25,7 @@ internal class CustomRazorDetectorTest
 
         customStore.CustomContainers.Count().Is(2);
         customStore.CustomContainers.Select(c => $"{c.Title},{c.NavigationPath}")
-            .Is("Examples/XGetting Started,examples-xgetting-started",
-                "Examples/UI/Welcome,examples-ui-welcome");
+            .Is("Examples/Getting Started,examples-getting-started",
+                "Examples/Blazing Story,examples-blazing-story");
     }
 }
