@@ -43,7 +43,9 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
 
         writer.WriteStartObject();
 
-        var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        var properties = typeof(T)
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(p => p.CanRead && p.GetIndexParameters().Length == 0);
 
         foreach (var property in properties)
         {

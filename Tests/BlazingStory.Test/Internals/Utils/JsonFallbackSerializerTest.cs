@@ -62,6 +62,15 @@ public class JsonFallbackSerializerTest
         }
     }
 
+    private class ClassWithIndexer
+    {
+        // This indexer should be omitted by the converter logic
+        public int this[int key] => key + 42;
+
+        // Normal property
+        public string NormalProperty { get; set; } = string.Empty;
+    }
+
     [Test]
     public void JsonFallbackSerializer_Serialize_ComplicatedObject_Test()
     {
@@ -94,5 +103,24 @@ public class JsonFallbackSerializerTest
               }
             }
             """);
+    }
+
+    [Test]
+    public void JsonFallbackSerializer_Serialize_ObjectWithIndexer_Test()
+    {
+        // GIVEN
+        var withIndexer = new ClassWithIndexer
+        {
+            NormalProperty = "TestValue"
+        };
+
+        // WHEN
+        var json = JsonFallbackSerializer.Serialize(withIndexer, 
+            options => options.WriteIndented = true);
+
+        // THEN: ensure it includes NormalProperty but ignores the indexer
+        // The indexer should not appear, since it's skipped by p.GetIndexParameters().Length == 0
+        Assert.That(json, Does.Contain("NormalProperty"));
+        Assert.That(json, Does.Not.Contain("42")); // or any marker for the indexer value
     }
 }
