@@ -11,7 +11,7 @@ internal class QueryRouteDataTest
         routeData.Path.Is("/story/example/button--primary");
         routeData.View.Is("story");
         routeData.Parameter.Is("example/button--primary");
-        routeData.RouteToStoryOrDocs.IsTrue();
+        routeData.RouteToStoryDocsOrCustom.IsTrue();
     }
 
     [Test]
@@ -21,7 +21,7 @@ internal class QueryRouteDataTest
         routeData.Path.Is("/settings/about");
         routeData.View.Is("settings");
         routeData.Parameter.Is("about");
-        routeData.RouteToStoryOrDocs.IsFalse();
+        routeData.RouteToStoryDocsOrCustom.IsFalse();
     }
 
     [Test]
@@ -31,6 +31,6 @@ internal class QueryRouteDataTest
         routeData.Path.Is("/viewMode/id");
         routeData.View.Is("viewMode");
         routeData.Parameter.Is("id");
-        routeData.RouteToStoryOrDocs.IsFalse();
+        routeData.RouteToStoryDocsOrCustom.IsFalse();
     }
 }
