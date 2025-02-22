@@ -1,5 +1,8 @@
+v.1.0.0-preview.45
+- Fix: The Action log panel crashes when the event argument type has indexer property. (PR #68 contributed by Snellingen)
+
 v.1.0.0-preview.44
-- Fix: The Action log panel crashes when the event argument type has the unsupported type of properties or cyclic reference.
+- Fix: The Action log panel crashes when the event argument type has the unsupported type of properties or cyclic reference. (Issue #65, PR #66 contributed by Snellingen)
 
 v.1.0.0-preview.43
 - Enhancement: The Keyboard Shortcuts page is now available.
