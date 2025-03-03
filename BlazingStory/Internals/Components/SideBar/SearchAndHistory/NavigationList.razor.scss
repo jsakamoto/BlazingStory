@@ -20,6 +20,10 @@
                 color: var(--bs-icon-document-color);
             }
 
+            &.type-custom .svg-icon {
+                color: var(--bs-icon-custom-color);
+            }
+
             .label {
                 flex: 1;
                 display: flex;

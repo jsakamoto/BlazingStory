@@ -1,0 +1,10 @@
+.custom-page {
+    position: absolute;
+    inset: 0;
+    color: var(--bs-text-color);
+
+    .custom-main {
+        padding: 4rem 20px;
+        overflow: auto;
+    }
+}

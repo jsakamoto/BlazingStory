@@ -1,0 +1,88 @@
+﻿@using System.Text.RegularExpressions
+@implements IDisposable
+@if (this._CustomPage?.CustomRazorDescriptor != null)
+{
+    <div class="custom-page stack vertical">
+        <ToolBar Visible="this._Commands.ToolbarVisible?.Flag == true">
+            @if (this._Commands.ShowSidebar?.Flag == false)
+            {
+                <IconButton Icon="SvgIconType.Sidebar" Command="this._Commands.ShowSidebar" />
+                <Separator />
+            }
+
+            @* -- Render Add-On's Toolbar Contents -- *@
+            @foreach (var addon in this.AddonsStore.GetAddons(AddonType.CustomPage))
+            {
+                <text>@addon.ToolbarContents</text>
+            }
+
+            <Spacer />
+
+            @if ((this._Commands.Fullscreen?.Flag ?? true) == true)
+            {
+                <IconButton Icon="SvgIconType.CircleClose" Command="this._Commands.Fullscreen" Title="Exit full screen [{0}]" />
+            }
+            else
+            {
+                <IconButton Icon="SvgIconType.FullScreen" Command="this._Commands.Fullscreen" />
+            }
+        </ToolBar>
+        <div class="custom-main fill">
+            <DynamicComponent Type="this._CustomPage.CustomRazorDescriptor.TypeOfCustomRazor" />
+        </div>
+    </div>
+}
+
+@code {
+    [CascadingParameter]
+    protected AddonsStore AddonsStore { get; init; } = default!;
+
+    [CascadingParameter]
+    protected CustomStore CustomStore { get; init; } = default!;
+
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
+    [CascadingParameter]
+    protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
+
+    [CascadingParameter]
+    protected QueryRouteData RouteData { get; init; } = default!;
+
+    private readonly Subscriptions _Subscriptions = new();
+
+    private (Command? ToolbarVisible, Command? ShowSidebar, Command? Fullscreen) _Commands = default;
+
+    private string _PageTitle = "Custom page title";
+
+    private CustomContainer? _CustomPage;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var navigationPath = Regex.Replace(this.RouteData.Parameter, "--custom$", "");
+        if (!this.CustomStore.TryGetCustomContainerByPath(navigationPath, out var customPage)) return;
+        this._PageTitle = customPage.Title;
+        this._CustomPage = customPage;
+    }
+
+    protected override void OnInitialized()
+    {
+        var commands = this.Services.GetRequiredService<CommandService>();
+        this._Commands = (
+            ToolbarVisible: commands[CommandType.ToolBarVisible],
+            ShowSidebar: commands[CommandType.SideBarVisible],
+            Fullscreen: commands[CommandType.GoFullScreen]);
+        this._Subscriptions.Add(this._Commands.ToolbarVisible!.Subscribe(this.OnToggleToolbarVisible));
+    }
+
+    private async ValueTask OnToggleToolbarVisible()
+    {
+        this._Commands.ToolbarVisible?.ToggleFlag();
+        await ValueTask.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        this._Subscriptions.Dispose();
+    }
+}
