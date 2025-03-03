@@ -1,7 +1,10 @@
 @using System.Text.Json
+@using System.Text.Encodings.Web
 
 @code
 {
+    private static readonly JsonSerializerOptions _jsonSerializerOptions = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+
     public static RenderFragment<string> Separator => (string text) => @<span class="separator" bs-actions-panel-tags>@text</span>;
 #pragma warning disable IL2026
     public static RenderFragment<JsonElement> RenderLogValue => [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(JsonElement))] (JsonElement value) =>
@@ -36,7 +39,7 @@
     }
     else
     {
-        <span class="@CssClass("action-value", new{value.ValueKind})" bs-actions-panel-tags>@JsonSerializer.Serialize(value)</span>
+        <span class="@CssClass("action-value", new { value.ValueKind })" bs-actions-panel-tags>@JsonSerializer.Serialize(value, _jsonSerializerOptions)</span>
     }
     </text>;
 #pragma warning restore IL2026

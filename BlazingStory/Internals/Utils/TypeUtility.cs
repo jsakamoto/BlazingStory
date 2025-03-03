@@ -1,8 +1,8 @@
-﻿using BlazingStory.Internals.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using BlazingStory.Internals.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.Internals.Utils;
@@ -196,4 +196,28 @@ internal static class TypeUtility
     /// When you pass the `List&lt;T&gt;` type, this method returns `List&lt;&gt;`.
     /// </summary>
     internal static Type GetOpenType(Type type) => type.IsGenericType ? type.GetGenericTypeDefinition() : type;
+
+    /// <summary>
+    /// Returns whether the given object is a user-defined reference type.
+    /// </summary>
+    internal static bool IsUserDefinedReferenceType(Type type)
+    {
+        // Exclude value types (structs)
+        if (type.IsValueType) return false;
+
+        // Exclude common built-in types
+        if (type == typeof(string) ||
+            type.IsArray ||
+            typeof(System.Collections.IEnumerable).IsAssignableFrom(type)) // Includes List, Dictionary, etc.
+        {
+            return false;
+        }
+
+        // Check if it is a user-defined type
+        var nameSpace = (type.Namespace ?? "") + ".";
+        if (nameSpace.StartsWith("System.") == true) return false;
+        if (nameSpace.StartsWith("Microsoft.") == true) return false;
+
+        return true;
+    }
 }
