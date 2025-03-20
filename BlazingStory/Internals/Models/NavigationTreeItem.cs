@@ -33,8 +33,8 @@ public class NavigationTreeItem : INavigationPath
 
         this.SubItems.Sort((a, b) =>
         {
-            if (a.Type == NavigationItemType.Custom && b.Type != NavigationItemType.Custom) return -1;
-            if (a.Type != NavigationItemType.Custom && b.Type == NavigationItemType.Custom) return 1;
+            if (a.Type == NavigationItemType.CustomPage && b.Type != NavigationItemType.CustomPage) return -1;
+            if (a.Type != NavigationItemType.CustomPage && b.Type == NavigationItemType.CustomPage) return 1;
             return a.Caption.CompareTo(b.Caption);
         });
 

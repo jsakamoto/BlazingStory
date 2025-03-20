@@ -9,7 +9,7 @@
             var href = this._NavigationService?.GetNavigationUrl(item);
             var style = $"padding-left: calc({this.IndentLevel} * var(--bs-sidebar-nav-indent-size));";
             var tabIndex = this.SubHeading ? "unset" : "-1";
-            var isDocsOrStoryOrCustom = item.Type is NavigationItemType.Docs or NavigationItemType.Story or NavigationItemType.Custom;
+            var isDocsOrStoryOrCustom = item.Type is NavigationItemType.Docs or NavigationItemType.Story or NavigationItemType.CustomPage;
             var isRouteToStoryDocsOrCustom = this.RouteData?.RouteToStoryDocsOrCustom == true;
             var isPathMatch = this.RouteData?.Path == item.NavigationPath;
             var active = isDocsOrStoryOrCustom && isRouteToStoryDocsOrCustom && isPathMatch;
@@ -106,7 +106,7 @@
             NavigationItemType.Component => SvgIconType.Component,
             NavigationItemType.Docs => SvgIconType.Document,
             NavigationItemType.Story => SvgIconType.BookmarkHollow,
-            NavigationItemType.Custom => SvgIconType.Document,
+            NavigationItemType.CustomPage => SvgIconType.Document,
             _ => SvgIconType.Folder
         };
     }

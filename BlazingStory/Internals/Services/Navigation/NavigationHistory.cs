@@ -36,7 +36,7 @@ public class NavigationHistory
 
     internal async ValueTask AddAsync(NavigationTreeItem root, NavigationTreeItem active)
     {
-        if (active.Type is not NavigationItemType.Docs and not NavigationItemType.Story and not NavigationItemType.Custom) return;
+        if (active.Type is not NavigationItemType.Docs and not NavigationItemType.Story and not NavigationItemType.CustomPage) return;
 
         var componentItem = root.FindParentOf(active);
         if (componentItem == null) return;
@@ -61,7 +61,7 @@ public class NavigationHistory
                 NavigationPath = active.NavigationPath,
                 Segments = active.PathSegments
             },
-            NavigationItemType.Custom => new NavigationListItem()
+            NavigationItemType.CustomPage => new NavigationListItem()
             {
                 Id = nextId,
                 Caption = active.Caption,

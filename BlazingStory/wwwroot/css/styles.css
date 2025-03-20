@@ -481,7 +481,7 @@ button {
 .navigation-list .navigation-list-items .item.type-docs .svg-icon {
   color: var(--bs-icon-document-color);
 }
-.navigation-list .navigation-list-items .item.type-custom .svg-icon {
+.navigation-list .navigation-list-items .item.type-custom-page .svg-icon {
   color: var(--bs-icon-custom-color);
 }
 .navigation-list .navigation-list-items .item .label {
@@ -591,12 +591,12 @@ button {
 .navigation-tree .caption button.action:focus {
   background-color: var(--bs-focused-half-color);
 }
-.navigation-tree .type-story.active > .caption a, .navigation-tree .type-docs.active > .caption a, .navigation-tree .type-custom.active > .caption a {
+.navigation-tree .type-story.active > .caption a, .navigation-tree .type-docs.active > .caption a, .navigation-tree .type-custom-page.active > .caption a {
   color: var(--bs-sidebar-nav-active-color);
   background-color: var(--bs-sidebar-nav-active-back-color);
   font-weight: bold;
 }
-.navigation-tree .type-story.active > .caption .action svg, .navigation-tree .type-docs.active > .caption .action svg, .navigation-tree .type-custom.active > .caption .action svg {
+.navigation-tree .type-story.active > .caption .action svg, .navigation-tree .type-docs.active > .caption .action svg, .navigation-tree .type-custom-page.active > .caption .action svg {
   fill: #fff;
 }
 .navigation-tree .chevron {
@@ -618,7 +618,7 @@ button {
 .navigation-tree .expanded > .caption .chevron {
   transform: rotateZ(90deg);
 }
-.navigation-tree .type-story > .caption .chevron, .navigation-tree .type-docs > .caption .chevron, .navigation-tree .type-custom > .caption .chevron {
+.navigation-tree .type-story > .caption .chevron, .navigation-tree .type-docs > .caption .chevron, .navigation-tree .type-custom-page > .caption .chevron {
   visibility: hidden;
 }
 .navigation-tree .sub-items {
@@ -697,7 +697,7 @@ button {
 .navigation-tree .type-story > .caption .action svg {
   color: var(--bs-icon-story-color);
 }
-.navigation-tree .type-custom > .caption .action svg {
+.navigation-tree .type-custom-page > .caption .action svg {
   color: var(--bs-icon-custom-color);
 }
 

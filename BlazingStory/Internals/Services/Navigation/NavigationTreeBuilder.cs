@@ -10,15 +10,16 @@ internal class NavigationTreeBuilder
     /// <summary>
     /// Build a tree of <see cref="NavigationTreeItem"/> from a collection of <see cref="StoryContainer"/>.
     /// </summary>
-    /// <param name="components">A collection of <see cref="StoryContainer"/> that is the source of the navigation item tree</param>
+    /// <param name="components">A collection of <see cref="StoryContainer"/> that is the source of the navigation item tree.</param>
+    /// <param name="customPages">A collection of <see cref="CustomPageContainer"/> that is the source of the navigation item tree.</param>
     /// <param name="expandedNavigationPath">A navigation path string to specify the tree item node that should be expanded (ex."/story/examples-button--primary")</param>
     /// <returns></returns>
-    internal NavigationTreeItem Build(IEnumerable<StoryContainer> components, IEnumerable<CustomContainer> customPages, string? expandedNavigationPath)
+    internal NavigationTreeItem Build(IEnumerable<StoryContainer> components, IEnumerable<CustomPageContainer> customPages, string? expandedNavigationPath)
     {
         var root = new NavigationTreeItem { Type = NavigationItemType.Container };
 
         this.BuildStories(components, root);
-        this.BuildCustom(customPages, root);
+        this.BuildCustomPages(customPages, root);
 
         root.SortSubItemsRecurse();
 
@@ -69,15 +70,15 @@ internal class NavigationTreeBuilder
         }
     }
 
-    private void BuildCustom(IEnumerable<CustomContainer> customPages, NavigationTreeItem root)
+    private void BuildCustomPages(IEnumerable<CustomPageContainer> customPages, NavigationTreeItem root)
     {
         foreach (var page in customPages)
         {
             var segments = page.Title.Split('/');
-            var customNode = this.CreateOrGetNavigationTreeItem(root, pathSegments: Enumerable.Empty<string>(), segments);
-            customNode.Type = NavigationItemType.Custom;
-            customNode.Caption = segments.LastOrDefault("Custom");
-            customNode.NavigationPath = "/custom/" + page.NavigationPath;
+            var customPageNode = this.CreateOrGetNavigationTreeItem(root, pathSegments: Enumerable.Empty<string>(), segments);
+            customPageNode.Type = NavigationItemType.CustomPage;
+            customPageNode.Caption = segments.LastOrDefault("Custom");
+            customPageNode.NavigationPath = "/custom/" + page.NavigationPath;
         }
     }
 

@@ -44,7 +44,7 @@
     { 
         NavigationItemType.Component => SvgIconType.Component,
         NavigationItemType.Story => SvgIconType.Component,
-        NavigationItemType.Custom => SvgIconType.Document,
+        NavigationItemType.CustomPage => SvgIconType.Document,
         _ => SvgIconType.Document
     };
 
@@ -52,7 +52,7 @@
     {
         NavigationItemType.Component => "type-component",
         NavigationItemType.Story => "type-component",
-        NavigationItemType.Custom => "type-custom",
+        NavigationItemType.CustomPage => "type-custom-page",
         _ => "type-docs" };
 
     private async Task OnClickHistoryItem(NavigationListItem historyItem)

@@ -6,5 +6,5 @@ public enum NavigationItemType
     Component,
     Story,
     Docs,
-    Custom
+    CustomPage
 }

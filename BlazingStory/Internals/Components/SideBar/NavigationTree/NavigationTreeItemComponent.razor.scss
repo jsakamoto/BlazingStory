@@ -49,7 +49,7 @@
         }
     }
     /* for Active Story, Docs and Custom */
-    .type-story, .type-docs, .type-custom {
+    .type-story, .type-docs, .type-custom-page {
         &.active > .caption {
             a {
                 color: var(--bs-sidebar-nav-active-color);
@@ -85,7 +85,7 @@
         transform: rotateZ(90deg);
     }
 
-    .type-story, .type-docs, .type-custom {
+    .type-story, .type-docs, .type-custom-page {
         & > .caption .chevron {
             visibility: hidden;
         }
@@ -190,7 +190,7 @@
         color: var(--bs-icon-story-color);
     }
 
-    .type-custom > .caption .action svg {
+    .type-custom-page > .caption .action svg {
         color: var(--bs-icon-custom-color);    
     }
 }

@@ -7,24 +7,24 @@ internal class CustomRazorDetectorTest
     [Test]
     public void Detect_from_Empty_Test()
     {
-        var store = new CustomStore();
+        var store = new CustomPageStore();
 
-        CustomRazorDetector.DetectAndRegisterToStore([], store);
+        CustomPageRazorDetector.DetectAndRegisterToStore([], store);
 
-        store.CustomContainers.Count().Is(0);
+        store.CustomPageContainers.Count().Is(0);
     }
 
     [Test]
     public void Detect_Test()
     {
-        var customStore = new CustomStore();
+        var store = new CustomPageStore();
         var app1Assembly = typeof(BlazingStoryApp1.App).Assembly;
         var app2Assembly = typeof(BlazingStoryApp2.App).Assembly;
 
-        CustomRazorDetector.DetectAndRegisterToStore([app1Assembly, app2Assembly], customStore);
+        CustomPageRazorDetector.DetectAndRegisterToStore([app1Assembly, app2Assembly], store);
 
-        customStore.CustomContainers.Count().Is(2);
-        customStore.CustomContainers.Select(c => $"{c.Title},{c.NavigationPath}")
+        store.CustomPageContainers.Count().Is(2);
+        store.CustomPageContainers.Select(c => $"{c.Title},{c.NavigationPath}")
             .Is("Examples/Getting Started,examples-getting-started",
                 "Examples/Blazing Story,examples-blazing-story");
     }

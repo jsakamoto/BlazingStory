@@ -1,6 +1,6 @@
 ﻿@using System.Text.RegularExpressions
 @implements IDisposable
-@if (this._CustomPage?.CustomRazorDescriptor != null)
+@if (this._CustomPage?.CustomPageRazorDescriptor != null)
 {
     <div class="custom-page stack vertical">
         <ToolBar Visible="this._Commands.ToolbarVisible?.Flag == true">
@@ -28,7 +28,7 @@
             }
         </ToolBar>
         <div class="custom-main fill">
-            <DynamicComponent Type="this._CustomPage.CustomRazorDescriptor.TypeOfCustomRazor" />
+            <DynamicComponent Type="this._CustomPage.CustomPageRazorDescriptor.TypeOfCustomPageRazor" />
         </div>
     </div>
 }
@@ -38,7 +38,7 @@
     protected AddonsStore AddonsStore { get; init; } = default!;
 
     [CascadingParameter]
-    protected CustomStore CustomStore { get; init; } = default!;
+    protected CustomPageStore CustomPageStore { get; init; } = default!;
 
     [CascadingParameter]
     protected IServiceProvider Services { get; init; } = default!;
@@ -55,12 +55,12 @@
 
     private string _PageTitle = "Custom page title";
 
-    private CustomContainer? _CustomPage;
+    private CustomPageContainer? _CustomPage;
 
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
         var navigationPath = Regex.Replace(this.RouteData.Parameter, "--custom$", "");
-        if (!this.CustomStore.TryGetCustomContainerByPath(navigationPath, out var customPage)) return;
+        if (!this.CustomPageStore.TryGetCustomPageContainerByPath(navigationPath, out var customPage)) return;
         this._PageTitle = customPage.Title;
         this._CustomPage = customPage;
     }

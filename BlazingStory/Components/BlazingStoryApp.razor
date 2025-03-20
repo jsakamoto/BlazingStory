@@ -61,7 +61,7 @@
 
         <div class="color-scheme-container preferes-color-scheme-@this._PreferesColorScheme" style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >=2 ? 1 : 0); visibility: @(this._InitLevel >= 1 ? "visible" : "hidden");">
             <CascadingValue Value="this._StoriesStore">
-                <CascadingValue Value="this._CustomStore">
+                <CascadingValue Value="this._CustomPageStore">
                     <CascadingValue Value="this">
 
                         <Router AppAssembly="@typeof(BlazingStoryApp).Assembly">
@@ -137,7 +137,7 @@
 
     private readonly StoriesStore _StoriesStore = new();
 
-    private readonly CustomStore _CustomStore = new();
+    private readonly CustomPageStore _CustomPageStore = new();
 
     private readonly AddonsStore _AddonsStore = new();
 
@@ -175,7 +175,7 @@
         this.RegisterAddon<BlazingStory.Internals.Addons.Measure.MeasureAddon>();
         this.RegisterAddon<BlazingStory.Internals.Addons.Outlines.OutlinesAddon>();
 
-        CustomRazorDetector.DetectAndRegisterToStore(Assemblies, _CustomStore);
+        CustomPageRazorDetector.DetectAndRegisterToStore(Assemblies, _CustomPageStore);
 
         this._ServiceScope = this.ConfigureServices();
     }
