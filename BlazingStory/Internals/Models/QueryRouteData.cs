@@ -30,7 +30,7 @@ public class QueryRouteData : IEquatable<QueryRouteData?>
     /// If a URL like "http://.../?path=/story/example-button--primary" is given, this field will return true.<br/>
     /// If a URL like "http://.../?path=/settings/about" is given, this field will return false.<br/>
     /// </summary>
-    internal readonly bool RouteToStoryOrDocs;
+    internal readonly bool RouteToStoryDocsOrCustom;
 
     /// <summary>
     /// Initialize a new instance of <see cref="QueryRouteData"/> from an URL like "http://.../?path=/story/example-button--primary" and a name of query parameter.
@@ -46,7 +46,7 @@ public class QueryRouteData : IEquatable<QueryRouteData?>
         this.Path = "/" + queryString;
         this.View = segments.FirstOrDefault() ?? "";
         this.Parameter = string.Join('/', segments.Skip(1));
-        this.RouteToStoryOrDocs = this.View is "story" or "docs";
+        this.RouteToStoryDocsOrCustom = this.View is "story" or "docs" or "custom";
     }
 
     /// <summary>

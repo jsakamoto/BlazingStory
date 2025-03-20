@@ -10,7 +10,7 @@ public class NavigationTreeItem : INavigationPath
     /// Gets a navigation path string for the item.<br/>
     /// (ex. "/story/example-button--primary", "/docs/example-button--docs")
     /// </summary>
-    public string NavigationPath { get; init; } = "";
+    public string NavigationPath { get; set; } = "";
 
     internal IEnumerable<string> PathSegments { get; set; } = Enumerable.Empty<string>();
 
@@ -24,13 +24,20 @@ public class NavigationTreeItem : INavigationPath
 
     /// <summary>
     /// Sorts sub items recursively by its caption, except stories.
+    /// Ensures that items of type Custom are always on top.
     /// </summary>
     internal void SortSubItemsRecurse()
     {
         if (this.SubItems.Count == 0) return;
         if (this.SubItems.First().Type is not NavigationItemType.Container and not NavigationItemType.Component) return;
 
-        this.SubItems.Sort((a, b) => a.Caption.CompareTo(b.Caption));
+        this.SubItems.Sort((a, b) =>
+        {
+            if (a.Type == NavigationItemType.Custom && b.Type != NavigationItemType.Custom) return -1;
+            if (a.Type != NavigationItemType.Custom && b.Type == NavigationItemType.Custom) return 1;
+            return a.Caption.CompareTo(b.Caption);
+        });
+
         this.SubItems.ForEach(item => item.SortSubItemsRecurse());
     }
 

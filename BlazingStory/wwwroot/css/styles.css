@@ -43,6 +43,7 @@
   --bs-icon-folder-color: #2a0481;
   --bs-icon-story-container-color: var(--bs-accent-color);
   --bs-icon-story-color: #37d5d3;
+  --bs-icon-custom-color: #ff8300;
   --bs-icon-document-color: #ff8300;
   --bs-keymap-text-color: #5c6870;
   --bs-keymap-back-color: rgba(0,0,0,0.05);
@@ -106,6 +107,7 @@
   --bs-icon-folder-color: #ff4785;
   --bs-icon-story-container-color: var(--bs-accent-color);
   --bs-icon-story-color: #37d5d3;
+  --bs-icon-custom-color: #ffae00;
   --bs-icon-document-color: #ffae00;
   --bs-keymap-text-color: #798186;
   --bs-keymap-back-color: rgba(255,255,255,0.05);
@@ -479,6 +481,9 @@ button {
 .navigation-list .navigation-list-items .item.type-docs .svg-icon {
   color: var(--bs-icon-document-color);
 }
+.navigation-list .navigation-list-items .item.type-custom .svg-icon {
+  color: var(--bs-icon-custom-color);
+}
 .navigation-list .navigation-list-items .item .label {
   flex: 1;
   display: flex;
@@ -541,7 +546,7 @@ button {
   min-width: 100%;
   display: inline-flex;
   flex-direction: column;
-  /* for Active Story or Docs */
+  /* for Active Story, Docs and Custom */
   /* ---- Chevron ---- */
   /* ---- Sub Items ---- */
   /* ---- Sub Heading ---- */
@@ -586,12 +591,12 @@ button {
 .navigation-tree .caption button.action:focus {
   background-color: var(--bs-focused-half-color);
 }
-.navigation-tree .type-story.active > .caption a, .navigation-tree .type-docs.active > .caption a {
+.navigation-tree .type-story.active > .caption a, .navigation-tree .type-docs.active > .caption a, .navigation-tree .type-custom.active > .caption a {
   color: var(--bs-sidebar-nav-active-color);
   background-color: var(--bs-sidebar-nav-active-back-color);
   font-weight: bold;
 }
-.navigation-tree .type-story.active > .caption .action svg, .navigation-tree .type-docs.active > .caption .action svg {
+.navigation-tree .type-story.active > .caption .action svg, .navigation-tree .type-docs.active > .caption .action svg, .navigation-tree .type-custom.active > .caption .action svg {
   fill: #fff;
 }
 .navigation-tree .chevron {
@@ -613,7 +618,7 @@ button {
 .navigation-tree .expanded > .caption .chevron {
   transform: rotateZ(90deg);
 }
-.navigation-tree .type-story > .caption .chevron, .navigation-tree .type-docs > .caption .chevron {
+.navigation-tree .type-story > .caption .chevron, .navigation-tree .type-docs > .caption .chevron, .navigation-tree .type-custom > .caption .chevron {
   visibility: hidden;
 }
 .navigation-tree .sub-items {
@@ -691,6 +696,9 @@ button {
 }
 .navigation-tree .type-story > .caption .action svg {
   color: var(--bs-icon-story-color);
+}
+.navigation-tree .type-custom > .caption .action svg {
+  color: var(--bs-icon-custom-color);
 }
 
 .toolbar-viewport {
@@ -1569,6 +1577,16 @@ a.icon-button {
 }
 .docs-page .docs-main .docs-contents .controls-panel tbody tr:last-of-type td:last-of-type {
   border-bottom-right-radius: 4px;
+}
+
+.custom-page {
+  position: absolute;
+  inset: 0;
+  color: var(--bs-text-color);
+}
+.custom-page .custom-main {
+  padding: 4rem 20px;
+  overflow: auto;
 }
 
 .story-preview {
