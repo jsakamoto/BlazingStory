@@ -1,3 +1,6 @@
+v.1.0.0-preview.46
+- Enhancement: The Custom Pages feature is now available. (Issue #31, PR #67 contributed by Snellingen)
+
 v.1.0.0-preview.45
 - Fix: The Action log panel crashes when the event argument type has indexer property. (PR #68 contributed by Snellingen)
 

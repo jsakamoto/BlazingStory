@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(Framework)' == 'net8.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.14" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(Framework)' == 'net9.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.3" />
   </ItemGroup>
 
   <ItemGroup>
