@@ -1584,9 +1584,43 @@ a.icon-button {
   inset: 0;
   color: var(--bs-text-color);
 }
-.custom-page .custom-main {
+.custom-page .custom-page-main {
   padding: 4rem 20px;
   overflow: auto;
+}
+.custom-page .custom-page-main .custom-page-contents {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.custom-page .custom-page-main .custom-page-contents h1 {
+  font-size: 32px;
+  line-height: 36px;
+  padding: 0;
+  margin: 0 0 16px 0;
+  color: var(--bs-caption-text-color);
+  font-weight: 700;
+}
+.custom-page .custom-page-main .custom-page-contents h2 {
+  font-size: 26px;
+  line-height: 30px;
+  font-weight: 700;
+  padding: 0;
+  margin: 0 0 8px 0;
+  color: var(--bs-caption-text-color);
+  font-weight: 700;
+}
+.custom-page .custom-page-main .custom-page-contents h3 {
+  font-size: 20px;
+  line-height: 24px;
+  padding: 0;
+  margin: 0 0 6px 0;
+  color: var(--bs-caption-text-color);
+  font-weight: 700;
+}
+.custom-page .custom-page-main .custom-page-contents img {
+  max-width: 100%;
+  height: auto;
 }
 
 .story-preview {

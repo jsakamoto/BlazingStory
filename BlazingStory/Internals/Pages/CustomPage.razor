@@ -27,8 +27,10 @@
                 <IconButton Icon="SvgIconType.FullScreen" Command="this._Commands.Fullscreen" />
             }
         </ToolBar>
-        <div class="custom-main fill">
-            <DynamicComponent Type="this._CustomPage.CustomPageRazorDescriptor.TypeOfCustomPageRazor" />
+        <div class="custom-page-main fill">
+            <div class="custom-page-contents">
+                <DynamicComponent Type="this._CustomPage.CustomPageRazorDescriptor.TypeOfCustomPageRazor" />
+            </div>
         </div>
     </div>
 }
