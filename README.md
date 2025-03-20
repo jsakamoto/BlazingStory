@@ -409,6 +409,28 @@ If you set that parameter with `Dark` or `Light`, except `Both`, the "Blazing St
 
 If you need to add `<link>` or `<script>` elements to include CSS or JavaScript files for canvas views of your stories, you should do that in the **`iframe.html`** file, not in the `index.html` file.
 
+## 📝 Custom Pages
+
+Blazing Story allows you to add custom pages that can include any content you want. These pages will be shown in the sidebar's navigation tree. It is helpful for adding a "Welcome" page, "Getting Started" page, or any other custom page. The custom pages are a Razor component so you can use any Blazor features.
+
+You can add a custom page by creating a new Razor component file with the `[CustomPage]` attribute, like below. (The pages only need the `CustomPage` attribute, no filename requirements like "page.custom.razor.")
+
+```csharp
+@attribute [CustomPage("Examples/Getting Started")]
+
+<h2>🚀 Getting Started</h2>
+<h3>Example scenario</h3>
+<p>For the example scenario, you already have a Blazor WebAssembly application project, "MyBlazorWasmApp1", that includes the "Button" component.</p>
+...
+
+```
+
+After creating a custom page like the one above, you will see the custom page like the following example.
+
+![Example of Custom Pages](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/example-of-custom-pages.png)
+
+You can set the custom page's position in the sidebar navigation tree by specifying the title string of the `CustomPage` attribute parameter, which includes a slash separator. The slash separator works to represent the hierarchy of the sidebar navigation tree, like the one inside the `Stories` attribute parameter.
+
 ## 🎀 Customize the title and brand logo
 
 ### Customize the title
