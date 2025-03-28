@@ -34,6 +34,16 @@
   </Target>
 
   <!--
+  This property group is used to copy XML documentation comment files from all referenced assemblies to the output folder.
+  This is required to support the "Details" descriptions on the "Docs" pages for Blazor Server,
+  especially when inheriting from a component provided by another NuGet package.
+  See also: Issue #61.
+  -->
+  <PropertyGroup>
+    <CopyDocumentationFilesFromPackages Condition=" '$(CopyDocumentationFilesFromPackages)' == '' ">true</CopyDocumentationFilesFromPackages>
+  </PropertyGroup>
+
+  <!--
   This target is used to add the XML Doc Comment files to the Blazor WebAssembly Static Web Assets.
   This is required to support the "Details" descriptions in the "Docs" pages.
   -->
@@ -44,8 +54,8 @@
 
     <ItemGroup>
 
-      <!-- Include the XML Doc Comment files of the Referenced NuGet packages (exclude which starts with "Microsoft.~" or "System.~") -->
-      <_XmlDocComment Include="@(_ReferenceDocumentationFiles)" Condition=" !$([System.String]::Copy('%(Filename)').StartsWith('Microsoft.')) AND !$([System.String]::Copy('%(Filename)').StartsWith('System.')) ">
+      <!-- Include the XML Doc Comment files of the Referenced NuGet packages -->
+      <_XmlDocComment Include="@(_ReferenceDocumentationFiles)">
         <AssetTraitValue>symbol</AssetTraitValue>
         <AssetTraitName>BlazorWebAssemblyResource</AssetTraitName>
         <RelativePath>_framework/%(Filename).xml</RelativePath>
