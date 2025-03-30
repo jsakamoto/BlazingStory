@@ -1,11 +1,14 @@
+v.1.0.0-preview.47
+- Fix: Documentation comments from other NuGet packages were not displayed on the "Docs" page or in the control panel. (Issue #61, PR #70, contributed by @leonardstruck)
+
 v.1.0.0-preview.46
-- Enhancement: The Custom Pages feature is now available. (Issue #31, PR #67 contributed by Snellingen)
+- Enhancement: The Custom Pages feature is now available. (Issue #31, PR #67 contributed by @Snellingen)
 
 v.1.0.0-preview.45
-- Fix: The Action log panel crashes when the event argument type has indexer property. (PR #68 contributed by Snellingen)
+- Fix: The Action log panel crashes when the event argument type has indexer property. (PR #68 contributed by @Snellingen)
 
 v.1.0.0-preview.44
-- Fix: The Action log panel crashes when the event argument type has the unsupported type of properties or cyclic reference. (Issue #65, PR #66 contributed by Snellingen)
+- Fix: The Action log panel crashes when the event argument type has the unsupported type of properties or cyclic reference. (Issue #65, PR #66 contributed by @Snellingen)
 
 v.1.0.0-preview.43
 - Enhancement: The Keyboard Shortcuts page is now available.
