@@ -2,7 +2,7 @@
     overflow-x: auto;
     background-color: var(--bs-code-back-color);
 
-    pre {
+    pre:has(code) {
         font-family: var(--bs-monospace-font-family);
         font-size: 13px;
         padding: 20px;
@@ -13,22 +13,24 @@
             // Prism syntax highlighting
             .token {
                 &.punctuation {
-                    color: #807e74;
+                    color: #ededed;
                 }
 
                 &.tag {
-                    color: #009696;
+                    color: #ffffb6;
                 }
 
                 &.attr-name {
                     color: #9cdcfe;
                 }
 
-                &.attr-value,
-                &.attr-value .punctuation {
-                    color: #c8c8c8;
+                &.attr-value {
+                    color: #b474dd;
                 }
 
+                &.attr-value .punctuation {
+                    color: #ededed;
+                }
 
                 &.comment {
                     color: #57a64a;

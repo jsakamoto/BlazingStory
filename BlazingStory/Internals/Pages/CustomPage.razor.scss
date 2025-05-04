@@ -14,35 +14,171 @@
 
             h1 {
                 font-size: 32px;
-                line-height: 36px;
-                padding: 0;
-                margin: 0 0 16px 0;
-                color: var(--bs-caption-text-color);
-                font-weight: 700;
-            }
-
-            h2 {
-                font-size: 26px;
-                line-height: 30px;
-                font-weight: 700;
+                line-height: 43px;
                 padding: 0;
                 margin: 0 0 8px 0;
                 color: var(--bs-caption-text-color);
                 font-weight: 700;
             }
 
-            h3 {
-                font-size: 20px;
-                line-height: 24px;
-                padding: 0;
-                margin: 0 0 6px 0;
+            h2 {
+                font-size: 24px;
+                font-weight: 700;
+                line-height: 32px;
+                padding: 0 0 4px 0;
+                margin: 0 0 8px 0;
                 color: var(--bs-caption-text-color);
                 font-weight: 700;
+                border-bottom: 1px solid var(--bs-border-color);
+            }
+
+            h3 {
+                font-size: 20px;
+                font-weight: 700;
+                line-height: 27px;
+                padding: 0;
+                margin: 0 0 8px 0;
+                color: var(--bs-caption-text-color);
+            }
+
+            p {
+                font-size: 14px;
+                margin: 16px 0;
+                line-height: 24px;
             }
 
             img {
                 max-width: 100%;
                 height: auto;
+            }
+            //
+            // alerts
+            .markdown-alert {
+                &.markdown-alert-note {
+                    --bs-markdown-alert-accent-color: var(--bs-markdown-alert-note-accent-color);
+                    --bs-markdown-alert-border-color: var(--bs-markdown-alert-note-border-color);
+                }
+
+                &.markdown-alert-warning {
+                    --bs-markdown-alert-accent-color: var(--bs-markdown-alert-warning-accent-color);
+                    --bs-markdown-alert-border-color: var(--bs-markdown-alert-warning-border-color);
+                }
+
+                &.markdown-alert-important {
+                    --bs-markdown-alert-accent-color: var(--bs-markdown-alert-important-accent-color);
+                    --bs-markdown-alert-border-color: var(--bs-markdown-alert-important-border-color);
+                }
+
+                &.markdown-alert-tip {
+                    --bs-markdown-alert-accent-color: var(--bs-markdown-alert-tip-accent-color);
+                    --bs-markdown-alert-border-color: var(--bs-markdown-alert-tip-accent-color);
+                }
+
+                &.markdown-alert-caution {
+                    --bs-markdown-alert-accent-color: var(--bs-markdown-alert-caution-accent-color);
+                    --bs-markdown-alert-border-color: var(--bs-markdown-alert-caution-accent-color);
+                }
+
+                border-left: solid 4px var(--bs-markdown-alert-border-color);
+                padding: 8px 16px;
+                margin: 0 0 16px 0;
+
+                p {
+                    padding: 0;
+                    margin: 0;
+                }
+
+                .markdown-alert-title {
+                    color: var(--bs-markdown-alert-accent-color);
+                    fill: var(--bs-markdown-alert-accent-color);
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 0;
+                    margin: 0 0 16px 0;
+                    font-weight: bold;
+                }
+            }
+
+            pre:has(code) {
+                position: relative;
+                font-family: var(--bs-monospace-font-family);
+                font-size: 13px;
+                line-height: 19px;
+                margin: 25px 0 40px 0;
+                padding: 20px 30px 20px 22px;
+                white-space: pre-wrap;
+                border: 1px solid var(--bs-border-color);
+                border-radius: 4px;
+                box-shadow: var(--bs-layout-border-shadow);
+
+                code {
+                    margin: 0;
+                    padding: 0;
+                    font-family: inherit;
+                    color: var(--bs-caption-text-color);
+                    //
+                    // Prism syntax highlighting
+                    .token {
+                        &.punctuation {
+                            color: var(--bs-code-punctuation);
+                        }
+
+                        &.tag {
+                            color: var(--bs-code-tag);
+                        }
+
+                        &.attr-name {
+                            color: var(--bs-code-attr-name);
+                        }
+
+                        &.attr-value {
+                            color: var(--bs-code-attr-value);
+                        }
+
+                        &.attr-value .punctuation {
+                            color: var(--bs-code-attr-value-punctuation);
+                        }
+
+                        &.comment {
+                            color: var(--bs-code-comment);
+                            font-style: italic;
+                        }
+
+                        &.keyword, &.number, &.boolean {
+                            color: var(--bs-code-keyword);
+                        }
+
+                        &.string {
+                            color: var(--bs-code-string);
+                        }
+
+                        &.class-name {
+                            color: var(--bs-code-class-name);
+                        }
+
+                        &.property {
+                            color: var(--bs-code-property);
+                        }
+                    }
+                }
+                //
+                // copy button
+                &:before {
+                    content: "Copy";
+                    position: absolute;
+                    right: 0;
+                    bottom: 0;
+                    font-family: var(--bs-font-family);
+                    font-size: 12px;
+                    font-weight: bold;
+                    padding: 4px 10px;
+                    line-height: 16px;
+                    border-top: 1px solid var(--bs-border-color);
+                    border-left: 1px solid var(--bs-border-color);
+                    border-radius: 4px 0 0 0;
+                    cursor: pointer;
+                }
             }
         }
     }

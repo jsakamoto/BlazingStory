@@ -70,7 +70,7 @@
     {
         if (this.Visible && this._HighlightedGen != this._RenderGen)
         {
-            await this._JSModule.InvokeVoidAsync("highlightElement", _CodeElementRef);
+            await this._JSModule.InvokeVoidAsync("Prism.highlightElement", _CodeElementRef);
             this._HighlightedGen = this._RenderGen;
         }
     }
