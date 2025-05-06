@@ -23,9 +23,10 @@ internal class CustomRazorDetectorTest
 
         CustomPageRazorDetector.DetectAndRegisterToStore([app1Assembly, app2Assembly], store);
 
-        store.CustomPageContainers.Count().Is(2);
         store.CustomPageContainers.Select(c => $"{c.Title},{c.NavigationPath}")
-            .Is("Examples/Getting Started,examples-getting-started",
-                "Examples/Blazing Story,examples-blazing-story");
+            .Order()
+            .Is("Examples/Blazing Story,examples-blazing-story",
+                "Examples/Getting Started,examples-getting-started",
+                "Examples/Sample of Markdown,examples-sample-of-markdown");
     }
 }
