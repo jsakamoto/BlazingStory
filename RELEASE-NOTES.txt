@@ -1,3 +1,6 @@
+v.1.0.0-preview.48
+- Enhancement: Added support for using Markdown files (.md) directly as Custom Pages through integration with the "MD2RazorGenerator" NuGet package.
+
 v.1.0.0-preview.47
 - Fix: Documentation comments from other NuGet packages were not displayed on the "Docs" page or in the control panel. (Issue #61, PR #70, contributed by @leonardstruck)
 
