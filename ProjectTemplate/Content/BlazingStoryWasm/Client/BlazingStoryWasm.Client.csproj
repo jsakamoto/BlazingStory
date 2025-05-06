@@ -9,18 +9,27 @@
     <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
     <AssemblyName Condition="'$(name)' != '$(name{-VALUE-FORMS-}safe_namespace)'">$(AssemblyName.Replace(' ', '_'))</AssemblyName>
     <!--#endif -->
+    <MD2RazorDefaultBaseClass>global::BlazingStory.Internals.Pages.MarkdownPageBase</MD2RazorDefaultBaseClass>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(Framework)' == 'net8.0' ">
-    <PackageReference Include="BlazingStory" Version="1.0.0-preview.47" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.14" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.14" PrivateAssets="all" />
+    <PackageReference Include="BlazingStory" Version="1.0.0-preview.48" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.15" PrivateAssets="all" />
+    <PackageReference Include="MD2RazorGenerator" Version="1.2.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup Condition=" '$(Framework)' == 'net9.0' ">
-    <PackageReference Include="BlazingStory" Version="1.0.0-preview.47" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.3" PrivateAssets="all" />
+    <PackageReference Include="BlazingStory" Version="1.0.0-preview.48" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.4" PrivateAssets="all" />
+    <PackageReference Include="MD2RazorGenerator" Version="1.2.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
