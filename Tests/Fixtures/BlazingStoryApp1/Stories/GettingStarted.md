@@ -11,22 +11,6 @@ For the example scenario, you already have a Blazor WebAssembly application proj
 > [!Note]  
 > Blazing Story supports Blazor Server application projects as well as Blazor WebAssembly application projects.
 
-| :exclamation:  You have to read about this   |
-|----------------------------------------------|
-
-> [!Important]
-> Crucial information necessary for users to succeed.
-
-> [!Warning]
-> Critical content demanding immediate user attention due to potential risks.
-
-> [!Tip]
-> Helpful information for users to succeed.
-
-> [!Caution]
-> Important information for users to succeed.
-
-
 ```
 📂 (working directory)
     + 📄 MyBlazorWasmApp1.sln
