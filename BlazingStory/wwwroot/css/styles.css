@@ -876,6 +876,7 @@ svg.svg-icon {
 }
 
 .corner-button {
+  font-family: var(--bs-font-family);
   color: var(--bs-caption-text-color);
   background-color: var(--bs-inputs-background);
   font-size: 12px;
@@ -1758,21 +1759,6 @@ a.icon-button {
 }
 .custom-page .custom-page-main .custom-page-contents pre:has(code) code .token.property {
   color: var(--bs-code-property);
-}
-.custom-page .custom-page-main .custom-page-contents pre:has(code):before {
-  content: "Copy";
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  font-family: var(--bs-font-family);
-  font-size: 12px;
-  font-weight: bold;
-  padding: 4px 10px;
-  line-height: 16px;
-  border-top: 1px solid var(--bs-border-color);
-  border-left: 1px solid var(--bs-border-color);
-  border-radius: 4px 0 0 0;
-  cursor: pointer;
 }
 
 .story-preview {

@@ -162,23 +162,6 @@
                         }
                     }
                 }
-                //
-                // copy button
-                &:before {
-                    content: "Copy";
-                    position: absolute;
-                    right: 0;
-                    bottom: 0;
-                    font-family: var(--bs-font-family);
-                    font-size: 12px;
-                    font-weight: bold;
-                    padding: 4px 10px;
-                    line-height: 16px;
-                    border-top: 1px solid var(--bs-border-color);
-                    border-left: 1px solid var(--bs-border-color);
-                    border-radius: 4px 0 0 0;
-                    cursor: pointer;
-                }
             }
         }
     }
