@@ -43,7 +43,7 @@
 
     public CodeView()
     {
-        this._JSModule = new(() => this.JSRuntime, "prism.js");
+        this._JSModule = new(() => this.JSRuntime, "js/prism.js");
     }
 
     protected override async Task OnParametersSetAsync()
@@ -70,7 +70,7 @@
     {
         if (this.Visible && this._HighlightedGen != this._RenderGen)
         {
-            await this._JSModule.InvokeVoidAsync("highlightElement", _CodeElementRef);
+            await this._JSModule.InvokeVoidAsync("Prism.highlightElement", _CodeElementRef);
             this._HighlightedGen = this._RenderGen;
         }
     }

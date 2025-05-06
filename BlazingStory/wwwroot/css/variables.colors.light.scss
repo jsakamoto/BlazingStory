@@ -77,4 +77,34 @@
     --bs-actions-log-value-string-color: rgb(196, 26, 22);
     --bs-actions-log-value-noobj-color: rgb(28, 0, 207);
     --bs-actions-log-value-null-color: rgb(128, 128, 128);
+    //
+    // markdown
+    // - alert
+    //   - note
+    --bs-markdown-alert-note-accent-color: #0969da;
+    --bs-markdown-alert-note-border-color: #0969da;
+    //   - warning
+    --bs-markdown-alert-warning-accent-color: #8250df;
+    --bs-markdown-alert-warning-border-color: #8250df;
+    //   - important
+    --bs-markdown-alert-important-accent-color: #9a6700;
+    --bs-markdown-alert-important-border-color: #9a6700;
+    //   - tip
+    --bs-markdown-alert-tip-accent-color: #1a7f37;
+    --bs-markdown-alert-tip-border-color: #1a7f37;
+    //   - caution
+    --bs-markdown-alert-caution-accent-color: #d1242f;
+    --bs-markdown-alert-caution-border-color: #cf222e;
+    //
+    // - code
+    --bs-code-punctuation: #393a34;
+    --bs-code-tag: #800000;
+    --bs-code-attr-name: #ff0000;
+    --bs-code-attr-value: #0000ff;
+    --bs-code-attr-value-punctuation: #393a34;
+    --bs-code-comment: #008000;
+    --bs-code-keyword: #0000ff;
+    --bs-code-string: #a31515;
+    --bs-code-class-name: #2b91af;
+    --bs-code-property: #2b91af;
 }

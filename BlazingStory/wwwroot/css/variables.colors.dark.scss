@@ -77,4 +77,34 @@
     --bs-actions-log-value-string-color: rgb(233, 63, 59);
     --bs-actions-log-value-noobj-color: rgb(153, 128, 255);
     --bs-actions-log-value-null-color: rgb(127, 127, 127);
+    //
+    // markdown
+    // - alert
+    //   - note
+    --bs-markdown-alert-note-accent-color: #478be6;
+    --bs-markdown-alert-note-border-color: #316dca;
+    //   - warning
+    --bs-markdown-alert-warning-accent-color: #c69026;
+    --bs-markdown-alert-warning-border-color: #966600;
+    //   - important
+    --bs-markdown-alert-important-accent-color: #986ee2;
+    --bs-markdown-alert-important-border-color: #8256d0;
+    //   - tip
+    --bs-markdown-alert-tip-accent-color: #57ab5a;
+    --bs-markdown-alert-tip-border-color: #347d39;
+    //   - caution
+    --bs-markdown-alert-caution-accent-color: #e5534b;
+    --bs-markdown-alert-caution-border-color: #c93c37;
+    //
+    // - code
+    --bs-code-punctuation: #ededed;
+    --bs-code-tag: #a8ff60;
+    --bs-code-attr-name: #96cbfe;
+    --bs-code-attr-value: #b474dd;
+    --bs-code-attr-value-punctuation: #ededed;
+    --bs-code-comment: #57a64a;
+    --bs-code-keyword: #b474dd;
+    --bs-code-string: #e93f3b;
+    --bs-code-class-name: #ffffb6;
+    --bs-code-property: #e36eec;
 }
