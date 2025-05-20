@@ -54,9 +54,9 @@ internal class StoryContainer
         this._XmlDocComment = services.GetRequiredService<IXmlDocComment>();
     }
 
-    internal void RegisterStory(string name, StoryContext storyContext, [DynamicallyAccessedMembers(All)] Type? storiesLayout, [DynamicallyAccessedMembers(All)] Type? storyLayout, RenderFragment<StoryContext> renderFragment)
+    internal void RegisterStory(string name, StoryContext storyContext, [DynamicallyAccessedMembers(All)] Type? storiesLayout, [DynamicallyAccessedMembers(All)] Type? storyLayout, RenderFragment<StoryContext> renderFragment, RenderFragment? description)
     {
-        var newStory = new Story(this._StoriesRazorDescriptor, this.TargetComponentType, name, storyContext, storiesLayout, storyLayout, renderFragment);
+        var newStory = new Story(this._StoriesRazorDescriptor, this.TargetComponentType, name, storyContext, storiesLayout, storyLayout, renderFragment, description);
         var index = this.Stories.FindIndex(story => story.Name == name);
         if (index == -1)
         {
