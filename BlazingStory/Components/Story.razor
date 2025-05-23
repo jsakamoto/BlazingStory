@@ -26,6 +26,9 @@
     [CascadingParameter]
     internal IEnumerable<ComponentParameter>? ComponentParameters { get; set; }
 
+    /// <summary>
+    /// A unique name for this story. This name is used to identify the story in the UI.
+    /// </summary>
     [Parameter, EditorRequired]
     public string Name { get; set; } = "";
 
@@ -42,6 +45,9 @@
     [Parameter, EditorRequired]
     public RenderFragment<StoryContext>? Template { get; set; }
     
+    /// <summary>
+    /// A render fragment that provides additional descriptive content for the story.
+    /// </summary>
     [Parameter] public RenderFragment? Description { get; set; }
 
     private StoryContext? _StoryContext;
