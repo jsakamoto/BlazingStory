@@ -322,11 +322,13 @@ Instead, you should set the `ChildContent` parameter through the `<Arguments>` r
 
 ## ✍️ Documentation Enhancement
 
-By default, no detailed descriptions are in the "Docs" pages on "Blazing Story".
+By default, the "Docs" pages in Blazing Story do not contain detailed descriptions.
 
 ![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/docs-page-with-no-description.png)
 
-To add more detailed descriptions to "Docs" pages, first of all, write down a summary of component parameters into your UI component's .razor file with an ["XML document comment"](https://learn.microsoft.com/dotnet/csharp/language-reference/xmldoc/) format, like below.
+### Adding Descriptions to Parameters
+
+To add more detailed descriptions of component parameters to the "Docs" pages, write a summary of the component parameters in your UI component’s .razor file using the ["XML document comment"](https://learn.microsoft.com/dotnet/csharp/language-reference/xmldoc/) format, as shown below.
 
 ```csharp
 @code {
@@ -366,15 +368,15 @@ Or, you can also do that by adding the `<GenerateDocumentationFile>` MSBuild pro
     ...
 ```
 
-After doing that, you will see those added XML document comments are appeared in the "Docs" pages.
+After doing that, the XML documentation comments you added to parameters will appear on the "Docs" pages.
 
-![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/docs-page-with-description.png)
+![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/docs-page-with-parameter-description.png)
 
-### Note
+### Adding Descriptions to Component
 
-Currently, to add the description for the component itself, not for each parameter's descriptions, you will have to add a partial class file of the .razor file.
+To add a description for the component itself, rather than for each of its parameters, you have to create a partial class file for the .razor file.
 
-For example, if you have the "Button.razor" Razor component file, then you will have to add the "Button.razor.cs" file to the project and write down the summary of the component in the "...razor.cs" file, like below.
+For example, if you have a "Button.razor" component, you should add a corresponding "Button.razor.cs" file to your project and include the component's summary in that .razor.cs file, as shown below.
 
 ```csharp
 // 📄 This is a partial class file "Button.razor.cs" 
@@ -389,6 +391,41 @@ public partial class Button
 {
 }
 ```
+
+After doing that, the XML documentation comments you added will appear on the "Docs" pages.
+
+![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/docs-page-with-component-description.png)
+
+### Adding Descriptions to Individual Stories
+
+You can provide descriptions for individual stories in addition to component and parameter descriptions. This is useful for explaining a particular story's specific context or purpose.
+
+To add a description to a story, use the `<Description>` render fragment parameter within the `<Story>` component in your `.stories.razor` file. The content of the `<Description>` render fragment will be rendered in the "Docs" page, below the story's name.
+
+Here's an example of how to add a description to a story:
+
+```html
+    ...
+    <Story Name="Default">
+        <!--
+        👇 Add a description for this story inside 
+        the <Description> render fragment, as shown below:
+        -->
+        <Description>
+            <b>Description:</b>
+            <span>
+            This section describes the usual usage of
+            the <code>&lt;IconButton&gt;</code> component.
+            </span>
+        </Description>
+        ...
+```
+
+This will display the provided HTML content as the description for the "Default" story on the "Docs" page, as shown below:
+
+![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/docs-page-with-story-description.png)
+
+You can use any HTML markup within the `<Description>` render fragment to format your story's description.
 
 ## ⚙️ Configure prefers color scheme
 
