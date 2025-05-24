@@ -29,7 +29,7 @@
     </_BS_BundleAppProjectsScopedCss>
     <ItemGroup>
       <_ReferencedProjectBuildStaticWebAssetsItems Include="@(_BS_ProjectBundle)" />
-      <StaticWebAsset Include="@(_BS_ProjectBundle)" KeepMetadata="@(_StaticWebAssetCanonicalMetadata)" />
+      <StaticWebAsset Include="@(_BS_ProjectBundle)" KeepMetadata="@(_StaticWebAssetCanonicalMetadata);FileLength;LastWriteTime" />
       <StaticWebAssetEndpoint Include="@(_BS_ProjectEndpoint)" />
       <_BS_ProjectBundle Remove="@(_BS_ProjectBundle)" />
       <_BS_ProjectEndpoint Remove="@(_BS_ProjectEndpoint)" />

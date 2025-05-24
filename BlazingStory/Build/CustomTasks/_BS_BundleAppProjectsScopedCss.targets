@@ -89,11 +89,14 @@ foreach (var appProj in this.ReferencedAppProjects)
     bundleScpCss.SetMetadata("Integrity", integrity);
     bundleScpCss.SetMetadata("Fingerprint", fingerprint);
 
+    var fileInfo = new System.IO.FileInfo(bundleScpCssPath);
+    bundleScpCss.SetMetadata("FileLength", fileInfo.Length.ToString());
+    bundleScpCss.SetMetadata("LastWriteTime", fileInfo.LastWriteTimeUtc.ToString("R")); // ex."Tue, 20 May 2025 23:21:08 GMT"
+
     projectBundle.Add(bundleScpCss);
     
     // Build a new StaticWebAssetEndpoint item
 
-    var fileInfo = new System.IO.FileInfo(bundleScpCssPath);
     var resHeaderFormat = "[{{\"Name\":\"Accept-Ranges\",\"Value\":\"bytes\"}},{{\"Name\":\"Cache-Control\",\"Value\":\"{0}\"}},{{\"Name\":\"Content-Length\",\"Value\":\"{1}\"}},{{\"Name\":\"Content-Type\",\"Value\":\"text/css\"}},{{\"Name\":\"ETag\",\"Value\":\"\\u0022{2}\\u0022\"}},{{\"Name\":\"Last-Modified\",\"Value\":\"{3:R}\"}}]";
     var encodedIntegrity = integrity.Replace("+", "\\u002B").Replace("/", "\\u002F");
 
