@@ -29,7 +29,7 @@ internal static class TestHelper
     {
         var parameters = ParameterExtractor.GetParametersFromComponentType(typeof(TComponent), XmlDocComment.Dummy);
         var context = new BlazingStory.Types.StoryContext(parameters);
-        return new Story(Descriptor(title), typeof(TComponent), name, context, null, null, EmptyFragment);
+        return new Story(Descriptor(title), typeof(TComponent), name, context, null, null, EmptyFragment, null);
     }
 
     internal static IEnumerable<StoryContainer> GetExampleStories1(IServiceProvider services) => [

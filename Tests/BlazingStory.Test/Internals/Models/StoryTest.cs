@@ -8,7 +8,7 @@ internal class StoryTest
     [Test]
     public void NavigationPath_Test()
     {
-        var story = new Story(Descriptor("Pages/Authentication and Authorization"), typeof(object), "Sign In", new([]), null, null, EmptyFragment);
+        var story = new Story(Descriptor("Pages/Authentication and Authorization"), typeof(object), "Sign In", new([]), null, null, EmptyFragment, null);
         story.NavigationPath.Is("pages-authentication-and-authorization--sign-in");
     }
 }

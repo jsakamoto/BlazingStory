@@ -26,6 +26,9 @@
     [CascadingParameter]
     internal IEnumerable<ComponentParameter>? ComponentParameters { get; set; }
 
+    /// <summary>
+    /// A unique name for this story. This name is used to identify the story in the UI.
+    /// </summary>
     [Parameter, EditorRequired]
     public string Name { get; set; } = "";
 
@@ -41,6 +44,11 @@
 
     [Parameter, EditorRequired]
     public RenderFragment<StoryContext>? Template { get; set; }
+    
+    /// <summary>
+    /// A render fragment that provides additional descriptive content for the story.
+    /// </summary>
+    [Parameter] public RenderFragment? Description { get; set; }
 
     private StoryContext? _StoryContext;
 
@@ -57,7 +65,7 @@
             this.StoriesStore.RegisterStoryContainer(this.StoryContainer);
         }
 
-        this.StoryContainer.RegisterStory(this.Name, this._StoryContext, this.StoryContainer.Layout, this.Layout, this.Template);
+        this.StoryContainer.RegisterStory(this.Name, this._StoryContext, this.StoryContainer.Layout, this.Layout, this.Template, this.Description);
     }
 
     /// <summary>

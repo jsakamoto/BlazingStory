@@ -3,7 +3,6 @@
 <Stories TComponent="CodeView" Layout="typeof(MarginedFrame)">
 
     <Story Name="Default">
-
         <Arguments>
             <Arg For="_ => _.Story" Value="_Story" />
             <Arg For="_ => _.Visible" Value="true" />
@@ -29,6 +28,6 @@
     {
         var descriptor = new StoriesRazorDescriptor(typeof(CodeView_stories), new("Internals/Pages/Docs/CodeView"));
         var context = new StoryContext([]);
-        this._Story = new Story(descriptor, typeof(CodeView), "Default", context, null, null, null!);
+        this._Story = new Story(descriptor, typeof(CodeView), "Default", context, null, null, null!, null);
     }
 }

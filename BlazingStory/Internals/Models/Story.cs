@@ -33,8 +33,10 @@ public class Story
     internal readonly Type? StoryLayout;
 
     internal readonly RenderFragment<StoryContext> RenderFragment;
+    
+    internal readonly RenderFragment? Description;
 
-    internal Story(StoriesRazorDescriptor storiesRazorDescriptor, Type componentType, string name, StoryContext context, [DynamicallyAccessedMembers(All)] Type? storiesLayout, [DynamicallyAccessedMembers(All)] Type? storyLayout, RenderFragment<StoryContext> renderFragment)
+    internal Story(StoriesRazorDescriptor storiesRazorDescriptor, Type componentType, string name, StoryContext context, [DynamicallyAccessedMembers(All)] Type? storiesLayout, [DynamicallyAccessedMembers(All)] Type? storyLayout, RenderFragment<StoryContext> renderFragment, RenderFragment? description)
     {
         this.StoriesRazorDescriptor = storiesRazorDescriptor ?? throw new ArgumentNullException(nameof(storiesRazorDescriptor));
         this.Title = this.StoriesRazorDescriptor.StoriesAttribute.Title ?? throw new ArgumentNullException(nameof(storiesRazorDescriptor));
@@ -45,5 +47,6 @@ public class Story
         this.StoryLayout = storyLayout;
         this.RenderFragment = renderFragment;
         this.NavigationPath = Services.Navigation.NavigationPath.Create(this.Title, this.Name);
+        this.Description = description;
     }
 }
