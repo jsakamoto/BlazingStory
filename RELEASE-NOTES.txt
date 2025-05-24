@@ -1,3 +1,6 @@
+v.1.0.0-preview.49
+- Enhancement: Added support for adding descriptions to individual stories. (PR #72 contributed by @HaunBa)
+
 v.1.0.0-preview.48
 - Enhancement: Added support for using Markdown files (.md) directly as Custom Pages through integration with the "MD2RazorGenerator" NuGet package.
 
