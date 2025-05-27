@@ -1,4 +1,5 @@
 using BlazingStory.Components;
+using BlazingStory.McpServer;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MyBlazorWasmApp1.Stories.Components.Pages;
 
@@ -10,6 +11,7 @@ builder.Services.AddRazorComponents()
 
 var serverUrl = builder.Configuration[WebHostDefaults.ServerUrlsKey]?.Split(';').FirstOrDefault() ?? "http://localhost:5277";
 builder.Services.TryAddScoped(sp => new HttpClient { BaseAddress = new Uri(serverUrl) });
+builder.Services.AddBlazingStoryMcpServer();
 
 var app = builder.Build();
 
@@ -23,6 +25,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.MapBlazingStoryMcp();
 app.MapStaticAssets();
 app.UseRouting();
 app.UseAntiforgery();

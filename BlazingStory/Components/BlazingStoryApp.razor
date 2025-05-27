@@ -135,9 +135,9 @@
 
     private AvailableColorSchemes _PrevAvailableColorSchemes = AvailableColorSchemes.Both;
 
-    private readonly StoriesStore _StoriesStore = new();
+    private StoriesStore _StoriesStore = new();
 
-    private readonly CustomPageStore _CustomPageStore = new();
+    private CustomPageStore _CustomPageStore = new();
 
     private readonly AddonsStore _AddonsStore = new();
 
@@ -169,19 +169,25 @@
 
     protected override void OnInitialized()
     {
-        this.RegisterAddon<BlazingStory.Internals.Addons.Background.BackgroundAddon>();
-        this.RegisterAddon<BlazingStory.Internals.Addons.Grid.GridAddon>();
-        this.RegisterAddon<BlazingStory.Internals.Addons.ChangeSize.ChangeSizeAddon>();
-        this.RegisterAddon<BlazingStory.Internals.Addons.Measure.MeasureAddon>();
-        this.RegisterAddon<BlazingStory.Internals.Addons.Outlines.OutlinesAddon>();
-
         CustomPageRazorDetector.DetectAndRegisterToStore(Assemblies, _CustomPageStore);
 
+        var injectedStoriesStore = this.GlobalServices.GetService<StoriesStore>();
+        if (injectedStoriesStore is not null) this._StoriesStore = injectedStoriesStore;
+
+        this.ConfigureAddons();
         this._ServiceScope = this.ConfigureServices();
     }
 
     private void RegisterAddon<[DynamicallyAccessedMembers(All)] TAddon>() => this._AddonsTypes.Add(typeof(TAddon));
 
+    private void ConfigureAddons()
+    {
+        this.RegisterAddon<BlazingStory.Internals.Addons.Background.BackgroundAddon>();
+        this.RegisterAddon<BlazingStory.Internals.Addons.Grid.GridAddon>();
+        this.RegisterAddon<BlazingStory.Internals.Addons.ChangeSize.ChangeSizeAddon>();
+        this.RegisterAddon<BlazingStory.Internals.Addons.Measure.MeasureAddon>();
+        this.RegisterAddon<BlazingStory.Internals.Addons.Outlines.OutlinesAddon>();
+    }
 
     private AsyncServiceScope ConfigureServices()
     {
