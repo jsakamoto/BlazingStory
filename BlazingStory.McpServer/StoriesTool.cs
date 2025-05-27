@@ -30,7 +30,7 @@ internal class StoriesTool
     }
 
     [McpServerTool(Name = "getComponents")]
-    [Description("Retrieves the names, types, and summaries of all components available in this UI catalog.")]
+    [Description("Retrieves the names, types, and summaries of all Razor components for Blazor applications available in this UI catalog.")]
     public async Task<string> GetComponentsAsync()
     {
         using var scope = this._services.CreateScope();
