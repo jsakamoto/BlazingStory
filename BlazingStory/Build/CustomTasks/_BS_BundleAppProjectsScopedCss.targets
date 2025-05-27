@@ -56,6 +56,7 @@ foreach (var appProj in this.ReferencedAppProjects)
     var bundleScpCssPath = bundleScpCssDir + bundleScpCssName;
     var relPathHasFingerprint = stylesCssItem.GetMetadata("RelativePath").EndsWith("#[.{fingerprint}]?.styles.css");
     var relPath = relPathHasFingerprint ? appName + "#[.{fingerprint}]!.bundle.scp.css" : bundleScpCssName;
+    if (!File.Exists(bundleScpCssPath)) continue;
 
     var bundleScpCss = new TaskItem(bundleScpCssPath);
     bundleScpCss.SetMetadata("OriginalItemSpec", bundleScpCssPath);
