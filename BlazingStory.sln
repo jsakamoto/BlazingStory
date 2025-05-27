@@ -44,6 +44,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComponentPack1", "Tests\Fix
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmptyBlazorServerApp1", "Tests\Fixtures\EmptyBlazorServerApp1\EmptyBlazorServerApp1.csproj", "{96FC09AB-A568-6C02-C439-5D53F30BE56D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazingStory.McpServer", "BlazingStory.McpServer\BlazingStory.McpServer.csproj", "{A1B3D708-F6CA-41A7-A7B2-62F06931801A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,6 +104,10 @@ Global
 		{96FC09AB-A568-6C02-C439-5D53F30BE56D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96FC09AB-A568-6C02-C439-5D53F30BE56D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96FC09AB-A568-6C02-C439-5D53F30BE56D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1B3D708-F6CA-41A7-A7B2-62F06931801A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1B3D708-F6CA-41A7-A7B2-62F06931801A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1B3D708-F6CA-41A7-A7B2-62F06931801A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1B3D708-F6CA-41A7-A7B2-62F06931801A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
