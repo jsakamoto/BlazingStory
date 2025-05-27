@@ -1,0 +1,51 @@
+﻿@attribute [Stories("Components/Button")]
+
+<Stories TComponent="Button">
+    <ArgType For="_=>_.BackgroundColor" Control="ControlType.Color" />
+    <ArgType For="_=>_.Size" Control="ControlType.Select" />
+
+    <Story Name="Primary">
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_ButtonContent" />
+        </Arguments>
+        <Template>
+            <Button Primary="true" @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Secondary">
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_ButtonContent" />
+            <Arg For="_ => _.Primary" Value="false" />
+        </Arguments>
+        <Template>
+            <Button @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Large">
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_ButtonContent" />
+            <Arg For="_ => _.Size" Value="ButtonSize.Large" />
+        </Arguments>
+        <Template>
+            <Button @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Small">
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_ButtonContent" />
+            <Arg For="_ => _.Size" Value="ButtonSize.Small" />
+        </Arguments>
+        <Template>
+            <Button @attributes="context.Args" />
+        </Template>
+    </Story>
+
+</Stories>
+
+@code 
+{
+    private RenderFragment _ButtonContent = @<text>Button</text>;
+}

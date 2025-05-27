@@ -1,0 +1,50 @@
+<button type="button" class="@this.GetCssClasses()" style="@this.GetStyles()" @attributes="this.Attributes" @onclick="OnClick">
+    @this.ChildContent
+</button>
+
+@code
+{
+    /// <summary>
+    /// Is this the principal call to action on the page?
+    /// </summary>
+    [Parameter]
+    public bool Primary { get; set; }
+
+    /// <summary>
+    /// What background color to use
+    /// </summary>
+    [Parameter]
+    public string? BackgroundColor { get; set; }
+
+    /// <summary>
+    /// How large should the button be?
+    /// </summary>
+    [Parameter]
+    public ButtonSize Size { get; set; }
+
+    /// <summary>
+    /// Button contents
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Optional click handler
+    /// </summary>
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? Attributes { get; set; }
+
+    private string GetCssClasses()
+    {
+        var mode = this.Primary ? "blazingstory-button--primary" : "blazingstory-button--secondary";
+        return $"blazingstory-button blazingstory-button--{this.Size.ToString().ToLower()} {mode}";
+    }
+
+    private string GetStyles()
+    {
+        return string.IsNullOrEmpty(this.BackgroundColor) ? "" : $"background-color: {this.BackgroundColor}";
+    }
+}
