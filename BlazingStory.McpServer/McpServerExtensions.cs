@@ -15,18 +15,14 @@ public static class McpServerExtensions
     /// Add the Model Context Protocol (MCP) server of Blazing Story to the service collection.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add the server to.</param>
-    /// <returns>The <see cref="IServiceCollection" /> so that additional calls can be chained.</returns>
-    public static IServiceCollection AddBlazingStoryMcpServer(this IServiceCollection services)
+    /// <returns>An <see cref="IMcpServerBuilder"/> that can be used to further configure the MCP server.</returns>
+    public static IMcpServerBuilder AddBlazingStoryMcpServer(this IServiceCollection services)
     {
-        services
+        services.AddScoped((_) => new StoriesStore());
+        return services
             .AddMcpServer(options => { })
             .WithHttpTransport(options => { })
-            .WithTools<StoriesTool>()
-            .WithTools<TimeTool>();
-
-        services.AddScoped((_) => new StoriesStore());
-
-        return services;
+            .WithTools<StoriesTool>();
     }
 
     /// <summary>
