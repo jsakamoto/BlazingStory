@@ -47,7 +47,7 @@ foreach (var appProj in this.ReferencedAppProjects)
     // Try to find "<Project Name>.styles.css" from StaticWebAsset items
     var appName = appProj.GetMetadata("Filename");
     var stylesCssName = appName + ".styles.css";
-    var stylesCssItem = this.Items.FirstOrDefault(item => Path.GetFileName(item.GetMetadata("OriginalItemSpec")) == stylesCssName);
+    var stylesCssItem = this.Items.FirstOrDefault(item => Path.GetFileName(item.ItemSpec) == stylesCssName);
     if (stylesCssItem == null) continue;
 
     // Build a new StaticAsset item of "<Project Name>.bundle.scp.css" from the "<Project Name>.styles.css"
@@ -56,7 +56,6 @@ foreach (var appProj in this.ReferencedAppProjects)
     var bundleScpCssPath = bundleScpCssDir + bundleScpCssName;
     var relPathHasFingerprint = stylesCssItem.GetMetadata("RelativePath").EndsWith("#[.{fingerprint}]?.styles.css");
     var relPath = relPathHasFingerprint ? appName + "#[.{fingerprint}]!.bundle.scp.css" : bundleScpCssName;
-    if (!File.Exists(bundleScpCssPath)) continue;
 
     var bundleScpCss = new TaskItem(bundleScpCssPath);
     bundleScpCss.SetMetadata("OriginalItemSpec", bundleScpCssPath);
@@ -91,14 +90,19 @@ foreach (var appProj in this.ReferencedAppProjects)
     bundleScpCss.SetMetadata("Fingerprint", fingerprint);
 
     var fileInfo = new System.IO.FileInfo(bundleScpCssPath);
-    bundleScpCss.SetMetadata("FileLength", fileInfo.Length.ToString());
-    bundleScpCss.SetMetadata("LastWriteTime", fileInfo.LastWriteTimeUtc.ToString("R")); // ex."Tue, 20 May 2025 23:21:08 GMT"
+    var fileLength = stylesCssItem.GetMetadata("FileLength");
+    var lastWriteTime = stylesCssItem.GetMetadata("LastWriteTime");
+    if (string.IsNullOrEmpty(fileLength)) fileLength = fileInfo.Length.ToString();
+    if (string.IsNullOrEmpty(lastWriteTime)) lastWriteTime = fileInfo.LastWriteTimeUtc.ToString("R"); // ex."Tue, 20 May 2025 23:21:08 GMT"
+
+    bundleScpCss.SetMetadata("FileLength", fileLength);
+    bundleScpCss.SetMetadata("LastWriteTime", lastWriteTime);
 
     projectBundle.Add(bundleScpCss);
     
     // Build a new StaticWebAssetEndpoint item
 
-    var resHeaderFormat = "[{{\"Name\":\"Accept-Ranges\",\"Value\":\"bytes\"}},{{\"Name\":\"Cache-Control\",\"Value\":\"{0}\"}},{{\"Name\":\"Content-Length\",\"Value\":\"{1}\"}},{{\"Name\":\"Content-Type\",\"Value\":\"text/css\"}},{{\"Name\":\"ETag\",\"Value\":\"\\u0022{2}\\u0022\"}},{{\"Name\":\"Last-Modified\",\"Value\":\"{3:R}\"}}]";
+    var resHeaderFormat = "[{{\"Name\":\"Accept-Ranges\",\"Value\":\"bytes\"}},{{\"Name\":\"Cache-Control\",\"Value\":\"{0}\"}},{{\"Name\":\"Content-Length\",\"Value\":\"{1}\"}},{{\"Name\":\"Content-Type\",\"Value\":\"text/css\"}},{{\"Name\":\"ETag\",\"Value\":\"\\u0022{2}\\u0022\"}},{{\"Name\":\"Last-Modified\",\"Value\":\"{3}\"}}]";
     var encodedIntegrity = integrity.Replace("+", "\\u002B").Replace("/", "\\u002F");
 
     // for "_content/<Project Name>/<Project Name>.bundle.scp.css"
@@ -106,7 +110,7 @@ foreach (var appProj in this.ReferencedAppProjects)
     var bundleEndpoint = new TaskItem(bundleEndpointIdentity);
     bundleEndpoint.SetMetadata("AssetFile", bundleScpCssPath);
     bundleEndpoint.SetMetadata("Selectors", "[]");
-    bundleEndpoint.SetMetadata("ResponseHeaders", string.Format(resHeaderFormat, "no-cache", fileInfo.Length, integrity, fileInfo.LastWriteTimeUtc));
+    bundleEndpoint.SetMetadata("ResponseHeaders", string.Format(resHeaderFormat, "no-cache", fileLength, integrity, lastWriteTime));
     bundleEndpoint.SetMetadata("EndpointProperties", string.Format("[{{\"Name\":\"integrity\",\"Value\":\"sha256-{0}\"}}]", encodedIntegrity));
     projectEndpoints.Add(bundleEndpoint);
 
@@ -114,7 +118,7 @@ foreach (var appProj in this.ReferencedAppProjects)
     var fingerPrintBundleEndpoint = new TaskItem(string.Format("_content/{0}/{0}.{1}.bundle.scp.css", appName, fingerprint));
     fingerPrintBundleEndpoint.SetMetadata("AssetFile", bundleScpCssPath);
     fingerPrintBundleEndpoint.SetMetadata("Selectors", "[]");
-    fingerPrintBundleEndpoint.SetMetadata("ResponseHeaders", string.Format(resHeaderFormat, "max-age=31536000, immutable", fileInfo.Length, integrity, fileInfo.LastWriteTimeUtc));
+    fingerPrintBundleEndpoint.SetMetadata("ResponseHeaders", string.Format(resHeaderFormat, "max-age=31536000, immutable", fileLength, integrity, lastWriteTime));
     fingerPrintBundleEndpoint.SetMetadata("EndpointProperties", string.Format("[{{\"Name\":\"fingerprint\",\"Value\":\"{0}\"}},{{\"Name\":\"integrity\",\"Value\":\"sha256-{1}\"}},{{\"Name\":\"label\",\"Value\":\"{2}\"}}]", fingerprint, encodedIntegrity, bundleEndpointIdentity));
     projectEndpoints.Add(fingerPrintBundleEndpoint);
 }
