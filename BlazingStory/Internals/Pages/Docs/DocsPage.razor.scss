@@ -48,6 +48,17 @@
                 margin: 25px 0 40px 0;
             }
 
+            .story-description {
+                margin: 12px 0 24px 0;
+
+                code {
+                    font-family: var(--bs-monospace-font-family);
+                    padding: 3px 5px;
+                    border-radius: 6px;
+                    background-color: var(--bs-back-color);
+                }
+            }
+
             .controls-panel {
                 tbody {
                     border: solid 1px var(--bs-add-on-panel-border-color);
