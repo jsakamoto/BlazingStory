@@ -1606,6 +1606,15 @@ a.icon-button {
 .docs-page .docs-main .docs-contents > .first-story {
   margin: 25px 0 40px 0;
 }
+.docs-page .docs-main .docs-contents .story-description {
+  margin: 12px 0 24px 0;
+}
+.docs-page .docs-main .docs-contents .story-description code {
+  font-family: var(--bs-monospace-font-family);
+  padding: 3px 5px;
+  border-radius: 6px;
+  background-color: var(--bs-back-color);
+}
 .docs-page .docs-main .docs-contents .controls-panel tbody {
   border: solid 1px var(--bs-add-on-panel-border-color);
   filter: drop-shadow(0px 1px 3px var(--bs-border-color));
