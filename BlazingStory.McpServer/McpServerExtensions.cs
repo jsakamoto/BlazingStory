@@ -3,6 +3,7 @@ using BlazingStory.Internals.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using ModelContextProtocol.Server;
 
 namespace BlazingStory.McpServer;
 
@@ -15,12 +16,13 @@ public static class McpServerExtensions
     /// Add the Model Context Protocol (MCP) server of Blazing Story to the service collection.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add the server to.</param>
+    /// <param name="configureMcpServerOptions">An optional action to configure the <see cref="McpServerOptions"/> for the MCP server.</param>
     /// <returns>An <see cref="IMcpServerBuilder"/> that can be used to further configure the MCP server.</returns>
-    public static IMcpServerBuilder AddBlazingStoryMcpServer(this IServiceCollection services)
+    public static IMcpServerBuilder AddBlazingStoryMcpServer(this IServiceCollection services, Action<McpServerOptions>? configureMcpServerOptions = null)
     {
         services.AddScoped((_) => new StoriesStore());
         return services
-            .AddMcpServer(options => { })
+            .AddMcpServer(options => configureMcpServerOptions?.Invoke(options))
             .WithHttpTransport(options => { })
             .WithTools<StoriesTool>();
     }
