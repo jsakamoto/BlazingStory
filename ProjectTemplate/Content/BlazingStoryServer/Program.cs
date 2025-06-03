@@ -1,4 +1,7 @@
 using BlazingStory.Components;
+#if (McpServer)
+using BlazingStory.McpServer;
+#endif
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using StoryServerApp.Components.Pages;
 
@@ -10,6 +13,9 @@ builder.Services.AddRazorComponents()
 
 var serverUrl = builder.Configuration[WebHostDefaults.ServerUrlsKey]?.Split(';').FirstOrDefault() ?? "http://localhost:5000";
 builder.Services.TryAddScoped(sp => new HttpClient { BaseAddress = new Uri(serverUrl) });
+#if (McpServer)
+builder.Services.AddBlazingStoryMcpServer();
+#endif
 
 var app = builder.Build();
 
@@ -26,6 +32,9 @@ if (!app.Environment.IsDevelopment())
 #if (!NoHttps)
 app.UseHttpsRedirection();
 
+#endif
+#if (McpServer)
+app.MapBlazingStoryMcp();
 #endif
 #if (Framework == "net8.0")
 app.UseStaticFiles();
