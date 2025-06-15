@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <MD2RazorDefaultBaseClass>global::BlazingStory.Internals.Pages.MarkdownPageBase</MD2RazorDefaultBaseClass>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MD2RazorGenerator" Version="1.2.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BlazingStory\BlazingStory.csproj" />
+    <ProjectReference Include="..\..\..\BlazingStory.MCPServer\BlazingStory.McpServer.csproj" />
+    <ProjectReference Include="..\MyBlazorWasmApp1\MyBlazorWasmApp1.csproj" />
+  </ItemGroup>
+
+  <Import Project="..\..\..\BlazingStory\Build\BlazingStory.targets" />
+
+</Project>

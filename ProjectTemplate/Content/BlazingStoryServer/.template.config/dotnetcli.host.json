@@ -18,6 +18,10 @@
     "IncludeSampleContent": {
       "longName": "include-sample"
     },
+    "McpServer": {
+      "longName": "mcp-server",
+      "shortName": "mcp"
+    },
     "kestrelHttpPort": {
       "isHidden": true
     },

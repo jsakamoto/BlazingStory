@@ -4,7 +4,7 @@
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <WarningsAsErrors>nullable</WarningsAsErrors>
+    <WarningsAsErrors>$(WarningsAsErrors);nullable</WarningsAsErrors>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName).xml</DocumentationFile>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -51,6 +51,7 @@
   <ItemGroup>
     <SupportedPlatform Include="browser" />
     <InternalsVisibleTo Include="BlazingStory.Test" />
+    <InternalsVisibleTo Include="BlazingStory.McpServer" />
     <InternalsVisibleTo Include="BlazingStory.Stories" />
   </ItemGroup>
 

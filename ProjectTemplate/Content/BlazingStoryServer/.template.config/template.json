@@ -148,6 +148,12 @@
       "datatype": "bool",
       "defaultValue": "true",
       "description": "If specified, adds a sample component and its stories."
+    },
+    "McpServer":{
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "If specified, this enables the MCP server feature that exposes information about components and their stories via the Model Context Protocol."
     }
   },
   "guids": [

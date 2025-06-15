@@ -1,0 +1,271 @@
+1
+00:00:00,441 --> 00:00:02,841
+This is the Blazing Story site, a demo
+
+2
+00:00:02,841 --> 00:00:04,961
+for a UI component library made for
+
+3
+00:00:04,961 --> 00:00:05,561
+Blazor.
+
+4
+00:00:06,597 --> 00:00:08,677
+This library includes components like
+
+5
+00:00:08,677 --> 00:00:11,637
+buttons, date pickers, radio buttons, and
+
+6
+00:00:11,637 --> 00:00:14,197
+dropdowns. It also has more
+
+7
+00:00:14,197 --> 00:00:15,877
+complex ones like steppers.
+
+8
+00:00:21,080 --> 00:00:23,320
+This blazing story site has a new feature
+
+9
+00:00:23,320 --> 00:00:25,400
+called the MCP server enabled.
+
+10
+00:00:26,232 --> 00:00:28,712
+And in this Blazor application project, a
+
+11
+00:00:28,712 --> 00:00:31,032
+reference to the MCP server is already
+
+12
+00:00:31,032 --> 00:00:33,032
+set up for GitHub Copilot in Visual
+
+13
+00:00:33,032 --> 00:00:33,912
+Studio Code.
+
+14
+00:00:35,283 --> 00:00:37,403
+I have also created custom instructions
+
+15
+00:00:37,403 --> 00:00:39,483
+for GitHub Copilot to tell it to use the
+
+16
+00:00:39,483 --> 00:00:41,523
+MCP server from BlazingStory.
+
+17
+00:00:43,323 --> 00:00:45,483
+Now, let's try a demonstration.
+
+18
+00:00:46,283 --> 00:00:48,363
+We will give a text prompt and ask GitHub
+
+19
+00:00:48,363 --> 00:00:50,843
+Copilot to generate a checkout page UI
+
+20
+00:00:50,843 --> 00:00:51,963
+for an e-commerce site.
+
+21
+00:00:53,081 --> 00:00:54,961
+I copy the prompt and paste it into the
+
+22
+00:00:54,961 --> 00:00:57,161
+GitHub Copilot chat window to run it.
+
+23
+00:01:00,127 --> 00:01:02,047
+You can see that GitHub Copilot is
+
+24
+00:01:02,047 --> 00:01:04,527
+sending a request to the BlazingStory MCP
+
+25
+00:01:04,527 --> 00:01:05,007
+server.
+
+26
+00:01:06,027 --> 00:01:07,947
+Let's wait a moment for it to finish.
+
+27
+00:01:16,235 --> 00:01:17,035
+It is done.
+
+28
+00:01:22,733 --> 00:01:23,533
+Let's run it.
+
+29
+00:01:33,272 --> 00:01:36,152
+Using the demo UI library, it created the
+
+30
+00:01:36,152 --> 00:01:37,672
+page just as instructed.
+
+31
+00:01:38,504 --> 00:01:40,104
+You can see that the date picker,
+
+32
+00:01:40,264 --> 00:01:42,584
+drop-down, and radio button components
+
+33
+00:01:42,584 --> 00:01:43,544
+are used properly.
+
+34
+00:01:44,594 --> 00:01:46,674
+The stepper component is also used and
+
+35
+00:01:46,674 --> 00:01:47,634
+working correctly.
+
+36
+00:01:50,920 --> 00:01:53,080
+Let's review the generated source code.
+
+37
+00:01:55,296 --> 00:01:57,336
+Even the input types for the text input
+
+38
+00:01:57,336 --> 00:01:59,056
+components are chosen correctly.
+
+39
+00:02:01,604 --> 00:02:04,004
+Next, instead of using a text prompt,
+
+40
+00:02:04,084 --> 00:02:06,004
+let's try generating from an image.
+
+41
+00:02:07,735 --> 00:02:09,815
+Here is a rough sketch of a checkout page
+
+42
+00:02:09,815 --> 00:02:10,935
+made in PowerPoint.
+
+43
+00:02:12,523 --> 00:02:14,363
+I paste this image into the GitHub
+
+44
+00:02:14,363 --> 00:02:17,083
+Copilot chat window in Visual StudioCode.
+
+45
+00:02:24,055 --> 00:02:26,175
+Then, I type a prompt asking it to
+
+46
+00:02:26,175 --> 00:02:28,055
+generate a page based on the attached
+
+47
+00:02:28,055 --> 00:02:29,175
+image, and run it.
+
+48
+00:02:31,627 --> 00:02:34,507
+The generation starts. You can see
+
+49
+00:02:34,507 --> 00:02:36,427
+that GitHub Copilot is working while
+
+50
+00:02:36,427 --> 00:02:38,987
+sending requests to the BlazingStory MCP
+
+51
+00:02:38,987 --> 00:02:41,856
+server. Let's wait a moment again.
+
+52
+00:02:51,645 --> 00:02:52,445
+It is done.
+
+53
+00:02:54,593 --> 00:02:55,393
+Let's run it.
+
+54
+00:03:04,217 --> 00:03:06,377
+Even from an image, it created the page
+
+55
+00:03:06,377 --> 00:03:08,937
+as instructed using the Demo UI library.
+
+56
+00:03:14,463 --> 00:03:16,503
+The stepper component is used correctly
+
+57
+00:03:16,503 --> 00:03:17,743
+and works as expected.
+
+58
+00:03:21,307 --> 00:03:23,227
+Let's review the generated source code
+
+59
+00:03:23,227 --> 00:03:23,707
+again.
+
+60
+00:03:24,969 --> 00:03:26,489
+You can see that the components were
+
+61
+00:03:26,489 --> 00:03:28,769
+chosen and set up properly, based on the
+
+62
+00:03:28,769 --> 00:03:30,969
+information from the BlazingStory MCP
+
+63
+00:03:30,969 --> 00:03:31,529
+server.
+
+64
+00:03:32,608 --> 00:03:35,248
+As you can see, by using the new MCP
+
+65
+00:03:35,248 --> 00:03:37,488
+server feature of BlazingStory, we can
+
+66
+00:03:37,488 --> 00:03:39,808
+generate code that uses the specified UI
+
+67
+00:03:39,808 --> 00:03:41,808
+component library very accurately.
+
+68
+00:03:43,457 --> 00:03:44,657
+Thank you for watching!
