@@ -10,6 +10,8 @@ The clone of ["Storybook"](https://storybook.js.org/) for Blazor, a frontend wor
 
 The "Blazing Story" is built on **almost 100% Blazor native** (except only a few JavaScript helper codes), so you don't have to care about `npm`, `package.json`, `webpack`, and any JavaScript/TypeScript code. You can create a UI catalog application **on the Blazor way!**
 
+In addition, Blazing Story also provides an **MCP server feature.** This allows Blazing Story to expose information about its components and stories to AI agents, enabling highly accurate code generation.
+
 You can try it out from the live demonstration site at the following link: https://jsakamoto.github.io/BlazingStory/
 
 ## 🚀 Getting Started
@@ -51,6 +53,9 @@ Open the solution file (.sln) with Visual Studio, and add a new **"Blazing Story
 > [!Note]  
 > If you are working on a Blazor Server application project, you should add a new **"Blazing Story (Server App)"** project instead of the "Blazing Story (WebAssembly App)" project.
 
+> [!Note]  
+> To use the MCP server feature, you need to add a new **"Blazing Story (Server App)"** project and check the "Enable the MCP server feature" checkbox in the project creation dialog.  
+> Note that the MCP server feature is not available in the Blazing Story app when running on Blazor WebAssembly.
 
 If you are working on dotnet CLI, you can do that with the following commands in a terminal.
 
@@ -65,7 +70,11 @@ dotnet sln add ./MyBlazorWasmApp1.Stories/
 ```
 
 > [!Note]  
-> If you are working on a Blazor Server application project, you should do the `dotnet new blazingstoryserver` command.
+> If you are working on a Blazor Server application project, you should run the `dotnet new blazingstoryserver` command.
+
+> [!Note]  
+> To use the MCP server feature, you need to run the `dotnet new blazingstoryserver -mcp` command.
+> Note that the MCP server feature is not available in the Blazing Story app when running on Blazor WebAssembly.
 
 The file layout will be the following tree.
 
@@ -570,6 +579,81 @@ After doing that, you will see the changes you made in the "stories" files, and 
 But please remember that it is really unstable. In our experience, it doesn't work on a "Doc" page. Visiting a "Doc" page often stops the entire "Blazing Story" app. Once it happens, there is no way to recover it except to re-launch the app as far as we know (when you use the `dotnet watch` command, hit Ctrl + R).
 
 Therefore, the hot reloading feature is still a preview feature. We are working on it, but we cannot guarantee that it will work well in the future.
+
+## 🎛️ MCP Server Feature
+
+### Summary
+
+Blzing Story provides a **MCP server** feature that allows Blazing Story to expose information about its components and stories to AI agents, enabling highly accurate code generation.
+
+To catch up he power of the Blazing Story's MCP server feature, you can watch the following introduction video.
+
+https://github.com/user-attachments/assets/1e4ced81-8d06-4714-ad89-4b0987d958c9
+
+Currently, the MCP server feature is available only in the Blazing Story app running on Blazor Server. It is not available in the Blazing Story app running on Blazor WebAssembly.
+
+### Create a new Blazing Story app with the MCP server feature
+
+When you create a new Blazing Story app project, you can enable the MCP server feature by checking the "Enable the MCP server feature" checkbox in the project creation dialog.
+
+![Creating a new Blazing Story app with the MCP Server option](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/readme-images/add-a-new-project-mcp-option.png)
+
+Or, if you are working on dotnet CLI, you can do that by running the `dotnet new blazingstoryserver` command with the `-mcp` option, like below:
+
+```shell
+dotnet new blazingstoryserver -mcp
+```
+
+### Migration your Blazing Story app to enable the MCP server feature
+
+To enable the MCP server feature in your existing Blazing Story app, you need to follow these steps:
+
+1. Upgrade your Blazing Story app project to reference the latest version of the Blazing Story NuGet package.
+
+2. Add the `BlazingStory.McpServer` package reference to your Blazing Story app project.
+
+   If you are working on Visual Studio, you can do that by right-clicking the project in the solution explorer and selecting "Manage NuGet Packages...", then searching for the `BlazingStory.McpServer` package and installing it.
+
+   If you are working on dotnet CLI, you can do that with the following command:
+
+   ```shell
+   dotnet add package BlazingStory.MCPServer
+   ```
+
+3. Add the `AddBlazingStoryMcpServer` method call to the `Program.cs` file of your Blazing Story app project to register the MCP server services in the dependency injection container.
+
+   ```csharp
+   // 📄 Program.cs
+   ...
+   // 👇 Add the necessary using directive for the MCP server.
+   using BlazingStory.McpServer;
+   ...
+   var builder = WebApplication.CreateBuilder(args);
+   ...
+    // 👇 Add services to the container.
+   builder.Services.AddBlazingStoryMcpServer();
+   ...
+   ```  
+4. Add the `MapBlazingStoryMcp` method call to the `app` object in the `Program.cs` file to register the Blazing Story MCP server middleware.
+
+   ```csharp
+   // 📄 Program.cs
+   ...
+   app.UseHttpsRedirection();
+
+   // 👇 Register the Blazing Story MCP server middleware.
+   app.MapBlazingStoryMcp();
+   app.MapStaticAssets();
+   app.UseRouting();
+   app.UseAntiforgery();
+   ...
+   ```
+
+### Usage
+
+The tranport type of the MCP server feature of the Blazing Story is **Streamable HTTP** and **SSE**. It doesn't support STDIO transport type for now.
+
+Once you have enabled the MCP server feature in your Blazing Story app, you can access the MCP server at the `/mcp/blazingstory` endpoint of your Blazing Story app for Streamable HTTP access, or at the `/mcp/blazingstory/sse` endpoint for SSE access.
 
 ## 📌 System Requirements
 

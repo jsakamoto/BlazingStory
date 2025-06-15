@@ -1,3 +1,6 @@
+v.1.0.0-preview.52
+- Enhancement: Introduced the MCP (Model Context Protocol) server feature, enabling Blazing Story applications to interact with MCP clients and facilitating integration with AI agents.
+
 v.1.0.0-preview.51
 - Fix: A build error that occurred under certain conditions.
 - Improve: The design of story descriptions on Docs pages.
