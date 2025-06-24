@@ -198,9 +198,9 @@ internal static class TypeUtility
     internal static Type GetOpenType(Type type) => type.IsGenericType ? type.GetGenericTypeDefinition() : type;
 
     /// <summary>
-    /// Returns whether the given object is a user-defined reference type.
+    /// Returns whether the given object is a plain object type that should be serialized as a JSON object, like '{"foo":123,"bar:456}}'.
     /// </summary>
-    internal static bool IsUserDefinedReferenceType(Type type)
+    internal static bool IsPlainObjectType(Type type)
     {
         // Exclude value types (structs)
         if (type.IsValueType) return false;
@@ -212,11 +212,6 @@ internal static class TypeUtility
         {
             return false;
         }
-
-        // Check if it is a user-defined type
-        var nameSpace = (type.Namespace ?? "") + ".";
-        if (nameSpace.StartsWith("System.") == true) return false;
-        if (nameSpace.StartsWith("Microsoft.") == true) return false;
 
         return true;
     }

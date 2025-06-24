@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Components;
 using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.Internals.Utils;
@@ -24,12 +25,40 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
 #pragma warning disable IL2026, IL2027, IL2072
     public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
     {
-        if (value == null)
+        var typeCode = value is null ? TypeCode.Empty : Type.GetTypeCode(typeof(T));
+
+        // Serialize null-thy values
+        if (value is null || typeCode is TypeCode.Empty or TypeCode.DBNull)
         {
             writer.WriteNullValue();
             return;
         }
 
+        // Serialize primitive types directly
+        switch (value)
+        {
+            case DateTime d:
+                writer.WriteRawValue(d.ToUniversalTime().ToString("o"), skipInputValidation: true);
+                return;
+            case DateTimeOffset d:
+                writer.WriteRawValue(d.UtcDateTime.ToString("o"), skipInputValidation: true);
+                return;
+            case DateOnly d:
+                writer.WriteRawValue(d.ToString("o"), skipInputValidation: true);
+                return;
+            case TimeOnly t:
+                writer.WriteRawValue(t.ToString("o"), skipInputValidation: true);
+                return;
+            default: // Handle other primitive types, like strings, numbers, etc.
+                if (typeCode is not TypeCode.Object)
+                {
+                    JsonSerializer.Serialize(writer, value, typeof(T));
+                    return;
+                }
+                break;
+        }
+
+        // Handle cyclic references and unsupported types
         var isClass = value.GetType().IsClass;
         if (isClass)
         {
@@ -41,6 +70,7 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
             this._visited.Push(value);
         }
 
+        // Serialize properties of the object
         writer.WriteStartObject();
 
         var properties = typeof(T)
@@ -52,18 +82,11 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
             writer.WritePropertyName(property.Name);
 
             var propValue = property.GetValue(value);
+            var propType = propValue?.GetType() ?? property.PropertyType;
 
-            if (propValue == null)
+            if (IsUnsupportedType(propType))
             {
-                writer.WriteNullValue();
-            }
-            else if (IsUnsupportedType(property.PropertyType))
-            {
-                writer.WriteStringValue(string.Format(_fallbackMessageFormat, $"type '{TypeUtility.GetTypeDisplayText(property.PropertyType).First()}'"));
-            }
-            else if (propValue is string s)
-            {
-                writer.WriteStringValue(s);
+                writer.WriteStringValue(string.Format(_fallbackMessageFormat, $"type '{TypeUtility.GetTypeDisplayText(propType).First()}'"));
             }
             else if (propValue is IDictionary dictionary)
             {
@@ -76,7 +99,7 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
                 }
                 writer.WriteEndObject();
             }
-            else if (propValue is IEnumerable enumerable)
+            else if (propValue is IEnumerable enumerable && propValue is not string)
             {
                 writer.WriteStartArray();
                 foreach (var item in enumerable)
@@ -90,11 +113,11 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
             {
                 try
                 {
-                    JsonSerializer.Serialize(writer, propValue, property.PropertyType, this.PrepareJsonSerializerOptions(options, property.PropertyType));
+                    JsonSerializer.Serialize(writer, propValue, propType, this.PrepareJsonSerializerOptions(options, propType));
                 }
                 catch (Exception)
                 {
-                    writer.WriteStringValue(string.Format(_fallbackMessageFormat, $"type '{TypeUtility.GetTypeDisplayText(property.PropertyType).First()}'"));
+                    writer.WriteStringValue(string.Format(_fallbackMessageFormat, $"type '{TypeUtility.GetTypeDisplayText(propType).First()}'"));
                 }
             }
         }
@@ -106,7 +129,7 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
 
     private JsonSerializerOptions PrepareJsonSerializerOptions(JsonSerializerOptions options, Type valueType)
     {
-        if (TypeUtility.IsUserDefinedReferenceType(valueType))
+        if (TypeUtility.IsPlainObjectType(valueType))
         {
 #pragma warning disable IL2070, IL2071
             var jsonConverterType = typeof(JsonFallbackConverter<>).MakeGenericType(valueType);
@@ -123,7 +146,9 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
 
     private static bool IsUnsupportedType(Type type)
     {
-        return typeof(Delegate).IsAssignableFrom(type) ||
-               typeof(Expression).IsAssignableFrom(type);
+        return type == typeof(EventCallback) ||
+                TypeUtility.GetOpenType(type) == typeof(EventCallback<>) ||
+                typeof(Delegate).IsAssignableFrom(type) ||
+                typeof(Expression).IsAssignableFrom(type);
     }
 }
