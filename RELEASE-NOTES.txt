@@ -1,3 +1,6 @@
+v.1.0.0-preview.53
+- Fix: Primitive values in event arguments were not displayed correctly in the Action log panel.
+
 v.1.0.0-preview.52
 - Enhancement: Introduced the MCP (Model Context Protocol) server feature, enabling Blazing Story applications to interact with MCP clients and facilitating integration with AI agents.
 
