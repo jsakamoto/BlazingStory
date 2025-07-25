@@ -5,7 +5,7 @@
     background-color: var(--bs-back-color);
 
     & > .pane-of-split-container:first-of-type {
-        transition: all linear 0.1s;
+        transition: width linear 0.1s, min-width linear 0.1s, var(--bs-scrollbar-transition);
 
         .sidebar-container {
             display: none;
@@ -21,7 +21,6 @@
 
     &.sidebar-shown {
         & > .pane-of-split-container:first-of-type {
-            transition: none;
 
             .sidebar-container {
                 display: block;

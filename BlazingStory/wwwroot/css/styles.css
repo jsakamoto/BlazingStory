@@ -55,7 +55,7 @@
   --bs-popup-hover-back-color: rgba(2, 156, 253, 0.07);
   --bs-popup-active-text-color: var(--bs-accent-color);
   --bs-popup-divider-color: rgba(38, 85, 115, 0.2);
-  --bs-scrollbar-thumb-color: #ccc;
+  --bs-scrollbar-thumb-color: #afafaf;
   --bs-scrollbar-back-color: #e0e0e0;
   --bs-code-text-color: #ededed;
   --bs-code-back-color: #262626;
@@ -139,8 +139,8 @@
   --bs-popup-hover-back-color: rgba(2, 156, 253, 0.07);
   --bs-popup-active-text-color: var(--bs-accent-color);
   --bs-popup-divider-color: rgba(255, 255, 255, 0.1);
-  --bs-scrollbar-thumb-color: #ccc;
-  --bs-scrollbar-back-color: #e0e0e0;
+  --bs-scrollbar-thumb-color: #7a7c7c;
+  --bs-scrollbar-back-color: #333333;
   --bs-code-text-color: #ededed;
   --bs-code-back-color: #262626;
   --bs-code-copy-text-color: #c9cdcf;
@@ -311,24 +311,17 @@ button {
   flex: 1;
 }
 
-.thin-scrollbar {
+:root {
+  --bs-scrollbar-transition: scrollbar-color 0.2s linear;
+}
+
+* {
   scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: var(--bs-scrollbar-transition);
+}
+*:hover {
   scrollbar-color: var(--bs-scrollbar-thumb-color) var(--bs-scrollbar-back-color);
-}
-.thin-scrollbar::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-  background-color: transparent;
-}
-.thin-scrollbar::-webkit-scrollbar-thumb {
-  border-radius: 4px;
-  background-color: transparent;
-}
-.thin-scrollbar:hover::-webkit-scrollbar {
-  background-color: var(--bs-scrollbar-back-color);
-}
-.thin-scrollbar:hover::-webkit-scrollbar-thumb {
-  background: var(--bs-scrollbar-thumb-color);
 }
 
 .color-scheme-container {
@@ -351,16 +344,13 @@ button {
   background-color: var(--bs-back-color);
 }
 .main-layout > .pane-of-split-container:first-of-type {
-  transition: all linear 0.1s;
+  transition: width linear 0.1s, min-width linear 0.1s, var(--bs-scrollbar-transition);
 }
 .main-layout > .pane-of-split-container:first-of-type .sidebar-container {
   display: none;
 }
 .main-layout > .pane-of-split-container:last-of-type {
   box-shadow: var(--bs-layout-border-shadow);
-}
-.main-layout.sidebar-shown > .pane-of-split-container:first-of-type {
-  transition: none;
 }
 .main-layout.sidebar-shown > .pane-of-split-container:first-of-type .sidebar-container {
   display: block;
