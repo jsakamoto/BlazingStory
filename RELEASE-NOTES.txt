@@ -1,3 +1,6 @@
+v.1.0.0-preview.56
+- Improve: the scroll bars design.
+
 v.1.0.0-preview.55
 - Update: Upgraded the MCP server package version, and enabled structured tool output.
 
