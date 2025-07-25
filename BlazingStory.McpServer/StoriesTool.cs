@@ -22,14 +22,14 @@ internal class StoriesTool
         this._services = services;
     }
 
-    [McpServerTool(Name = "getComponents")]
+    [McpServerTool(Name = "getComponents", UseStructuredContent = true)]
     [Description("""
         Retrieves metadata for all Razor components available in this UI catalog for Blazor applications.
         For each component, it returns basic information such as the component’s name, type (e.g., layout, form, display), and a brief summary describing its purpose or function.
         This tool provides a high-level overview of the components available in the catalog and is typically used to populate component lists, enable search or filter functionality, or generate documentation indexes.
         To explore a specific component in more depth, use the `getComponentParameters` tool to retrieve its configurable parameters, or the `getComponentStories` tool to see practical usage examples with code snippets.
         """)]
-    public async Task<IEnumerable<ComponentSummary>> GetComponentsAsync()
+    public async Task<ComponentSummariesResult> GetComponentsAsync()
     {
         using var scope = this._services.CreateScope();
         var storiesStore = await this.BuildStoriesStoreAsync(scope);
@@ -45,10 +45,10 @@ internal class StoriesTool
             Summary: c.Summary.Value
         ));
 
-        return components;
+        return new(components);
     }
 
-    [McpServerTool(Name = "getComponentParameters")]
+    [McpServerTool(Name = "getComponentParameters", UseStructuredContent = true)]
     [Description("""
         Retrieves all parameters of a specific Razor component identified by its component name.
         This includes detailed information for each parameter such as the parameter name, type, summary/description, and any available option values (e.g., for enum or select-type parameters).
@@ -62,10 +62,10 @@ internal class StoriesTool
         using var scope = this._services.CreateScope();
         var storiesStore = await this.BuildStoriesStoreAsync(scope);
         var container = storiesStore.StoryContainers.FirstOrDefault(c => c.TargetComponentType.Name == componentName);
-        if (container is null) return new(Success: false, ErrorMessage: $"Component '{componentName}' not found or parameter info not available.", Parameters: []);
+        if (container is null) return new(error: true, message: $"Component '{componentName}' not found or parameter info not available.");
 
         var story = container.Stories.FirstOrDefault();
-        if (story is null) return new(Success: false, ErrorMessage: $"Parameter info of the component '{componentName}' not available since it has no stories.", Parameters: []);
+        if (story is null) return new(error: true, message: $"Parameter info of the component '{componentName}' not available since it has no stories.");
 
         await Parallel.ForEachAsync(story.Context.Parameters, async (parameter, token) =>
         {
@@ -88,7 +88,7 @@ internal class StoriesTool
         return new(parameters);
     }
 
-    [McpServerTool(Name = "getComponentStories")]
+    [McpServerTool(Name = "getComponentStories", UseStructuredContent = true)]
     [Description("""
         Retrieves all stories associated with a specific Razor component identified by its component name.
         Each story typically represents a usage example or scenario for the component, and includes metadata such as the story name, title, description (explaining how and when to use the component in that context), and a code snippet demonstrating its usage.
@@ -102,7 +102,7 @@ internal class StoriesTool
         using var scope = this._services.CreateScope();
         var storiesStore = await this.BuildStoriesStoreAsync(scope);
         var container = storiesStore.StoryContainers.FirstOrDefault(c => c.TargetComponentType.Name == componentName);
-        if (container is null) return new(Success: false, ErrorMessage: $"Component '{componentName}' not found or has no stories.", Stories: []);
+        if (container is null) return new(error: true, message: $"Component '{componentName}' not found or has no stories.");
 
         var projectionTasks = container.Stories.Select(async (BlazingStory.Internals.Models.Story s) =>
         {

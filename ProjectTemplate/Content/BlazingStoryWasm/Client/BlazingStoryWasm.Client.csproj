@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(Framework)' == 'net8.0' ">
-    <PackageReference Include="BlazingStory" Version="1.0.0-preview.54" />
+    <PackageReference Include="BlazingStory" Version="1.0.0-preview.55" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.17" PrivateAssets="all" />
     <PackageReference Include="MD2RazorGenerator" Version="1.2.2">
@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(Framework)' == 'net9.0' ">
-    <PackageReference Include="BlazingStory" Version="1.0.0-preview.54" />
+    <PackageReference Include="BlazingStory" Version="1.0.0-preview.55" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.6" PrivateAssets="all" />
     <PackageReference Include="MD2RazorGenerator" Version="1.2.2">

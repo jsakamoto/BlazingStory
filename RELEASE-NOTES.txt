@@ -1,3 +1,6 @@
+v.1.0.0-preview.55
+- Update: Upgraded the MCP server package version, and enabled structured tool output.
+
 v.1.0.0-preview.54
 - Enhancement: Made the return types of the MCP server feature strongly typed.
 
