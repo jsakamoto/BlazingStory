@@ -18,7 +18,7 @@ export const ensureAllFontsAndStylesAreLoaded = async (): Promise<void> => {
             const checkFonts = (): void => 
                 [...document.fonts].every(font => font.status === "loaded") 
                     ? resolve() 
-                    : setTimeout(checkFonts, 10);
+                    : void setTimeout(checkFonts, 10);
             checkFonts();
         }),
         delay(5000)
@@ -30,7 +30,7 @@ export const ensureAllFontsAndStylesAreLoaded = async (): Promise<void> => {
             const checkStyles = (): void => 
                 [...document.head.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')].every(link => link.sheet)
                     ? resolve()
-                    : setTimeout(checkStyles, 10);
+                    : void setTimeout(checkStyles, 10);
             checkStyles();
         }),
         delay(5000)
@@ -52,7 +52,7 @@ export const subscribePreferesColorSchemeChanged = (
     dotnetObjRef: DotNetObjectReference, 
     methodName: string
 ): IDisposable => {
-    const handler = (): void => dotnetObjRef.invokeMethodAsync(methodName, getPrefersColorScheme());
+    const handler = (): void => void dotnetObjRef.invokeMethodAsync(methodName, getPrefersColorScheme());
     
     darkModeMediaQuery.addEventListener("change", handler);
     return { dispose: () => darkModeMediaQuery.removeEventListener("change", handler) };
