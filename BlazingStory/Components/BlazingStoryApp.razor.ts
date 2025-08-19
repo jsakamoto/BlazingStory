@@ -1,33 +1,50 @@
 import { DotNetObjectReference, IDisposable } from "../Scripts/types";
 
-export const ensureAllFontsAndStylesAreLoaded = async () => {
+const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
+/**
+ * Ensures all fonts and stylesheets are fully loaded before proceeding
+ * Only executes on the root path to optimize performance
+ */
+export const ensureAllFontsAndStylesAreLoaded = async (): Promise<void> => {
     if (location.pathname !== "/") return;
 
-    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+    const startTime = Date.now();
 
-    // Ensure all fonts are loaded.
-    for (const font of document.fonts) font.load();
-    for (; ;) {
-        const fonts = Array.from(document.fonts);
-        if (fonts.every(font => font.status === "loaded")) break;
+    // Initiate font loading concurrently
+    await Promise.allSettled([...document.fonts].map(font => font.load()));
+
+    // Wait until all fonts and stylesheets are loaded
+    const isAllFontsLoaded = () => [...document.fonts].every(font => font.status === "loaded");
+    const isAllStylesheetsLoaded = () => [...document.head.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')].every(link => link.sheet);
+    while (!isAllFontsLoaded() || !isAllStylesheetsLoaded()) {
         await delay(10);
+
+        // Prevent infinite loop by checking elapsed time
+        if (Date.now() - startTime > 5000) {
+            console.warn("Timeout waiting for fonts and stylesheets to load");
+            break;
+        }
     }
+};
 
-    // Wait for all style sheets are loaded.
-    for (; ;) {
-        const styleSheets = Array.from<HTMLLinkElement>(document.head.querySelectorAll('link[rel="stylesheet"]'));
-        if (styleSheets.every(l => Boolean(l.sheet))) break;
-        await delay(10);
-    }
-}
+const darkModeMediaQuery = matchMedia("(prefers-color-scheme: dark)");
 
-const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+/**
+ * Returns current color scheme preference
+ */
+export const getPrefersColorScheme = (): "dark" | "light" => 
+    darkModeMediaQuery.matches ? "dark" : "light";
 
-export const getPrefersColorScheme = (): string => darkModeMediaQuery.matches ? "dark" : "light";
-
-export const subscribePreferesColorSchemeChanged = (dotnetObjRef: DotNetObjectReference, methodName: string): IDisposable => {
-    const subscriber = (e: MediaQueryListEvent) => { dotnetObjRef.invokeMethodAsync(methodName, getPrefersColorScheme()); };
-    darkModeMediaQuery.addEventListener("change", subscriber);
-    return ({ dispose: () => darkModeMediaQuery.removeEventListener("change", subscriber) });
-}
+/**
+ * Subscribes to color scheme changes with automatic cleanup
+ */
+export const subscribePreferesColorSchemeChanged = (
+    dotnetObjRef: DotNetObjectReference, 
+    methodName: string
+): IDisposable => {
+    const handler = (): void => void dotnetObjRef.invokeMethodAsync(methodName, getPrefersColorScheme());
+    
+    darkModeMediaQuery.addEventListener("change", handler);
+    return { dispose: () => darkModeMediaQuery.removeEventListener("change", handler) };
+};

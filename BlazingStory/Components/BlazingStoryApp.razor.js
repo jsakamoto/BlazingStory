@@ -1,26 +1,23 @@
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 export const ensureAllFontsAndStylesAreLoaded = async () => {
     if (location.pathname !== "/")
         return;
-    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-    for (const font of document.fonts)
-        font.load();
-    for (;;) {
-        const fonts = Array.from(document.fonts);
-        if (fonts.every(font => font.status === "loaded"))
-            break;
+    const startTime = Date.now();
+    await Promise.allSettled([...document.fonts].map(font => font.load()));
+    const isAllFontsLoaded = () => [...document.fonts].every(font => font.status === "loaded");
+    const isAllStylesheetsLoaded = () => [...document.head.querySelectorAll('link[rel="stylesheet"]')].every(link => link.sheet);
+    while (!isAllFontsLoaded() || !isAllStylesheetsLoaded()) {
         await delay(10);
-    }
-    for (;;) {
-        const styleSheets = Array.from(document.head.querySelectorAll('link[rel="stylesheet"]'));
-        if (styleSheets.every(l => Boolean(l.sheet)))
+        if (Date.now() - startTime > 5000) {
+            console.warn("Timeout waiting for fonts and stylesheets to load");
             break;
-        await delay(10);
+        }
     }
 };
-const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+const darkModeMediaQuery = matchMedia("(prefers-color-scheme: dark)");
 export const getPrefersColorScheme = () => darkModeMediaQuery.matches ? "dark" : "light";
 export const subscribePreferesColorSchemeChanged = (dotnetObjRef, methodName) => {
-    const subscriber = (e) => { dotnetObjRef.invokeMethodAsync(methodName, getPrefersColorScheme()); };
-    darkModeMediaQuery.addEventListener("change", subscriber);
-    return ({ dispose: () => darkModeMediaQuery.removeEventListener("change", subscriber) });
+    const handler = () => void dotnetObjRef.invokeMethodAsync(methodName, getPrefersColorScheme());
+    darkModeMediaQuery.addEventListener("change", handler);
+    return { dispose: () => darkModeMediaQuery.removeEventListener("change", handler) };
 };
