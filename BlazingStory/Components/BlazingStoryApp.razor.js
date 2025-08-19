@@ -2,25 +2,17 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 export const ensureAllFontsAndStylesAreLoaded = async () => {
     if (location.pathname !== "/")
         return;
+    const startTime = Date.now();
     await Promise.allSettled([...document.fonts].map(font => font.load()));
-    await Promise.race([
-        new Promise(resolve => {
-            const checkFonts = () => [...document.fonts].every(font => font.status === "loaded")
-                ? resolve()
-                : void setTimeout(checkFonts, 10);
-            checkFonts();
-        }),
-        delay(5000)
-    ]);
-    await Promise.race([
-        new Promise(resolve => {
-            const checkStyles = () => [...document.head.querySelectorAll('link[rel="stylesheet"]')].every(link => link.sheet)
-                ? resolve()
-                : void setTimeout(checkStyles, 10);
-            checkStyles();
-        }),
-        delay(5000)
-    ]);
+    const isAllFontsLoaded = () => [...document.fonts].every(font => font.status === "loaded");
+    const isAllStylesheetsLoaded = () => [...document.head.querySelectorAll('link[rel="stylesheet"]')].every(link => link.sheet);
+    while (!isAllFontsLoaded() || !isAllStylesheetsLoaded()) {
+        await delay(10);
+        if (Date.now() - startTime > 5000) {
+            console.warn("Timeout waiting for fonts and stylesheets to load");
+            break;
+        }
+    }
 };
 const darkModeMediaQuery = matchMedia("(prefers-color-scheme: dark)");
 export const getPrefersColorScheme = () => darkModeMediaQuery.matches ? "dark" : "light";

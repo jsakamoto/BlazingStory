@@ -9,32 +9,23 @@ const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, m
 export const ensureAllFontsAndStylesAreLoaded = async (): Promise<void> => {
     if (location.pathname !== "/") return;
 
+    const startTime = Date.now();
+
     // Initiate font loading concurrently
     await Promise.allSettled([...document.fonts].map(font => font.load()));
 
-    // Wait for fonts with efficient polling and fail-safe timeout
-    await Promise.race([
-        new Promise<void>(resolve => {
-            const checkFonts = (): void => 
-                [...document.fonts].every(font => font.status === "loaded") 
-                    ? resolve() 
-                    : void setTimeout(checkFonts, 10);
-            checkFonts();
-        }),
-        delay(5000)
-    ]);
+    // Wait until all fonts and stylesheets are loaded
+    const isAllFontsLoaded = () => [...document.fonts].every(font => font.status === "loaded");
+    const isAllStylesheetsLoaded = () => [...document.head.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')].every(link => link.sheet);
+    while (!isAllFontsLoaded() || !isAllStylesheetsLoaded()) {
+        await delay(10);
 
-    // Wait for stylesheets with efficient polling and fail-safe timeout
-    await Promise.race([
-        new Promise<void>(resolve => {
-            const checkStyles = (): void => 
-                [...document.head.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')].every(link => link.sheet)
-                    ? resolve()
-                    : void setTimeout(checkStyles, 10);
-            checkStyles();
-        }),
-        delay(5000)
-    ]);
+        // Prevent infinite loop by checking elapsed time
+        if (Date.now() - startTime > 5000) {
+            console.warn("Timeout waiting for fonts and stylesheets to load");
+            break;
+        }
+    }
 };
 
 const darkModeMediaQuery = matchMedia("(prefers-color-scheme: dark)");
