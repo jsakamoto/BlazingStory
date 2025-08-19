@@ -1,3 +1,6 @@
+v.1.0.0-preview.57
+- Enhancement: Improved initial font and stylesheet loading performance. (PR #74 contributed by @Zettersten)
+
 v.1.0.0-preview.56
 - Improve: the scroll bars design.
 
