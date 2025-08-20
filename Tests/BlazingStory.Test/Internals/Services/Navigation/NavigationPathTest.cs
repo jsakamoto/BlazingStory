@@ -20,4 +20,22 @@ internal class NavigationPathTest
     {
         NavigationPath.Create("Examples/Ui/Button's Stories", "Filled & Primary").Is("examples-ui-button-s-stories--filled-primary");
     }
+
+    [Test]
+    public void Create_with_Number_Starting_Folder_Test()
+    {
+        NavigationPath.Create("123Examples/Ui/Button").Is("123examples-ui-button");
+    }
+
+    [Test]
+    public void Create_with_Hyphen_In_Folder_Test()
+    {
+        NavigationPath.Create("Some-Folder/Ui/Button").Is("some-folder-ui-button");
+    }
+
+    [Test]
+    public void Create_with_Number_And_Hyphen_Test()
+    {
+        NavigationPath.Create("123-Test/Ui-Components/Button").Is("123-test-ui-components-button");
+    }
 }

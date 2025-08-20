@@ -27,7 +27,7 @@ internal static class StoriesRazorSource
         if (projectMetadata == null) return ValueTask.FromResult("");
 
         var relativePathOfRazor = story.StoriesRazorDescriptor.StoriesAttribute.FilePath.Substring(projectMetadata.ProjectDir.Length).TrimStart('/', '\\');
-        var resName = string.Join('.', relativePathOfRazor.Split('/', '\\').Prepend(projectMetadata.RootNamespace));
+        var resName = CreateEmbeddedResourceName(projectMetadata.RootNamespace, relativePathOfRazor);
 
         using var resStream = assemblyOfStoriesRazor.GetManifestResourceStream(resName);
         if (resStream == null) return ValueTask.FromResult("");
@@ -38,6 +38,41 @@ internal static class StoriesRazorSource
         var sourceOfStory = GetSourceOfStory(sourceOfRazor, story.Name);
 
         return ValueTask.FromResult(sourceOfStory);
+    }
+
+    /// <summary>
+    /// Creates an embedded resource name that matches .NET's embedded resource naming conventions.
+    /// This handles special cases like folder names starting with numbers or containing hyphens.
+    /// </summary>
+    private static string CreateEmbeddedResourceName(string rootNamespace, string relativeFilePath)
+    {
+        var pathSegments = relativeFilePath.Split('/', '\\');
+        var normalizedSegments = new List<string> { rootNamespace };
+
+        foreach (var segment in pathSegments)
+        {
+            normalizedSegments.Add(NormalizeResourceNameSegment(segment));
+        }
+
+        return string.Join('.', normalizedSegments);
+    }
+
+    /// <summary>
+    /// Normalizes a path segment according to .NET's embedded resource naming conventions.
+    /// </summary>
+    private static string NormalizeResourceNameSegment(string segment)
+    {
+        // If the segment starts with a number, prefix with underscore
+        if (segment.Length > 0 && char.IsDigit(segment[0]))
+        {
+            segment = "_" + segment;
+        }
+
+        // Replace invalid identifier characters with underscores
+        // This handles hyphens and other special characters
+        var normalized = Regex.Replace(segment, @"[^\w]", "_");
+
+        return normalized;
     }
 
     /// <summary>
