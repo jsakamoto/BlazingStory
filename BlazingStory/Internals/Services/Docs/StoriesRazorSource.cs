@@ -27,7 +27,7 @@ internal static class StoriesRazorSource
         if (projectMetadata == null) return ValueTask.FromResult("");
 
         var relativePathOfRazor = story.StoriesRazorDescriptor.StoriesAttribute.FilePath.Substring(projectMetadata.ProjectDir.Length).TrimStart('/', '\\');
-        var resName = string.Join('.', relativePathOfRazor.Split('/', '\\').Prepend(projectMetadata.RootNamespace));
+        var resName = EmbeddedResourceNameHelper.CreateResourceName(projectMetadata.RootNamespace, relativePathOfRazor);
 
         using var resStream = assemblyOfStoriesRazor.GetManifestResourceStream(resName);
         if (resStream == null) return ValueTask.FromResult("");
