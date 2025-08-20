@@ -1,3 +1,6 @@
+v.1.0.0-preview.58
+- Fix: "Show Code" does not display story code when *.stories.razor is in folders starting with digits or containing certain symbols (Issue #77)
+
 v.1.0.0-preview.57
 - Enhancement: Improved initial font and stylesheet loading performance. (PR #74 contributed by @Zettersten)
 
