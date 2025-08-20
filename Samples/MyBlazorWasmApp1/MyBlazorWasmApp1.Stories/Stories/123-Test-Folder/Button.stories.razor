@@ -1,0 +1,17 @@
+@attribute [Stories("123-Test-Folder/Button")]
+
+<Stories TComponent="Button">
+    <Story Name="NumberHyphenTest">
+        <Arguments>
+            <Arg For="_ => _.Text" Value='"Fixed!"' />
+            <Arg For="_ => _.Color" Value="ButtonColor.Primary" />
+        </Arguments>
+        <Template>
+            <Button @attributes="context.Args" />
+        </Template>
+        <Description>
+            This story tests the fix for folders that start with numbers and contain hyphens.
+            If you can see this code in the Docs page "Show Code" section, the fix is working!
+        </Description>
+    </Story>
+</Stories>

@@ -62,8 +62,12 @@ internal static class StoriesRazorSource
     /// </summary>
     private static string NormalizeResourceNameSegment(string segment)
     {
+        // Handle empty segments (shouldn't happen in practice but be defensive)
+        if (string.IsNullOrEmpty(segment))
+            return segment;
+
         // If the segment starts with a number, prefix with underscore
-        if (segment.Length > 0 && char.IsDigit(segment[0]))
+        if (char.IsDigit(segment[0]))
         {
             segment = "_" + segment;
         }

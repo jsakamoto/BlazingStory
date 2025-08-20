@@ -1,0 +1,17 @@
+@attribute [Stories("9NumberTest/Rating")]
+
+<Stories TComponent="Rating">
+    <Story Name="NumberPrefix">
+        <Arguments>
+            <Arg For="_ => _.Rate" Value="4" />
+            <Arg For="_ => _.Color" Value='"gold"' />
+        </Arguments>
+        <Template>
+            <Rating @attributes="context.Args" />
+        </Template>
+        <Description>
+            This story tests the fix for folders that start with a single digit.
+            The embedded resource name should be prefixed with an underscore.
+        </Description>
+    </Story>
+</Stories>
