@@ -6,7 +6,7 @@ namespace BlazingStory.Internals.Services.Docs;
 /// Helper class to convert file paths to MSBuild-compatible embedded resource names.
 /// MSBuild follows C# identifier naming rules when creating resource names from file paths.
 /// </summary>
-internal static class EmbeddedResourceNameHelper 
+internal static class EmbeddedResourceNameHelper
 {
     /// <summary>
     /// Converts a file path to an embedded resource name using the same rules as MSBuild.
@@ -18,26 +18,18 @@ internal static class EmbeddedResourceNameHelper
     {
         // Split the path into segments - folders and filename
         var pathSegments = relativePath.Split('/', '\\');
-        
+
         // Transform all segments except the last one (filename) to be valid C# identifiers
-        var transformedSegments = new List<string>();
-        
-        // Transform folder names
-        for (int i = 0; i < pathSegments.Length - 1; i++)
-        {
-            transformedSegments.Add(TransformToValidIdentifier(pathSegments[i]));
-        }
-        
-        // Keep the filename as-is (MSBuild doesn't transform dots in filenames)
-        if (pathSegments.Length > 0)
-        {
-            transformedSegments.Add(pathSegments[pathSegments.Length - 1]);
-        }
-        
+        var transformedSegments = pathSegments
+            .Take(pathSegments.Length - 1)
+            .Select(TransformToValidIdentifier)
+            .Concat([pathSegments.LastOrDefault()])
+            .Where(segment => !string.IsNullOrEmpty(segment)); // Remove empty segments
+
         // Join with root namespace
         return string.Join('.', new[] { rootNamespace }.Concat(transformedSegments));
     }
-    
+
     /// <summary>
     /// Transforms a string to be a valid C# identifier following MSBuild rules.
     /// </summary>
@@ -46,16 +38,11 @@ internal static class EmbeddedResourceNameHelper
     private static string TransformToValidIdentifier(string input)
     {
         if (string.IsNullOrEmpty(input)) return input;
-        
+
         // Replace all non-alphanumeric characters with underscores
         var result = Regex.Replace(input, @"[^a-zA-Z0-9]", "_");
-        
+
         // If the result starts with a digit, prefix with underscore
-        if (char.IsDigit(result[0]))
-        {
-            result = "_" + result;
-        }
-        
-        return result;
+        return char.IsDigit(result[0]) ? "_" + result : result;
     }
 }
