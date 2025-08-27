@@ -127,6 +127,9 @@
     [Parameter]
     public AvailableColorSchemes AvailableColorSchemes { get; set; } = AvailableColorSchemes.Both;
 
+    [Parameter]
+    public IList<NavigationTreeOrdering>? OrderNavigation { get; set; }
+
     /// <summary>
     /// [Preview feature] Gets or sets whether to enable hot reloading. (default: false)
     /// </summary>

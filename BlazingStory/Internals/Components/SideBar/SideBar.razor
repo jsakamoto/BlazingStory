@@ -54,6 +54,10 @@
     {
         var expandedNavigationPath = this.RouteData.RouteToStoryDocsOrCustom ? this.RouteData.Parameter : null;
         var navigationService = this.Services.GetRequiredService<NavigationService>();
-        this._NavigationRoot = navigationService.BuildNavigationTree(this.StoriesStore.StoryContainers, this.CustomPageStore.CustomPageContainers, expandedNavigationPath);
+        this._NavigationRoot = navigationService.BuildNavigationTree(
+            this.StoriesStore.StoryContainers, 
+            this.CustomPageStore.CustomPageContainers, 
+            this.BlazingStoryApp.OrderNavigation,
+            expandedNavigationPath);
     }
 }

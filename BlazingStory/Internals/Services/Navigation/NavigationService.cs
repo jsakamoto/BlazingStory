@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using BlazingStory.Internals.Models;
+using BlazingStory.Types;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Internals.Services.Navigation;
@@ -24,9 +25,9 @@ internal class NavigationService
         this._NavigationHistory = new(helperScript);
     }
 
-    internal NavigationTreeItem BuildNavigationTree(IEnumerable<StoryContainer> storyContainers, IEnumerable<CustomPageContainer> customPageContainers, string? expandedNavigationPath)
+    internal NavigationTreeItem BuildNavigationTree(IEnumerable<StoryContainer> storyContainers, IEnumerable<CustomPageContainer> customPageContainers, IList<NavigationTreeOrdering>? customOrderings, string? expandedNavigationPath)
     {
-        this._Root = new NavigationTreeBuilder().Build(storyContainers, customPageContainers, expandedNavigationPath);
+        this._Root = new NavigationTreeBuilder().Build(storyContainers, customPageContainers, customOrderings, expandedNavigationPath);
         return this._Root;
     }
 
