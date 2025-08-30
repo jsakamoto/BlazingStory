@@ -25,7 +25,7 @@ internal class NavigationService
         this._NavigationHistory = new(helperScript);
     }
 
-    internal NavigationTreeItem BuildNavigationTree(IEnumerable<StoryContainer> storyContainers, IEnumerable<CustomPageContainer> customPageContainers, IList<NavigationTreeOrdering>? customOrderings, string? expandedNavigationPath)
+    internal NavigationTreeItem BuildNavigationTree(IEnumerable<StoryContainer> storyContainers, IEnumerable<CustomPageContainer> customPageContainers, IList<NavigationTreeOrderEntry>? customOrderings, string? expandedNavigationPath)
     {
         this._Root = new NavigationTreeBuilder().Build(storyContainers, customPageContainers, customOrderings, expandedNavigationPath);
         return this._Root;

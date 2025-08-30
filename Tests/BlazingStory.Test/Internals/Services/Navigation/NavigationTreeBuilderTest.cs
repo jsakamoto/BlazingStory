@@ -7,7 +7,7 @@ using RazorClassLib1.Components.Button;
 using RazorClassLib1.Components.Rating;
 using RazorClassLib1.Components.Select;
 using static BlazingStory.Test._Fixtures.TestHelper;
-using static BlazingStory.Types.NavigationTreeOrderingBuilder;
+using static BlazingStory.Types.NavigationTreeOrderBuilder;
 
 namespace BlazingStory.Test.Internals.Services.Navigation;
 

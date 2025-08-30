@@ -1,5 +1,5 @@
-﻿using static BlazingStory.Types.NavigationTreeOrdering;
-using static BlazingStory.Types.NavigationTreeOrderingBuilder;
+﻿using static BlazingStory.Types.NavigationTreeOrderBuilder;
+using static BlazingStory.Types.NavigationTreeOrderEntry;
 
 namespace BlazingStory.Test.Types;
 

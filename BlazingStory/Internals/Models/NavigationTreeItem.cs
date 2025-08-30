@@ -34,8 +34,8 @@ public class NavigationTreeItem : INavigationPath
     /// <item>Any remaining items not covered by the custom ordering rules are sorted using the default comparer (<see cref="NavigationTreeItemComparer.Instance"/>) and appended to the sorted list. </item>
     /// </list>
     /// After sorting, the sub-items of the current navigation tree item are replaced with the newly sorted list.</remarks>
-    /// <param name="customOrderings">A list of <see cref="NavigationTreeOrdering"/> objects that define the custom ordering rules for sorting. Each ordering specifies the desired sequence of items and sub-items within the navigation tree.</param>
-    internal void SortSubItemsRecurse(IList<NavigationTreeOrdering> customOrderings)
+    /// <param name="customOrderings">A list of <see cref="NavigationTreeOrderEntry"/> objects that define the custom ordering rules for sorting. Each ordering specifies the desired sequence of items and sub-items within the navigation tree.</param>
+    internal void SortSubItemsRecurse(IList<NavigationTreeOrderEntry> customOrderings)
     {
         static bool filterStories(NavigationTreeItem item) => item.Type is NavigationItemType.Docs or NavigationItemType.Story;
         var itemSourceSet = this.SubItems.Where(item => !filterStories(item)).ToDictionary(item => item.Caption, item => item);
@@ -48,13 +48,13 @@ public class NavigationTreeItem : INavigationPath
         for (var i = 0; i < customOrderings.Count; i++)
         {
             var request = customOrderings[i];
-            if (request.Type != NavigationTreeOrdering.NodeType.Item) continue;
+            if (request.Type != NavigationTreeOrderEntry.NodeType.Item) continue;
             if (itemSourceSet.TryGetValue(request.Title, out var item))
             {
                 sortedItems.Add(item);
                 itemSourceSet.Remove(request.Title);
 
-                var nextIsSubItems = i + 1 < customOrderings.Count && customOrderings[i + 1].Type == NavigationTreeOrdering.NodeType.SubItems;
+                var nextIsSubItems = i + 1 < customOrderings.Count && customOrderings[i + 1].Type == NavigationTreeOrderEntry.NodeType.SubItems;
                 var subCustomOrderings = nextIsSubItems ? customOrderings[i + 1].SubItems : [];
 
                 // Sort the sub items recursively
