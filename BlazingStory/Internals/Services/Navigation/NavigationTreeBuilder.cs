@@ -22,13 +22,7 @@ internal class NavigationTreeBuilder
 
         this.BuildStories(components, root);
         this.BuildCustomPages(customPages, root);
-#if true
-        var sortedSubItems = Sort(root.SubItems, customOrderings ?? []);
-        root.SubItems.Clear();
-        root.SubItems.AddRange(sortedSubItems);
-#else
-        root.SortSubItemsRecurse();
-#endif
+        root.SortSubItemsRecurse(customOrderings ?? []);
 
         if (!string.IsNullOrEmpty(expandedNavigationPath))
         {
@@ -110,60 +104,6 @@ internal class NavigationTreeBuilder
 
         return this.CreateOrGetNavigationTreeItem(subItem, pathSegments.Append(head).ToArray(), tails);
     }
-
-    private static IEnumerable<NavigationTreeItem> Sort(IEnumerable<NavigationTreeItem> items, IList<NavigationTreeOrdering> customOrderings)
-    {
-        if (items.FirstOrDefault()?.Type is not NavigationItemType.Container and not NavigationItemType.Component) return items.ToArray();
-
-        var itemSourceSet = items.ToDictionary(item => item.Caption, item => item);
-        var sortedItems = new List<NavigationTreeItem>();
-
-        for (var i = 0; i < customOrderings.Count; i++)
-        {
-            var request = customOrderings[i];
-            if (request.Type != NavigationTreeOrdering.NodeType.Item) continue;
-            if (itemSourceSet.TryGetValue(request.Title, out var item))
-            {
-                sortedItems.Add(item);
-                itemSourceSet.Remove(request.Title);
-
-                var nextIsSubItems = i + 1 < customOrderings.Count && customOrderings[i + 1].Type == NavigationTreeOrdering.NodeType.SubItems;
-                var subCustomOrderings = nextIsSubItems ? customOrderings[i + 1].SubItems : [];
-
-                var sortedSubItems = Sort(item.SubItems, subCustomOrderings);
-                item.SubItems.Clear();
-                item.SubItems.AddRange(sortedSubItems);
-
-                if (nextIsSubItems) i++;
-            }
-        }
-
-        // Sort remains recursively
-        var sortedRemains = itemSourceSet.Values.Order(comparer: NavigationTreeItemComparer.Instance).ToArray();
-        foreach (var item in sortedRemains)
-        {
-            var sortedSubItems = Sort(item.SubItems, []);
-            item.SubItems.Clear();
-            item.SubItems.AddRange(sortedSubItems);
-        }
-        sortedItems.AddRange(sortedRemains);
-
-        return sortedItems;
-    }
-
-    internal class NavigationTreeItemComparer : IComparer<NavigationTreeItem>
-    {
-        internal static readonly NavigationTreeItemComparer Instance = new();
-
-        int IComparer<NavigationTreeItem>.Compare(NavigationTreeItem? a, NavigationTreeItem? b)
-        {
-            if (a is null || b is null) return 0;
-            if (a.Type == NavigationItemType.CustomPage && b.Type != NavigationItemType.CustomPage) return -1;
-            if (a.Type != NavigationItemType.CustomPage && b.Type == NavigationItemType.CustomPage) return 1;
-            return a.Caption.CompareTo(b.Caption);
-        }
-    }
-
 
     private static bool FindExpansionPathTo(Stack<NavigationTreeItem> expansionPath, NavigationTreeItem item, string expandedNavigationPath)
     {
