@@ -1,6 +1,9 @@
-﻿<BlazingStory.Internals.Components.Icons.SvgIcons />
+﻿@using static BlazingStory.Types.NavigationTreeOrderBuilder
 
-<BlazingStoryApp Assemblies="new []{ typeof(App).Assembly }"
+<BlazingStory.Internals.Components.Icons.SvgIcons />
+
+<BlazingStoryApp Assemblies="[typeof(App).Assembly]"
                  DefaultLayout="typeof(DefaultLayout)"
+                 NavigationTreeOrder="@N["Internals", N["Components","Pages", N["Canvas", N["Controls"]]]]"
                  EnableHotReloading="true">
 </BlazingStoryApp>

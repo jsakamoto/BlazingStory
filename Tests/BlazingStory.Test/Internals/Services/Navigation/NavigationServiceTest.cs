@@ -13,7 +13,7 @@ internal class NavigationServiceTest
         // Given
         await using var host = new TestHost();
         var navService = host.Services.GetRequiredService<NavigationService>();
-        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), [], null);
+        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), [], [], null);
 
         // When / Then
         navService.Search(null).Any().IsFalse();
@@ -26,7 +26,7 @@ internal class NavigationServiceTest
         // Given
         await using var host = new TestHost();
         var navService = host.Services.GetRequiredService<NavigationService>();
-        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), [], null);
+        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), [], [], null);
 
         // When
         var searchResults = navService.Search(new[] { "Def" });
@@ -41,7 +41,7 @@ internal class NavigationServiceTest
         // Given
         await using var host = new TestHost();
         var navService = host.Services.GetRequiredService<NavigationService>();
-        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), [], null);
+        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), [], [], null);
 
         // When
         var searchResults = navService.Search(new[] { "lec", "def" }); // NOTE: "def" should match "Default" (ignore case).
@@ -58,7 +58,7 @@ internal class NavigationServiceTest
         // Given
         await using var host = new TestHost();
         var navService = host.Services.GetRequiredService<NavigationService>();
-        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), [], null);
+        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), [], [], null);
 
         // When
         var searchResults = navService.Search(new[] { "button" });
@@ -74,7 +74,7 @@ internal class NavigationServiceTest
         await using var host = new TestHost();
         var navMan = host.Services.GetRequiredService<NavigationManager>();
         var navService = host.Services.GetRequiredService<NavigationService>();
-        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), [], null);
+        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), [], [], null);
 
         navService.NavigateToNextComponentItem(new("story", "examples-button--default-button"), navigateToNext: true);
         navMan.Uri.Is("http://localhost/?path=/docs/examples-select--docs");
@@ -90,7 +90,7 @@ internal class NavigationServiceTest
         await using var host = new TestHost();
         var navMan = host.Services.GetRequiredService<NavigationManager>();
         var navService = host.Services.GetRequiredService<NavigationService>();
-        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), [], null);
+        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), [], [], null);
 
         navService.NavigateToNextComponentItem(new("docs", "examples-select--docs"), navigateToNext: false);
         navMan.Uri.Is("http://localhost/?path=/docs/examples-button--docs");
@@ -106,7 +106,7 @@ internal class NavigationServiceTest
         await using var host = new TestHost();
         var navMan = host.Services.GetRequiredService<NavigationManager>();
         var navService = host.Services.GetRequiredService<NavigationService>();
-        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), [], null);
+        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), [], [], null);
 
         navService.NavigateToNextDocsOrStory(new("docs", "examples-button--docs"), navigateToNext: true);
         navMan.Uri.Is("http://localhost/?path=/story/examples-button--default-button");
@@ -131,7 +131,7 @@ internal class NavigationServiceTest
         await using var host = new TestHost();
         var navMan = host.Services.GetRequiredService<NavigationManager>();
         var navService = host.Services.GetRequiredService<NavigationService>();
-        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), [], null);
+        navService.BuildNavigationTree(TestHelper.GetExampleStories1(host.Services), [], [], null);
 
         navService.NavigateToNextDocsOrStory(new("story", "examples-select--select"), navigateToNext: false);
         navMan.Uri.Is("http://localhost/?path=/docs/examples-select--docs");

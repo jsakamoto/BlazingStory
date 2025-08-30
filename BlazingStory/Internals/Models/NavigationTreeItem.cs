@@ -1,3 +1,5 @@
+using BlazingStory.Types;
+
 namespace BlazingStory.Internals.Models;
 
 public class NavigationTreeItem : INavigationPath
@@ -23,22 +25,52 @@ public class NavigationTreeItem : INavigationPath
     }
 
     /// <summary>
-    /// Sorts sub items recursively by its caption, except stories.
-    /// Ensures that items of type Custom are always on top.
+    /// Recursively sorts the sub-items of the current navigation tree item based on the specified custom ordering rules.
     /// </summary>
-    internal void SortSubItemsRecurse()
+    /// <remarks>This method processes the sub-items of the current navigation tree item in the following manner:
+    /// <list type="bullet">
+    /// <item>Items of type <see cref="NavigationItemType.Docs"/> or <see cref="NavigationItemType.Story"/> are preserved in their default order and placed before other item types.</item>
+    /// <item>Items matching the custom ordering rules are added to the sorted list in the specified order. If a custom ordering specifies sub-items, those sub-items are recursively sorted using the same logic.</item>
+    /// <item>Any remaining items not covered by the custom ordering rules are sorted using the default comparer (<see cref="NavigationTreeItemComparer.Instance"/>) and appended to the sorted list. </item>
+    /// </list>
+    /// After sorting, the sub-items of the current navigation tree item are replaced with the newly sorted list.</remarks>
+    /// <param name="customOrderings">A list of <see cref="NavigationTreeOrderEntry"/> objects that define the custom ordering rules for sorting. Each ordering specifies the desired sequence of items and sub-items within the navigation tree.</param>
+    internal void SortSubItemsRecurse(IList<NavigationTreeOrderEntry> customOrderings)
     {
-        if (this.SubItems.Count == 0) return;
-        if (this.SubItems.First().Type is not NavigationItemType.Container and not NavigationItemType.Component) return;
+        static bool filterStories(NavigationTreeItem item) => item.Type is NavigationItemType.Docs or NavigationItemType.Story;
+        var itemSourceSet = this.SubItems.Where(item => !filterStories(item)).ToDictionary(item => item.Caption, item => item);
+        var sortedItems = new List<NavigationTreeItem>(capacity: this.SubItems.Count);
 
-        this.SubItems.Sort((a, b) =>
+        // Keep the default ordering for docs and stories, placing them before other item types.
+        sortedItems.AddRange(this.SubItems.Where(filterStories));
+
+        // Sort the navigation tree items according to the custom ordering specifications.
+        for (var i = 0; i < customOrderings.Count; i++)
         {
-            if (a.Type == NavigationItemType.CustomPage && b.Type != NavigationItemType.CustomPage) return -1;
-            if (a.Type != NavigationItemType.CustomPage && b.Type == NavigationItemType.CustomPage) return 1;
-            return a.Caption.CompareTo(b.Caption);
-        });
+            var request = customOrderings[i];
+            if (request.Type != NavigationTreeOrderEntry.NodeType.Item) continue;
+            if (itemSourceSet.TryGetValue(request.Title, out var item))
+            {
+                sortedItems.Add(item);
+                itemSourceSet.Remove(request.Title);
 
-        this.SubItems.ForEach(item => item.SortSubItemsRecurse());
+                var nextIsSubItems = i + 1 < customOrderings.Count && customOrderings[i + 1].Type == NavigationTreeOrderEntry.NodeType.SubItems;
+                var subCustomOrderings = nextIsSubItems ? customOrderings[i + 1].SubItems : [];
+
+                // Sort the sub items recursively
+                item.SortSubItemsRecurse(subCustomOrderings);
+
+                if (nextIsSubItems) i++;
+            }
+        }
+
+        // Sort remains recursively
+        var sortedRemains = itemSourceSet.Values.Order(comparer: NavigationTreeItemComparer.Instance).ToArray();
+        foreach (var item in sortedRemains) item.SortSubItemsRecurse([]);
+        sortedItems.AddRange(sortedRemains);
+
+        // Replace the sub items
+        for (var i = 0; i < sortedItems.Count; i++) this.SubItems[i] = sortedItems[i];
     }
 
     internal IEnumerable<NavigationTreeItem> EnumAll()
@@ -89,5 +121,18 @@ public class NavigationTreeItem : INavigationPath
             if (parent != null) return parent;
         }
         return null;
+    }
+
+    internal class NavigationTreeItemComparer : IComparer<NavigationTreeItem>
+    {
+        internal static readonly NavigationTreeItemComparer Instance = new();
+
+        int IComparer<NavigationTreeItem>.Compare(NavigationTreeItem? a, NavigationTreeItem? b)
+        {
+            if (a is null || b is null) return 0;
+            if (a.Type == NavigationItemType.CustomPage && b.Type != NavigationItemType.CustomPage) return 1;
+            if (a.Type != NavigationItemType.CustomPage && b.Type == NavigationItemType.CustomPage) return -1;
+            return a.Caption.CompareTo(b.Caption);
+        }
     }
 }

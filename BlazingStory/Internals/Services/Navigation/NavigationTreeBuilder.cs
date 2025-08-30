@@ -1,4 +1,5 @@
 ﻿using BlazingStory.Internals.Models;
+using BlazingStory.Types;
 
 namespace BlazingStory.Internals.Services.Navigation;
 
@@ -12,16 +13,16 @@ internal class NavigationTreeBuilder
     /// </summary>
     /// <param name="components">A collection of <see cref="StoryContainer"/> that is the source of the navigation item tree.</param>
     /// <param name="customPages">A collection of <see cref="CustomPageContainer"/> that is the source of the navigation item tree.</param>
+    /// <param name="customOrderings">A collection of <see cref="NavigationTreeOrderEntry"/> that reprents specifications of ordering navigation tree items.</param>
     /// <param name="expandedNavigationPath">A navigation path string to specify the tree item node that should be expanded (ex."/story/examples-button--primary")</param>
     /// <returns></returns>
-    internal NavigationTreeItem Build(IEnumerable<StoryContainer> components, IEnumerable<CustomPageContainer> customPages, string? expandedNavigationPath)
+    internal NavigationTreeItem Build(IEnumerable<StoryContainer> components, IEnumerable<CustomPageContainer> customPages, IList<NavigationTreeOrderEntry>? customOrderings, string? expandedNavigationPath)
     {
         var root = new NavigationTreeItem { Type = NavigationItemType.Container };
 
         this.BuildStories(components, root);
         this.BuildCustomPages(customPages, root);
-
-        root.SortSubItemsRecurse();
+        root.SortSubItemsRecurse(customOrderings ?? []);
 
         if (!string.IsNullOrEmpty(expandedNavigationPath))
         {
@@ -115,4 +116,5 @@ internal class NavigationTreeBuilder
         expansionPath.Pop();
         return false;
     }
+
 }

@@ -436,25 +436,6 @@ This will display the provided HTML content as the description for the "Default"
 
 You can use any HTML markup within the `<Description>` render fragment to format your story's description.
 
-## ⚙️ Configure prefers color scheme
-
-By default, the "Blazing Story" app respects the system's color scheme, such as "dark" or "light". If you want to keep the "Blazing Story" app's color scheme to be either "dark" or "light" regardless of the system's color scheme, you can do that by setting the `AvailableColorScheme` parameter of the `BlazingStoryApp` component in your `App.razor` file.
-
-If you set that parameter with `Dark` or `Light`, except `Both`, the "Blazing Story" app will be displayed with the specified color scheme regardless of the system's color scheme.
-
-```razor
-@* 📄 App.razor *@
-<BlazingStoryApp 
-    Assemblies="[typeof(App).Assembly]"  
-    AvailableColorSchemes="AvailableColorSchemes.Light">
-    @* This app will be displayed "light" mode only 👆*@
-</BlazingStoryApp>
-```
-
-## 🪄 Include custom CSS or JavaScript files for your stories
-
-If you need to add `<link>` or `<script>` elements to include CSS or JavaScript files for canvas views of your stories, you should do that in the **`iframe.html`** file, not in the `index.html` file.
-
 ## 📝 Custom Pages & Markdown
 
 Blazing Story allows you to add custom pages that can include any content you want. These pages will be shown in the sidebar's navigation tree. It is helpful for adding a "Welcome" page, "Getting Started" page, or any other custom page. The custom pages are a Razor component so you can use any Blazor features.
@@ -504,6 +485,58 @@ For the example scenario, you already have a Blazor WebAssembly application proj
 3. The MD2RazorGenerator will automatically convert your Markdown files into Razor components with the `CustomPage` attribute applied.
 
 This approach combines the simplicity of Markdown for documentation with the power of Blazor's component model.
+
+## ↕️ Sorting the navigation tree items
+
+By default, items at the same level in the sidebar navigation tree are sorted alphabetically by title, with containers/components listed before custom pages. (Even if a custom page’s title would come first alphabetically, it appears after all containers/components.)
+
+To override the default order, set the `NavigationTreeOrder` parameter of the `BlazingStoryApp` in your `App.razor`. This parameter accepts a declarative list built with `NavigationTreeOrderBuilder.N[...]`.
+
+Rules:
+- Docs and Story items under a component keep their original order and are always listed first.
+- If an item is immediately followed by an `N[...]` group, that group specifies the order of that item’s children (applied recursively).
+- Unspecified siblings are appended in the default order (alphabetical, components before custom pages).
+
+Basic example (top-level and nested ordering):
+
+```razor
+@* 📄 App.razor *@
+@using static BlazingStory.Types.NavigationTreeOrderBuilder
+
+<BlazingStoryApp Assemblies="[typeof(App).Assembly]" 
+    NavigationTreeOrder="@N[
+      "Welcome",                    // top-level items 
+      "Components", 
+         N["Layouts",               // children under "Components" 
+             N["Header", "Footer"], // children under "Layouts" 
+           "Button"], 
+      "Templates"]" />
+```
+
+Notes:
+
+- Titles must match the captions shown at that level (e.g., top-level “Components”, then child “Layouts”, etc.).
+- Even if you list custom pages inside a component’s children, they still appear after Docs and Story items for that component.
+- Any items not mentioned in `NavigationTreeOrder` remain sorted by the default.
+ 
+## ⚙️ Configure prefers color scheme
+
+By default, the "Blazing Story" app respects the system's color scheme, such as "dark" or "light". If you want to keep the "Blazing Story" app's color scheme to be either "dark" or "light" regardless of the system's color scheme, you can do that by setting the `AvailableColorScheme` parameter of the `BlazingStoryApp` component in your `App.razor` file.
+
+If you set that parameter with `Dark` or `Light`, except `Both`, the "Blazing Story" app will be displayed with the specified color scheme regardless of the system's color scheme.
+
+```razor
+@* 📄 App.razor *@
+<BlazingStoryApp 
+    Assemblies="[typeof(App).Assembly]"  
+    AvailableColorSchemes="AvailableColorSchemes.Light">
+    @* This app will be displayed "light" mode only 👆*@
+</BlazingStoryApp>
+```
+
+## 🪄 Include custom CSS or JavaScript files for your stories
+
+If you need to add `<link>` or `<script>` elements to include CSS or JavaScript files for canvas views of your stories, you should do that in the **`iframe.html`** file, not in the `index.html` file.
 
 ## 🎀 Customize the title and brand logo
 
