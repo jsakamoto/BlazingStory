@@ -4,7 +4,7 @@
 
 ## 📝 Summary
 
-The clone of ["Storybook"](https://storybook.js.org/) for Blazor, a frontend workshop for building UI components and pages in isolation.
+The clone of ["Storybook"](https://storybook.js.org/) for Blazor, a front-end workshop for building UI components and pages in isolation.
 
 [![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/social-preview.png)](https://jsakamoto.github.io/BlazingStory/)
 
@@ -70,7 +70,7 @@ dotnet sln add ./MyBlazorWasmApp1.Stories/
 ```
 
 > [!Note]  
-> If you are working on a Blazor Server application project, you should run the `dotnet new blazingstoryserver` command.
+> If you are working on a Blazor Server application project, you should do the `dotnet new blazingstoryserver` command.
 
 > [!Note]  
 > To use the MCP server feature, you need to run the `dotnet new blazingstoryserver -mcp` command.
@@ -151,7 +151,159 @@ The "Button.stories.razor" would be like the below.
 </Stories>
 ```
 
-#### Step 5 - Run it!
+#### Step 5 - Configuring a Subpath for Blazor Storybook
+
+To run the Blazing Story app under a subpath (e.g., `/blazor`), you need to configure the application to handle routing and static file serving correctly. This is particularly important for Blazor Server apps or when deploying to environments like IIS or Azure, where the app may run under a subpath.
+
+1. **Update `Program.cs`**:
+   - Configure the subpath (e.g., `/blazor`) in `appsettings.json`, `appsettings.Development.json`, or via an environment variable (`BlazorSubpath`).
+   - Use `UsePathBase` to strip the subpath from requests, ensuring Blazor routing works correctly.
+   - Add `UseStaticFiles` in the branched pipeline to serve static files (e.g., JavaScript, CSS) under the subpath.
+   - Include `UseAntiforgery` in the branch to support Blazor Server's anti-forgery requirements.
+   - Example `Program.cs` configuration:
+
+```csharp
+using BlazingStory.Components;
+using BlazingStory.Configurations;
+using BlazorStorybook.Components.Pages;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+
+var serverUrl = builder.Configuration[WebHostDefaults.ServerUrlsKey]?.Split(';').FirstOrDefault() ?? "https://localhost:7248";
+builder.Services.TryAddScoped(sp => new HttpClient { BaseAddress = new Uri(serverUrl) });
+
+// Add Nova notification service for storybook stories
+builder.Services.AddNovaNotifications();
+
+builder.Services.AddHealthChecks();
+
+// Read the subpath from configuration (key: "BlazorSubpath"). Fallback to "/" if not set
+string subPath = builder.Configuration["BlazorSubpath"] ?? "/";
+if (string.IsNullOrWhiteSpace(subPath))
+{
+    subPath = "/"; // Ensure root fallback
+}
+else if (!subPath.StartsWith('/'))
+{
+    throw new InvalidOperationException("BlazorSubpath must start with '/'.");
+}
+
+// Trim any trailing slashes for consistency
+subPath = subPath == "/" ? subPath : subPath.TrimEnd('/');
+
+// Register as singleton
+builder.Services.AddSingleton(new BlazorSubpathConfig { Subpath = subPath });
+
+// Load configuration
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+
+// Configure headers to allow iframe embedding
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["X-Frame-Options"] = "ALLOWALL";
+    await next();
+});
+
+app.UseStaticFiles(); // Global static files
+app.UseRouting(); // Global routing
+app.MapHealthChecks("/health");
+
+// Redirect root (/) to the configured subpath
+app.MapGet("/", context =>
+{
+    context.Response.Redirect($"{subPath}/");
+    return Task.CompletedTask;
+});
+
+// Mount Blazor at the configurable subpath with branched pipeline
+app.Map(subPath, branch =>
+{
+    branch.UsePathBase(subPath); // Strips subpath for internal path handling
+    branch.UseStaticFiles();     // Serves static files (_content, _framework, wwwroot) under subpath
+    branch.UseRouting();         // Routing after static files
+    branch.UseAntiforgery();     // Anti-forgery for Blazor Server endpoints
+    branch.UseEndpoints(endpoints =>
+    {
+        endpoints.MapRazorComponents<BlazingStoryServerComponent<IndexPage, IFramePage>>()
+            .AddInteractiveServerRenderMode();
+    });
+});
+
+await app.RunAsync();
+```
+
+2. **Configure Subpath**:
+   - **Option 1: Update `appsettings.Development.json`**:
+     Set the subpath to `/blazor` to match your deployment.
+     ```json
+     {
+       "DetailedErrors": true,
+       "Logging": {
+         "LogLevel": {
+           "Default": "Information",
+           "Microsoft.AspNetCore": "Debug"
+         }
+       },
+       "BlazorSubpath": "/blazor"
+     }
+     ```
+   - **Option 2: Environment Variable (overrides `appsettings.json`)**:
+     - Set via command line:
+       ```shell
+       dotnet run --BlazorSubpath=/custompath
+       ```
+     - Set in OS:
+       - Linux/Mac: `export BlazorSubpath=/custompath`
+       - Windows: Set `BlazorSubpath` in Environment Variables
+     - In Docker:
+       ```shell
+       docker run -e BlazorSubpath=/app ...
+       ```
+
+3. **Update the IndexPage.razor and the IFramePage.razor**:
+   - Replace `<base href="@(new Uri(NavigationManager.BaseUri).AbsolutePath)" />` with `<base href="@(new Uri(NavigationManager.ToAbsoluteUri(SubpathConfig.Subpath + "/").ToString()).AbsolutePath)" />`
+   - Add also `@inject BlazorSubpathConfig SubpathConfig`
+
+4. **Fix Routing and Static File Issues**:
+   - If you encounter routing errors like `AmbiguousMatchException`, ensure only one `@page` directive is used in `BlazingStoryServerComponent.razor` (e.g., `@page "/{*urlPath}"` without `@page "/"`).
+   - If JavaScript/CSS files (e.g., `iframe-communication.js`, `blazor.web.js`) fail to load with MIME type errors, verify `UseStaticFiles()` is in the branched pipeline after `UsePathBase`.
+
+5. **Build and Run Commands**:
+   - Clean and rebuild the project to ensure no stale artifacts:
+     ```shell
+     dotnet clean
+     dotnet build
+     ```
+   - Run the Blazing Story app:
+     ```shell
+     dotnet run --project ./MyBlazorWasmApp1.Stories
+     ```
+   - For hot reloading (preview, unstable):
+     ```shell
+     dotnet watch --project ./MyBlazorWasmApp1.Stories
+     ```
+     Note: If the app freezes (e.g., on Docs pages), restart with `Ctrl+R` in `dotnet watch`.
+
+6. **Testing**:
+   - Access `https://localhost:7248/` (adjust port as needed) to redirect to `/blazor/`.
+   - Verify `/blazor/` loads `IndexPage.razor` and `/blazor/iframe.html` loads `IFramePage.razor`.
+   - Check the Network tab in browser dev tools (F12) to ensure static files (e.g., `/blazor/js/iframe-communication.js`, `/blazor/_framework/blazor.web.js`) return 200 with `application/javascript` MIME type.
+
+#### Step 6 - Run it!
 
 If you are working on Visual Studio, right-click the "MyBlazorWasmApp1.Stories" project in the solution explorer to show the context menu, click the "Set as Startup Project" menu item, and hit the `Ctrl` + `F5` key.
 
@@ -518,7 +670,7 @@ Notes:
 - Titles must match the captions shown at that level (e.g., top-level “Components”, then child “Layouts”, etc.).
 - Even if you list custom pages inside a component’s children, they still appear after Docs and Story items for that component.
 - Any items not mentioned in `NavigationTreeOrder` remain sorted by the default.
- 
+
 ## ⚙️ Configure prefers color scheme
 
 By default, the "Blazing Story" app respects the system's color scheme, such as "dark" or "light". If you want to keep the "Blazing Story" app's color scheme to be either "dark" or "light" regardless of the system's color scheme, you can do that by setting the `AvailableColorScheme` parameter of the `BlazingStoryApp` component in your `App.razor` file.

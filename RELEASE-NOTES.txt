@@ -1,3 +1,6 @@
+v.1.0.0-preview.60
+- Feature: Added support for deploying Blazing Story under a subpath (e.g., /blazor) by configuring BlazorSubpath in appsettings.json or via environment variables.
+
 v.1.0.0-preview.59
 - Enhancement: Added the NavigationTreeOrder parameter to BlazingStoryApp, enabling declarative custom ordering of sidebar navigation tree items (equivalent to Storybook's storySort.order). (Issue #80, thanks to @WimVdSElia)
 - Breaking Change: Custom documentation pages are now always placed after stories instead of before them, aligning with Storybook's behavior. By default (when no custom order is specified), documentation pages appear after containers and components.
