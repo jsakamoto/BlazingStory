@@ -1,4 +1,5 @@
-﻿using BlazingStory.Internals.Utils;
+﻿using BlazingStory.Internals.Components.Icons;
+using BlazingStory.Internals.Utils;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Internals.Services.Command;
@@ -11,6 +12,8 @@ public class Command
 
     internal readonly string? Title;
     
+    internal readonly SvgIconType? Icon;
+
     internal readonly string? LinkUrl;
 
     private HotKeyCombo? _HotKey;
@@ -25,13 +28,14 @@ public class Command
 
     internal Command(string? title = null, bool? flag = null) : this(default, title, flag) { }
 
-    public Command(HotKeyCombo? hotKey, string? title = null, bool? flag = null, string? linkUrl = null)
+    public Command(HotKeyCombo? hotKey, string? title = null, bool? flag = null, string? linkUrl = null, SvgIconType? icon = null)
     {
         this._HotKey = hotKey;
         this._DefaultHotKey = hotKey;
         this.Title = title;
         this.LinkUrl = linkUrl;
         this._Flag = flag;
+        this.Icon = icon;
     }
 
     /// <summary>Returns the key name of the hot key, like "⌃ ⇧ F1".</summary>

@@ -5,150 +5,150 @@
 @inject IJSRuntime JSRuntime
 
 <HeadContent>
-    @{
-        var updateToken = UriParameterKit.GetUpdateToken(this.JSRuntime);
-    }
-    <link rel="stylesheet" href="_content/Toolbelt.Blazor.SplitContainer/Toolbelt.Blazor.SplitContainer.bundle.scp.css@(updateToken)" />
-    <link rel="preload" href="_content/BlazingStory/fonts/nunito-sans-regular.woff2@(updateToken)" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="_content/BlazingStory/fonts/nunito-sans-bold.woff2@(updateToken)" as="font" type="font/woff2" crossorigin />
-    <link rel="stylesheet" href="_content/BlazingStory/fonts/fonts.css@(updateToken)" />
-    <link rel="stylesheet" href="_content/BlazingStory/css/styles.min.css@(updateToken)" />
+	@{
+		var updateToken = UriParameterKit.GetUpdateToken(this.JSRuntime);
+	}
+	<link rel="stylesheet" href="_content/Toolbelt.Blazor.SplitContainer/Toolbelt.Blazor.SplitContainer.bundle.scp.css@(updateToken)" />
+	<link rel="preload" href="_content/BlazingStory/fonts/nunito-sans-regular.woff2@(updateToken)" as="font" type="font/woff2" crossorigin />
+	<link rel="preload" href="_content/BlazingStory/fonts/nunito-sans-bold.woff2@(updateToken)" as="font" type="font/woff2" crossorigin />
+	<link rel="stylesheet" href="_content/BlazingStory/fonts/fonts.css@(updateToken)" />
+	<link rel="stylesheet" href="_content/BlazingStory/css/styles.min.css@(updateToken)" />
 </HeadContent>
 
 <SvgIcons />
 
 @if (this._Ready)
 {
-    <PathQueryRouter>
-        <SplitContainer Class="@CssClass("main-layout", this._SidBarVisibilityState)" @bind-FirstPaneSize="_SideBarSize" @bind-FirstPaneSize:after="OnSideBarSizeChanged" FirstPaneMinSize="200" SecondPaneMinSize="210">
+	<PathQueryRouter>
+		<SplitContainer Class="@CssClass("main-layout", this._SidBarVisibilityState)" @bind-FirstPaneSize="_SideBarSize" @bind-FirstPaneSize:after="OnSideBarSizeChanged" FirstPaneMinSize="200" SecondPaneMinSize="210">
 
-            <FirstPane>
-                <div class="sidebar-container fill">
-                    <SideBar />
-                </div>
-            </FirstPane>
+			<FirstPane>
+				<div class="sidebar-container fill">
+					<SideBar />
+				</div>
+			</FirstPane>
 
-            <SecondPane>
-                @Body
-            </SecondPane>
-        </SplitContainer>
-    </PathQueryRouter>
+			<SecondPane>
+				@Body
+			</SecondPane>
+		</SplitContainer>
+	</PathQueryRouter>
 }
 
 @code
 {
-    [CascadingParameter]
-    internal IServiceProvider Services { get; init; } = default!;
+	[CascadingParameter]
+	internal IServiceProvider Services { get; init; } = default!;
 
-    private bool _Ready = false;
+	private bool _Ready = false;
 
-    private HelperScript HelperScript = default!;
+	private HelperScript HelperScript = default!;
 
-    private int _SideBarSize = 210;
+	private int _SideBarSize = 210;
 
-    private string SideBarSizeKeyName => this.GetType().Name + "." + nameof(_SideBarSize);
+	private string SideBarSizeKeyName => this.GetType().Name + "." + nameof(_SideBarSize);
 
-    private Command? _SideBarVisibleCommand;
+	private Command? _SideBarVisibleCommand;
 
-    private Command? _GoFullScreenCommand;
+	private Command? _GoFullScreenCommand;
 
-    private readonly Subscriptions _Subscriptions = new();
+	private readonly Subscriptions _Subscriptions = new();
 
-    private enum SidBarVisibilityStates
-    {
-        SidebarShowing,
-        SidebarShown,
-        SidebarHiding,
-        SidebarHidden,
-    }
+	private enum SidBarVisibilityStates
+	{
+		SidebarShowing,
+		SidebarShown,
+		SidebarHiding,
+		SidebarHidden,
+	}
 
-    private SidBarVisibilityStates _SidBarVisibilityState = SidBarVisibilityStates.SidebarShown;
+	private SidBarVisibilityStates _SidBarVisibilityState = SidBarVisibilityStates.SidebarShown;
 
-    protected override void OnInitialized()
-    {
-        this.HelperScript = this.Services.GetRequiredService<HelperScript>();
-    }
+	protected override void OnInitialized()
+	{
+		this.HelperScript = this.Services.GetRequiredService<HelperScript>();
+	}
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            var commandService = await this.ConfigureCommandsAsync(this.Services);
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			var commandService = await this.ConfigureCommandsAsync(this.Services);
 
-            this._SideBarVisibleCommand = commandService[CommandType.SideBarVisible]!;
-            this._GoFullScreenCommand = commandService[CommandType.GoFullScreen]!;
-            this._Subscriptions.Add(this._SideBarVisibleCommand.Subscribe(this.OnToggleSideBarVisible));
-            this._Subscriptions.Add(this._GoFullScreenCommand.Subscribe(this.OnToggleFullscreen));
-            this._Subscriptions.Add(commandService.Subscribe(CommandType.AboutYourBlazingStory, () => { this.NavigationManager.NavigateTo("./?path=/settings/about"); return ValueTask.CompletedTask; }));
-            this._Subscriptions.Add(commandService.Subscribe(CommandType.ReleaseNotes, () => { this.NavigationManager.NavigateTo("./?path=/settings/release-notes"); return ValueTask.CompletedTask; }));
-            this._Subscriptions.Add(commandService.Subscribe(CommandType.KeyboardShortcuts, () => { this.NavigationManager.NavigateTo("./?path=/settings/shortcuts"); return ValueTask.CompletedTask; }));
-            this._SidBarVisibilityState = this.GetSidebarVisible() ? SidBarVisibilityStates.SidebarShown : SidBarVisibilityStates.SidebarHidden;
+			this._SideBarVisibleCommand = commandService[CommandType.SideBarVisible]!;
+			this._GoFullScreenCommand = commandService[CommandType.GoFullScreen]!;
+			this._Subscriptions.Add(this._SideBarVisibleCommand.Subscribe(this.OnToggleSideBarVisible));
+			this._Subscriptions.Add(this._GoFullScreenCommand.Subscribe(this.OnToggleFullscreen));
+			this._Subscriptions.Add(commandService.Subscribe(CommandType.AboutYourBlazingStory, () => { this.NavigationManager.NavigateTo("./?path=/settings/about"); return ValueTask.CompletedTask; }));
+			this._Subscriptions.Add(commandService.Subscribe(CommandType.ReleaseNotes, () => { this.NavigationManager.NavigateTo("./?path=/settings/release-notes"); return ValueTask.CompletedTask; }));
+			this._Subscriptions.Add(commandService.Subscribe(CommandType.KeyboardShortcuts, () => { this.NavigationManager.NavigateTo("./?path=/settings/shortcuts"); return ValueTask.CompletedTask; }));
+			this._SidBarVisibilityState = this.GetSidebarVisible() ? SidBarVisibilityStates.SidebarShown : SidBarVisibilityStates.SidebarHidden;
 
-            this._Ready = true;
-            this.StateHasChanged();
+			this._Ready = true;
+			this.StateHasChanged();
 
-            await this.HelperScript.SetupKeyDownReceiverAsync();
-            this._SideBarSize = await this.HelperScript.GetLocalStorageItemAsync(this.SideBarSizeKeyName, this._SideBarSize);
-            this.StateHasChanged();
-        }
+			await this.HelperScript.SetupKeyDownReceiverAsync();
+			this._SideBarSize = await this.HelperScript.GetLocalStorageItemAsync(this.SideBarSizeKeyName, this._SideBarSize);
+			this.StateHasChanged();
+		}
 
-        else
-        {
-            if (this._SidBarVisibilityState == SidBarVisibilityStates.SidebarHiding)
-            {
-                this._SidBarVisibilityState = SidBarVisibilityStates.SidebarHidden;
-                this.StateHasChanged();
-            }
-            else if (this._SidBarVisibilityState == SidBarVisibilityStates.SidebarShowing)
-            {
-                await Task.Delay(100);
-                this._SidBarVisibilityState = SidBarVisibilityStates.SidebarShown;
-                this.StateHasChanged();
-            }
-        }
-    }
+		else
+		{
+			if (this._SidBarVisibilityState == SidBarVisibilityStates.SidebarHiding)
+			{
+				this._SidBarVisibilityState = SidBarVisibilityStates.SidebarHidden;
+				this.StateHasChanged();
+			}
+			else if (this._SidBarVisibilityState == SidBarVisibilityStates.SidebarShowing)
+			{
+				await Task.Delay(100);
+				this._SidBarVisibilityState = SidBarVisibilityStates.SidebarShown;
+				this.StateHasChanged();
+			}
+		}
+	}
 
-    private async ValueTask<CommandService> ConfigureCommandsAsync(IServiceProvider services)
-    {
-        var commandServce = services.GetRequiredService<CommandService>();
-        await commandServce.Commands.EnsureInitializedAsync(() => new (CommandType, Command)[]
-        {
-            (CommandType.AboutYourBlazingStory, new(default, "About your Blazing Story")),
-            (CommandType.ReleaseNotes, new(default, "Release notes")),
-            (CommandType.Documentation, new(default, "Documentation", linkUrl: "https://blazingstory.github.io/docs/")),
-            (CommandType.KeyboardShortcuts, new(new(Ctrl | Shift, Code.Comma), "Keyboard shortcuts")),
+	private async ValueTask<CommandService> ConfigureCommandsAsync(IServiceProvider services)
+	{
+		var commandServce = services.GetRequiredService<CommandService>();
+		await commandServce.Commands.EnsureInitializedAsync(() => new (CommandType, Command)[]
+		{
+			(CommandType.AboutYourBlazingStory, new(default, "About your Blazing Story", icon: SvgIconType.CircleInfo)),
+			(CommandType.ReleaseNotes, new(default, "Release notes", icon: SvgIconType.ReleaseNotes)),
+			(CommandType.Documentation, new(default, "Documentation", linkUrl: "https://blazingstory.github.io/docs/", icon: SvgIconType.OpenNewTab)),
+			(CommandType.KeyboardShortcuts, new(new(Ctrl | Shift, Code.Comma), "Keyboard shortcuts", icon: SvgIconType.KeyboardShortcuts)),
 
-            (CommandType.SideBarVisible,new(new(Alt, Code.S), "Show sidebar", flag: true)),
-            (CommandType.ToolBarVisible,new(new(Alt, Code.T), "Show toolbar", flag: true)),
-            (CommandType.AddonPanelVisible, new(new(Alt, Code.A), "Show addons", flag: true)),
-            (CommandType.AddonPanelOrientation, new(new(Alt, Code.D), "Change addons orientation")),
-            (CommandType.GoFullScreen, new(new(Alt, Code.F), "Go full screen", flag: false)),
-            (CommandType.GoSearch, new(new(Ctrl, Code.K), "Search")),
-            (CommandType.PreviousComponent, new(new(Alt, Code.ArrowUp), "Previous component")),
-            (CommandType.NextComponent, new(new(Alt, Code.ArrowDown), "Next component")),
-            (CommandType.PreviousStory, new(new(Alt, Code.ArrowLeft), "Previous story")),
-            (CommandType.NextStory, new(new(Alt, Code.ArrowRight), "Next story")),
-            (CommandType.CollapseAll, new(new(Ctrl | Shift, Code.ArrowUp), "Collapse all"))
-        });
-        return commandServce;
-    }
+			(CommandType.SideBarVisible,new(new(Alt, Code.S), "Show sidebar", flag: true)),
+			(CommandType.ToolBarVisible,new(new(Alt, Code.T), "Show toolbar", flag: true)),
+			(CommandType.AddonPanelVisible, new(new(Alt, Code.A), "Show addons", flag: true)),
+			(CommandType.AddonPanelOrientation, new(new(Alt, Code.D), "Change addons orientation")),
+			(CommandType.GoFullScreen, new(new(Alt, Code.F), "Go full screen", flag: false)),
+			(CommandType.GoSearch, new(new(Ctrl, Code.K), "Search")),
+			(CommandType.PreviousComponent, new(new(Alt, Code.ArrowUp), "Previous component")),
+			(CommandType.NextComponent, new(new(Alt, Code.ArrowDown), "Next component")),
+			(CommandType.PreviousStory, new(new(Alt, Code.ArrowLeft), "Previous story")),
+			(CommandType.NextStory, new(new(Alt, Code.ArrowRight), "Next story")),
+			(CommandType.CollapseAll, new(new(Ctrl | Shift, Code.ArrowUp), "Collapse all"))
+		});
+		return commandServce;
+	}
 
-    private async Task OnSideBarSizeChanged()
-    {
-        await this.HelperScript.SetLocalStorageItemAsync(this.SideBarSizeKeyName, _SideBarSize);
-    }
+	private async Task OnSideBarSizeChanged()
+	{
+		await this.HelperScript.SetLocalStorageItemAsync(this.SideBarSizeKeyName, _SideBarSize);
+	}
 
-    private ValueTask OnToggleSideBarVisible() => this.ToggleSideBarVisibliy(this._SideBarVisibleCommand);
+	private ValueTask OnToggleSideBarVisible() => this.ToggleSideBarVisibliy(this._SideBarVisibleCommand);
 
-    private ValueTask OnToggleFullscreen() => this.ToggleSideBarVisibliy(this._GoFullScreenCommand);
+	private ValueTask OnToggleFullscreen() => this.ToggleSideBarVisibliy(this._GoFullScreenCommand);
 
-    private async ValueTask ToggleSideBarVisibliy(Command? command)
-    {
-        if (command == null) return;
-        command.ToggleFlag();
-        this._SidBarVisibilityState = this.GetSidebarVisible() ? SidBarVisibilityStates.SidebarShowing : SidBarVisibilityStates.SidebarHiding;
-        await ValueTask.CompletedTask;
-    }
+	private async ValueTask ToggleSideBarVisibliy(Command? command)
+	{
+		if (command == null) return;
+		command.ToggleFlag();
+		this._SidBarVisibilityState = this.GetSidebarVisible() ? SidBarVisibilityStates.SidebarShowing : SidBarVisibilityStates.SidebarHiding;
+		await ValueTask.CompletedTask;
+	}
 
-    private bool GetSidebarVisible() => (this._SideBarVisibleCommand?.Flag ?? true) && !(this._GoFullScreenCommand?.Flag ?? false);
+	private bool GetSidebarVisible() => (this._SideBarVisibleCommand?.Flag ?? true) && !(this._GoFullScreenCommand?.Flag ?? false);
 }

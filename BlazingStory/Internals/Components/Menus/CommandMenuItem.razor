@@ -3,62 +3,67 @@
 
 @if (this.Command != null)
 {
-    var hotKey = this.Command.HotKey;
-    var hasHotkey = hotKey != null && hotKey.Code != "";
+	var hotKey = this.Command.HotKey;
+	var hasHotkey = hotKey != null && hotKey.Code != "";
 	var linkUrl = this.Command.LinkUrl;
-    var hasLink = !string.IsNullOrEmpty(linkUrl);
+	var hasLink = !string.IsNullOrEmpty(linkUrl);
+	var icon = this.Command.Flag == true ? SvgIconType.Check : this.Command.Icon;
 
 	var tagName = hasLink ? "a" : "div";
-    var cssClass = CssClass("menu-item", "command-menu-item", new { Active = this.Command.Flag == true, hasHotkey });
+	var cssClass = CssClass("menu-item", "command-menu-item", new { Active = this.Command.Flag == true, hasHotkey });
 	var attributes = new Dictionary<string, object?>();
-    if (hasLink)
-    {
+	if (hasLink)
+	{
 		attributes["href"] = linkUrl;
 		attributes["target"] = "_blank";
-    }
+	}
+	if (this.Command.Flag.HasValue)
+	{
+		attributes["aria-checked"] = this.Command.Flag.Value.ToString().ToLower();
+	}
 
-    <HtmlElement TagName="@tagName" class="@cssClass" OnClick="OnClickMenuItem" @attributes="attributes">
-        <span class="check-mark-area">
-            @if (this.Command.Flag == true)
-            {
-                <span><SvgIcon Type="SvgIconType.Check" /></span>
-            }
-        </span>
-        <span class="command-title">@this.Command.Title</span>
-        <span class="hotkey-area">
-            @if (hasHotkey)
-            {
-                <KeyMap Key="hotKey" />
-            }
-        </span>
-    </HtmlElement>
+	<HtmlElement TagName="@tagName" class="@cssClass" OnClick="OnClickMenuItem" @attributes="attributes">
+		<span class="icon-area">
+			@if (icon.HasValue)
+			{
+				<span><SvgIcon Type="icon.Value" /></span>
+			}
+		</span>
+		<span class="command-title">@this.Command.Title</span>
+		<span class="hotkey-area">
+			@if (hasHotkey)
+			{
+				<KeyMap Key="hotKey" />
+			}
+		</span>
+	</HtmlElement>
 }
 
 @code
 {
-    [Parameter, EditorRequired]
-    public Command? Command { get; set; }
+	[Parameter, EditorRequired]
+	public Command? Command { get; set; }
 
-    protected override void OnInitialized()
-    {
-        if (this.Command == null) return;
-        this.Command.StateChanged += Command_StateChanged;
-    }
+	protected override void OnInitialized()
+	{
+		if (this.Command == null) return;
+		this.Command.StateChanged += Command_StateChanged;
+	}
 
-    private async Task OnClickMenuItem()
-    {
-        if (this.Command == null) return;
-        await this.Command.InvokeAsync();
-    }
+	private async Task OnClickMenuItem()
+	{
+		if (this.Command == null) return;
+		await this.Command.InvokeAsync();
+	}
 
-    private void Command_StateChanged(object? sender, EventArgs args)
-    {
-        this.StateHasChanged();    
-    }
+	private void Command_StateChanged(object? sender, EventArgs args)
+	{
+		this.StateHasChanged();
+	}
 
-    public void Dispose()
-    {
-        if (this.Command == null) return;
-        this.Command.StateChanged -= Command_StateChanged;
-    }
+	public void Dispose()
+	{
+		if (this.Command == null) return;
+		this.Command.StateChanged -= Command_StateChanged;
+	}
 }

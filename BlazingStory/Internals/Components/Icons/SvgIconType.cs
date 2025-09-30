@@ -40,5 +40,10 @@ public enum SvgIconType
     Link,
     FullScreen,
     Check,
-    Sidebar
+    Sidebar,
+
+    // ---- icons on the settings menu ----
+    CircleInfo,
+    ReleaseNotes,
+    KeyboardShortcuts,
 }

@@ -1226,12 +1226,15 @@ a.icon-button {
   padding: 0 10px 0 8px;
   overflow-y: hidden;
 }
-.menu-item.command-menu-item .check-mark-area {
-  color: var(--bs-focused-color);
+.menu-item.command-menu-item .icon-area {
+  color: var(--bs-dimmed-hover-text-color);
   width: 25px;
 }
-.menu-item.command-menu-item .check-mark-area svg.svg-icon {
+.menu-item.command-menu-item .icon-area svg.svg-icon {
   --bs-svg-icon-size: 16px;
+}
+.menu-item.command-menu-item[aria-checked] .icon-area {
+  color: var(--bs-focused-color);
 }
 .menu-item.command-menu-item .command-title {
   flex: 1;
@@ -1239,6 +1242,7 @@ a.icon-button {
 .menu-item.command-menu-item .hotkey-area {
   padding-left: 10px;
   margin-bottom: 2px;
+  font-weight: normal;
 }
 
 a.menu-item.command-menu-item {
