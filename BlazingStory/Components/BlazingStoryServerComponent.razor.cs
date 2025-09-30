@@ -33,9 +33,6 @@ public partial class BlazingStoryServerComponent<
     // Provides configured subpath for Blazor hosting (e.g., "/blazor")
     [Inject] private BlazorSubpathConfig? SubpathConfig { get; set; }
 
-    // Logger for diagnostics and debugging
-    [Inject] private ILogger<BlazingStoryServerComponent<TIndexPage, TIFramePage>>? Logger { get; set; }
-
     // Flag indicating whether the current request is for iframe.html
     private bool _RequestForIFrameHtml = false;
 
@@ -68,9 +65,5 @@ public partial class BlazingStoryServerComponent<
 
         // Mark request as iframe if paths match
         this._RequestForIFrameHtml = uri.AbsolutePath == iframePath;
-
-        // Debug logging: current URI, expected iframe path, match flag
-        this.Logger?.LogDebug("Current URI: {Uri}, Iframe Path: {IframePath}, IsIframe: {IsIframe}",
-            uri.AbsolutePath, iframePath, this._RequestForIFrameHtml);
     }
 }
