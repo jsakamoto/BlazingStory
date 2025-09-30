@@ -1241,6 +1241,11 @@ a.icon-button {
   margin-bottom: 2px;
 }
 
+a.menu-item.command-menu-item {
+  color: var(--bs-popup-text-color);
+  text-decoration: none;
+}
+
 .preview-frame {
   position: absolute;
   inset: 0;

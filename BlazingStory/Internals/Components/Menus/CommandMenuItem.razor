@@ -5,8 +5,19 @@
 {
     var hotKey = this.Command.HotKey;
     var hasHotkey = hotKey != null && hotKey.Code != "";
+	var linkUrl = this.Command.LinkUrl;
+    var hasLink = !string.IsNullOrEmpty(linkUrl);
 
-    <div class="menu-item command-menu-item @CssClass(new{ Active = this.Command.Flag == true, hasHotkey})" @onclick="OnClickMenuItem">
+	var tagName = hasLink ? "a" : "div";
+    var cssClass = CssClass("menu-item", "command-menu-item", new { Active = this.Command.Flag == true, hasHotkey });
+	var attributes = new Dictionary<string, object?>();
+    if (hasLink)
+    {
+		attributes["href"] = linkUrl;
+		attributes["target"] = "_blank";
+    }
+
+    <HtmlElement TagName="@tagName" class="@cssClass" OnClick="OnClickMenuItem" @attributes="attributes">
         <span class="check-mark-area">
             @if (this.Command.Flag == true)
             {
@@ -20,7 +31,7 @@
                 <KeyMap Key="hotKey" />
             }
         </span>
-    </div>
+    </HtmlElement>
 }
 
 @code

@@ -10,6 +10,8 @@ public class Command
     public bool? Flag { get => this._Flag; set { if (this._Flag == value) return; this._Flag = value; this.StateChanged?.Invoke(this, EventArgs.Empty); } }
 
     internal readonly string? Title;
+    
+    internal readonly string? LinkUrl;
 
     private HotKeyCombo? _HotKey;
 
@@ -23,11 +25,12 @@ public class Command
 
     internal Command(string? title = null, bool? flag = null) : this(default, title, flag) { }
 
-    public Command(HotKeyCombo? hotKey, string? title = null, bool? flag = null)
+    public Command(HotKeyCombo? hotKey, string? title = null, bool? flag = null, string? linkUrl = null)
     {
         this._HotKey = hotKey;
         this._DefaultHotKey = hotKey;
         this.Title = title;
+        this.LinkUrl = linkUrl;
         this._Flag = flag;
     }
 
