@@ -54,7 +54,9 @@
 @code {
     private RenderFragment<NavigationTreeItem> NavigationTreeItemContent => (NavigationTreeItem item) =>
     @<text>
-        <span class="chevron"></span>
+        <span class="chevron">
+            <SvgIcon Type="SvgIconType.Chevron" />
+        </span>
         <span class="icon">
             <SvgIcon Type="GetIconType(item)" />
         </span>

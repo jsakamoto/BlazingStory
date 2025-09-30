@@ -29,7 +29,7 @@
     --bs-sidebar-nav-active-back-color: #1ea7fd;
     --bs-focused-color: var(--bs-accent-color);
     --bs-focused-half-color: #{rgba($accent-color, 0.15)};
-    --bs-chevron-color: rgba(121,129,134,0.6);
+    --bs-chevron-color: var(--bs-dimmed-text-color);
     // tool bar
     --bs-toolbar-back-color: #292c2e;
     // add-on panel
