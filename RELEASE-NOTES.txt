@@ -1,5 +1,9 @@
-v.1.0.0-preview.60
+v.1.0.0-preview.61
 - Feature: Added support for deploying Blazing Story under a subpath (e.g., /blazor) by configuring BlazorSubpath in appsettings.json or via environment variables.
+
+v.1.0.0-preview.60
+- Update: Upgraded the UI design to match Storybook v9, bringing a more modern and refined user interface.
+- Enhancement: Added "Documentation" menu item to the settings menu, providing easy access to the newly launched Blazing Story documentation site.
 
 v.1.0.0-preview.59
 - Enhancement: Added the NavigationTreeOrder parameter to BlazingStoryApp, enabling declarative custom ordering of sidebar navigation tree items (equivalent to Storybook's storySort.order). (Issue #80, thanks to @WimVdSElia)
