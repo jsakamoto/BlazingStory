@@ -15,8 +15,6 @@ namespace BlazingStory.Components;
 /// This version supports both:
 /// - With DI registration of <see cref="BlazorSubpathConfig" />.
 /// - Without DI registration (fallbacks automatically to "/").
-///
-/// This component is sealed (cannot be inherited).
 /// </summary>
 /// <typeparam name="TIndexPage">
 /// The type representing the index page component.
@@ -24,7 +22,7 @@ namespace BlazingStory.Components;
 /// <typeparam name="TIFramePage">
 /// The type representing the iframe page component.
 /// </typeparam>
-public sealed partial class BlazingStoryServerComponent<
+public partial class BlazingStoryServerComponent<
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TIndexPage,
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TIFramePage> : ComponentBase
     where TIndexPage : ComponentBase
