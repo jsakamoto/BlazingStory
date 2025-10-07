@@ -43,6 +43,10 @@
     }
 
     .explorer-menu {
-        margin: 0;
+        margin: 20px 0;
+    }
+
+    .explorer-menu:has(> .navigation-tree > .navigation-tree-item.type-container:first-child) {
+        margin-top: 0;
     }
 }
