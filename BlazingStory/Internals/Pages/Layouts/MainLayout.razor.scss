@@ -42,6 +42,6 @@
 }
 
 .sidebar-container {
-    padding: 16px calc(12px - var(--splitter-bar-size)) 20px 12px;
+    padding: 16px calc(12px - var(--splitter-bar-size) + 1px) 20px 12px;
     background-color: var(--bs-back-color);
 }
