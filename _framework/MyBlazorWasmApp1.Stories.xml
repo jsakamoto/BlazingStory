@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MyBlazorWasmApp1.Stories</name>
+    </assembly>
+    <members>
+        <member name="T:MyBlazorWasmApp1.Stories.Models.User">
+            <summary>
+            Represents a user model used in stories for the Blazor WebAssembly application.
+            Implements <see cref="T:MyBlazorWasmApp1.Models.IUser"/>.
+            </summary>
+        </member>
+        <member name="P:MyBlazorWasmApp1.Stories.Models.User.Name">
+            <summary>
+            Gets or sets the display name of the user.
+            </summary>
+        </member>
+    </members>
+</doc>
