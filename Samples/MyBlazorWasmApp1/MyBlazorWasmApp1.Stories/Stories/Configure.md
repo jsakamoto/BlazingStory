@@ -1,5 +1,5 @@
 ---
-$attribute: CustomPage("Blazing Story/Welcome")
+$attribute: CustomPage("Configure your project")
 ---
 ## <img src="https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/icon.min.64x64.svg" style="vertical-align: middle;"> Blazing Story
 
