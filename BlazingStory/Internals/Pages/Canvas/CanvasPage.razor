@@ -5,293 +5,295 @@
 
 <div class="fill stack vertical addon-pane-@(this.AddonPanelVisible ? "visible" : "hidden")">
 
-    <SplitContainer Class="canvas-page-container fill" Orientation="this._AddonPanelLayout.SplitterOrientation" SecondPaneMinSize="80"
-                    @bind-SecondPaneSize="_AddonPanelSize"
-                    @bind-SecondPaneSize:after="OnAddonPanelSizeChanged">
+	<SplitContainer Class="canvas-page-container fill"
+					Orientation="this._AddonPanelLayout.SplitterOrientation"
+					UnitOfPaneSize="UnitOfPaneSize.Percent"
+					@bind-SecondPaneSize="_AddonPanelSize"
+					@bind-SecondPaneSize:after="OnAddonPanelSizeChanged">
 
-        <FirstPane>
-            <div class="canvas-container fill stack vertical">
+		<FirstPane>
+			<div class="canvas-container fill stack vertical">
 
-                @* -- Toolbar -- *@
-                <ToolBar Visible="this._ToolbarVisibleCommand?.Flag == true">
-                    @if (this._Commands[CommandType.SideBarVisible]?.Flag == false)
-                    {
-                        <IconButton Icon="SvgIconType.Sidebar" Command="this._Commands[CommandType.SideBarVisible]" />
-                        <Separator />
-                    }
+				@* -- Toolbar -- *@
+				<ToolBar Visible="this._ToolbarVisibleCommand?.Flag == true">
+					@if (this._Commands[CommandType.SideBarVisible]?.Flag == false)
+					{
+						<IconButton Icon="SvgIconType.Sidebar" Command="this._Commands[CommandType.SideBarVisible]" />
+						<Separator />
+					}
 
-                    <IconButton Icon="SvgIconType.Reload" OnClick="OnClickReload" Title="Reload the story" />
-                    <IconButton Icon="SvgIconType.ZoomIn" OnClick="OnClickZoomIn" Title="Zoom in" />
-                    <IconButton Icon="SvgIconType.ZoomOut" OnClick="OnClickZoomOut" Title="Zoom out" />
-                    <IconButton Icon="SvgIconType.ZoomReset" OnClick="OnClickResetZoom" Title="Reset zoom" />
-                    <Separator />
+					<IconButton Icon="SvgIconType.Reload" OnClick="OnClickReload" Title="Reload the story" />
+					<IconButton Icon="SvgIconType.ZoomIn" OnClick="OnClickZoomIn" Title="Zoom in" />
+					<IconButton Icon="SvgIconType.ZoomOut" OnClick="OnClickZoomOut" Title="Zoom out" />
+					<IconButton Icon="SvgIconType.ZoomReset" OnClick="OnClickResetZoom" Title="Reset zoom" />
+					<Separator />
 
-                    @* -- Render Add-On's Toolbar Contents -- *@
-                    @foreach (var addon in this.AddonsStore.GetAddons(AddonType.CanvasPage))
-                    {
-                        <text>@addon.ToolbarContents</text>
-                    }
+					@* -- Render Add-On's Toolbar Contents -- *@
+					@foreach (var addon in this.AddonsStore.GetAddons(AddonType.CanvasPage))
+					{
+						<text>@addon.ToolbarContents</text>
+					}
 
-                    <Spacer />
+					<Spacer />
 
-                    @if (this._AddonPanelVisibleCommand?.Flag != true)
-                    {
-                        <IconButton Icon="this.ToggleOrientationButtonIcon" Command="this._AddonPanelVisibleCommand" />
-                    }
-                    @if ((this._GoFullscreenCommand?.Flag ?? true) == true)
-                    {
-                        <IconButton Icon="SvgIconType.CircleClose" Command="this._GoFullscreenCommand" Title="Exit full screen [{0}]" />
-                    }
-                    else
-                    {
-                        <IconButton Icon="SvgIconType.FullScreen" Command="this._GoFullscreenCommand" />
-                    }
+					@if (this._AddonPanelVisibleCommand?.Flag != true)
+					{
+						<IconButton Icon="this.ToggleOrientationButtonIcon" Command="this._AddonPanelVisibleCommand" />
+					}
+					@if ((this._GoFullscreenCommand?.Flag ?? true) == true)
+					{
+						<IconButton Icon="SvgIconType.CircleClose" Command="this._GoFullscreenCommand" Title="Exit full screen [{0}]" />
+					}
+					else
+					{
+						<IconButton Icon="SvgIconType.FullScreen" Command="this._GoFullscreenCommand" />
+					}
 
-                    <IconButton Icon="SvgIconType.OpenNewTab" Href="@this._PreviewFrame?.CurrentPreviewFrameUrl" Target="_blank" Title="Open canvas in new tab" />
-                    <IconButton Icon="SvgIconType.Link" Title="Copy canvas link" OnClick="this.OnClickCopyCanvasLink" />
-                </ToolBar>
+					<IconButton Icon="SvgIconType.OpenNewTab" Href="@this._PreviewFrame?.CurrentPreviewFrameUrl" Target="_blank" Title="Open canvas in new tab" />
+					<IconButton Icon="SvgIconType.Link" Title="Copy canvas link" OnClick="this.OnClickCopyCanvasLink" />
+				</ToolBar>
 
-                @* -- IFrame -- *@
-                <div class="canvas-frame-viewport fill">
-                    <PreviewFrame @ref="_PreviewFrame"
-                                  Story="this._CurrentStory"
-                                  ViewMode="story"
-                                  Id="@this.RouteData.Parameter"
-                                  Args="this._CurrentStory?.Context.Args"
-                                  Globals="this.AddonsStore.GetFrameArguments(AddonType.CanvasPage)"
-                                  OnComponentAction="OnComponentAction" />
-                </div>
-            </div>
-        </FirstPane>
+				@* -- IFrame -- *@
+				<div class="canvas-frame-viewport fill">
+					<PreviewFrame @ref="_PreviewFrame"
+								  Story="this._CurrentStory"
+								  ViewMode="story"
+								  Id="@this.RouteData.Parameter"
+								  Args="this._CurrentStory?.Context.Args"
+								  Globals="this.AddonsStore.GetFrameArguments(AddonType.CanvasPage)"
+								  OnComponentAction="OnComponentAction" />
+				</div>
+			</div>
+		</FirstPane>
 
-        <SecondPane>
+		<SecondPane>
 
-            @* -- Addons -- *@
-            <CascadingValue Value="this._CanvasPageContext">
-                <div class="add-on-container fill stack vertical">
-                    <AddOnPanel Story="this._CurrentStory" SplitterOrientation="this._AddonPanelLayout.SplitterOrientation">
-                    </AddOnPanel>
-                </div>
-            </CascadingValue>
-        </SecondPane>
+			@* -- Addons -- *@
+			<CascadingValue Value="this._CanvasPageContext">
+				<div class="add-on-container fill stack vertical">
+					<AddOnPanel Story="this._CurrentStory" SplitterOrientation="this._AddonPanelLayout.SplitterOrientation">
+					</AddOnPanel>
+				</div>
+			</CascadingValue>
+		</SecondPane>
 
-    </SplitContainer>
+	</SplitContainer>
 
 </div>
 
 @code
 {
-    [CascadingParameter]
-    protected StoriesStore StoriesStore { get; init; } = default!;
+	[CascadingParameter]
+	protected StoriesStore StoriesStore { get; init; } = default!;
 
-    [CascadingParameter]
-    protected QueryRouteData RouteData { get; init; } = default!;
+	[CascadingParameter]
+	protected QueryRouteData RouteData { get; init; } = default!;
 
-    [CascadingParameter]
-    protected AddonsStore AddonsStore { get; init; } = default!;
+	[CascadingParameter]
+	protected AddonsStore AddonsStore { get; init; } = default!;
 
-    [CascadingParameter]
-    protected IServiceProvider Services { get; init; } = default!;
+	[CascadingParameter]
+	protected IServiceProvider Services { get; init; } = default!;
 
-    [CascadingParameter]
-    protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
+	[CascadingParameter]
+	protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
 
-    private PreviewFrame? _PreviewFrame;
+	private PreviewFrame? _PreviewFrame;
 
-    private HelperScript HelperScript = default!;
+	private HelperScript HelperScript = default!;
 
-    private CommandService _Commands = default!;
+	private CommandService _Commands = default!;
 
-    private Command? _ToolbarVisibleCommand;
+	private Command? _ToolbarVisibleCommand;
 
-    private Command? _AddonPanelVisibleCommand;
+	private Command? _AddonPanelVisibleCommand;
 
-    private Command? _GoFullscreenCommand;
+	private Command? _GoFullscreenCommand;
 
-    private readonly Subscriptions _Subscriptions = new();
+	private readonly Subscriptions _Subscriptions = new();
 
-    private bool AddonPanelVisible => (this._AddonPanelVisibleCommand?.Flag ?? true) && !(this._GoFullscreenCommand?.Flag ?? false);
+	private bool AddonPanelVisible => (this._AddonPanelVisibleCommand?.Flag ?? true) && !(this._GoFullscreenCommand?.Flag ?? false);
 
-    private int _AddonPanelSize = 210;
+	private double _AddonPanelSize = 50;
 
-    private AddonPanelLayout _AddonPanelLayout = new();
+	private AddonPanelLayout _AddonPanelLayout = new();
 
-    private string _PageTitle = "";
+	private string _PageTitle = "";
 
-    private string _LastTitledParameter = "";
+	private string _LastTitledParameter = "";
 
-    private Story? _CurrentStory = null;
+	private Story? _CurrentStory = null;
 
-    private string AddonPanelLayoutKeyName => this.GetType().Name + "." + nameof(_AddonPanelLayout);
+	private string AddonPanelLayoutKeyName => this.GetType().Name + "." + nameof(_AddonPanelLayout);
 
-    private SvgIconType ToggleOrientationButtonIcon => this._AddonPanelLayout.SplitterOrientation switch
-    {
-        SplitterOrientation.Horizontal => SvgIconType.BottomSidePane,
-        _ => SvgIconType.RightSidePane
-    };
+	private SvgIconType ToggleOrientationButtonIcon => this._AddonPanelLayout.SplitterOrientation switch
+	{
+		SplitterOrientation.Horizontal => SvgIconType.BottomSidePane,
+		_ => SvgIconType.RightSidePane
+	};
 
-    private ComponentActionLogs? _ComponentActionLogs;
+	private ComponentActionLogs? _ComponentActionLogs;
 
-    private readonly CanvasPageContext _CanvasPageContext = new();
+	private readonly CanvasPageContext _CanvasPageContext = new();
 
-    protected override void OnInitialized()
-    {
-        this.HelperScript = this.Services.GetRequiredService<HelperScript>();
-        this.AddonsStore.OnFrameArgumentsChanged += AddonsStore_OnFrameArgumentsChanged;
+	protected override void OnInitialized()
+	{
+		this.HelperScript = this.Services.GetRequiredService<HelperScript>();
+		this.AddonsStore.OnFrameArgumentsChanged += AddonsStore_OnFrameArgumentsChanged;
 
-        this._Commands = this.Services.GetRequiredService<CommandService>();
-        this._ToolbarVisibleCommand = this._Commands[CommandType.ToolBarVisible]!;
-        this._AddonPanelVisibleCommand = this._Commands[CommandType.AddonPanelVisible]!;
-        this._GoFullscreenCommand = this._Commands[CommandType.GoFullScreen];
+		this._Commands = this.Services.GetRequiredService<CommandService>();
+		this._ToolbarVisibleCommand = this._Commands[CommandType.ToolBarVisible]!;
+		this._AddonPanelVisibleCommand = this._Commands[CommandType.AddonPanelVisible]!;
+		this._GoFullscreenCommand = this._Commands[CommandType.GoFullScreen];
 
-        this._Subscriptions.Add(
-            this._Commands.Subscribe(CommandType.AddonPanelOrientation, this.OnToggleOrientation),
-            this._ToolbarVisibleCommand.Subscribe(this.OnToggleToolbarVisible),
-            this._AddonPanelVisibleCommand.Subscribe(this.OnToggleAddonPanelVisible)
-        );
+		this._Subscriptions.Add(
+			this._Commands.Subscribe(CommandType.AddonPanelOrientation, this.OnToggleOrientation),
+			this._ToolbarVisibleCommand.Subscribe(this.OnToggleToolbarVisible),
+			this._AddonPanelVisibleCommand.Subscribe(this.OnToggleAddonPanelVisible)
+		);
 
-        this._ComponentActionLogs = this.Services.GetRequiredService<ComponentActionLogs>();
-        this._CanvasPageContext.SetItem(this._ComponentActionLogs);
-    }
+		this._ComponentActionLogs = this.Services.GetRequiredService<ComponentActionLogs>();
+		this._CanvasPageContext.SetItem(this._ComponentActionLogs);
+	}
 
-    protected override void OnParametersSet()
-    {
-        this.UpdateCurrentStory();
-        this.UpdatePageTitle();
-    }
+	protected override void OnParametersSet()
+	{
+		this.UpdateCurrentStory();
+		this.UpdatePageTitle();
+	}
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender) return;
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
 
-        this._AddonPanelLayout = await this.HelperScript.LoadObjectFromLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
-        this.UpdateAddonPanelSize(this._AddonPanelLayout.SplitterOrientation);
-        this.StateHasChanged();
-    }
+		this._AddonPanelLayout = await this.HelperScript.LoadObjectFromLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
+		this.UpdateAddonPanelSize(this._AddonPanelLayout.SplitterOrientation);
+		this.StateHasChanged();
+	}
 
-    private void UpdatePageTitle()
-    {
-        if (this._LastTitledParameter == this.RouteData.Parameter) return;
-        if (this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story))
-        {
-            this._PageTitle = string.Join(" / ", story.Title.Split('/')) + " - " + story.Name + " - " + this.BlazingStoryApp.Title;
-        }
-        this._LastTitledParameter = this.RouteData.Parameter;
-    }
+	private void UpdatePageTitle()
+	{
+		if (this._LastTitledParameter == this.RouteData.Parameter) return;
+		if (this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story))
+		{
+			this._PageTitle = string.Join(" / ", story.Title.Split('/')) + " - " + story.Name + " - " + this.BlazingStoryApp.Title;
+		}
+		this._LastTitledParameter = this.RouteData.Parameter;
+	}
 
-    private void AddonsStore_OnFrameArgumentsChanged(object? sender, EventArgs args)
-    {
-        this.StateHasChanged();
-    }
+	private void AddonsStore_OnFrameArgumentsChanged(object? sender, EventArgs args)
+	{
+		this.StateHasChanged();
+	}
 
-    private void UpdateCurrentStory()
-    {
-        if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
+	private void UpdateCurrentStory()
+	{
+		if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
 
-        var path = this.RouteData.Parameter;
-        if (this.StoriesStore.TryGetStoryByPath(path, out var story))
-        {
-            if (!object.ReferenceEquals(this._CurrentStory, story)) _ComponentActionLogs?.Clear();
-            this._CurrentStory = story;
-        }
-        else this._CurrentStory = null;
+		var path = this.RouteData.Parameter;
+		if (this.StoriesStore.TryGetStoryByPath(path, out var story))
+		{
+			if (!object.ReferenceEquals(this._CurrentStory, story)) _ComponentActionLogs?.Clear();
+			this._CurrentStory = story;
+		}
+		else this._CurrentStory = null;
 
-        if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged += Context_ArgumentChanged;
-    }
+		if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged += Context_ArgumentChanged;
+	}
 
-    private ValueTask Context_ArgumentChanged()
-    {
-        this.StateHasChanged();
-        return ValueTask.CompletedTask;
-    }
+	private ValueTask Context_ArgumentChanged()
+	{
+		this.StateHasChanged();
+		return ValueTask.CompletedTask;
+	}
 
-    private async Task OnAddonPanelSizeChanged()
-    {
-        if (_AddonPanelLayout.SplitterOrientation == SplitterOrientation.Horizontal)
-        {
-            this._AddonPanelLayout.VerticalSize = this._AddonPanelSize;
-        }
-        else
-        {
-            this._AddonPanelLayout.HorizontalSize = this._AddonPanelSize;
-        }
-        await this.SaveAddonPanelLayoutAsync();
-    }
+	private async Task OnAddonPanelSizeChanged()
+	{
+		if (_AddonPanelLayout.SplitterOrientation == SplitterOrientation.Horizontal)
+		{
+			this._AddonPanelLayout.VerticalProportion = this._AddonPanelSize;
+		}
+		else
+		{
+			this._AddonPanelLayout.HorizontalProportion = this._AddonPanelSize;
+		}
+		await this.SaveAddonPanelLayoutAsync();
+	}
 
-    private void UpdateAddonPanelSize(SplitterOrientation splitterOrientation)
-    {
-        this._AddonPanelSize = splitterOrientation switch
-        {
-            SplitterOrientation.Vertical => this._AddonPanelLayout.HorizontalSize,
-            _ => this._AddonPanelLayout.VerticalSize
-        };
-    }
+	private void UpdateAddonPanelSize(SplitterOrientation splitterOrientation)
+	{
+		this._AddonPanelSize = splitterOrientation switch
+		{
+			SplitterOrientation.Vertical => this._AddonPanelLayout.HorizontalProportion,
+			_ => this._AddonPanelLayout.VerticalProportion
+		};
+	}
 
-    private async ValueTask OnToggleOrientation()
-    {
-        _AddonPanelLayout.SplitterOrientation = _AddonPanelLayout.SplitterOrientation switch
-        {
-            SplitterOrientation.Horizontal => SplitterOrientation.Vertical,
-            _ => SplitterOrientation.Horizontal
-        };
-        this.UpdateAddonPanelSize(this._AddonPanelLayout.SplitterOrientation);
-        await this.SaveAddonPanelLayoutAsync();
-    }
+	private async ValueTask OnToggleOrientation()
+	{
+		_AddonPanelLayout.SplitterOrientation = _AddonPanelLayout.SplitterOrientation switch
+		{
+			SplitterOrientation.Horizontal => SplitterOrientation.Vertical,
+			_ => SplitterOrientation.Horizontal
+		};
+		this.UpdateAddonPanelSize(this._AddonPanelLayout.SplitterOrientation);
+		await this.SaveAddonPanelLayoutAsync();
+	}
 
-    private async ValueTask OnToggleToolbarVisible()
-    {
-        this._ToolbarVisibleCommand?.ToggleFlag();
-        await ValueTask.CompletedTask;
-    }
+	private async ValueTask OnToggleToolbarVisible()
+	{
+		this._ToolbarVisibleCommand?.ToggleFlag();
+		await ValueTask.CompletedTask;
+	}
 
-    private async ValueTask OnToggleAddonPanelVisible()
-    {
-        this._AddonPanelVisibleCommand?.ToggleFlag();
-        await ValueTask.CompletedTask;
-    }
+	private async ValueTask OnToggleAddonPanelVisible()
+	{
+		this._AddonPanelVisibleCommand?.ToggleFlag();
+		await ValueTask.CompletedTask;
+	}
 
-    private async Task OnClickCopyCanvasLink()
-    {
-        if (this._PreviewFrame == null) return;
-        var canvalLinkUrl = this._PreviewFrame.CurrentPreviewFrameUrl.TrimStart('.', '/');
-        var absoluteCanvalLinkUrl = this.NavigationManager.ToAbsoluteUri(canvalLinkUrl);
-        await this.HelperScript.CopyTextToClipboardAsync(absoluteCanvalLinkUrl.AbsoluteUri);
-    }
+	private async Task OnClickCopyCanvasLink()
+	{
+		if (this._PreviewFrame == null) return;
+		var canvalLinkUrl = this._PreviewFrame.CurrentPreviewFrameUrl.TrimStart('.', '/');
+		var absoluteCanvalLinkUrl = this.NavigationManager.ToAbsoluteUri(canvalLinkUrl);
+		await this.HelperScript.CopyTextToClipboardAsync(absoluteCanvalLinkUrl.AbsoluteUri);
+	}
 
-    private async Task OnClickReload()
-    {
-        if (this._PreviewFrame != null) await this._PreviewFrame.ReloadAsync();
-    }
+	private async Task OnClickReload()
+	{
+		if (this._PreviewFrame != null) await this._PreviewFrame.ReloadAsync();
+	}
 
-    private async Task OnClickZoomIn()
-    {
-        if (this._PreviewFrame != null) await this._PreviewFrame.ZoomInAsync();
-    }
+	private async Task OnClickZoomIn()
+	{
+		if (this._PreviewFrame != null) await this._PreviewFrame.ZoomInAsync();
+	}
 
-    private async Task OnClickZoomOut()
-    {
-        if (this._PreviewFrame != null) await this._PreviewFrame.ZoomOutAsync();
-    }
+	private async Task OnClickZoomOut()
+	{
+		if (this._PreviewFrame != null) await this._PreviewFrame.ZoomOutAsync();
+	}
 
-    private async Task OnClickResetZoom()
-    {
-        if (this._PreviewFrame != null) await this._PreviewFrame.ResetZoomAsync();
-    }
+	private async Task OnClickResetZoom()
+	{
+		if (this._PreviewFrame != null) await this._PreviewFrame.ResetZoomAsync();
+	}
 
-    private async ValueTask SaveAddonPanelLayoutAsync()
-    {
-        await this.HelperScript.SaveObjectToLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
-    }
+	private async ValueTask SaveAddonPanelLayoutAsync()
+	{
+		await this.HelperScript.SaveObjectToLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
+	}
 
-    private void OnComponentAction(ComponentActionEventArgs e)
-    {
-        _ComponentActionLogs?.Add(e.Name, e.ArgsJson);
-    }
+	private void OnComponentAction(ComponentActionEventArgs e)
+	{
+		_ComponentActionLogs?.Add(e.Name, e.ArgsJson);
+	}
 
-    public void Dispose()
-    {
-        this.AddonsStore.OnFrameArgumentsChanged -= AddonsStore_OnFrameArgumentsChanged;
-        this._Subscriptions.Dispose();
-        if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
-    }
+	public void Dispose()
+	{
+		this.AddonsStore.OnFrameArgumentsChanged -= AddonsStore_OnFrameArgumentsChanged;
+		this._Subscriptions.Dispose();
+		if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
+	}
 }
