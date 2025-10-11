@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.JSInterop.WebAssembly</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.JSInterop.WebAssembly.WebAssemblyJSRuntime">
+            <summary>
+            Provides methods for invoking JavaScript functions for applications running
+            on the Mono WebAssembly runtime.
+            </summary>
+        </member>
+        <member name="M:Microsoft.JSInterop.WebAssembly.WebAssemblyJSRuntime.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.JSInterop.WebAssembly.WebAssemblyJSRuntime"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.JSInterop.WebAssembly.WebAssemblyJSRuntime.InvokeJS(System.String,System.String,Microsoft.JSInterop.JSCallResultType,System.Int64)">
+            <inheritdoc />
+        </member>
+        <member name="M:Microsoft.JSInterop.WebAssembly.WebAssemblyJSRuntime.BeginInvokeJS(System.Int64,System.String,System.String,Microsoft.JSInterop.JSCallResultType,System.Int64)">
+            <inheritdoc />
+        </member>
+        <member name="M:Microsoft.JSInterop.WebAssembly.WebAssemblyJSRuntime.EndInvokeDotNet(Microsoft.JSInterop.Infrastructure.DotNetInvocationInfo,Microsoft.JSInterop.Infrastructure.DotNetInvocationResult@)">
+            <inheritdoc />
+        </member>
+        <member name="M:Microsoft.JSInterop.WebAssembly.WebAssemblyJSRuntime.SendByteArray(System.Int32,System.Byte[])">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>
