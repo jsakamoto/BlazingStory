@@ -67,21 +67,6 @@ else
 
     private class StyleDescriptor { public string? Id { get; init; } public bool Enable { get; init; } public string? Href { get; init; } };
 
-    // Lazy initialization for retrieving MethodInfo of EventTArgMonitorHandler
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S3011:Reflection should not be used to increase accessibility of classes, methods, or fields", Justification = "<Pending>")]
-    private static readonly Lazy<MethodInfo> _EventTArgMonitorHandlerMethod = new(() => typeof(CanvasFrame).GetMethod(nameof(EventTArgMonitorHandler), BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new InvalidOperationException());
-
-    // Lazy initialization for retrieving MethodInfo of EventCallbackFactory.Create
-    private static readonly Lazy<MethodInfo> _EventCallbackCreateMethod = new(() =>
-        typeof(EventCallbackFactory).GetMethods(BindingFlags.Public | BindingFlags.Instance)
-            .Where(m => m.Name == "Create" && m.IsGenericMethod)
-            .Select(m => (MethodInfo: m, ParameterTypes: m.GetParameters().Select(p => p.ParameterType).ToArray()))
-            .Where(m => m.ParameterTypes.Length == 2)
-            .Where(m => m.ParameterTypes[0] == typeof(object))
-            .Where(m => m.ParameterTypes[1].IsGenericType && m.ParameterTypes[1].GetGenericTypeDefinition() == typeof(Func<,>))
-            .Select(m => m.MethodInfo)
-            .First());
-
     private JSModule? _JSModule;
     private Story? _Story;
 
@@ -92,22 +77,6 @@ else
     private string _ComponentArgsString = string.Empty;
 
     private string _GlobalEffectsString = string.Empty;
-
-    public async ValueTask DisposeAsync()
-    {
-        if (this._Story != null)
-        {
-            this._Story.Context.ShouldRender -= this.StoryContext_ShouldRender;
-        }
-        if (this.NavigationManager != null)
-        {
-            this.NavigationManager.LocationChanged -= this.NavigationManager_LocationChanged;
-        }
-        if (this._JSModule != null)
-        {
-            await this._JSModule.DisposeAsync();
-        }
-    }
 
     protected override void OnInitialized()
     {
@@ -296,6 +265,21 @@ else
         this.StateHasChanged();
     }
 
+    // Lazy initialization for retrieving MethodInfo of EventTArgMonitorHandler
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S3011:Reflection should not be used to increase accessibility of classes, methods, or fields", Justification = "<Pending>")]
+    private static readonly Lazy<MethodInfo> _EventTArgMonitorHandlerMethod = new(() => typeof(CanvasFrame).GetMethod(nameof(EventTArgMonitorHandler), BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new InvalidOperationException());
+
+    // Lazy initialization for retrieving MethodInfo of EventCallbackFactory.Create
+    private static readonly Lazy<MethodInfo> _EventCallbackCreateMethod = new(() =>
+        typeof(EventCallbackFactory).GetMethods(BindingFlags.Public | BindingFlags.Instance)
+            .Where(m => m.Name == "Create" && m.IsGenericMethod)
+            .Select(m => (MethodInfo: m, ParameterTypes: m.GetParameters().Select(p => p.ParameterType).ToArray()))
+            .Where(m => m.ParameterTypes.Length == 2)
+            .Where(m => m.ParameterTypes[0] == typeof(object))
+            .Where(m => m.ParameterTypes[1].IsGenericType && m.ParameterTypes[1].GetGenericTypeDefinition() == typeof(Func<,>))
+            .Select(m => m.MethodInfo)
+            .First());
+
     // Method to wire up event monitors
     private async ValueTask WireUpEventMonitorsAsync()
     {
@@ -457,6 +441,22 @@ else
         {
             await this._Story.Context.AddOrUpdateArgumentAsync(paramName, value);
             await this.UpdateUrlWithArgsAsync();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (this._Story != null)
+        {
+            this._Story.Context.ShouldRender -= this.StoryContext_ShouldRender;
+        }
+        if (this.NavigationManager != null)
+        {
+            this.NavigationManager.LocationChanged -= this.NavigationManager_LocationChanged;
+        }
+        if (this._JSModule != null)
+        {
+            await this._JSModule.DisposeAsync();
         }
     }
 }
