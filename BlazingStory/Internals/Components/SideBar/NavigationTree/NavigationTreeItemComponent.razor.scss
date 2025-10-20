@@ -6,10 +6,12 @@
     .navigation-tree-item {
         display: inline-flex;
         flex-direction: column;
+        overflow: hidden;
+        border-radius: 4px;
     }
 
     .caption {
-        height: 24px;
+        height: 28px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -26,17 +28,20 @@
 
         .action {
             align-items: center;
-            font-size: 13px;
+            font-size: 14px;
             font-stretch: 100%;
             display: flex;
             flex-wrap: nowrap;
-            flex:1;
+            flex: 1;
             padding: 0 12px 0 0;
             appearance: none;
             text-decoration: none;
 
             .icon {
-                margin: 1px 0 0 2px;
+                svg {
+                    padding: 0;
+                    margin-right: 6px;
+                }
             }
         }
 
@@ -65,24 +70,23 @@
     //
     /* ---- Chevron ---- */
     .chevron {
-        display: inline-block;
-        width: 0;
-        height: 0;
-        margin: 0 2px 0 10px;
-        color: var(--bs-chevron-color);
-        border-top: 3px solid transparent;
-        border-bottom: 3px solid transparent;
-        border-left: 3px solid;
-        -webkit-transform: rotateZ(90deg);
-        -moz-transform: rotateZ(90deg);
-        -ms-transform: rotateZ(90deg);
-        transform: rotateZ(0deg);
-        -webkit-transition: -webkit-transform .1s ease-out;
+        display: block;
+        margin: 0 6px;
+
+        .svg-icon {
+            padding: 0;
+            margin: 0;
+            width: 10px;
+            height: 10px;
+            fill: var(--bs-chevron-color);
+        }
+
+        transform: rotateZ(-90deg);
         transition: transform .1s ease-out;
     }
 
     .expanded > .caption .chevron {
-        transform: rotateZ(90deg);
+        transform: rotateZ(0deg);
     }
 
     .type-story, .type-docs, .type-custom-page {
@@ -103,7 +107,6 @@
     //
     /* ---- Sub Heading ---- */
     .caption.sub-heading {
-        height: 20px;
         margin-top: var(--bs-sidebar-gap-size);
         margin-bottom: 4px;
 
@@ -147,20 +150,17 @@
     }
 
     .sub-heading-action {
-        width: 18px;
-        height: 18px;
+        width: 28px;
+        height: 28px;
         padding: 0;
-        margin: 0 21px 0 0;
-        display: inline-flex;
+        display: flex;
         align-items: center;
         justify-content: center;
         visibility: hidden;
 
         svg {
-            width: calc(var(--bs-svg-icon-size) - 2px);
-            height: calc(var(--bs-svg-icon-size) - 2px);
-            color: var(--bs-dimmed-text-color);
-            margin: 0;
+            padding: 0;
+            color: var(--bs-chevron-color);
         }
 
         &:hover svg,
@@ -191,6 +191,6 @@
     }
 
     .type-custom-page > .caption .action svg {
-        color: var(--bs-icon-custom-color);    
+        color: var(--bs-icon-custom-color);
     }
 }

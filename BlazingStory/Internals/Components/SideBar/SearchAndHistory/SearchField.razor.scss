@@ -4,10 +4,10 @@
     input {
         appearance: none;
         height: 32px;
-        padding: 1px 32px 1px 30px;
+        padding: 1px 32px 1px 29px;
         border: 1px solid rgba(153,153,153,0.4);
         background: transparent;
-        border-radius: 28px;
+        border-radius: 6px;
         font-size: 13px;
         font-family: inherit;
         -webkit-transition: all 150ms;
@@ -25,8 +25,9 @@
     .find-icon {
         --bs-svg-icon-size: 14px;
         position: absolute;
-        left: 11px;
+        left: 9px;
         top: 6px;
+        padding: 0;
         color: var(--bs-dimmed-text-color);
         pointer-events: none;
     }
