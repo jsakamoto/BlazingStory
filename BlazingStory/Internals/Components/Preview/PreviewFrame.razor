@@ -269,24 +269,6 @@
         }
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        if (this._DebounceCts != null)
-        {
-            await this._DebounceCts.CancelAsync();
-            this._DebounceCts.Dispose();
-        }
-        if (this._EventMonitorSubscriber is not null)
-        {
-            await this._EventMonitorSubscriber.DisposeIfConnectedAsync("dispose");
-        }
-        if (this._JSModule is not null)
-        {
-            await this._JSModule.DisposeAsync();
-        }
-        this._ThisRef?.Dispose();
-    }
-
     protected override void OnInitialized()
     {
         if (this.JSRuntime is not null)
@@ -402,5 +384,23 @@
         {
             await this._JSModule.InvokeVoidAsync("ensureDotnetWatchScriptInjected", this._Iframe);
         }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (this._DebounceCts != null)
+        {
+            await this._DebounceCts.CancelAsync();
+            this._DebounceCts.Dispose();
+        }
+        if (this._EventMonitorSubscriber is not null)
+        {
+            await this._EventMonitorSubscriber.DisposeIfConnectedAsync("dispose");
+        }
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.DisposeAsync();
+        }
+        this._ThisRef?.Dispose();
     }
 }
