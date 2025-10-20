@@ -2,7 +2,6 @@
 using System.Reflection;
 using BlazingStory.Internals.Extensions;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
 using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.Internals.Utils;
@@ -12,14 +11,21 @@ internal static class TypeUtility
     /// <summary>
     /// Returns the name of the given type as a C# language keyword.
     /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
+    /// <param name="type">
+    /// The type to get the name of.
+    /// </param>
+    /// <returns>
+    /// The name of the type as a C# language keyword.
+    /// </returns>
+    [SuppressMessage("Trimming", "IL2067:Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The parameter of method does not have matching annotations.", Justification = "<Pending>")]
     internal static IEnumerable<string> GetTypeDisplayText([DynamicallyAccessedMembers(PublicConstructors | PublicMethods | Interfaces)] Type type)
     {
         var (isNullable, isGeneric, primaryType, secondaryTypes) = TypeUtility.ExtractTypeStructure(type);
+
         if (primaryType.IsEnum)
         {
-            yield return primaryType.Name + (isNullable ? "?" : "");
+            yield return primaryType.Name + (isNullable ? "?" : string.Empty);
+
             foreach (var enumValue in Enum.GetValues(primaryType))
             {
                 yield return $"\"{enumValue}\"";
@@ -27,85 +33,76 @@ internal static class TypeUtility
         }
         else if (isGeneric)
         {
-#pragma warning disable IL2067 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The parameter of method does not have matching annotations.
             var typeArguments = string.Join(", ", secondaryTypes.SelectMany(t => GetTypeDisplayText(t)));
-#pragma warning restore IL2067 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The parameter of method does not have matching annotations.
-            yield return GetTypeNameAsLangKeyword(primaryType) + "<" + typeArguments + ">" + (isNullable ? "?" : "");
+
+            yield return GetTypeNameAsLangKeyword(primaryType) + "<" + typeArguments + ">" + (isNullable ? "?" : string.Empty);
         }
         else
         {
-            yield return GetTypeNameAsLangKeyword(primaryType) + (isNullable ? "?" : "");
+            yield return GetTypeNameAsLangKeyword(primaryType) + (isNullable ? "?" : string.Empty);
         }
     }
 
     /// <summary>
     /// Extracts type structure of the given type.
     /// </summary>
+    /// <param name="type">
+    /// The type to extract the structure from.
+    /// </param>
+    /// <returns>
+    /// The extracted type structure.
+    /// </returns>
+    [SuppressMessage("Trimming", "IL2072:Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.", Justification = "<Pending>")]
     internal static TypeStructure ExtractTypeStructure([DynamicallyAccessedMembers(PublicConstructors | PublicMethods | Interfaces)] Type type)
     {
         if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
         {
-#pragma warning disable IL2072 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
-            return new(isNullable: true, isGeneric: false, primaryType: type.GetGenericArguments().First(), secondaryTypes: []);
-#pragma warning restore IL2072 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
+            return new(isNullable: true, isGeneric: false, primaryType: type.GetGenericArguments().First(), secondaryTypes: Array.Empty<Type>());
         }
         else if (type.IsGenericType)
         {
             return new(isNullable: false, isGeneric: true, primaryType: type, secondaryTypes: type.GetGenericArguments());
         }
-        else return new(isNullable: false, isGeneric: false, primaryType: type, secondaryTypes: Array.Empty<Type>());
-    }
-
-    /// <summary>
-    /// Get name of the type as a C# language keyword.
-    /// </summary>
-    private static string GetTypeNameAsLangKeyword(Type type)
-    {
-        return Type.GetTypeCode(type) switch
+        else
         {
-            TypeCode.Boolean => "bool",
-            TypeCode.Byte => "byte",
-            TypeCode.Char => "char",
-            TypeCode.Decimal => "decimal",
-            TypeCode.Double => "double",
-            TypeCode.Int16 => "short",
-            TypeCode.Int32 => "int",
-            TypeCode.Int64 => "long",
-            TypeCode.SByte => "sbyte",
-            TypeCode.Single => "float",
-            TypeCode.String => "string",
-            TypeCode.UInt16 => "ushort",
-            TypeCode.UInt32 => "uint",
-            TypeCode.UInt64 => "ulong",
-            _ => type.Name.Split('`').First()
-        };
+            return new(isNullable: false, isGeneric: false, primaryType: type, secondaryTypes: Array.Empty<Type>());
+        }
     }
 
     /// <summary>
-    /// Try to convert the given string to the given type.<br/>
-    /// (Most cases, this method uses for deserialize URL query parameters of iframe to component parameters.)
+    /// Try to convert the given string to the given type. <br /> (Most cases, this method uses for
+    /// deserialize URL query parameters of iframe to component parameters.)
     /// </summary>
-    /// <param name="targetTypeStructure">The structure of the type to convert to.</param>
-    /// <param name="sourceString">The string to convert from.</param>
-    /// <param name="convertedValue">The converted value if the conversion is successful.</param>
-    /// <returns>True if the conversion is successful, otherwise false.</returns>
-    internal static bool TryConvertType(TypeStructure targetTypeStructure, string sourceString, out object? convertedValue)
+    /// <param name="targetTypeStructure">
+    /// The structure of the type to convert to.
+    /// </param>
+    /// <param name="sourceString">
+    /// The string to convert from.
+    /// </param>
+    /// <param name="convertedValue">
+    /// The converted value if the conversion is successful.
+    /// </param>
+    /// <returns>
+    /// True if the conversion is successful, otherwise false.
+    /// </returns>
+    internal static bool TryConvertType(this TypeStructure targetTypeStructure, string sourceString, out object? convertedValue)
     {
         var primaryType = targetTypeStructure.PrimaryType;
         var isNullable = targetTypeStructure.IsNullable;
 
+        // Handle nullable types
         if (isNullable && sourceString == "(null)")
         {
             convertedValue = null;
             return true;
         }
-
+        // Handle string type
         else if (primaryType == typeof(string))
         {
             convertedValue = sourceString;
             return true;
         }
-
+        // Handle boolean type
         else if (primaryType == typeof(bool))
         {
             if (bool.TryParse(sourceString, out var boolValue))
@@ -114,7 +111,7 @@ internal static class TypeUtility
                 return true;
             }
         }
-
+        // Handle enum types
         else if (primaryType.IsEnum)
         {
             if (Enum.TryParse(primaryType, sourceString, out var enumValue))
@@ -123,25 +120,42 @@ internal static class TypeUtility
                 return true;
             }
         }
-
+        // Handle RenderFragment
         else if (primaryType == typeof(RenderFragment))
         {
-            RenderFragment renderFragment = (RenderTreeBuilder builder) => builder.AddContent(0, sourceString);
-            convertedValue = renderFragment;
+            convertedValue = sourceString.ToRenderFragment();
             return true;
         }
-
+        // Handle generic RenderFragment<T>
         else if (primaryType.IsGenericTypeOf(typeof(RenderFragment<>)))
         {
             var argumentType = primaryType.GetGenericArguments().First();
-            convertedValue = RenderFragmentKit.FromString(argumentType, sourceString);
+            convertedValue = sourceString.ToRenderFragment(argumentType);
             return true;
         }
-
+        // Handle arrays and complex types by deserializing JSON
+        else if (primaryType.IsArray || (primaryType.IsClass && primaryType != typeof(string)))
+        {
+            // Try to deserialize as JSON if the string looks like JSON
+            if (sourceString.StartsWith("[") || sourceString.StartsWith("{"))
+            {
+                try
+                {
+                    convertedValue = System.Text.Json.JsonSerializer.Deserialize(sourceString, primaryType);
+                    return convertedValue != null;
+                }
+                catch
+                {
+                    // Fall through to other handlers
+                }
+            }
+        }
+        // Handle parsable types (numeric types)
         else if (IsParsableType(primaryType))
         {
             var tryParseMethod = primaryType.GetMethod(nameof(IParsable<int>.TryParse), BindingFlags.Public | BindingFlags.Static, [typeof(string), typeof(IFormatProvider), primaryType.MakeByRefType()]);
             var parameters = new object?[] { sourceString, default(IFormatProvider), Activator.CreateInstance(primaryType) };
+
             if ((bool)(tryParseMethod?.Invoke(null, parameters) ?? false))
             {
                 convertedValue = parameters[2];
@@ -149,12 +163,13 @@ internal static class TypeUtility
             }
         }
 
+        // Fall-back: conversion failed
         convertedValue = null;
         return false;
     }
 
     /// <summary>
-    /// Returns whether the given type implements <see cref="IParsable{TSelf}"/>.
+    /// Returns whether the given type implements <see cref="IParsable{TSelf}" />.
     /// </summary>
     internal static bool IsParsableType([DynamicallyAccessedMembers(Interfaces)] Type type)
     {
@@ -164,7 +179,7 @@ internal static class TypeUtility
     /// <summary>
     /// Returns whether the given type is a numeric type.
     /// </summary>
-    internal static bool IsNumericType(Type type) => Type.GetTypeCode(type) switch
+    internal static bool IsNumericType(this Type type) => Type.GetTypeCode(type) switch
     {
         TypeCode.Byte => true,
         TypeCode.SByte => true,
@@ -192,15 +207,15 @@ internal static class TypeUtility
     };
 
     /// <summary>
-    /// Get open type of the given type.<br/>
-    /// When you pass the `List&lt;T&gt;` type, this method returns `List&lt;&gt;`.
+    /// Get open type of the given type. <br /> When you pass the `List&lt;T&gt;` type, this method
+    /// returns `List&lt;&gt;`.
     /// </summary>
     internal static Type GetOpenType(Type type) => type.IsGenericType ? type.GetGenericTypeDefinition() : type;
 
     /// <summary>
-    /// Returns whether the given object is a plain object type that should be serialized as a JSON object, like '{"foo":123,"bar:456}}'.
+    /// Returns whether the given object is a user-defined reference type.
     /// </summary>
-    internal static bool IsPlainObjectType(Type type)
+    internal static bool IsUserDefinedReferenceType(Type type)
     {
         // Exclude value types (structs)
         if (type.IsValueType) return false;
@@ -213,6 +228,36 @@ internal static class TypeUtility
             return false;
         }
 
+        // Check if it is a user-defined type
+        var nameSpace = (type.Namespace ?? "") + ".";
+        if (nameSpace.StartsWith("System.") == true) return false;
+        if (nameSpace.StartsWith("Microsoft.") == true) return false;
+
         return true;
+    }
+
+    /// <summary>
+    /// Get name of the type as a C# language keyword.
+    /// </summary>
+    private static string GetTypeNameAsLangKeyword(Type type)
+    {
+        return Type.GetTypeCode(type) switch
+        {
+            TypeCode.Boolean => "bool",
+            TypeCode.Byte => "byte",
+            TypeCode.Char => "char",
+            TypeCode.Decimal => "decimal",
+            TypeCode.Double => "double",
+            TypeCode.Int16 => "short",
+            TypeCode.Int32 => "int",
+            TypeCode.Int64 => "long",
+            TypeCode.SByte => "sbyte",
+            TypeCode.Single => "float",
+            TypeCode.String => "string",
+            TypeCode.UInt16 => "ushort",
+            TypeCode.UInt32 => "uint",
+            TypeCode.UInt64 => "ulong",
+            _ => type.Name.Split('`').First()
+        };
     }
 }

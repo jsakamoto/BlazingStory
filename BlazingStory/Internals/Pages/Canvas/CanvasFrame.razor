@@ -1,18 +1,22 @@
-@using System.Web
-@using System.Collections.Specialized;
-@using System.Reflection
-@using System.Linq.Expressions
-@using System.Text.Json
-@using System.Text.Json.Serialization
-@using System.Text.Encodings.Web
-@using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+﻿﻿@using System.Collections.Specialized;
+@using System.Diagnostics.CodeAnalysis;
+@using System.Linq.Expressions;
+@using System.Reflection;
+@using System.Text.Json;
+@using System.Web;
+@using BlazingStory.Components;
+@using BlazingStory.Internals.Extensions;
+@using BlazingStory.Internals.Models;
+@using BlazingStory.Internals.Services;
+@using BlazingStory.Internals.Utils;
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.AspNetCore.Components.Routing;
+@using Microsoft.Extensions.Logging;
+@using Microsoft.JSInterop;
+@using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 @implements IAsyncDisposable
-@inject IJSRuntime JSRuntime
-@inject ILogger<CanvasFrame> Logger
-@inject NavigationManager NavigationManager
 
-@{ #pragma warning disable IL2111 }
 @if (this._Story == null)
 {
     <CanvasFrameNothingToAddress />
@@ -23,13 +27,12 @@ else
         <LayoutView Layout="@(this._Story.StoriesLayout ?? typeof(NullLayout))">
             <LayoutView Layout="@(this._Story.StoryLayout ?? typeof(NullLayout))">
 
-                @this._Story.RenderFragment(this._Story.Context)
+                @this._Story.RenderFragmentStoryContext(this._Story.Context)
 
             </LayoutView>
         </LayoutView>
     </LayoutView>
 }
-@{ #pragma warning restore IL2111 }
 
 @if (this._EnableMeasure)
 {
@@ -47,35 +50,85 @@ else
     [CascadingParameter]
     protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
 
-    private readonly JSModule _JSModule;
+    [Inject]
+    private IJSRuntime? JSRuntime { get; set; }
 
+    [Inject]
+    private ILogger<CanvasFrame>? Logger { get; set; }
+
+    [Inject]
+    private NavigationManager? NavigationManager { get; set; }
+
+    private class StyleDescriptor { public string? Id { get; init; } public bool Enable { get; init; } public string? Href { get; init; } };
+
+    // Lazy initialization for retrieving MethodInfo of EventTArgMonitorHandler
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S3011:Reflection should not be used to increase accessibility of classes, methods, or fields", Justification = "<Pending>")]
+    private static readonly Lazy<MethodInfo> _EventTArgMonitorHandlerMethod = new(() => typeof(CanvasFrame).GetMethod(nameof(EventTArgMonitorHandler), BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new InvalidOperationException());
+
+    // Lazy initialization for retrieving MethodInfo of EventCallbackFactory.Create
+    private static readonly Lazy<MethodInfo> _EventCallbackCreateMethod = new(() =>
+        typeof(EventCallbackFactory).GetMethods(BindingFlags.Public | BindingFlags.Instance)
+            .Where(m => m.Name == "Create" && m.IsGenericMethod)
+            .Select(m => (MethodInfo: m, ParameterTypes: m.GetParameters().Select(p => p.ParameterType).ToArray()))
+            .Where(m => m.ParameterTypes.Length == 2)
+            .Where(m => m.ParameterTypes[0] == typeof(object))
+            .Where(m => m.ParameterTypes[1].IsGenericType && m.ParameterTypes[1].GetGenericTypeDefinition() == typeof(Func<,>))
+            .Select(m => m.MethodInfo)
+            .First());
+
+    private JSModule? _JSModule;
     private Story? _Story;
-
     private bool _EnableMeasure = false;
-
     private bool _Rendered = false;
 
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public CanvasFrame()
+    private string _ComponentArgsString = string.Empty;
+
+    private string _GlobalEffectsString = string.Empty;
+
+    public async ValueTask DisposeAsync()
     {
-        this._JSModule = new(() => this.JSRuntime, "Internals/Pages/Canvas/CanvasFrame.razor.js");
+        if (this._Story != null)
+        {
+            this._Story.Context.ShouldRender -= this.StoryContext_ShouldRender;
+        }
+        if (this.NavigationManager != null)
+        {
+            this.NavigationManager.LocationChanged -= this.NavigationManager_LocationChanged;
+        }
+        if (this._JSModule != null)
+        {
+            await this._JSModule.DisposeAsync();
+        }
     }
 
     protected override void OnInitialized()
     {
-        this.NavigationManager.LocationChanged += NavigationManager_LocationChanged;
+        if (this.JSRuntime is not null)
+        {
+            this._JSModule = new(() => this.JSRuntime, "Internals/Pages/Canvas/CanvasFrame.razor.js");
+        }
+        if (this.NavigationManager != null)
+        {
+            this.NavigationManager.LocationChanged += this.NavigationManager_LocationChanged;
+        }
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        if (!this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story)) return;
-        if (Object.ReferenceEquals(this._Story, story)) return;
-
-        if (this._Story != null) this._Story.Context.ShouldRender -= StoryContext_ShouldRender;
+        if (!this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story))
+        {
+            return;
+        }
+        if (Object.ReferenceEquals(this._Story, story))
+        {
+            return;
+        }
+        if (this._Story != null)
+        {
+            this._Story.Context.ShouldRender -= this.StoryContext_ShouldRender;
+        }
         this._Story = story;
-        this._Story.Context.ShouldRender += StoryContext_ShouldRender;
+        this._Story.Context.ShouldRender += this.StoryContext_ShouldRender;
 
         await this.UpdateComponentStatesAsync();
         this.StateHasChanged();
@@ -85,7 +138,7 @@ else
     {
         if (!firstRender) return;
         this._Rendered = true;
-        await UpdateComponentStatesAsync();
+        await this.UpdateComponentStatesAsync();
         this.StateHasChanged();
     }
 
@@ -97,17 +150,20 @@ else
         this.StateHasChanged();
     }
 
-    private string _ComponentArgsString = "";
-
-    private string _GlobalEffectsString = "";
-
     private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs args)
     {
-        this.UpdateComponentStatesAsync().AndLogException(this.Logger);
+        if (this.Logger != null)
+        {
+            this.UpdateComponentStatesAsync().AndLogException(this.Logger);
+        }
     }
 
     private async ValueTask UpdateComponentStatesAsync()
     {
+        if (this.NavigationManager == null)
+        {
+            return;
+        }
         var queryStrings = HttpUtility.ParseQueryString(new Uri(this.NavigationManager.Uri).Query);
         await this.UpdateComponentArgsFromUrlAsync(queryStrings);
         await this.UpdateGlobalEffectsFromUrlAsync(queryStrings);
@@ -116,95 +172,161 @@ else
 
     private async ValueTask UpdateComponentArgsFromUrlAsync(NameValueCollection queryStrings)
     {
-        if (this._Story == null) return;
-
-        var componentArgsString = queryStrings["args"] ?? "";
-        if (this._ComponentArgsString == componentArgsString) return;
+        if (this._Story == null)
+        {
+            return;
+        }
+        var componentArgsString = queryStrings["args"] ?? string.Empty;
+        componentArgsString = UrlParameterShortener.DecodeAndDecompress(componentArgsString);
+        if (this._ComponentArgsString == componentArgsString)
+        {
+            return;
+        }
         this._ComponentArgsString = componentArgsString;
+        var newComponentArgs = UriParameterKit.DecodeKeyValues(componentArgsString);
 
-        await this._Story.Context.ResetArgumentsAsync();
+        // Count non-EventCallback args in the context (for fair comparison)
+        var nonEventCallbackArgsCount = this._Story.Context.Args
+            .Count(x => x.Value == null || !x.Value.GetType().Name.StartsWith("EventCallback"));
 
-        var componentArgs = UriParameterKit.DecodeKeyValues(this._ComponentArgsString);
+        var argsMatch = true;
+        foreach (var arg in newComponentArgs)
+        {
+            if (!this._Story.Context.Args.TryGetValue(arg.Key, out var currentValue))
+            {
+                argsMatch = false;
+                break;
+            }
+
+            // Convert current value to string using the same method as when writing to URL
+            var currentValueString = this._Story.Context.ConvertParameterValueToString(arg.Key, currentValue);
+            if (!Equals(currentValueString, arg.Value))
+            {
+                argsMatch = false;
+                break;
+            }
+        }
+
+        // Compare counts excluding EventCallbacks (they are never in URL)
+        if (argsMatch && nonEventCallbackArgsCount == newComponentArgs.Count)
+        {
+            return;
+        }
+
+        // Convert URL args to typed values
+        var updatedArgs = new Dictionary<string, object?>();
         var parameters = this._Story.Context.Parameters;
-        foreach (var arg in componentArgs)
+
+        foreach (var arg in newComponentArgs)
         {
             var parameter = parameters.FirstOrDefault(p => p.Name == arg.Key);
-            if (parameter == null) continue;
-            if (!TypeUtility.TryConvertType(parameter.TypeStructure, arg.Value, out var value)) continue;
-
-            await this._Story.Context.AddOrUpdateArgumentAsync(arg.Key, value);
+            if (parameter == null)
+            {
+                continue;
+            }
+            if (!parameter.TypeStructure.TryConvertType(arg.Value, out var value))
+            {
+                continue;
+            }
+            updatedArgs[arg.Key] = value;
         }
+
+        // IMPORTANT: Use UpdateArgumentsAsync instead of ResetAndUpdateArgumentsAsync
+        // to avoid visual flash when the component briefly renders with default values
+        await this._Story.Context.UpdateArgumentsAsync(updatedArgs);
         this.StateHasChanged();
     }
 
-    private class StyleDescriptor { public string? Id { get; init; } public bool Enable { get; init; } public string? Href { get; init; } };
+    private async Task UpdateUrlWithArgsAsync()
+    {
+        if (this._Story == null || this.NavigationManager == null) return;
+
+        // IMPORTANT: Filter out EventCallbacks - they should NEVER be serialized to URL
+        var args = this._Story.Context.Args
+            .Where(x => x.Value == null || !x.Value.GetType().Name.StartsWith("EventCallback"))
+            .ToDictionary(
+                keySelector: x => x.Key,
+                elementSelector: x => (object?)this._Story.Context.ConvertParameterValueToString(x.Key, x.Value)
+            );
+
+        // Update URL immediately (no debounce) to avoid race condition
+        // where OnLocationChanged reads the old URL before it's updated
+        var queryStrings = HttpUtility.ParseQueryString(new Uri(this.NavigationManager.Uri).Query);
+        var encodedArgs = UriParameterKit.EncodeKeyValues(args);
+        var compressedArgs = UrlParameterShortener.CompressAndEncode(encodedArgs);
+        queryStrings["args"] = compressedArgs;
+        var newUri = new Uri(this.NavigationManager.Uri).GetLeftPart(UriPartial.Path) + "?" + queryStrings.ToString();
+        this.NavigationManager.NavigateTo(newUri);
+
+        await Task.CompletedTask;
+    }
 
     private async ValueTask UpdateGlobalEffectsFromUrlAsync(NameValueCollection queryStrings)
     {
-        // If it is during the server-side pre-rendering, nothing to do.
         if (!this._Rendered) return;
-
-        var globalEffectsString = queryStrings["globals"] ?? "";
+        var globalEffectsString = queryStrings["globals"] ?? string.Empty;
         if (this._GlobalEffectsString == globalEffectsString) return;
         this._GlobalEffectsString = globalEffectsString;
-
         var globalEffects = UriParameterKit.DecodeKeyValues(globalEffectsString);
         var background = globalEffects.TryGetValue("backgrounds.value", out var backgroundStr) ? backgroundStr : "transparent";
         var enableGrid = globalEffects.TryGetValue("backgrounds.grid", out var gridStr) ? bool.TryParse(gridStr, out var grid) ? grid : false : false;
         var enableOutline = globalEffects.TryGetValue("outline", out var outlineStr) ? bool.TryParse(outlineStr, out var outline) ? outline : false : false;
-        this._EnableMeasure = globalEffects.TryGetValue("measureEnabled", out var measureStr) ? bool.TryParse(measureStr, out var measure) ? measure : false : false;
 
+        var theme = globalEffects.TryGetValue("theme.value", out var themeStr) ? themeStr : string.Empty;
+        var brand = globalEffects.TryGetValue("brand.value", out var brandStr) ? brandStr : string.Empty;
+
+        this._EnableMeasure = globalEffects.TryGetValue("measureEnabled", out var measureStr) ? bool.TryParse(measureStr, out var measure) ? measure : false : false;
         var basePath = "./_content/BlazingStory/css/preview/";
         var styleDescripters = new StyleDescriptor[] {
             new() { Id = "addon-background-grid", Enable = enableGrid, Href = basePath + "background-grid.min.css" },
-            new() { Id = "addon-outline", Enable = enableOutline, Href = basePath + "outline.min.css" }};
-        await this._JSModule.InvokeVoidAsync("ensurePreviewStyle", new object[] { background, styleDescripters });
-
+            new() { Id = "addon-outline", Enable = enableOutline, Href = basePath + "outline.min.css" }
+        };
+        if (this._JSModule != null)
+        {
+            await this._JSModule.InvokeVoidAsync("ensurePreviewStyle", new object[] { background, styleDescripters, theme, brand });
+        }
         this.StateHasChanged();
     }
 
-    private static readonly Lazy<MethodInfo> _EventTArgMonitorHandlerMethod = new(() => typeof(CanvasFrame).GetMethod(nameof(EventTArgMonitorHandler), BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new InvalidOperationException());
-
-    private static readonly Lazy<MethodInfo> _EventCallbackCreateMethod = new(() =>
-        typeof(EventCallbackFactory).GetMethods(BindingFlags.Public | BindingFlags.Instance)
-            .Where(m => m.Name == "Create" && m.IsGenericMethod)
-            .Select(m => (MethodInfo: m, ParameterTypes: m.GetParameters().Select(p => p.ParameterType).ToArray()))
-            .Where(m => m.ParameterTypes.Length == 2)
-            .Where(m => m.ParameterTypes[0] == typeof(object))
-            .Where(m => m.ParameterTypes[1].IsGenericType && m.ParameterTypes[1].GetGenericTypeDefinition() == typeof(Func<,>))
-            .Select(m => m.MethodInfo)
-            .First());
-
+    // Method to wire up event monitors
     private async ValueTask WireUpEventMonitorsAsync()
     {
-        if (this._Story == null) return;
+        if (this._Story?.Context?.Parameters == null)
+        {
+            return;
+        }
 
         foreach (var parameter in this._Story.Context.Parameters)
         {
+            // Check if parameter is an EventCallback
             if (parameter.Type.IsAssignableTo(typeof(EventCallback)))
             {
-                var eventCallback = EventCallback.Factory.Create(this, () => this.EventVoidMonitorHandler(parameter.Name));
+                var eventCallback = EventCallback.Factory.Create(this, (Func<Task>)(() => this.EventVoidMonitorHandler(parameter.Name)));
                 await this._Story.Context.AddOrUpdateArgumentAsync(parameter.Name, eventCallback);
             }
-
+            // Check if parameter is a generic EventCallback<>
             else if (parameter.Type.IsGenericType && parameter.Type.GetGenericTypeDefinition() == typeof(EventCallback<>))
             {
                 var typeOfArgs = parameter.Type.GenericTypeArguments.First();
-
+                if (typeOfArgs == null)
+                {
+                    continue;
+                }
                 var eventArgsParam = Expression.Parameter(typeOfArgs, "eventArgs");
 #pragma warning disable IL2060
+                // Get the generic method for EventTArgMonitorHandler
                 var monitorHandler = _EventTArgMonitorHandlerMethod.Value.MakeGenericMethod(typeOfArgs);
 #pragma warning restore IL2060
                 var callBody = Expression.Call(Expression.Constant(this), monitorHandler, Expression.Constant(parameter.Name), eventArgsParam);
 
+                // Create lambda expression
                 var monitorHandlerLambdaType = typeof(Func<,>).MakeGenericType(typeOfArgs, typeof(Task));
                 var monitorHandlerLambda = Expression.Lambda(monitorHandlerLambdaType, callBody, eventArgsParam);
                 var monitorHandlerDelegate = monitorHandlerLambda.Compile();
-
 #pragma warning disable IL2060
+                // Create event callback
                 var eventCallbackCreate = _EventCallbackCreateMethod.Value.MakeGenericMethod(typeOfArgs) ?? throw new InvalidOperationException();
 #pragma warning restore IL2060
-
                 var eventCallback = eventCallbackCreate.Invoke(EventCallback.Factory, new object[] { this, monitorHandlerDelegate });
                 await this._Story.Context.AddOrUpdateArgumentAsync(parameter.Name, eventCallback);
             }
@@ -213,19 +335,118 @@ else
 
     private async Task EventVoidMonitorHandler(string name)
     {
-        await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, "void");
+        if (this._JSModule != null)
+        {
+            await this._JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, "void");
+        }
     }
 
-    internal async Task EventTArgMonitorHandler<[DynamicallyAccessedMembers(PublicProperties)] TArgs>(string name, TArgs eventArgs)
+    private async Task EventTArgMonitorHandler<[DynamicallyAccessedMembers(PublicProperties)] TArgs>(string name, TArgs eventArgs)
     {
-        var json = JsonFallbackSerializer.Serialize(eventArgs);
-        await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, json);
-    }
+        if (this._JSModule == null || this._Story == null) return;
 
-    public async ValueTask DisposeAsync()
-    {
-        if (this._Story != null) this._Story.Context.ShouldRender -= StoryContext_ShouldRender;
-        this.NavigationManager.LocationChanged -= NavigationManager_LocationChanged;
-        await this._JSModule.DisposeAsync();
+        var paramName = name.EndsWith("Changed") ? name.Replace("Changed", "") : name;
+        object? value = eventArgs;
+
+        var parameter = this._Story.Context.Parameters.FirstOrDefault(p => p.Name == paramName);
+        var expectedType = parameter?.TypeStructure.PrimaryType;
+
+        if (eventArgs is IDictionary<string, object?> dict)
+        {
+            if (dict.TryGetValue(paramName, out var dictValue) && dictValue != null)
+            {
+                value = dictValue;
+            }
+            else if (dict.TryGetValue("Keys", out var keysObj) && keysObj is JsonElement keysElement && keysElement.ValueKind == JsonValueKind.Array &&
+                     dict.TryGetValue("Values", out var valuesObj) && valuesObj is JsonElement valuesElement && valuesElement.ValueKind == JsonValueKind.Array)
+            {
+                var keys = keysElement.EnumerateArray().Select(e => e.GetString()).Where(s => s != null).ToList();
+                var values = valuesElement.EnumerateArray().Select(e => e.ValueKind == JsonValueKind.String ? e.GetString() : (object)e).ToList();
+                var keyIndex = keys.IndexOf(paramName);
+                if (keyIndex >= 0 && keyIndex < values.Count)
+                {
+                    value = values[keyIndex];
+                }
+            }
+        }
+        else if (expectedType == typeof(string) && eventArgs != null)
+        {
+            value = eventArgs.ToString();
+        }
+
+        if (value != null && expectedType != null)
+        {
+            if (expectedType == typeof(string))
+            {
+                value = value.ToString();
+            }
+            else if (expectedType.IsArray || (expectedType.IsGenericType && expectedType.GetGenericTypeDefinition() == typeof(IList<>)))
+            {
+                if (value is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.Array)
+                {
+                    var elementType = expectedType.IsArray ? expectedType.GetElementType() : expectedType.GetGenericArguments()[0];
+
+                    // Determine if we need to convert to array or list
+                    bool isArray = expectedType.IsArray;
+
+                    if (elementType == typeof(string))
+                    {
+                        var enumerable = jsonElement.EnumerateArray().Select(e => e.GetString()).Where(s => s != null);
+                        value = isArray ? enumerable.ToArray() : enumerable.ToList();
+                    }
+                    else if (elementType == typeof(int))
+                    {
+                        var enumerable = jsonElement.EnumerateArray().Select(e => e.GetInt32());
+                        value = isArray ? enumerable.ToArray() : enumerable.ToList();
+                    }
+                    else if (elementType == typeof(double))
+                    {
+                        var enumerable = jsonElement.EnumerateArray().Select(e => e.GetDouble());
+                        value = isArray ? enumerable.ToArray() : enumerable.ToList();
+                    }
+                    else if (elementType == typeof(long))
+                    {
+                        var enumerable = jsonElement.EnumerateArray().Select(e => e.GetInt64());
+                        value = isArray ? enumerable.ToArray() : enumerable.ToList();
+                    }
+                    else if (elementType == typeof(float))
+                    {
+                        var enumerable = jsonElement.EnumerateArray().Select(e => (float)e.GetDouble());
+                        value = isArray ? enumerable.ToArray() : enumerable.ToList();
+                    }
+                    else if (elementType == typeof(decimal))
+                    {
+                        var enumerable = jsonElement.EnumerateArray().Select(e => e.GetDecimal());
+                        value = isArray ? enumerable.ToArray() : enumerable.ToList();
+                    }
+                    else if (elementType == typeof(bool))
+                    {
+                        var enumerable = jsonElement.EnumerateArray().Select(e => e.GetBoolean());
+                        value = isArray ? enumerable.ToArray() : enumerable.ToList();
+                    }
+                }
+                else if (value is IList<object> list)
+                {
+                    value = list;
+                }
+            }
+            else if (expectedType == typeof(int) && value is string str && int.TryParse(str, out var intValue))
+            {
+                value = intValue;
+            }
+            else if (expectedType == typeof(bool) && value is string boolStr && bool.TryParse(boolStr, out var boolValue))
+            {
+                value = boolValue;
+            }
+        }
+
+        var json = JsonFallbackSerializer.Serialize(new Dictionary<string, object?> { { paramName, value } });
+        await this._JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, json);
+
+        if (this._Story != null)
+        {
+            await this._Story.Context.AddOrUpdateArgumentAsync(paramName, value);
+            await this.UpdateUrlWithArgsAsync();
+        }
     }
 }

@@ -1,5 +1,6 @@
+@using System.Text.Json
+
 @implements IDisposable
-@inject NavigationManager NavigationManager
 
 <PageTitle>@_PageTitle</PageTitle>
 
@@ -53,19 +54,22 @@
 
                 @* -- IFrame -- *@
                 <div class="canvas-frame-viewport fill">
-                    <PreviewFrame @ref="_PreviewFrame"
-                                  Story="this._CurrentStory"
-                                  ViewMode="story"
-                                  Id="@this.RouteData.Parameter"
-                                  Args="this._CurrentStory?.Context.Args"
-                                  Globals="this.AddonsStore.GetFrameArguments(AddonType.CanvasPage)"
-                                  OnComponentAction="OnComponentAction" />
+                    @if (this._CurrentStory != null)
+                    {
+                        <PreviewFrame @ref="_PreviewFrame"
+                                      Story="this._CurrentStory"
+                                      ViewMode="story"
+                                      Id="@this.RouteData.Parameter"
+                                      Args="this._CurrentStory.Context.Args"
+                                      ArgsChanged="OnArgsChanged"
+                                      Globals="this.AddonsStore.GetFrameArguments(AddonType.CanvasPage)"
+                                      OnComponentAction="OnComponentAction" />
+                    }
                 </div>
             </div>
         </FirstPane>
 
         <SecondPane>
-
             @* -- Addons -- *@
             <CascadingValue Value="this._CanvasPageContext">
                 <div class="add-on-container fill stack vertical">
@@ -96,6 +100,8 @@
     [CascadingParameter]
     protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
 
+    [Inject] private NavigationManager? NavigationManager { get; set; }
+
     private PreviewFrame? _PreviewFrame;
 
     private HelperScript HelperScript = default!;
@@ -116,13 +122,13 @@
 
     private AddonPanelLayout _AddonPanelLayout = new();
 
-    private string _PageTitle = "";
+    private string _PageTitle = string.Empty;
 
-    private string _LastTitledParameter = "";
+    private string _LastTitledParameter = string.Empty;
 
     private Story? _CurrentStory = null;
 
-    private string AddonPanelLayoutKeyName => this.GetType().Name + "." + nameof(_AddonPanelLayout);
+    private string AddonPanelLayoutKeyName => this.GetType().Name + "." + nameof(this._AddonPanelLayout);
 
     private SvgIconType ToggleOrientationButtonIcon => this._AddonPanelLayout.SplitterOrientation switch
     {
@@ -137,7 +143,7 @@
     protected override void OnInitialized()
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
-        this.AddonsStore.OnFrameArgumentsChanged += AddonsStore_OnFrameArgumentsChanged;
+        this.AddonsStore.OnFrameArgumentsChanged += this.AddonsStore_OnFrameArgumentsChanged;
 
         this._Commands = this.Services.GetRequiredService<CommandService>();
         this._ToolbarVisibleCommand = this._Commands[CommandType.ToolBarVisible]!;
@@ -186,17 +192,17 @@
 
     private void UpdateCurrentStory()
     {
-        if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
+        if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= this.Context_ArgumentChanged;
 
         var path = this.RouteData.Parameter;
         if (this.StoriesStore.TryGetStoryByPath(path, out var story))
         {
-            if (!object.ReferenceEquals(this._CurrentStory, story)) _ComponentActionLogs?.Clear();
+            if (!object.ReferenceEquals(this._CurrentStory, story)) this._ComponentActionLogs?.Clear();
             this._CurrentStory = story;
         }
         else this._CurrentStory = null;
 
-        if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged += Context_ArgumentChanged;
+        if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged += this.Context_ArgumentChanged;
     }
 
     private ValueTask Context_ArgumentChanged()
@@ -205,9 +211,17 @@
         return ValueTask.CompletedTask;
     }
 
+    private async Task OnArgsChanged(IReadOnlyDictionary<string, object?> newArgs)
+    {
+        if (this._CurrentStory != null)
+        {
+            await this._CurrentStory.Context.UpdateArgumentsAsync(newArgs);
+        }
+    }
+
     private async Task OnAddonPanelSizeChanged()
     {
-        if (_AddonPanelLayout.SplitterOrientation == SplitterOrientation.Horizontal)
+        if (this._AddonPanelLayout.SplitterOrientation == SplitterOrientation.Horizontal)
         {
             this._AddonPanelLayout.VerticalSize = this._AddonPanelSize;
         }
@@ -229,7 +243,7 @@
 
     private async ValueTask OnToggleOrientation()
     {
-        _AddonPanelLayout.SplitterOrientation = _AddonPanelLayout.SplitterOrientation switch
+        this._AddonPanelLayout.SplitterOrientation = this._AddonPanelLayout.SplitterOrientation switch
         {
             SplitterOrientation.Horizontal => SplitterOrientation.Vertical,
             _ => SplitterOrientation.Horizontal
@@ -253,9 +267,10 @@
     private async Task OnClickCopyCanvasLink()
     {
         if (this._PreviewFrame == null) return;
-        var canvalLinkUrl = this._PreviewFrame.CurrentPreviewFrameUrl.TrimStart('.', '/');
-        var absoluteCanvalLinkUrl = this.NavigationManager.ToAbsoluteUri(canvalLinkUrl);
-        await this.HelperScript.CopyTextToClipboardAsync(absoluteCanvalLinkUrl.AbsoluteUri);
+        if (this.NavigationManager == null) return;
+        var canvasLinkUrl = this._PreviewFrame.CurrentPreviewFrameUrl.TrimStart('.', '/');
+        var absoluteCanvasLinkUrl = this.NavigationManager.ToAbsoluteUri(canvasLinkUrl);
+        await this.HelperScript.CopyTextToClipboardAsync(absoluteCanvasLinkUrl.AbsoluteUri);
     }
 
     private async Task OnClickReload()
@@ -285,13 +300,13 @@
 
     private void OnComponentAction(ComponentActionEventArgs e)
     {
-        _ComponentActionLogs?.Add(e.Name, e.ArgsJson);
+        this._ComponentActionLogs?.Add(e.Name, e.ArgsJson);
     }
 
     public void Dispose()
     {
-        this.AddonsStore.OnFrameArgumentsChanged -= AddonsStore_OnFrameArgumentsChanged;
+        this.AddonsStore.OnFrameArgumentsChanged -= this.AddonsStore_OnFrameArgumentsChanged;
         this._Subscriptions.Dispose();
-        if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
+        if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= this.Context_ArgumentChanged;
     }
 }

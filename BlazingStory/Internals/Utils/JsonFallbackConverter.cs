@@ -4,14 +4,13 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Components;
 using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.Internals.Utils;
 
 public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)] T> : JsonConverter<T>
 {
-    public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => throw new NotSupportedException();
+    private const string _fallbackMessageFormat = "Serialization of {0} is not supported.";
 
     private readonly Stack<object> _visited;
 
@@ -20,9 +19,10 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
         this._visited = visited ?? new();
     }
 
-    private const string _fallbackMessageFormat = "Serialization of {0} is not supported.";
+    public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => throw new NotSupportedException();
 
 #pragma warning disable IL2026, IL2027, IL2072
+
     public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
     {
         var typeCode = value is null ? TypeCode.Empty : Type.GetTypeCode(typeof(T));
@@ -40,15 +40,19 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
             case DateTime d:
                 writer.WriteRawValue(d.ToUniversalTime().ToString("o"), skipInputValidation: true);
                 return;
+
             case DateTimeOffset d:
                 writer.WriteRawValue(d.UtcDateTime.ToString("o"), skipInputValidation: true);
                 return;
+
             case DateOnly d:
                 writer.WriteRawValue(d.ToString("o"), skipInputValidation: true);
                 return;
+
             case TimeOnly t:
                 writer.WriteRawValue(t.ToString("o"), skipInputValidation: true);
                 return;
+
             default: // Handle other primitive types, like strings, numbers, etc.
                 if (typeCode is not TypeCode.Object)
                 {
@@ -84,9 +88,17 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
             var propValue = property.GetValue(value);
             var propType = propValue?.GetType() ?? property.PropertyType;
 
-            if (IsUnsupportedType(propType))
+            if (propValue == null)
+            {
+                writer.WriteNullValue();
+            }
+            else if (IsUnsupportedType(propType))
             {
                 writer.WriteStringValue(string.Format(_fallbackMessageFormat, $"type '{TypeUtility.GetTypeDisplayText(propType).First()}'"));
+            }
+            else if (propValue is string s)
+            {
+                writer.WriteStringValue(s);
             }
             else if (propValue is IDictionary dictionary)
             {
@@ -125,11 +137,18 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
         writer.WriteEndObject();
         if (isClass) this._visited.Pop();
     }
+
 #pragma warning restore IL2026, IL2027, IL2072
+
+    private static bool IsUnsupportedType(Type type)
+    {
+        return typeof(Delegate).IsAssignableFrom(type) ||
+               typeof(Expression).IsAssignableFrom(type);
+    }
 
     private JsonSerializerOptions PrepareJsonSerializerOptions(JsonSerializerOptions options, Type valueType)
     {
-        if (TypeUtility.IsPlainObjectType(valueType))
+        if (TypeUtility.IsUserDefinedReferenceType(valueType))
         {
 #pragma warning disable IL2070, IL2071
             var jsonConverterType = typeof(JsonFallbackConverter<>).MakeGenericType(valueType);
@@ -142,13 +161,5 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
             }
         }
         return options;
-    }
-
-    private static bool IsUnsupportedType(Type type)
-    {
-        return type == typeof(EventCallback) ||
-                TypeUtility.GetOpenType(type) == typeof(EventCallback<>) ||
-                typeof(Delegate).IsAssignableFrom(type) ||
-                typeof(Expression).IsAssignableFrom(type);
     }
 }
