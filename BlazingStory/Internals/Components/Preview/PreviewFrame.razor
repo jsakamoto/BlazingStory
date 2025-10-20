@@ -287,38 +287,6 @@
         this._ThisRef?.Dispose();
     }
 
-    internal async ValueTask ReloadAsync()
-    {
-        if (this._JSModule is not null)
-        {
-            await this._JSModule.InvokeVoidAsync("reloadPreviewFrame", this._Iframe);
-        }
-    }
-
-    internal async ValueTask ZoomInAsync()
-    {
-        if (this._JSModule is not null)
-        {
-            await this._JSModule.InvokeVoidAsync("zoomInPreviewFrame", this._Iframe);
-        }
-    }
-
-    internal async ValueTask ZoomOutAsync()
-    {
-        if (this._JSModule is not null)
-        {
-            await this._JSModule.InvokeVoidAsync("zoomOutPreviewFrame", this._Iframe);
-        }
-    }
-
-    internal async ValueTask ResetZoomAsync()
-    {
-        if (this._JSModule is not null)
-        {
-            await this._JSModule.InvokeVoidAsync("resetZoomPreviewFrame", this._Iframe);
-        }
-    }
-
     protected override void OnInitialized()
     {
         if (this.JSRuntime is not null)
@@ -394,6 +362,38 @@
                 ["globals"] = encodeGlobals,
                 ["frameId"] = this._IframeElementId
             });
+    }
+
+    internal async ValueTask ReloadAsync()
+    {
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("reloadPreviewFrame", this._Iframe);
+        }
+    }
+
+    internal async ValueTask ZoomInAsync()
+    {
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("zoomInPreviewFrame", this._Iframe);
+        }
+    }
+
+    internal async ValueTask ZoomOutAsync()
+    {
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("zoomOutPreviewFrame", this._Iframe);
+        }
+    }
+
+    internal async ValueTask ResetZoomAsync()
+    {
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("resetZoomPreviewFrame", this._Iframe);
+        }
     }
 
     private async ValueTask EnsureDotnetWatchScriptInjected()
