@@ -1,3 +1,9 @@
+v.1.0.0-preview.61
+- Fix: The browser title did not update when a Custom Page was selected.
+- Update: Refined the navigation tree and settings menu design to align with Storybook v9.
+- Fix: The navigation tree layout broke when the first item was not a container (e.g., a custom document or a component).
+- Fix: The sorting algorithm of the navigation items.
+
 v.1.0.0-preview.60
 - Update: Upgraded the UI design to match Storybook v9, bringing a more modern and refined user interface.
 - Enhancement: Added "Documentation" menu item to the settings menu, providing easy access to the newly launched Blazing Story documentation site.

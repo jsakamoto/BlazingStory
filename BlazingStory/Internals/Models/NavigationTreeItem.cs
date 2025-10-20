@@ -41,8 +41,8 @@ public class NavigationTreeItem : INavigationPath
         var itemSourceSet = this.SubItems.Where(item => !filterStories(item)).ToDictionary(item => item.Caption, item => item);
         var sortedItems = new List<NavigationTreeItem>(capacity: this.SubItems.Count);
 
-        // Keep the default ordering for docs and stories, placing them before other item types.
-        sortedItems.AddRange(this.SubItems.Where(filterStories));
+        // Keep the default ordering for docs and stories.
+        var stories = this.SubItems.Where(filterStories).ToArray();
 
         // Sort the navigation tree items according to the custom ordering specifications.
         for (var i = 0; i < customOrderings.Count; i++)
@@ -68,6 +68,9 @@ public class NavigationTreeItem : INavigationPath
         var sortedRemains = itemSourceSet.Values.Order(comparer: NavigationTreeItemComparer.Instance).ToArray();
         foreach (var item in sortedRemains) item.SortSubItemsRecurse([]);
         sortedItems.AddRange(sortedRemains);
+
+        // Placing stories after other item types
+        sortedItems.AddRange(stories);
 
         // Replace the sub items
         for (var i = 0; i < sortedItems.Count; i++) this.SubItems[i] = sortedItems[i];
@@ -130,8 +133,8 @@ public class NavigationTreeItem : INavigationPath
         int IComparer<NavigationTreeItem>.Compare(NavigationTreeItem? a, NavigationTreeItem? b)
         {
             if (a is null || b is null) return 0;
-            if (a.Type == NavigationItemType.CustomPage && b.Type != NavigationItemType.CustomPage) return 1;
-            if (a.Type != NavigationItemType.CustomPage && b.Type == NavigationItemType.CustomPage) return -1;
+            if (a.Type == NavigationItemType.CustomPage && b.Type != NavigationItemType.CustomPage) return -1;
+            if (a.Type != NavigationItemType.CustomPage && b.Type == NavigationItemType.CustomPage) return 1;
             return a.Caption.CompareTo(b.Caption);
         }
     }

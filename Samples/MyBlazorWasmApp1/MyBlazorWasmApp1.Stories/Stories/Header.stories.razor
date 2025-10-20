@@ -1,0 +1,25 @@
+﻿@attribute [Stories("Example/Header")]
+
+<Stories TComponent="Header" Layout="typeof(FullScreen)">
+
+    <Story Name="Logged In">
+        <Arguments>
+        </Arguments>
+        <Template>
+            <Header User="this.User" @attributes="context.Args" />
+
+            @code {
+                public User User = new() { Name = "Jane Doe" };
+            }
+        </Template>
+    </Story>
+
+    <Story Name="Logged Out">
+        <Arguments>
+        </Arguments>
+        <Template>
+            <Header @attributes="context.Args" />
+        </Template>
+    </Story>
+
+</Stories>

@@ -1,5 +1,5 @@
 ---
-$attribute: CustomPage("Components/Welcome")
+$attribute: CustomPage("Configure your project")
 ---
 ## <img src="https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/icon.min.64x64.svg" style="vertical-align: middle;"> Blazing Story
 
@@ -13,6 +13,6 @@ A clone of ["Storybook"](https://storybook.js.org/) for Blazor, a frontend works
 
 "Blazing Story" is built on **almost 100% Blazor native** (with only a few JavaScript helper scripts), so you don't have to worry about `npm`, `package.json`, `webpack`, or any JavaScript/TypeScript code. You can create a UI catalog application **the Blazor way!**
 
-For more details, please refer to the README document at the following link:
+For more details, please refer to the Blazing Story official document site at the following link:
 
-- https://github.com/jsakamoto/BlazingStory/
+- https://blazingstory.github.io/docs/
