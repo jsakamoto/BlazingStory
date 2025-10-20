@@ -1,4 +1,5 @@
-﻿using BlazingStory.Internals.Models;
+﻿using System;
+using BlazingStory.Internals.Models;
 using BlazingStory.Internals.Services.Navigation;
 using BlazingStory.Test._Fixtures;
 using BlazingStory.Test._Fixtures.Dummies;
@@ -8,6 +9,7 @@ using RazorClassLib1.Components.Rating;
 using RazorClassLib1.Components.Select;
 using static BlazingStory.Test._Fixtures.TestHelper;
 using static BlazingStory.Types.NavigationTreeOrderBuilder;
+using BlazingStory.Test._Fixtures;
 
 namespace BlazingStory.Test.Internals.Services.Navigation;
 
@@ -141,6 +143,59 @@ internal class NavigationTreeBuilderTest
     }
 
     [Test]
+    public async Task Build_TopLevel_Is_Component_Test()
+    {
+        // Given
+        await using var host = new TestHost();
+        var builder = new NavigationTreeBuilder();
+        var storyContainers = new StoryContainer[] {
+            new(typeof(Button), null, new(typeof(Button_stories), new("Button")), host.Services){ Stories = {
+                CreateStory<Button>("Button", "Default"),
+                CreateStory<Button>("Button", "Primary"),
+            }}
+        };
+
+        // When
+        var root = builder.Build(storyContainers, [], [], null);
+
+        // Then
+        root.SubItems.Count.Is(1);
+        root.SubItems[0].Dump().Is("Component | Button | 3 | Expanded");
+        root.SubItems[0].SubItems[0].Dump().Is("Docs | Docs | 0");
+        root.SubItems[0].SubItems[1].Dump().Is("Story | Default | 0");
+        root.SubItems[0].SubItems[2].Dump().Is("Story | Primary | 0");
+    }
+
+    [Test]
+    public async Task Build_TopLevel_Is_CustomPage_Test()
+    {
+        // Given
+        await using var host = new TestHost();
+        var builder = new NavigationTreeBuilder();
+        var storyContainers = new StoryContainer[] {
+            new(typeof(Button), null, new(typeof(Button_stories), new("Components/Button")), host.Services){ Stories = {
+                CreateStory<Button>("Button", "Default"),
+                CreateStory<Button>("Button", "Primary"),
+            }}
+        };
+        var customPageContainers = new CustomPageContainer[] {
+            new(new(typeof(DummyPage), new("Welcome"))),
+        };
+
+        // When
+        var root = builder.Build(storyContainers, customPageContainers, [], null);
+
+        // Then
+        root.SubItems.Count.Is(2);
+        root.SubItems[0].Dump().Is("CustomPage | Welcome | 0 | Expanded");
+        root.SubItems[1].Dump().Is("Container | Components | 1 | Expanded");
+        root.SubItems[1].SubItems[0].Dump().Is("Component | Button | 3");
+        root.SubItems[1].SubItems[0].SubItems[0].Dump().Is("Docs | Docs | 0");
+        root.SubItems[1].SubItems[0].SubItems[1].Dump().Is("Story | Default | 0");
+        root.SubItems[1].SubItems[0].SubItems[2].Dump().Is("Story | Primary | 0");
+    }
+
+    [Test]
     public async Task Build_and_its_Ordering_Test()
     {
         // Given
@@ -164,22 +219,23 @@ internal class NavigationTreeBuilderTest
             new(new(typeof(DummyPage), new("Examples/Sample of Markdown"))),
             new(new(typeof(DummyPage), new("UI Components/Atoms/Rating/Use Cases"))),
             new(new(typeof(DummyPage), new("UI Components/Atoms/Rating/Overview"))),
+            new(new(typeof(DummyPage), new("For Your Team"))),
         };
 
         // When
         var builder = new NavigationTreeBuilder();
         var root = builder.Build(storyContainers, customPageContainers, [], expandedNavigationPath: null);
 
-        // Then
-        root.SubItems.Select(node => node.Caption).Is("Examples", "UI Components"); // The 1st level nodes were alphabetically sorted.
+        // Then: The 1st level nodes were alphabetically sorted, but custom pages are prioritized.
+        root.SubItems.Captions().Is("For Your Team", "Examples", "UI Components"); 
 
-        // In the "Examples" node, components and custom pages nodes were sorted in alphabetical order, but custom pages were always listed after components.
-        root.SubItems[0].SubItems.Select(node => node.Caption).Is("Button", "Select", "Sample of Markdown", "Welcome");
+        // In the "Examples" node, components and custom pages nodes were sorted in alphabetical order, but custom pages were always listed before components.
+        root.SubItems[1].SubItems.Captions().Is("Sample of Markdown", "Welcome", "Button", "Select");
 
-        root.SubItems[0].SubItems[0].SubItems.Select(node => node.Caption).Is("Docs", "Default", "Primary", "Danger"); // Stories were kept in the original order.
-        root.SubItems[0].SubItems[1].SubItems.Select(node => node.Caption).Is("Docs", "Single Select", "Multiple Select");
+        root.SubItems[1].SubItems[2].SubItems.Captions().Is("Docs", "Default", "Primary", "Danger"); // Stories were kept in the original order.
+        root.SubItems[1].SubItems[3].SubItems.Captions().Is("Docs", "Single Select", "Multiple Select");
 
-        root.SubItems[1].SubItems[0].SubItems[0].SubItems.Select(node => node.Caption).Is("Docs", "Default", "Overview", "Use Cases");
+        root.SubItems[2].SubItems[0].SubItems[0].SubItems.Captions().Is("Overview", "Use Cases", "Docs", "Default");
     }
 
     [Test]
@@ -245,21 +301,21 @@ internal class NavigationTreeBuilderTest
         var root = builder.Build(storyContainers, customPageContainers, customOrdering, expandedNavigationPath: null);
 
         // Then
-        root.SubItems.Select(node => node.Caption).Is("Components", "Welcome", "Templates", "Others", "Getting Started", "Overview"); // The 1st level nodes were sorted in the custom order.
-        root.SubItems[0].SubItems.Select(node => node.Caption).Is("Layouts", "Slider", "Button"); // The 2nd level nodes were also sorted in the custom order.
-        root.SubItems[0].SubItems[0].SubItems.Select(node => node.Caption).Is("Header", "Footer");
-        root.SubItems[0].SubItems[0].SubItems[0].SubItems.Select(node => node.Caption).Is("Docs", "Default");
-        root.SubItems[0].SubItems[0].SubItems[1].SubItems.Select(node => node.Caption).Is("Docs", "Default");
+        root.SubItems.Captions().Is("Components", "Welcome", "Templates", "Getting Started", "Overview", "Others"); // The 1st level nodes were sorted in the custom order.
+        root.SubItems[0].SubItems.Captions().Is("Layouts", "Slider", "Button"); // The 2nd level nodes were also sorted in the custom order.
+        root.SubItems[0].SubItems[0].SubItems.Captions().Is("Header", "Footer");
+        root.SubItems[0].SubItems[0].SubItems[0].SubItems.Captions().Is("Docs", "Default");
+        root.SubItems[0].SubItems[0].SubItems[1].SubItems.Captions().Is("Docs", "Default");
 
-        root.SubItems[0].SubItems[1].SubItems.Select(node => node.Caption).Is("Docs", "Default", "Warning", "Advice", "Notice"); // The custom-ordered page node should be brought up first, but it will not have been placed before stories and default docs.
+        root.SubItems[0].SubItems[1].SubItems.Captions().Is("Warning", "Advice", "Notice", "Docs", "Default"); // The custom-ordered page node should be brought up first
 
-        root.SubItems[0].SubItems[2].SubItems.Select(node => node.Caption).Is("Docs", "Default", "Small", "Large");
+        root.SubItems[0].SubItems[2].SubItems.Captions().Is("Docs", "Default", "Small", "Large");
 
-        root.SubItems[2].SubItems.Select(node => node.Caption).Is("ConfirmDialog", "SignInForm"); // In the "Templates" node, components nodes were sorted in alphabetical order because they were not specified in the custom order.
-        root.SubItems[2].SubItems[0].SubItems.Select(node => node.Caption).Is("Docs", "Default");
-        root.SubItems[2].SubItems[1].SubItems.Select(node => node.Caption).Is("Docs", "Default");
+        root.SubItems[2].SubItems.Captions().Is("ConfirmDialog", "SignInForm"); // In the "Templates" node, components nodes were sorted in alphabetical order because they were not specified in the custom order.
+        root.SubItems[2].SubItems[0].SubItems.Captions().Is("Docs", "Default");
+        root.SubItems[2].SubItems[1].SubItems.Captions().Is("Docs", "Default");
 
-        root.SubItems[3].SubItems.Select(node => node.Caption).Is("Overlay");
-        root.SubItems[3].SubItems[0].SubItems.Select(node => node.Caption).Is("Docs", "Default");
+        root.SubItems[5].SubItems.Captions().Is("Overlay");
+        root.SubItems[5].SubItems[0].SubItems.Captions().Is("Docs", "Default");
     }
 }

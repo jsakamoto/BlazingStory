@@ -33,7 +33,7 @@
                         </a>
                     }
 
-                    @if (this.SubHeading)
+                    @if (this.SubHeading && item.Type == NavigationItemType.Container)
                     {
                         @* .sub-heading-action *@
                         var subHeadingActionIcon = item.IsExpandedAll ? SvgIconType.CollapseAll : SvgIconType.ExpandAll;
@@ -60,7 +60,9 @@
         <span class="icon">
             <SvgIcon Type="GetIconType(item)" />
         </span>
-        @item.Caption
+        <span class="text">
+            @item.Caption
+        </span>
     </text>
     ;
 

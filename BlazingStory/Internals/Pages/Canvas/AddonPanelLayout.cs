@@ -6,7 +6,7 @@ internal class AddonPanelLayout
 {
     public SplitterOrientation SplitterOrientation = SplitterOrientation.Horizontal;
 
-    public int HorizontalSize = 210;
+    public double HorizontalProportion = 50;
 
-    public int VerticalSize = 210;
+    public double VerticalProportion = 50;
 }

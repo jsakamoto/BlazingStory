@@ -1,5 +1,5 @@
 .menu-item.command-menu-item {
-    padding: 0 10px 0 8px;
+    padding: 0 10px 0 9px;
     overflow-y: hidden;
 
     .icon-area {
@@ -8,7 +8,6 @@
 
         svg.svg-icon {
             --bs-svg-icon-size: 16px;
-            margin-top: 5px;
         }
     }
 
@@ -20,6 +19,7 @@
 
     .command-title {
         flex: 1;
+        letter-spacing: 0.02px;
     }
 
     .hotkey-area {

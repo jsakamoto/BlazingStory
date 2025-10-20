@@ -1,34 +1,27 @@
-﻿.canvas-container {
-    flex: 1;
+﻿.canvas-page-container {
+    position: absolute;
+    inset: 0;
 
-    .canvas-frame-viewport {
-        position: relative;
+    .canvas-container {
+        flex: 1;
 
-/*        .canvas-frame-content {
-            position: absolute;
-            inset: 0;
-            overflow: auto;
-            display: grid;
-            justify-items: center;
-            align-items: center;
-
-            .canvas-frame {
-                transition: width .3s,height .3s;
-                box-sizing: content-box;
-                border: none;
-                width: 100%;
-                height: 100%;
-            }
+        .canvas-frame-viewport {
+            position: relative;
         }
-*/    }
-}
+    }
 
-.canvas-page-container.splitter-orientation-vertical .add-on-container {
-    border-left: 1px solid hsla(203, 50%, 30%, 0.2);
-}
+    .pane-of-split-container {
+        min-width: 80px;
+        min-height: 80px;
+    }
 
-.canvas-page-container.splitter-orientation-horizontal .add-on-container {
-    border-top: 1px solid hsla(203, 50%, 30%, 0.2);
+    &.splitter-orientation-vertical .add-on-container {
+        border-left: 1px solid hsla(203, 50%, 30%, 0.2);
+    }
+
+    &.splitter-orientation-horizontal .add-on-container {
+        border-top: 1px solid hsla(203, 50%, 30%, 0.2);
+    }
 }
 
 .addon-pane-hidden {
