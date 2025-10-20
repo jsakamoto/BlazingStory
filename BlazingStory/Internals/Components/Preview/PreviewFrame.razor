@@ -106,6 +106,123 @@
     private CancellationTokenSource? _DebounceCts;
     private (string Name, string ArgsJson)? _PendingUpdate;
 
+    protected override void OnInitialized()
+    {
+        if (this.JSRuntime is not null)
+        {
+            this._JSModule = new(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
+        }
+        this._InitialPreviewFrameUrl = this._CurrentPreviewFrameUrl = this.GetPreviewFrameUrl();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await this.UpdatePreviewFrameUrlAsync();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender) return;
+        this.StateHasChanged();
+        this._AfterFirstRendered = true;
+    }
+
+    private async ValueTask UpdatePreviewFrameUrlAsync()
+    {
+        if (this._JSModule is null || !this._AfterFirstRendered) return;
+        var nextPreviewFrameUrl = this.GetPreviewFrameUrl();
+        if (this._CurrentPreviewFrameUrl == nextPreviewFrameUrl) return;
+        this._CurrentPreviewFrameUrl = nextPreviewFrameUrl;
+        await this._JSModule.InvokeVoidAsync("navigatePreviewFrameTo", this._Iframe, nextPreviewFrameUrl);
+    }
+
+    private async Task OnPreviewIFrameLoaded(ProgressEventArgs obj)
+    {
+        if (this._JSModule is null) return;
+        try
+        {
+            var options = this.Services.GetRequiredService<BlazingStoryOptions>();
+            if (options.EnableHotReloading)
+            {
+                await this.EnsureDotnetWatchScriptInjected();
+            }
+            this._ThisRef = DotNetObjectReference.Create(this);
+            this._EventMonitorSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentActionEvent", this._Iframe, this._ThisRef, nameof(ComponentActionEventCallback));
+        }
+
+        // In some cases, such as when a user navigates away from the page during this async
+        // operation, the JSModule may be disposed before the async operation completes. Ignore the
+        // "ObjectDisposedException" exception in this case.
+        catch (ObjectDisposedException)
+        {
+        }
+    }
+
+    private string GetPreviewFrameUrl()
+    {
+        if (this.Story is null) return "./iframe.html";
+        // IMPORTANT: Filter out EventCallbacks - they should NEVER be in the iframe URL
+        var args = this.Args?
+            .Where(x => x.Value == null || !x.Value.GetType().Name.StartsWith("EventCallback"))
+            .ToDictionary(
+                keySelector: x => x.Key,
+                elementSelector: x => (object?)this.Story.Context.ConvertParameterValueToString(x.Key, x.Value)
+            );
+        var encodeArgs = UriParameterKit.EncodeKeyValues(args);
+        var encodeGlobals = UriParameterKit.EncodeKeyValues(this.Globals);
+        var compressedArgs = UrlParameterShortener.CompressAndEncode(encodeArgs);
+        return UriParameterKit.GetUri(
+            uri: "./iframe.html",
+            parameters: new Dictionary<string, object?>
+            {
+                ["viewMode"] = this.ViewMode,
+                ["id"] = this.Id,
+                ["args"] = compressedArgs,
+                ["globals"] = encodeGlobals,
+                ["frameId"] = this._IframeElementId
+            });
+    }
+
+    internal async ValueTask ReloadAsync()
+    {
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("reloadPreviewFrame", this._Iframe);
+        }
+    }
+
+    internal async ValueTask ZoomInAsync()
+    {
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("zoomInPreviewFrame", this._Iframe);
+        }
+    }
+
+    internal async ValueTask ZoomOutAsync()
+    {
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("zoomOutPreviewFrame", this._Iframe);
+        }
+    }
+
+    internal async ValueTask ResetZoomAsync()
+    {
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("resetZoomPreviewFrame", this._Iframe);
+        }
+    }
+
+    private async ValueTask EnsureDotnetWatchScriptInjected()
+    {
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("ensureDotnetWatchScriptInjected", this._Iframe);
+        }
+    }
+
     [JSInvokable(nameof(ComponentActionEventCallback))]
     public async Task ComponentActionEventCallback(string name, string argsJson)
     {
@@ -266,123 +383,6 @@
                 this._DebounceCts?.Dispose();
                 this._DebounceCts = null;
             }
-        }
-    }
-
-    protected override void OnInitialized()
-    {
-        if (this.JSRuntime is not null)
-        {
-            this._JSModule = new(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
-        }
-        this._InitialPreviewFrameUrl = this._CurrentPreviewFrameUrl = this.GetPreviewFrameUrl();
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        await this.UpdatePreviewFrameUrlAsync();
-    }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (!firstRender) return;
-        this.StateHasChanged();
-        this._AfterFirstRendered = true;
-    }
-
-    private async ValueTask UpdatePreviewFrameUrlAsync()
-    {
-        if (this._JSModule is null || !this._AfterFirstRendered) return;
-        var nextPreviewFrameUrl = this.GetPreviewFrameUrl();
-        if (this._CurrentPreviewFrameUrl == nextPreviewFrameUrl) return;
-        this._CurrentPreviewFrameUrl = nextPreviewFrameUrl;
-        await this._JSModule.InvokeVoidAsync("navigatePreviewFrameTo", this._Iframe, nextPreviewFrameUrl);
-    }
-
-    private async Task OnPreviewIFrameLoaded(ProgressEventArgs obj)
-    {
-        if (this._JSModule is null) return;
-        try
-        {
-            var options = this.Services.GetRequiredService<BlazingStoryOptions>();
-            if (options.EnableHotReloading)
-            {
-                await this.EnsureDotnetWatchScriptInjected();
-            }
-            this._ThisRef = DotNetObjectReference.Create(this);
-            this._EventMonitorSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentActionEvent", this._Iframe, this._ThisRef, nameof(ComponentActionEventCallback));
-        }
-
-        // In some cases, such as when a user navigates away from the page during this async
-        // operation, the JSModule may be disposed before the async operation completes. Ignore the
-        // "ObjectDisposedException" exception in this case.
-        catch (ObjectDisposedException)
-        {
-        }
-    }
-
-    private string GetPreviewFrameUrl()
-    {
-        if (this.Story is null) return "./iframe.html";
-        // IMPORTANT: Filter out EventCallbacks - they should NEVER be in the iframe URL
-        var args = this.Args?
-            .Where(x => x.Value == null || !x.Value.GetType().Name.StartsWith("EventCallback"))
-            .ToDictionary(
-                keySelector: x => x.Key,
-                elementSelector: x => (object?)this.Story.Context.ConvertParameterValueToString(x.Key, x.Value)
-            );
-        var encodeArgs = UriParameterKit.EncodeKeyValues(args);
-        var encodeGlobals = UriParameterKit.EncodeKeyValues(this.Globals);
-        var compressedArgs = UrlParameterShortener.CompressAndEncode(encodeArgs);
-        return UriParameterKit.GetUri(
-            uri: "./iframe.html",
-            parameters: new Dictionary<string, object?>
-            {
-                ["viewMode"] = this.ViewMode,
-                ["id"] = this.Id,
-                ["args"] = compressedArgs,
-                ["globals"] = encodeGlobals,
-                ["frameId"] = this._IframeElementId
-            });
-    }
-
-    internal async ValueTask ReloadAsync()
-    {
-        if (this._JSModule is not null)
-        {
-            await this._JSModule.InvokeVoidAsync("reloadPreviewFrame", this._Iframe);
-        }
-    }
-
-    internal async ValueTask ZoomInAsync()
-    {
-        if (this._JSModule is not null)
-        {
-            await this._JSModule.InvokeVoidAsync("zoomInPreviewFrame", this._Iframe);
-        }
-    }
-
-    internal async ValueTask ZoomOutAsync()
-    {
-        if (this._JSModule is not null)
-        {
-            await this._JSModule.InvokeVoidAsync("zoomOutPreviewFrame", this._Iframe);
-        }
-    }
-
-    internal async ValueTask ResetZoomAsync()
-    {
-        if (this._JSModule is not null)
-        {
-            await this._JSModule.InvokeVoidAsync("resetZoomPreviewFrame", this._Iframe);
-        }
-    }
-
-    private async ValueTask EnsureDotnetWatchScriptInjected()
-    {
-        if (this._JSModule is not null)
-        {
-            await this._JSModule.InvokeVoidAsync("ensureDotnetWatchScriptInjected", this._Iframe);
         }
     }
 
