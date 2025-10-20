@@ -115,7 +115,7 @@
   --bs-sidebar-nav-active-back-color: #1ea7fd;
   --bs-focused-color: var(--bs-accent-color);
   --bs-focused-half-color: rgba(2, 156, 253, 0.15);
-  --bs-chevron-color: rgba(121,129,134,0.6);
+  --bs-chevron-color: var(--bs-dimmed-text-color);
   --bs-toolbar-back-color: #292c2e;
   --bs-add-on-panel-back-color: #1b1c1d;
   --bs-add-on-panel-border-color: #27292a;
@@ -134,7 +134,7 @@
   --bs-button-flagged-back-color: rgba(2, 156, 253, 0.07);
   --bs-toggle-button-back-color: #2e3438;
   --bs-toggle-button-shadow: rgba(255,255,255,.1) 0 0 0 1px;
-  --bs-popup-back-color: var(--bs-back-color);
+  --bs-popup-back-color: #1b1c1d;
   --bs-popup-text-color: var(--bs-caption-text-color);
   --bs-popup-hover-back-color: rgba(2, 156, 253, 0.07);
   --bs-popup-active-text-color: var(--bs-accent-color);
@@ -364,15 +364,16 @@ button {
 }
 
 .sidebar-container {
-  padding: 20px;
+  padding: 16px calc(12px - var(--splitter-bar-size)) 20px 12px;
   background-color: var(--bs-back-color);
 }
 
 .sidebar .sidebar-header {
   display: flex;
-  height: 28px;
+  min-height: 42px;
   align-items: center;
   margin-bottom: var(--bs-sidebar-gap-size);
+  padding-left: 8px;
 }
 .sidebar .sidebar-header .sidebar-header-title {
   flex: 1;
@@ -391,16 +392,21 @@ button {
   text-decoration: none;
   color: inherit;
 }
+.sidebar .sidebar-header .settings-popup-menu .popup-menu-trigger .icon-button {
+  width: 32px;
+  height: 32px;
+  justify-content: center;
+}
 .sidebar .sidebar-header .settings-popup-menu .popup-menu-holder {
   min-width: 180px;
 }
 .sidebar .explorer-menu {
-  margin-left: -20px;
-  margin-right: -20px;
+  margin: 0;
 }
 
 .settings-popup-menu .popup-menu-body {
   margin-left: 17px;
+  padding: 4px 4px;
 }
 
 .search-field {
@@ -409,10 +415,10 @@ button {
 .search-field input {
   appearance: none;
   height: 32px;
-  padding: 1px 32px 1px 30px;
+  padding: 1px 32px 1px 29px;
   border: 1px solid rgba(153, 153, 153, 0.4);
   background: transparent;
-  border-radius: 28px;
+  border-radius: 6px;
   font-size: 13px;
   font-family: inherit;
   -webkit-transition: all 150ms;
@@ -428,8 +434,9 @@ button {
 .search-field .find-icon {
   --bs-svg-icon-size: 14px;
   position: absolute;
-  left: 11px;
+  left: 9px;
   top: 6px;
+  padding: 0;
   color: var(--bs-dimmed-text-color);
   pointer-events: none;
 }
@@ -585,9 +592,11 @@ button {
 .navigation-tree .navigation-tree-item {
   display: inline-flex;
   flex-direction: column;
+  overflow: hidden;
+  border-radius: 4px;
 }
 .navigation-tree .caption {
-  height: 24px;
+  height: 28px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -603,7 +612,7 @@ button {
 }
 .navigation-tree .caption .action {
   align-items: center;
-  font-size: 13px;
+  font-size: 14px;
   font-stretch: 100%;
   display: flex;
   flex-wrap: nowrap;
@@ -612,8 +621,9 @@ button {
   appearance: none;
   text-decoration: none;
 }
-.navigation-tree .caption .action .icon {
-  margin: 1px 0 0 2px;
+.navigation-tree .caption .action .icon svg {
+  padding: 0;
+  margin-right: 6px;
 }
 .navigation-tree .caption .action:hover, .navigation-tree .caption button.action:focus {
   background-color: var(--bs-hover-light-back-color);
@@ -630,23 +640,20 @@ button {
   fill: #fff;
 }
 .navigation-tree .chevron {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  margin: 0 2px 0 10px;
-  color: var(--bs-chevron-color);
-  border-top: 3px solid transparent;
-  border-bottom: 3px solid transparent;
-  border-left: 3px solid;
-  -webkit-transform: rotateZ(90deg);
-  -moz-transform: rotateZ(90deg);
-  -ms-transform: rotateZ(90deg);
-  transform: rotateZ(0deg);
-  -webkit-transition: -webkit-transform 0.1s ease-out;
+  display: block;
+  margin: 0 6px;
+  transform: rotateZ(-90deg);
   transition: transform 0.1s ease-out;
 }
+.navigation-tree .chevron .svg-icon {
+  padding: 0;
+  margin: 0;
+  width: 10px;
+  height: 10px;
+  fill: var(--bs-chevron-color);
+}
 .navigation-tree .expanded > .caption .chevron {
-  transform: rotateZ(90deg);
+  transform: rotateZ(0deg);
 }
 .navigation-tree .type-story > .caption .chevron, .navigation-tree .type-docs > .caption .chevron, .navigation-tree .type-custom-page > .caption .chevron {
   visibility: hidden;
@@ -659,7 +666,6 @@ button {
   flex-direction: column;
 }
 .navigation-tree .caption.sub-heading {
-  height: 20px;
   margin-top: var(--bs-sidebar-gap-size);
   margin-bottom: 4px;
 }
@@ -694,20 +700,17 @@ button {
   padding-left: 0;
 }
 .navigation-tree .sub-heading-action {
-  width: 18px;
-  height: 18px;
+  width: 28px;
+  height: 28px;
   padding: 0;
-  margin: 0 21px 0 0;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   visibility: hidden;
 }
 .navigation-tree .sub-heading-action svg {
-  width: calc(var(--bs-svg-icon-size) - 2px);
-  height: calc(var(--bs-svg-icon-size) - 2px);
-  color: var(--bs-dimmed-text-color);
-  margin: 0;
+  padding: 0;
+  color: var(--bs-chevron-color);
 }
 .navigation-tree .sub-heading-action:hover svg, .navigation-tree .sub-heading-action:focus svg {
   color: var(--bs-focused-color);
@@ -733,7 +736,7 @@ button {
 
 .toolbar-viewport {
   --bs-toolbar-height: 40px;
-  --bs-toolbar-content-gap: 4px;
+  --bs-toolbar-content-gap: 6px;
   box-shadow: var(--bs-border-shadow);
   height: 0;
   overflow-y: hidden;
@@ -746,8 +749,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: var(--bs-toolbar-content-gap);
-  margin-left: 7px;
-  margin-right: 7px;
+  margin: 0 10px;
   height: var(--bs-toolbar-height);
   transition: margin-top linear 0.2s;
   margin-top: calc(-1.5 * var(--bs-toolbar-height));
@@ -795,7 +797,7 @@ button.tab-button.active {
 span.toolbar-separator {
   width: 1px;
   height: 20px;
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--bs-popup-divider-color);
   margin: 0 2px;
 }
 
@@ -1192,7 +1194,7 @@ a.icon-button {
 .popup-menu-body {
   background-color: var(--bs-popup-back-color);
   margin-left: 16px;
-  border-radius: 4px;
+  border-radius: 6px;
   overflow: hidden;
   pointer-events: all;
 }
@@ -1218,7 +1220,8 @@ a.icon-button {
 }
 
 .menu-item-divider {
-  border-bottom: 4px solid var(--bs-popup-divider-color);
+  margin: 4px 0;
+  border-bottom: 1px solid var(--bs-popup-divider-color);
   height: 0;
 }
 
@@ -1232,6 +1235,7 @@ a.icon-button {
 }
 .menu-item.command-menu-item .icon-area svg.svg-icon {
   --bs-svg-icon-size: 16px;
+  margin-top: 5px;
 }
 .menu-item.command-menu-item[aria-checked] .icon-area {
   color: var(--bs-focused-color);

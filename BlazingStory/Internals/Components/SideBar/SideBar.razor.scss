@@ -2,9 +2,10 @@
 
     .sidebar-header {
         display: flex;
-        height: 28px;
+        min-height: 42px;
         align-items: center;
         margin-bottom: var(--bs-sidebar-gap-size);
+        padding-left: 8px;
 
         .sidebar-header-title {
             flex: 1;
@@ -25,13 +26,23 @@
             }
         }
 
-        .settings-popup-menu .popup-menu-holder {
-            min-width: 180px;
+        .settings-popup-menu {
+
+            .popup-menu-trigger {
+                .icon-button {
+                    width: 32px;
+                    height: 32px;
+                    justify-content: center;
+                }
+            }
+
+            .popup-menu-holder {
+                min-width: 180px;
+            }
         }
     }
 
     .explorer-menu {
-        margin-left: -20px;
-        margin-right: -20px;
+        margin: 0;
     }
 }
