@@ -2,6 +2,7 @@
 using System.Reflection;
 using BlazingStory.Internals.Extensions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.Internals.Utils;
@@ -123,14 +124,15 @@ internal static class TypeUtility
         // Handle RenderFragment
         else if (primaryType == typeof(RenderFragment))
         {
-            convertedValue = sourceString.ToRenderFragment();
+            RenderFragment renderFragment = (RenderTreeBuilder builder) => builder.AddContent(0, sourceString);
+            convertedValue = renderFragment;
             return true;
         }
         // Handle generic RenderFragment<T>
         else if (primaryType.IsGenericTypeOf(typeof(RenderFragment<>)))
         {
             var argumentType = primaryType.GetGenericArguments().First();
-            convertedValue = sourceString.ToRenderFragment(argumentType);
+            convertedValue = RenderFragmentKit.FromString(argumentType, sourceString);
             return true;
         }
         // Handle arrays and complex types by deserializing JSON

@@ -151,7 +151,7 @@ public class StoryContext
             return value.ToString() ?? string.Empty;
         }
 
-        if (value.TryToString(out var str))
+        if (RenderFragmentKit.TryToString(value, out var str))
         {
             return str;
         }

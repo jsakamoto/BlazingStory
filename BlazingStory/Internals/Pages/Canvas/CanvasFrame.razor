@@ -17,6 +17,9 @@
 
 @implements IAsyncDisposable
 
+@{
+#pragma warning disable IL2111
+}
 @if (this._Story == null)
 {
     <CanvasFrameNothingToAddress />
@@ -27,11 +30,14 @@ else
         <LayoutView Layout="@(this._Story.StoriesLayout ?? typeof(NullLayout))">
             <LayoutView Layout="@(this._Story.StoryLayout ?? typeof(NullLayout))">
 
-                @this._Story.RenderFragmentStoryContext(this._Story.Context)
+                @this._Story.RenderFragment(this._Story.Context)
 
             </LayoutView>
         </LayoutView>
     </LayoutView>
+}
+@{
+#pragma warning restore IL2111
 }
 
 @if (this._EnableMeasure)
@@ -78,7 +84,9 @@ else
 
     private JSModule? _JSModule;
     private Story? _Story;
+
     private bool _EnableMeasure = false;
+
     private bool _Rendered = false;
 
     private string _ComponentArgsString = string.Empty;
@@ -115,15 +123,15 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        if (!this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story))
+        if (!this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story)) 
         {
             return;
         }
-        if (Object.ReferenceEquals(this._Story, story))
+        if (Object.ReferenceEquals(this._Story, story)) 
         {
             return;
         }
-        if (this._Story != null)
+        if (this._Story != null) 
         {
             this._Story.Context.ShouldRender -= this.StoryContext_ShouldRender;
         }
@@ -172,13 +180,13 @@ else
 
     private async ValueTask UpdateComponentArgsFromUrlAsync(NameValueCollection queryStrings)
     {
-        if (this._Story == null)
+        if (this._Story == null) 
         {
             return;
         }
         var componentArgsString = queryStrings["args"] ?? string.Empty;
         componentArgsString = UrlParameterShortener.DecodeAndDecompress(componentArgsString);
-        if (this._ComponentArgsString == componentArgsString)
+        if (this._ComponentArgsString == componentArgsString) 
         {
             return;
         }
@@ -263,27 +271,27 @@ else
 
     private async ValueTask UpdateGlobalEffectsFromUrlAsync(NameValueCollection queryStrings)
     {
+        // If it is during the server-side pre-rendering, nothing to do.
         if (!this._Rendered) return;
+
         var globalEffectsString = queryStrings["globals"] ?? string.Empty;
         if (this._GlobalEffectsString == globalEffectsString) return;
         this._GlobalEffectsString = globalEffectsString;
+
         var globalEffects = UriParameterKit.DecodeKeyValues(globalEffectsString);
         var background = globalEffects.TryGetValue("backgrounds.value", out var backgroundStr) ? backgroundStr : "transparent";
         var enableGrid = globalEffects.TryGetValue("backgrounds.grid", out var gridStr) ? bool.TryParse(gridStr, out var grid) ? grid : false : false;
         var enableOutline = globalEffects.TryGetValue("outline", out var outlineStr) ? bool.TryParse(outlineStr, out var outline) ? outline : false : false;
-
-        var theme = globalEffects.TryGetValue("theme.value", out var themeStr) ? themeStr : string.Empty;
-        var brand = globalEffects.TryGetValue("brand.value", out var brandStr) ? brandStr : string.Empty;
-
         this._EnableMeasure = globalEffects.TryGetValue("measureEnabled", out var measureStr) ? bool.TryParse(measureStr, out var measure) ? measure : false : false;
+
         var basePath = "./_content/BlazingStory/css/preview/";
         var styleDescripters = new StyleDescriptor[] {
             new() { Id = "addon-background-grid", Enable = enableGrid, Href = basePath + "background-grid.min.css" },
             new() { Id = "addon-outline", Enable = enableOutline, Href = basePath + "outline.min.css" }
-        };
+    };
         if (this._JSModule != null)
         {
-            await this._JSModule.InvokeVoidAsync("ensurePreviewStyle", new object[] { background, styleDescripters, theme, brand });
+            await this._JSModule.InvokeVoidAsync("ensurePreviewStyle", new object[] { background, styleDescripters });
         }
         this.StateHasChanged();
     }
@@ -323,10 +331,12 @@ else
                 var monitorHandlerLambdaType = typeof(Func<,>).MakeGenericType(typeOfArgs, typeof(Task));
                 var monitorHandlerLambda = Expression.Lambda(monitorHandlerLambdaType, callBody, eventArgsParam);
                 var monitorHandlerDelegate = monitorHandlerLambda.Compile();
+
 #pragma warning disable IL2060
                 // Create event callback
                 var eventCallbackCreate = _EventCallbackCreateMethod.Value.MakeGenericMethod(typeOfArgs) ?? throw new InvalidOperationException();
 #pragma warning restore IL2060
+
                 var eventCallback = eventCallbackCreate.Invoke(EventCallback.Factory, new object[] { this, monitorHandlerDelegate });
                 await this._Story.Context.AddOrUpdateArgumentAsync(parameter.Name, eventCallback);
             }
