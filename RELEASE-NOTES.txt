@@ -1,3 +1,11 @@
+v.1.0.0-preview.62
+- Fix: Added two-way binding support inside BlazingStory for improved reactivity.
+  - Added ArgsChanged event callback to PreviewFrame for better argument synchronization.
+  - Implemented debouncing in PreviewFrame and CanvasFrame to optimize argument updates and URL navigation.
+  - Refactored CanvasPage and StoryPreview to properly handle ArgsChanged events and improve state management.
+  - Updated StoryContext to support asynchronous argument updates for enhanced responsiveness.
+  - Cleaned up code and improved documentation across affected components.
+
 v.1.0.0-preview.61
 - Fix: The browser title did not update when a Custom Page was selected.
 - Update: Refined the navigation tree and settings menu design to align with Storybook v9.

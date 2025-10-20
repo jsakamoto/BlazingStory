@@ -1,64 +1,117 @@
-@implements IAsyncDisposable
-@inject IJSRuntime JSRuntime
+﻿﻿@using System.Text.Json;
+@using BlazingStory.Configurations;
+@using BlazingStory.Internals.Extensions;
+@using BlazingStory.Internals.Models;
+@using BlazingStory.Internals.Services;
+@using BlazingStory.Internals.Utils;
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.AspNetCore.Components.Web;
+@using Microsoft.Extensions.DependencyInjection;
+@using Microsoft.JSInterop;
 
-<div class="preview-frame">
+@implements IAsyncDisposable
+
+<div id="storybook-preview-wrapper" class="preview-frame">
     <iframe id="@this._IframeElementId" @ref="_Iframe" src="@_InitialPreviewFrameUrl" @onload="OnPreviewIFrameLoaded"></iframe>
 </div>
 
 @code
 {
+    /// <summary>
+    /// Gets or sets the story.
+    /// </summary>
+    /// <value>
+    /// The story.
+    /// </value>
     [Parameter, EditorRequired]
-    public required Story Story { get; set; }
+    public Story? Story { get; set; }
 
+    /// <summary>
+    /// Gets or sets the view mode.
+    /// </summary>
+    /// <value>
+    /// The view mode.
+    /// </value>
     [Parameter]
     public string? ViewMode { get; set; }
 
+    /// <summary>
+    /// Gets or sets the identifier.
+    /// </summary>
+    /// <value>
+    /// The identifier.
+    /// </value>
     [Parameter]
     public string? Id { get; set; }
 
+    /// <summary>
+    /// Gets or sets the arguments.
+    /// </summary>
+    /// <value>
+    /// The arguments.
+    /// </value>
     [Parameter]
     public IReadOnlyDictionary<string, object?>? Args { get; set; }
 
+    /// <summary>
+    /// Gets or sets the arguments.
+    /// </summary>
+    /// <value>
+    /// The arguments.
+    /// </value>
+    [Parameter]
+    public EventCallback<IReadOnlyDictionary<string, object?>> ArgsChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the globals.
+    /// </summary>
+    /// <value>
+    /// The globals.
+    /// </value>
     [Parameter]
     public IReadOnlyDictionary<string, object?>? Globals { get; set; }
 
+    /// <summary>
+    /// Gets or sets the on component action.
+    /// </summary>
+    /// <value>
+    /// The on component action.
+    /// </value>
     [Parameter]
     public EventCallback<ComponentActionEventArgs> OnComponentAction { get; set; }
-
-    [CascadingParameter]
-    internal IServiceProvider Services { get; init; } = default!;
-
-    private readonly string _IframeElementId = "F" + Guid.NewGuid().ToString();
 
     /// <summary>
     /// Gets the initial preview frame URL.
     /// </summary>
     public string CurrentPreviewFrameUrl => this._CurrentPreviewFrameUrl;
 
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
+    [Inject]
+    private IJSRuntime? JSRuntime { get; set; }
+
+    private readonly string _IframeElementId = "F" + Guid.NewGuid().ToString();
+
+    // Debouncing fields - reduced to 50ms for faster response
+    private readonly TimeSpan _DebounceDelay = TimeSpan.FromMilliseconds(50);
+
+    private JSModule? _JSModule;
     private ElementReference _Iframe;
-
-    private string _InitialPreviewFrameUrl = "";
-
-    private string _CurrentPreviewFrameUrl = "";
-
-    private readonly JSModule _JSModule;
-
+    private string _InitialPreviewFrameUrl = string.Empty;
+    private string _CurrentPreviewFrameUrl = string.Empty;
     private bool _AfterFirstRendered = false;
-
     private DotNetObjectReference<PreviewFrame>? _ThisRef;
-
     private IJSObjectReference? _EventMonitorSubscriber;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="PreviewFrame"/> class.
-    /// </summary>
-    public PreviewFrame()
-    {
-        this._JSModule = new(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
-    }
+    private CancellationTokenSource? _DebounceCts;
+    private (string Name, string ArgsJson)? _PendingUpdate;
 
     protected override void OnInitialized()
     {
+        if (this.JSRuntime is not null)
+        {
+            this._JSModule = new(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
+        }
         this._InitialPreviewFrameUrl = this._CurrentPreviewFrameUrl = this.GetPreviewFrameUrl();
     }
 
@@ -76,31 +129,33 @@
 
     private async ValueTask UpdatePreviewFrameUrlAsync()
     {
-        if (!this._AfterFirstRendered) return;
+        if (this._JSModule is null || !this._AfterFirstRendered) return;
         var nextPreviewFrameUrl = this.GetPreviewFrameUrl();
         if (this._CurrentPreviewFrameUrl == nextPreviewFrameUrl) return;
         this._CurrentPreviewFrameUrl = nextPreviewFrameUrl;
-        await _JSModule.InvokeVoidAsync("navigatePreviewFrameTo", this._Iframe, nextPreviewFrameUrl);
+        await this._JSModule.InvokeVoidAsync("navigatePreviewFrameTo", this._Iframe, nextPreviewFrameUrl);
     }
 
     private async Task OnPreviewIFrameLoaded(ProgressEventArgs obj)
     {
+        if (this._JSModule is null) return;
         try
         {
-            var options = Services.GetRequiredService<BlazingStoryOptions>();
+            var options = this.Services.GetRequiredService<BlazingStoryOptions>();
             if (options.EnableHotReloading)
             {
-                await EnsureDotnetWatchScriptInjected();
+                await this.EnsureDotnetWatchScriptInjected();
             }
-
             this._ThisRef = DotNetObjectReference.Create(this);
-            this._EventMonitorSubscriber = await _JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentActionEvent", this._Iframe, this._ThisRef, nameof(ComponentActionEventCallback));
+            this._EventMonitorSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentActionEvent", this._Iframe, this._ThisRef, nameof(ComponentActionEventCallback));
         }
 
-        // In some cases, such as when a user navigates away from the page during this async operation,
-        // the JSModule may be disposed before the async operation completes.
-        // Ignore the "ObjectDisposedException" exception in this case.
-        catch (ObjectDisposedException){ }
+        // In some cases, such as when a user navigates away from the page during this async
+        // operation, the JSModule may be disposed before the async operation completes. Ignore the
+        // "ObjectDisposedException" exception in this case.
+        catch (ObjectDisposedException)
+        {
+        }
     }
 
     /// <summary>
@@ -108,59 +163,247 @@
     /// </summary>
     private string GetPreviewFrameUrl()
     {
-        // "Stringify" the component args to encode them to the URL query string.
-        var args = this.Args?.ToDictionary(
-            keySelector: x => x.Key,
-            elementSelector: x => (object?)this.Story.Context.ConvertParameterValueToString(x.Key, x.Value)
-        );
-
+        if (this.Story is null) return "./iframe.html";
+        // IMPORTANT: Filter out EventCallbacks - they should NEVER be in the iframe URL
+        var args = this.Args?
+            .Where(x => x.Value == null || !x.Value.GetType().Name.StartsWith("EventCallback"))
+            .ToDictionary(
+                keySelector: x => x.Key,
+                elementSelector: x => (object?)this.Story.Context.ConvertParameterValueToString(x.Key, x.Value)
+            );
+        var encodeArgs = UriParameterKit.EncodeKeyValues(args);
+        var encodeGlobals = UriParameterKit.EncodeKeyValues(this.Globals);
+        var compressedArgs = UrlParameterShortener.CompressAndEncode(encodeArgs);
         return UriParameterKit.GetUri(
             uri: "./iframe.html",
             parameters: new Dictionary<string, object?>
-                {
-                    ["viewMode"] = this.ViewMode,
-                    ["id"] = this.Id,
-                    ["args"] = UriParameterKit.EncodeKeyValues(args),
-                    ["globals"] = UriParameterKit.EncodeKeyValues(this.Globals)
-                });
+            {
+                ["viewMode"] = this.ViewMode,
+                ["id"] = this.Id,
+                ["args"] = compressedArgs,
+                ["globals"] = encodeGlobals,
+                ["frameId"] = this._IframeElementId
+            });
     }
-
 
     internal async ValueTask ReloadAsync()
     {
-        await this._JSModule.InvokeVoidAsync("reloadPreviewFrame", this._Iframe);
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("reloadPreviewFrame", this._Iframe);
+        }
     }
 
     internal async ValueTask ZoomInAsync()
     {
-        await this._JSModule.InvokeVoidAsync("zoomInPreviewFrame", this._Iframe);
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("zoomInPreviewFrame", this._Iframe);
+        }
     }
 
     internal async ValueTask ZoomOutAsync()
     {
-        await this._JSModule.InvokeVoidAsync("zoomOutPreviewFrame", this._Iframe);
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("zoomOutPreviewFrame", this._Iframe);
+        }
     }
 
     internal async ValueTask ResetZoomAsync()
     {
-        await this._JSModule.InvokeVoidAsync("resetZoomPreviewFrame", this._Iframe);
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("resetZoomPreviewFrame", this._Iframe);
+        }
     }
 
     private async ValueTask EnsureDotnetWatchScriptInjected()
     {
-        await this._JSModule.InvokeVoidAsync("ensureDotnetWatchScriptInjected", this._Iframe);
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("ensureDotnetWatchScriptInjected", this._Iframe);
+        }
     }
 
     [JSInvokable(nameof(ComponentActionEventCallback))]
     public async Task ComponentActionEventCallback(string name, string argsJson)
     {
+        if (this._JSModule is null || this.Story is null) return;
+
+        // Log every event immediately with timestamp
+        var timestamp = DateTime.Now.ToString("HH:mm:ss.fff");
+
         await this.OnComponentAction.InvokeAsync(new(name, argsJson));
+
+        if (name.EndsWith("Changed") && !string.IsNullOrEmpty(argsJson))
+        {
+            // Store the latest event for debounced processing
+            this._PendingUpdate = (name, argsJson);
+
+            // Cancel any existing debounce timer
+            if (this._DebounceCts != null)
+                await this._DebounceCts.CancelAsync();
+            this._DebounceCts = new CancellationTokenSource();
+
+            try
+            {
+                // Wait for debounce delay
+                await Task.Delay(this._DebounceDelay, this._DebounceCts.Token);
+
+                // Process the latest pending update (use _PendingUpdate, not the captured argsJson)
+                if (this._PendingUpdate.HasValue && this._PendingUpdate.Value.Name == name)
+                {
+                    var latestArgsJson = this._PendingUpdate.Value.ArgsJson;
+
+                    try
+                    {
+                        var updatedArgs = JsonSerializer.Deserialize<Dictionary<string, object?>>(latestArgsJson);
+                        if (updatedArgs != null)
+                        {
+                            var paramName = name.Replace("Changed", "");
+                            var parameter = this.Story.Context.Parameters.FirstOrDefault(p => p.Name == paramName);
+                            var expectedType = parameter?.TypeStructure.PrimaryType;
+                            object? value = null;
+
+                            if (updatedArgs.TryGetValue(paramName, out var directValue) && directValue != null)
+                            {
+                                value = directValue;
+                            }
+                            else if (updatedArgs.TryGetValue("Keys", out var keysObj) && keysObj is JsonElement keysElement && keysElement.ValueKind == JsonValueKind.Array &&
+                                     updatedArgs.TryGetValue("Values", out var valuesObj) && valuesObj is JsonElement valuesElement && valuesElement.ValueKind == JsonValueKind.Array)
+                            {
+                                var keys = keysElement.EnumerateArray().Select(e => e.GetString()).Where(s => s != null).ToList();
+                                var values = valuesElement.EnumerateArray().Select(e => e.ValueKind == JsonValueKind.String ? e.GetString() : (object)e).ToList();
+                                var keyIndex = keys.IndexOf(paramName);
+                                if (keyIndex >= 0 && keyIndex < values.Count)
+                                {
+                                    value = values[keyIndex];
+                                }
+                            }
+
+                            // Convert value to expected type
+                            if (value != null && expectedType != null)
+                            {
+                                if (expectedType == typeof(string))
+                                {
+                                    value = value.ToString();
+                                }
+                                else if (expectedType.IsArray || (expectedType.IsGenericType && expectedType.GetGenericTypeDefinition() == typeof(IList<>)))
+                                {
+                                    if (value is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.Array)
+                                    {
+                                        var elementType = expectedType.IsArray ? expectedType.GetElementType() : expectedType.GetGenericArguments()[0];
+
+                                        // Determine if we need to convert to array or list
+                                        bool isArray = expectedType.IsArray;
+
+                                        if (elementType == typeof(string))
+                                        {
+                                            var enumerable = jsonElement.EnumerateArray().Select(e => e.GetString()).Where(s => s != null);
+                                            value = isArray ? enumerable.ToArray() : enumerable.ToList();
+                                        }
+                                        else if (elementType == typeof(int))
+                                        {
+                                            var enumerable = jsonElement.EnumerateArray().Select(e => e.GetInt32());
+                                            value = isArray ? enumerable.ToArray() : enumerable.ToList();
+                                        }
+                                        else if (elementType == typeof(double))
+                                        {
+                                            var enumerable = jsonElement.EnumerateArray().Select(e => e.GetDouble());
+                                            value = isArray ? enumerable.ToArray() : enumerable.ToList();
+                                        }
+                                        else if (elementType == typeof(long))
+                                        {
+                                            var enumerable = jsonElement.EnumerateArray().Select(e => e.GetInt64());
+                                            value = isArray ? enumerable.ToArray() : enumerable.ToList();
+                                        }
+                                        else if (elementType == typeof(float))
+                                        {
+                                            var enumerable = jsonElement.EnumerateArray().Select(e => (float)e.GetDouble());
+                                            value = isArray ? enumerable.ToArray() : enumerable.ToList();
+                                        }
+                                        else if (elementType == typeof(decimal))
+                                        {
+                                            var enumerable = jsonElement.EnumerateArray().Select(e => e.GetDecimal());
+                                            value = isArray ? enumerable.ToArray() : enumerable.ToList();
+                                        }
+                                        else if (elementType == typeof(bool))
+                                        {
+                                            var enumerable = jsonElement.EnumerateArray().Select(e => e.GetBoolean());
+                                            value = isArray ? enumerable.ToArray() : enumerable.ToList();
+                                        }
+                                    }
+                                    else if (value is IList<object> list)
+                                    {
+                                        value = list;
+                                    }
+                                }
+                                else if (expectedType == typeof(int) && value is string str && int.TryParse(str, out var intValue))
+                                {
+                                    value = intValue;
+                                }
+                                else if (expectedType == typeof(bool) && value is string boolStr && bool.TryParse(boolStr, out var boolValue))
+                                {
+                                    value = boolValue;
+                                }
+                            }
+
+                            // Check if the value has actually changed
+                            if (this.Args != null && this.Args.TryGetValue(paramName, out var currentValue))
+                            {
+                                var currentValueJson = JsonSerializer.Serialize(currentValue);
+                                var newValueJson = JsonSerializer.Serialize(value);
+                                if (currentValueJson == newValueJson)
+                                {
+                                    return;
+                                }
+                            }
+
+                            // Merge the new arg with existing args instead of replacing them all
+                            var mergedArgs = new Dictionary<string, object?>(this.Args ?? new Dictionary<string, object?>());
+                            mergedArgs[paramName] = value;
+
+                            this.Args = mergedArgs;
+
+                            // Only send the changed arg in the event
+                            var changedArg = new Dictionary<string, object?> { { paramName, value } };
+                            await this.ArgsChanged.InvokeAsync(changedArg);
+                            await this.UpdatePreviewFrameUrlAsync();
+                        }
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // Debounce was cancelled by a new event; ignore
+            }
+            finally
+            {
+                this._DebounceCts?.Dispose();
+                this._DebounceCts = null;
+            }
+        }
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _EventMonitorSubscriber.DisposeIfConnectedAsync("dispose");
-        await _JSModule.DisposeAsync();
-        _ThisRef?.Dispose();
+        if (this._DebounceCts != null)
+        {
+            await this._DebounceCts.CancelAsync();
+            this._DebounceCts.Dispose();
+        }
+        if (this._EventMonitorSubscriber is not null)
+        {
+            await this._EventMonitorSubscriber.DisposeIfConnectedAsync("dispose");
+        }
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.DisposeAsync();
+        }
+        this._ThisRef?.Dispose();
     }
 }

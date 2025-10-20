@@ -1,3 +1,5 @@
+@using System.Text.Json
+
 @if (this.Story != null)
 {
     <div class="story-preview">
@@ -14,12 +16,16 @@
             }
 
             <div class="preview-frame-viewport">
-                <PreviewFrame @ref="_PreviewFrame"
-                              Story="this.Story"
-                              ViewMode="story"
-                              Id="@this.Story.NavigationPath"
-                              Args="this.Story.Context.Args"
-                              Globals="this.Globals" />
+                @if (this.Story != null)
+                {
+                    <PreviewFrame @ref="_PreviewFrame"
+                                  Story="this.Story"
+                                  ViewMode="story"
+                                  Id="@this.Story.NavigationPath"
+                                  Args="this.Story.Context.Args"
+                                  ArgsChanged="OnArgsChanged"
+                                  Globals="this.Globals" />
+                }
             </div>
 
             <!-- "Show Code" -->
@@ -40,7 +46,7 @@
     internal IServiceProvider Services { get; init; } = default!;
 
     [Parameter, EditorRequired]
-    public required Story Story { get; set; }
+    public required Story? Story { get; set; }
 
     [Parameter]
     public bool EnableZoom { get; set; }
@@ -51,6 +57,28 @@
     private PreviewFrame? _PreviewFrame;
 
     private bool _ShowCode = false;
+
+    protected override void OnInitialized()
+    {
+        if (this.Story != null)
+        {
+            this.Story.Context.ArgumentChanged += this.Context_ArgumentChanged;
+        }
+    }
+
+    private ValueTask Context_ArgumentChanged()
+    {
+        this.StateHasChanged();
+        return ValueTask.CompletedTask;
+    }
+
+    private async Task OnArgsChanged(IReadOnlyDictionary<string, object?> newArgs)
+    {
+        if (this.Story != null)
+        {
+            await this.Story.Context.UpdateArgumentsAsync(newArgs);
+        }
+    }
 
     private async void OnClickZoomIn()
     {
@@ -65,5 +93,13 @@
     private async void OnClickResetZoom()
     {
         if (this._PreviewFrame != null) await this._PreviewFrame.ResetZoomAsync();
+    }
+
+    public void Dispose()
+    {
+        if (this.Story != null)
+        {
+            this.Story.Context.ArgumentChanged -= this.Context_ArgumentChanged;
+        }
     }
 }
