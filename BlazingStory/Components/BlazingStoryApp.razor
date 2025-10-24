@@ -296,7 +296,7 @@
             if (colorScheme != "dark" && colorScheme != "light")
             {
                 colorScheme = await this._JSModule.InvokeAsync<string>("getPrefersColorScheme");
-            };
+            }
             this._PreferesColorScheme = colorScheme;
         }
         else
