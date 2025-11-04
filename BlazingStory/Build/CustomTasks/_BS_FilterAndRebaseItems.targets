@@ -39,6 +39,9 @@ foreach (var appProj in this.ReferencedAppProjects)
         .Where(item => !(item.GetMetadata("AssetTraitName") == "Content-Encoding" && item.GetMetadata("AssetTraitValue") == "gzip" && item.GetMetadata("RelatedAsset")?.EndsWith(".styles.css") == true))
         .Where(item => !(item.GetMetadata("AssetTraitName") == "Content-Encoding" && item.GetMetadata("AssetTraitValue") == "br" && item.GetMetadata("RelatedAsset")?.EndsWith(".styles.css") == true))
 
+        // Exclude application settings json files, such as "appsettings.json" and "appsettings.{Environment}.json".
+		.Where(item => !(item.GetMetadata("AssetTraitName") == "WasmResource" && item.GetMetadata("AssetTraitValue") == "settings"))
+
         .ToArray();
 
     // Relocate the assets of the refereincing app project under the "_content/{appName}/" folder.

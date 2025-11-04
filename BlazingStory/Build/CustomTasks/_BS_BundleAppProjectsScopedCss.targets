@@ -78,7 +78,8 @@ foreach (var appProj in this.ReferencedAppProjects)
     bundleScpCss.SetMetadata("AssetTraitValue", "ProjectBundle");
     bundleScpCss.SetMetadata("AssetTraitName", "ScopedCss");
     bundleScpCss.SetMetadata("CopyToPublishDirectory", "PreserveNewest");
-    
+    bundleScpCss.SetMetadata("RelatedAsset", "");
+
     var hash = default(byte[]);
     var integrity = stylesCssItem.GetMetadata("Integrity");
     var fingerprint = stylesCssItem.GetMetadata("Fingerprint");

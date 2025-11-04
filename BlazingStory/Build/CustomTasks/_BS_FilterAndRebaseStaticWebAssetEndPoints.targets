@@ -17,19 +17,31 @@ var reservedMetadata = new HashSet<string> { "FullPath", "RootDir", "Filename", 
 
 static string GetPath(ITaskItem item) => item.GetMetadata("RootDir") + item.GetMetadata("Directory");
 
+static bool IsBelongTo(ITaskItem item, Dictionary<string, string> appProj) => item.GetMetadata("AssetFile").StartsWith(appProj["Directory"]) || item.ItemSpec.StartsWith(appProj["BasePath"]);
+
 var prunedItems = new List<ITaskItem>();
 
-// Prune the assets of the referenced app projects for each app project.
-foreach (var appProj in this.ReferencedAppProjects)
+var appProjects = this.ReferencedAppProjects.Select(appProj => 
 {
     var appName = appProj.GetMetadata("Filename");
-    var appBasePath = "_content/" + appName + "/";
-    var appProjDir = GetPath(appProj);
+    return new Dictionary<string, string> { 
+        {"Name", appName },
+        {"BasePath", "_content/" + appName + "/" },
+        {"Directory", GetPath(appProj) }
+    };
+}).ToArray();
+
+// Prune the assets of the referenced app projects for each app project.
+foreach (var appProj in appProjects)
+{
+    var appName = appProj["Name"];
+    var appBasePath = appProj["BasePath"];
+    var appProjDir = appProj["Directory"];
 
     var filteredItems = this.Items
     
         // Filter the assets of the current app project in a loop.
-        .Where(item => item.GetMetadata("AssetFile").StartsWith(appProjDir))
+        .Where(item => IsBelongTo(item, appProj))
 
         // Exclude the framework files that are under the "_framework" folder, such as "_framework/blazor.webassembly.js", "_framework/blazor.boot.json", etc.
         .Where(item => !item.ItemSpec.StartsWith("_framework/"))
@@ -46,14 +58,23 @@ foreach (var appProj in this.ReferencedAppProjects)
     // (As an exception, the assets of the .js files are relocated under the root folder.)
     var relocaltedItems = filteredItems.Select(item => 
     {
-        if (item.ItemSpec.StartsWith("_content/")) return item;
         if (item.ItemSpec.EndsWith(".js")) return item;
 
-        var relocatedItem = new TaskItem(appBasePath + item.ItemSpec);
-        foreach (string metadataName in item.MetadataNames)
+        var itemIsUnderTheContentDir = item.ItemSpec.StartsWith(appBasePath);
+        var newItemSpec = itemIsUnderTheContentDir ? item.ItemSpec : appBasePath + item.ItemSpec;
+        var relocatedItem = new TaskItem(newItemSpec);
+        
+        if (itemIsUnderTheContentDir)
         {
-            if (reservedMetadata.Contains(metadataName)) continue;
-            relocatedItem.SetMetadata(metadataName, item.GetMetadata(metadataName));
+            item.CopyMetadataTo(relocatedItem);
+        }
+        else
+        {
+            foreach (string metadataName in item.MetadataNames)
+            {
+                if (reservedMetadata.Contains(metadataName)) continue;
+                relocatedItem.SetMetadata(metadataName, item.GetMetadata(metadataName));
+            }
         }
 
         // If the EndpointProperties metadata exists, retrieve it. The value of this metadata is a JSON string. 
@@ -67,8 +88,9 @@ foreach (var appProj in this.ReferencedAppProjects)
         {
             endpointProperties = Regex.Replace(endpointProperties, @"""Name"":""label"",""Value"":""([^""]+)""", match => 
             {
-                var value = match.Groups[1].Value;
-                return $@"""Name"":""label"",""Value"":""{appBasePath}{value}""";
+                var labelValue = match.Groups[1].Value;
+                var newLabelValue = labelValue.StartsWith(appBasePath) ? labelValue : appBasePath + labelValue;
+                return $@"""Name"":""label"",""Value"":""{newLabelValue}""";
             });
             relocatedItem.SetMetadata("EndpointProperties", endpointProperties);
         }
@@ -80,8 +102,7 @@ foreach (var appProj in this.ReferencedAppProjects)
 }
 
 // Gather the other static web asset endpoints that belong with non-application project, such as Razor Class Libraries.    
-var appProjDirs = this.ReferencedAppProjects.Select(appProj => GetPath(appProj)).ToArray();
-var otherItems = this.Items.Where(item => !appProjDirs.Any(appProjDir => item.GetMetadata("AssetFile").StartsWith(appProjDir))).ToArray();
+var otherItems = this.Items.Where(item => !appProjects.Any(appProj => IsBelongTo(item, appProj))).ToArray();
 prunedItems.AddRange(otherItems);
 
 // Create a new set with duplicates removed by its ItemSpec and AssetFile from the prunedItems.
