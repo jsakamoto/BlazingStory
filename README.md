@@ -1,10 +1,10 @@
-﻿# ![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/icon.min.64x64.svg) Blazing Story
+﻿﻿# ![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/icon.min.64x64.svg) Blazing Story
 
 [![tests](https://github.com/jsakamoto/BlazingStory/actions/workflows/tests.yml/badge.svg)](https://github.com/jsakamoto/BlazingStory/actions/workflows/tests.yml) [![NuGet Package](https://img.shields.io/nuget/v/BlazingStory.svg)](https://www.nuget.org/packages/BlazingStory/) [![Discord](https://img.shields.io/discord/798312431893348414?style=flat&logo=discord&logoColor=white&label=Blazor%20Community&labelColor=5865f2&color=gray)](https://discord.com/channels/798312431893348414/1202165955900473375)
 
 ## 📝 Summary
 
-The clone of ["Storybook"](https://storybook.js.org/) for Blazor, a frontend workshop for building UI components and pages in isolation.
+The clone of ["Storybook"](https://storybook.js.org/) for Blazor, a front-end workshop for building UI components and pages in isolation.
 
 [![](https://raw.githubusercontent.com/jsakamoto/BlazingStory/main/assets/social-preview.png)](https://jsakamoto.github.io/BlazingStory/)
 
@@ -151,7 +151,160 @@ The "Button.stories.razor" would be like the below.
 </Stories>
 ```
 
-#### Step 5 - Run it!
+#### Step 5 - Configuring a Subpath for Blazor Storybook
+
+To run the Blazing Story app under a subpath (e.g., `/blazor`), you need to configure the application to handle routing and static file serving correctly. This is particularly important for Blazor Server apps or when deploying to environments like IIS or Azure, where the app may run under a subpath.
+
+1. **Update `Program.cs`**:
+   - Configure the subpath (e.g., `/blazor`) in `appsettings.json`, `appsettings.Development.json`, or via an environment variable (`BlazorSubpath`).
+   - Use `UsePathBase` to strip the subpath from requests, ensuring Blazor routing works correctly.
+   - Add `UseStaticFiles` in the branched pipeline to serve static files (e.g., JavaScript, CSS) under the subpath.
+   - Include `UseAntiforgery` in the branch to support Blazor Server's anti-forgery requirements.
+   - Example `Program.cs` configuration:
+
+```csharp
+using BlazingStory.Components;
+using BlazingStory.Configurations;
+using BlazorStorybook.Components.Pages;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add Razor components with interactive server-side rendering enabled
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+
+// Configure HttpClient with base server URL (read from config or fallback to default localhost port)
+var serverUrl = builder.Configuration[WebHostDefaults.ServerUrlsKey]?.Split(';').FirstOrDefault() ?? "https://localhost:7248";
+builder.Services.TryAddScoped(sp => new HttpClient { BaseAddress = new Uri(serverUrl) });
+
+// Add health checks (e.g. for monitoring / container orchestration readiness/liveness probes)
+builder.Services.AddHealthChecks();
+
+// Read optional subpath for mounting the Blazor app (config key: "BlazorSubpath"), default to "/"
+string subPath = builder.Configuration["BlazorSubpath"] ?? "/";
+if (string.IsNullOrWhiteSpace(subPath))
+{
+    subPath = "/"; // Ensure root fallback
+}
+else if (!subPath.StartsWith('/'))
+{
+    throw new InvalidOperationException("BlazorSubpath must start with '/'.");
+}
+
+// Normalize subpath by trimming trailing slashes (except when it's root "/")
+subPath = subPath == "/" ? subPath : subPath.TrimEnd('/');
+
+// Register the normalized subpath as a singleton config for DI
+builder.Services.AddSingleton(new BlazorSubpathConfig { Subpath = subPath });
+
+// Build the application
+var app = builder.Build();
+
+// Configure middleware pipeline
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error", createScopeForErrors: true); // Production error handling
+    app.UseHsts(); // Enable HTTP Strict Transport Security
+}
+
+app.UseHttpsRedirection();
+
+// Allow the app to be embedded in iframes (by overriding X-Frame-Options)
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["X-Frame-Options"] = "ALLOWALL";
+    await next();
+});
+
+app.UseStaticFiles(); // Serve global static files (wwwroot)
+app.UseRouting(); // Enable routing
+app.MapHealthChecks("/health"); // Expose health endpoint
+
+// Redirect root ("/") requests to the configured subpath (so Blazor is always mounted under subPath)
+app.MapGet("/", context =>
+{
+    context.Response.Redirect($"{subPath}/");
+    return Task.CompletedTask;
+});
+
+// Mount Blazor app at the configured subpath with a branched middleware pipeline
+app.Map(subPath, branch =>
+{
+    branch.UsePathBase(subPath); // Adjusts request path base so routing works under subpath
+    branch.UseStaticFiles();     // Serve Blazor static assets (_content, _framework, etc.)
+    branch.UseRouting();         // Enable routing for the Blazor app
+    branch.UseAntiforgery();     // Protect against CSRF
+    branch.UseEndpoints(endpoints =>
+    {
+        // Map Blazor storybook server component (IndexPage inside iframe page container)
+        endpoints.MapRazorComponents<BlazingStoryServerComponent<IndexPage, IFramePage>>()
+            .AddInteractiveServerRenderMode();
+    });
+});
+
+// Run the application
+await app.RunAsync();
+```
+
+2. **Configure Subpath**:
+   - **Option 1: Update `appsettings.Development.json`**:
+     Set the subpath to `/blazor` to match your deployment.
+     ```json
+     {
+       "DetailedErrors": true,
+       "Logging": {
+         "LogLevel": {
+           "Default": "Information",
+           "Microsoft.AspNetCore": "Debug"
+         }
+       },
+       "BlazorSubpath": "/blazor"
+     }
+     ```
+   - **Option 2: Environment Variable (overrides `appsettings.json`)**:
+     - Set via command line:
+       ```shell
+       dotnet run --BlazorSubpath=/custompath
+       ```
+     - Set in OS:
+       - Linux/Mac: `export BlazorSubpath=/custompath`
+       - Windows: Set `BlazorSubpath` in Environment Variables
+     - In Docker:
+       ```shell
+       docker run -e BlazorSubpath=/app ...
+       ```
+
+3. **Update the IndexPage.razor and the IFramePage.razor**:
+   - Replace `<base href="@(new Uri(NavigationManager.BaseUri).AbsolutePath)" />` with `<base href="@(new Uri(NavigationManager.ToAbsoluteUri(SubpathConfig.Subpath + "/").ToString()).AbsolutePath)" />`
+   - Add also `@inject BlazorSubpathConfig SubpathConfig`
+
+4. **Fix Routing and Static File Issues**:
+   - If you encounter routing errors like `AmbiguousMatchException`, ensure only one `@page` directive is used in `BlazingStoryServerComponent.razor` (e.g., `@page "/{*urlPath}"` without `@page "/"`).
+   - If JavaScript/CSS files (e.g., `iframe-communication.js`, `blazor.web.js`) fail to load with MIME type errors, verify `UseStaticFiles()` is in the branched pipeline after `UsePathBase`.
+
+5. **Build and Run Commands**:
+   - Clean and rebuild the project to ensure no stale artifacts:
+     ```shell
+     dotnet clean
+     dotnet build
+     ```
+   - Run the Blazing Story app:
+     ```shell
+     dotnet run --project ./MyBlazorWasmApp1.Stories
+     ```
+   - For hot reloading (preview, unstable):
+     ```shell
+     dotnet watch --project ./MyBlazorWasmApp1.Stories
+     ```
+     Note: If the app freezes (e.g., on Docs pages), restart with `Ctrl+R` in `dotnet watch`.
+
+6. **Testing**:
+   - Access `https://localhost:7248/` (adjust port as needed) to redirect to `/blazor/`.
+   - Verify `/blazor/` loads `IndexPage.razor` and `/blazor/iframe.html` loads `IFramePage.razor`.
+   - Check the Network tab in browser dev tools (F12) to ensure static files (e.g., `/blazor/js/iframe-communication.js`, `/blazor/_framework/blazor.web.js`) return 200 with `application/javascript` MIME type.
+
+#### Step 6 - Run it!
 
 If you are working on Visual Studio, right-click the "MyBlazorWasmApp1.Stories" project in the solution explorer to show the context menu, click the "Set as Startup Project" menu item, and hit the `Ctrl` + `F5` key.
 
@@ -189,7 +342,7 @@ However, on the "Blazing Story" side, Blazor application developers can get a St
 ## 🤔 Frequently Asked Questions
 
 **Q:** How can I write or configure addons?  
-**A:** You can't do that for now because the addon architecture is not completed yet. I'll finish it in the future version.
+**A:** You can't do that for now because the add-on architecture is not completed yet. I'll finish it in the future version.
 
 ## 🎉 Release Notes
 
