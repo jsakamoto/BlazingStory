@@ -1,13 +1,14 @@
-﻿#if NET10_0
-using System.Xml.Linq;
-using BlazingStory.Test._Fixtures;
+﻿using System.Xml.Linq;
+using BlazingStory.Build.Test._Fixtures;
 using Toolbelt.Diagnostics;
 
-namespace BlazingStory.Test.Build;
+namespace BlazingStory.Build.Test;
 
 [Parallelizable(ParallelScope.Children)]
 internal class BuildXmlDocCommentTest
 {
+    private static void ConfigureXProcessOptions(XProcessOptions options) => options.WhenDisposing = XProcessTerminate.EntireProcessTree;
+
     private static async ValueTask<(TestFixtureSpace, string)> CreateTestFixtureSpace(int targetFramework, int sdkVersion, bool allowPrerelease, string projectName)
     {
         var testFixtureSpace = new TestFixtureSpace();
@@ -18,7 +19,7 @@ internal class BuildXmlDocCommentTest
 
         // Create global.json to set SDK version, and verify the used SDK version number.
         testFixtureSpace.CreateGlobalJson($"{sdkVersion}.0.0", "latestMinor", allowPrerelease);
-        var dotnetVersion = await XProcess.Start("dotnet", "--version", appProjDir, TestHelper.XProcessOptions).WaitForExitAsync();
+        var dotnetVersion = await XProcess.Start("dotnet", "--version", appProjDir, ConfigureXProcessOptions).WaitForExitAsync();
         var foundOutput = await dotnetVersion.WaitForOutputAsync(output => output.StartsWith($"{sdkVersion}.0"), millsecondsTimeout: 3000);
         foundOutput.IsTrue(message: $"dotnetVersion.Output is: \"{dotnetVersion.Output}\"");
         dotnetVersion.ExitCode.Is(0, message: dotnetVersion.Output);
@@ -34,8 +35,8 @@ internal class BuildXmlDocCommentTest
         var (testFixtureSpace, emptyBlazorWasmApp1Dir) = await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorWasmApp1");
 
         // When
-        var listenUrl = $"http://localhost:{TestHelper.GetAvailableTCPv4Port()}";
-        using var dotnetRun = XProcess.Start("dotnet", $"run --urls {listenUrl}", emptyBlazorWasmApp1Dir, TestHelper.XProcessOptions);
+        var listenUrl = $"http://localhost:{TcpNetwork.GetAvailableTCPv4Port()}";
+        using var dotnetRun = XProcess.Start("dotnet", $"run --urls {listenUrl}", emptyBlazorWasmApp1Dir, ConfigureXProcessOptions);
         var success = await dotnetRun.WaitForOutputAsync(output => output.TrimStart().StartsWith("Now listening on: http"), millsecondsTimeout: 30000);
         success.IsTrue(message: dotnetRun.Output);
 
@@ -61,7 +62,7 @@ internal class BuildXmlDocCommentTest
         var (testFixtureSpace, emptyBlazorWasmApp1Dir) = await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorWasmApp1");
 
         // When
-        using var dotnetPublish = XProcess.Start("dotnet", "publish -c Release -p BlazorEnableCompression=false", emptyBlazorWasmApp1Dir, TestHelper.XProcessOptions);
+        using var dotnetPublish = XProcess.Start("dotnet", "publish -c Release -p BlazorEnableCompression=false", emptyBlazorWasmApp1Dir, ConfigureXProcessOptions);
         await dotnetPublish.WaitForExitAsync();
         dotnetPublish.ExitCode.Is(0, message: dotnetPublish.Output);
 
@@ -86,8 +87,8 @@ internal class BuildXmlDocCommentTest
         var (testFixtureSpace, emptyBlazorServerApp1Dir) = await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorServerApp1");
 
         // When
-        var listenUrl = $"http://localhost:{TestHelper.GetAvailableTCPv4Port()}";
-        using var dotnetRun = XProcess.Start("dotnet", $"run --urls {listenUrl}", emptyBlazorServerApp1Dir, TestHelper.XProcessOptions);
+        var listenUrl = $"http://localhost:{TcpNetwork.GetAvailableTCPv4Port()}";
+        using var dotnetRun = XProcess.Start("dotnet", $"run --urls {listenUrl}", emptyBlazorServerApp1Dir, ConfigureXProcessOptions);
         var success = await dotnetRun.WaitForOutputAsync(output => output.TrimStart().StartsWith("Now listening on: http"), millsecondsTimeout: 30000);
         success.IsTrue(message: dotnetRun.Output);
 
@@ -114,7 +115,7 @@ internal class BuildXmlDocCommentTest
         var (testFixtureSpace, emptyBlazorServerApp1Dir) = await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorServerApp1");
 
         // When
-        using var dotnetPublish = XProcess.Start("dotnet", "publish -c Release", emptyBlazorServerApp1Dir, TestHelper.XProcessOptions);
+        using var dotnetPublish = XProcess.Start("dotnet", "publish -c Release", emptyBlazorServerApp1Dir, ConfigureXProcessOptions);
         await dotnetPublish.WaitForExitAsync();
         dotnetPublish.ExitCode.Is(0, message: dotnetPublish.Output);
 
@@ -130,4 +131,3 @@ internal class BuildXmlDocCommentTest
         (xdocCommentForFramework.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("Microsoft.AspNetCore.Components.Web");
     }
 }
-#endif

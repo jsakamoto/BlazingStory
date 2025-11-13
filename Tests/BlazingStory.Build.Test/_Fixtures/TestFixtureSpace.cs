@@ -1,6 +1,6 @@
 ﻿using Toolbelt;
 
-namespace BlazingStory.Test._Fixtures;
+namespace BlazingStory.Build.Test._Fixtures;
 
 /// <summary>
 /// A class that provides a working directory that contains the fixture test project files.

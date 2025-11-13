@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace BlazingStory.Test._Fixtures;
+namespace BlazingStory.Build.Test._Fixtures;
 
 internal record DotNetSDKVersion(string Version, string RollForward, bool AllowPrerelease)
 {

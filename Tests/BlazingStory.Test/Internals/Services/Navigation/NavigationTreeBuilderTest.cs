@@ -1,5 +1,4 @@
-﻿using System;
-using BlazingStory.Internals.Models;
+﻿using BlazingStory.Internals.Models;
 using BlazingStory.Internals.Services.Navigation;
 using BlazingStory.Test._Fixtures;
 using BlazingStory.Test._Fixtures.Dummies;
@@ -9,7 +8,6 @@ using RazorClassLib1.Components.Rating;
 using RazorClassLib1.Components.Select;
 using static BlazingStory.Test._Fixtures.TestHelper;
 using static BlazingStory.Types.NavigationTreeOrderBuilder;
-using BlazingStory.Test._Fixtures;
 
 namespace BlazingStory.Test.Internals.Services.Navigation;
 
@@ -227,7 +225,7 @@ internal class NavigationTreeBuilderTest
         var root = builder.Build(storyContainers, customPageContainers, [], expandedNavigationPath: null);
 
         // Then: The 1st level nodes were alphabetically sorted, but custom pages are prioritized.
-        root.SubItems.Captions().Is("For Your Team", "Examples", "UI Components"); 
+        root.SubItems.Captions().Is("For Your Team", "Examples", "UI Components");
 
         // In the "Examples" node, components and custom pages nodes were sorted in alphabetical order, but custom pages were always listed before components.
         root.SubItems[1].SubItems.Captions().Is("Sample of Markdown", "Welcome", "Button", "Select");
