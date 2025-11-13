@@ -9,9 +9,12 @@ namespace BlazingStory.Build.Test;
 internal class BuildXmlDocCommentTest
 {
     public static IEnumerable<object[]> TestCases { get; } = [
-        [8, 8, false],
-        [8, 9, false],
-        [9, 9, false],
+        [ 8,  8, false],
+        [ 8,  9, false],
+        [ 8, 10, false],
+        [ 9,  9, false],
+        [ 9, 10, false],
+        [10, 10, false],
     ];
 
     private static void ConfigureXProcessOptions(XProcessOptions options) => options.WhenDisposing = XProcessTerminate.EntireProcessTree;
