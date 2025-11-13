@@ -1,4 +1,5 @@
 ﻿using System.Xml.Linq;
+using System.Xml.XPath;
 using BlazingStory.Build.Test._Fixtures;
 using Toolbelt.Diagnostics;
 
@@ -42,13 +43,13 @@ internal class BuildXmlDocCommentTest
 
         // Then
         var xdocCommentForApp = XDocument.Load(uri: $"{listenUrl}/_framework/EmptyBlazorWasmApp1.xml");
-        (xdocCommentForApp.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("EmptyBlazorWasmApp1");
+        xdocCommentForApp.XPathSelectElement("/doc/assembly/name").IsNotNull().Value.Is("EmptyBlazorWasmApp1");
 
         var xdocCommentForLib = XDocument.Load(uri: $"{listenUrl}/_framework/RazorClassLib1.xml");
-        (xdocCommentForLib.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("RazorClassLib1");
+        xdocCommentForLib.XPathSelectElement("/doc/assembly/name").IsNotNull().Value.Is("RazorClassLib1");
 
         var xdocCommentForFramework = XDocument.Load(uri: $"{listenUrl}/_framework/Microsoft.AspNetCore.Components.Web.xml");
-        (xdocCommentForFramework.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("Microsoft.AspNetCore.Components.Web");
+        xdocCommentForFramework.XPathSelectElement("/doc/assembly/name").IsNotNull().Value.Is("Microsoft.AspNetCore.Components.Web");
 
         dotnetRun.Process.Kill(entireProcessTree: true);
     }
@@ -69,13 +70,13 @@ internal class BuildXmlDocCommentTest
         // Then
         var frameworkDir = Path.Combine(testFixtureSpace.TestAppProjDir, "bin", "Release", $"net{targetFramework}.0", "publish", "wwwroot", "_framework");
         var xdocCommentForApp = XDocument.Load(uri: Path.Combine(frameworkDir, "EmptyBlazorWasmApp1.xml"));
-        (xdocCommentForApp.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("EmptyBlazorWasmApp1");
+        xdocCommentForApp.XPathSelectElement("doc/assembly/name").IsNotNull().Value.Is("EmptyBlazorWasmApp1");
 
         var xdocCommentForLib = XDocument.Load(uri: Path.Combine(frameworkDir, "RazorClassLib1.xml"));
-        (xdocCommentForLib.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("RazorClassLib1");
+        xdocCommentForLib.XPathSelectElement("/doc/assembly/name").IsNotNull().Value.Is("RazorClassLib1");
 
         var xdocCommentForFramework = XDocument.Load(uri: Path.Combine(frameworkDir, "Microsoft.AspNetCore.Components.Web.xml"));
-        (xdocCommentForFramework.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("Microsoft.AspNetCore.Components.Web");
+        xdocCommentForFramework.XPathSelectElement("/doc/assembly/name").IsNotNull().Value.Is("Microsoft.AspNetCore.Components.Web");
     }
 
     [TestCase(8, 8, false)]
@@ -95,13 +96,13 @@ internal class BuildXmlDocCommentTest
         // Then
         var outputDir = Path.Combine(testFixtureSpace.TestAppProjDir, "bin", "Debug", $"net{targetFramework}.0");
         var xdocCommentForApp = XDocument.Load(uri: Path.Combine(outputDir, "EmptyBlazorServerApp1.xml"));
-        (xdocCommentForApp.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("EmptyBlazorServerApp1");
+        xdocCommentForApp.XPathSelectElement("/doc/assembly/name").IsNotNull().Value.Is("EmptyBlazorServerApp1");
 
         var xdocCommentForLib = XDocument.Load(uri: Path.Combine(outputDir, "RazorClassLib1.xml"));
-        (xdocCommentForLib.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("RazorClassLib1");
+        xdocCommentForLib.XPathSelectElement("/doc/assembly/name").IsNotNull().Value.Is("RazorClassLib1");
 
         var xdocCommentForFramework = XDocument.Load(uri: Path.Combine(outputDir, "Microsoft.AspNetCore.Components.Web.xml"));
-        (xdocCommentForFramework.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("Microsoft.AspNetCore.Components.Web");
+        xdocCommentForFramework.XPathSelectElement("/doc/assembly/name").IsNotNull().Value.Is("Microsoft.AspNetCore.Components.Web");
 
         dotnetRun.Process.Kill(entireProcessTree: true);
     }
@@ -122,12 +123,12 @@ internal class BuildXmlDocCommentTest
         // Then
         var publishDir = Path.Combine(testFixtureSpace.TestAppProjDir, "bin", "Release", $"net{targetFramework}.0", "publish");
         var xdocCommentForApp = XDocument.Load(uri: Path.Combine(publishDir, "EmptyBlazorServerApp1.xml"));
-        (xdocCommentForApp.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("EmptyBlazorServerApp1");
+        xdocCommentForApp.XPathSelectElement("/doc/assembly/name").IsNotNull().Value.Is("EmptyBlazorServerApp1");
 
         var xdocCommentForLib = XDocument.Load(uri: Path.Combine(publishDir, "RazorClassLib1.xml"));
-        (xdocCommentForLib.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("RazorClassLib1");
+        xdocCommentForLib.XPathSelectElement("/doc/assembly/name").IsNotNull().Value.Is("RazorClassLib1");
 
         var xdocCommentForFramework = XDocument.Load(uri: Path.Combine(publishDir, "Microsoft.AspNetCore.Components.Web.xml"));
-        (xdocCommentForFramework.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("Microsoft.AspNetCore.Components.Web");
+        xdocCommentForFramework.XPathSelectElement("/doc/assembly/name").IsNotNull().Value.Is("Microsoft.AspNetCore.Components.Web");
     }
 }
