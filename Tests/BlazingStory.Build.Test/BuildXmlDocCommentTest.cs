@@ -8,6 +8,12 @@ namespace BlazingStory.Build.Test;
 [Parallelizable(ParallelScope.Children)]
 internal class BuildXmlDocCommentTest
 {
+    public static IEnumerable<object[]> TestCases { get; } = [
+        [8, 8, false],
+        [8, 9, false],
+        [9, 9, false],
+    ];
+
     private static void ConfigureXProcessOptions(XProcessOptions options) => options.WhenDisposing = XProcessTerminate.EntireProcessTree;
 
     private static async ValueTask<TestFixtureSpace> CreateTestFixtureSpace(int targetFramework, int sdkVersion, bool allowPrerelease, string projectName)
@@ -27,9 +33,7 @@ internal class BuildXmlDocCommentTest
         return testFixtureSpace;
     }
 
-    [TestCase(8, 8, false)]
-    [TestCase(8, 9, false)]
-    [TestCase(9, 9, false)]
+    [TestCaseSource(nameof(TestCases))]
     public async Task BlazorWasm_DotNetRun_Test(int targetFramework, int sdkVersion, bool allowPrerelease)
     {
         // Given
@@ -54,9 +58,7 @@ internal class BuildXmlDocCommentTest
         dotnetRun.Process.Kill(entireProcessTree: true);
     }
 
-    [TestCase(8, 8, false)]
-    [TestCase(8, 9, false)]
-    [TestCase(9, 9, false)]
+    [TestCaseSource(nameof(TestCases))]
     public async Task BlazorWasm_Publish_Test(int targetFramework, int sdkVersion, bool allowPrerelease)
     {
         // Given
@@ -79,13 +81,11 @@ internal class BuildXmlDocCommentTest
         xdocCommentForFramework.XPathSelectElement("/doc/assembly/name").IsNotNull().Value.Is("Microsoft.AspNetCore.Components.Web");
     }
 
-    [TestCase(8, 8, false)]
-    [TestCase(8, 9, false)]
-    [TestCase(9, 9, false)]
+    [TestCaseSource(nameof(TestCases))]
     public async Task BlazorServer_DotNetRun_Test(int targetFramework, int sdkVersion, bool allowPrerelease)
     {
         // Given
-        using var testFixtureSpace= await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorServerApp1");
+        using var testFixtureSpace = await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorServerApp1");
 
         // When
         var listenUrl = $"http://localhost:{TcpNetwork.GetAvailableTCPv4Port()}";
@@ -107,9 +107,7 @@ internal class BuildXmlDocCommentTest
         dotnetRun.Process.Kill(entireProcessTree: true);
     }
 
-    [TestCase(8, 8, false)]
-    [TestCase(8, 9, false)]
-    [TestCase(9, 9, false)]
+    [TestCaseSource(nameof(TestCases))]
     public async Task BlazorServer_Publish_Test(int targetFramework, int sdkVersion, bool allowPrerelease)
     {
         // Given
