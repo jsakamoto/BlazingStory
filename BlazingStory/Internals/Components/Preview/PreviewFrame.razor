@@ -18,174 +18,297 @@
 @code
 {
     /// <summary>
-    /// Gets or sets the story.
+    /// Gets or sets the story to be rendered in the preview iframe.
+    /// This is the main content that determines which component and its configuration will be displayed.
     /// </summary>
     /// <value>
-    /// The story.
+    /// The story containing component metadata, parameters, and rendering instructions.
+    /// Required parameter that must be provided by the parent component.
     /// </value>
     [Parameter, EditorRequired]
     public Story? Story { get; set; }
 
     /// <summary>
-    /// Gets or sets the view mode.
+    /// Gets or sets the current view mode for the story presentation.
+    /// Controls how the story is displayed within the BlazingStory interface.
     /// </summary>
     /// <value>
-    /// The view mode.
+    /// The view mode string. Common values include "story", "docs", or "canvas".
+    /// Used to determine the appropriate rendering context and UI layout.
     /// </value>
     [Parameter]
     public string? ViewMode { get; set; }
 
     /// <summary>
-    /// Gets or sets the identifier.
+    /// Gets or sets the unique identifier for this preview frame instance.
+    /// Used for story navigation, URL routing, and frame-specific operations.
     /// </summary>
     /// <value>
-    /// The identifier.
+    /// The story identifier used in URLs and for internal tracking.
+    /// Typically corresponds to the story's navigation path or slug.
     /// </value>
     [Parameter]
     public string? Id { get; set; }
 
     /// <summary>
-    /// Gets or sets the arguments.
+    /// Gets or sets the current component arguments/parameters that control the story's behavior.
+    /// These values are passed to the rendered component and can be modified through two-way binding.
     /// </summary>
     /// <value>
-    /// The arguments.
+    /// A dictionary containing parameter names as keys and their current values as values.
+    /// Values can be of any type supported by the component (strings, numbers, arrays, objects).
+    /// Used to configure the component's properties and maintain state synchronization.
     /// </value>
     [Parameter]
     public IReadOnlyDictionary<string, object?>? Args { get; set; }
 
     /// <summary>
-    /// Gets or sets the arguments.
+    /// Gets or sets the event callback that fires when component arguments change.
+    /// This enables two-way data binding between the preview frame and parent components.
     /// </summary>
     /// <value>
-    /// The arguments.
+    /// An event callback that receives the updated arguments dictionary when component properties change.
+    /// Critical for maintaining state synchronization and enabling interactive story controls.
     /// </value>
     [Parameter]
     public EventCallback<IReadOnlyDictionary<string, object?>> ArgsChanged { get; set; }
 
     /// <summary>
-    /// Gets or sets the globals.
+    /// Gets or sets the global configuration values that apply across all stories.
+    /// These settings control the overall presentation environment and addon behaviors.
     /// </summary>
     /// <value>
-    /// The globals.
+    /// A dictionary containing global settings like theme, background, grid visibility, etc.
+    /// Applied to the iframe environment to control the story's presentation context.
     /// </value>
     [Parameter]
     public IReadOnlyDictionary<string, object?>? Globals { get; set; }
 
     /// <summary>
-    /// Gets or sets the on component action.
+    /// Gets or sets the event callback for handling component actions and events.
+    /// This callback receives all component events for logging, debugging, and external processing.
     /// </summary>
     /// <value>
-    /// The on component action.
+    /// An event callback that receives ComponentActionEventArgs containing event name and serialized arguments.
+    /// Used for event monitoring, debugging, and integration with external systems or addons.
     /// </value>
     [Parameter]
     public EventCallback<ComponentActionEventArgs> OnComponentAction { get; set; }
 
     /// <summary>
-    /// Gets the initial preview frame URL.
+    /// Gets the current URL being displayed in the preview iframe.
+    /// This URL includes all current parameters, globals, and story configuration.
     /// </summary>
+    /// <value>
+    /// The complete iframe URL with encoded parameters, used for story rendering and navigation.
+    /// Updates automatically when story arguments or global settings change.
+    /// </value>
     public string CurrentPreviewFrameUrl => this._CurrentPreviewFrameUrl;
 
+    /// <summary>
+    /// Gets or sets the dependency injection service provider.
+    /// Provides access to registered services like BlazingStoryOptions for configuration.
+    /// </summary>
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
 
+    /// <summary>
+    /// Gets or sets the JavaScript runtime for interop operations.
+    /// Used for iframe manipulation, event subscription, and DOM interactions.
+    /// </summary>
     [Inject]
     private IJSRuntime? JSRuntime { get; set; }
 
+    /// <summary>
+    /// Unique identifier for the iframe element, ensuring no conflicts in multi-frame scenarios.
+    /// </summary>
     private readonly string _IframeElementId = "F" + Guid.NewGuid().ToString();
 
-    // Debouncing fields - reduced to 50ms for faster response
+    /// <summary>
+    /// Debounce delay for component events to prevent excessive updates during rapid user interactions.
+    /// Set to 50ms for responsive feel while avoiding performance issues.
+    /// </summary>
     private readonly TimeSpan _DebounceDelay = TimeSpan.FromMilliseconds(50);
 
+    /// <summary>
+    /// JavaScript module wrapper for iframe and event management operations.
+    /// </summary>
     private JSModule? _JSModule;
+
+    /// <summary>
+    /// Reference to the iframe element for direct JavaScript manipulation.
+    /// </summary>
     private ElementReference _Iframe;
+
+    /// <summary>
+    /// The initial URL when the frame was first loaded.
+    /// </summary>
     private string _InitialPreviewFrameUrl = string.Empty;
+
+    /// <summary>
+    /// The current URL being displayed in the iframe, updated as parameters change.
+    /// </summary>
     private string _CurrentPreviewFrameUrl = string.Empty;
+
+    /// <summary>
+    /// Flag indicating whether the first render cycle has completed.
+    /// </summary>
     private bool _AfterFirstRendered = false;
+
+    /// <summary>
+    /// .NET object reference for JavaScript callbacks to this component instance.
+    /// </summary>
     private DotNetObjectReference<PreviewFrame>? _ThisRef;
+
+    /// <summary>
+    /// JavaScript object reference for the event monitoring subscription.
+    /// </summary>
     private IJSObjectReference? _EventMonitorSubscriber;
+
+    /// <summary>
+    /// Cancellation token source for managing debounced operations.
+    /// </summary>
     private CancellationTokenSource? _DebounceCts;
+
+    /// <summary>
+    /// Stores the most recent pending update during debounce periods.
+    /// </summary>
     private (string Name, string ArgsJson)? _PendingUpdate;
 
+    /// <summary>
+    /// Initializes the component by setting up the JavaScript module and initial URL.
+    /// Called once when the component is first created.
+    /// </summary>
     protected override void OnInitialized()
     {
+        // Initialize the JavaScript module for iframe operations
         if (this.JSRuntime is not null)
         {
             this._JSModule = new(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
         }
+
+        // Set both initial and current URLs to the same starting point
         this._InitialPreviewFrameUrl = this._CurrentPreviewFrameUrl = this.GetPreviewFrameUrl();
     }
 
+    /// <summary>
+    /// Called whenever component parameters change, updates the iframe URL accordingly.
+    /// Ensures the preview stays synchronized with parameter changes from parent components.
+    /// </summary>
     protected override async Task OnParametersSetAsync()
     {
+        // Update the iframe URL to reflect any parameter changes
         await this.UpdatePreviewFrameUrlAsync();
     }
 
+    /// <summary>
+    /// Handles post-render operations, particularly setting up the component after first render.
+    /// The first render flag is used to avoid premature JavaScript operations.
+    /// </summary>
+    /// <param name="firstRender">True if this is the first time the component has been rendered</param>
     protected override void OnAfterRender(bool firstRender)
     {
         if (!firstRender) return;
+
+        // Trigger a state change to ensure proper initialization
         this.StateHasChanged();
+
+        // Mark that the first render has completed, enabling JavaScript operations
         this._AfterFirstRendered = true;
     }
 
+    /// <summary>
+    /// Updates the iframe URL if it has changed, triggering a navigation to the new URL.
+    /// Only performs the update if the component has been rendered and the URL actually changed.
+    /// </summary>
     private async ValueTask UpdatePreviewFrameUrlAsync()
     {
+        // Skip if JavaScript module isn't available or component hasn't finished first render
         if (this._JSModule is null || !this._AfterFirstRendered) return;
+
+        // Generate the new URL based on current parameters
         var nextPreviewFrameUrl = this.GetPreviewFrameUrl();
+
+        // Skip navigation if URL hasn't actually changed (performance optimization)
         if (this._CurrentPreviewFrameUrl == nextPreviewFrameUrl) return;
+
+        // Update our tracking variable and navigate the iframe to the new URL
         this._CurrentPreviewFrameUrl = nextPreviewFrameUrl;
         await this._JSModule.InvokeVoidAsync("navigatePreviewFrameTo", this._Iframe, nextPreviewFrameUrl);
     }
 
+    /// <summary>
+    /// Handles the iframe load event by setting up event monitoring and hot reloading.
+    /// This is called whenever the iframe finishes loading a new page.
+    /// </summary>
+    /// <param name="obj">Progress event arguments (unused but required by event signature)</param>
     private async Task OnPreviewIFrameLoaded(ProgressEventArgs obj)
     {
         if (this._JSModule is null) return;
         try
         {
+            // Set up hot reloading if enabled in configuration
             var options = this.Services.GetRequiredService<BlazingStoryOptions>();
             if (options.EnableHotReloading)
             {
                 await this.EnsureDotnetWatchScriptInjected();
             }
+
+            // Create a .NET object reference for JavaScript callbacks
             this._ThisRef = DotNetObjectReference.Create(this);
+
+            // Subscribe to component action events from the iframe
             this._EventMonitorSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentActionEvent", this._Iframe, this._ThisRef, nameof(ComponentActionEventCallback));
         }
-
-        // In some cases, such as when a user navigates away from the page during this async
-        // operation, the JSModule may be disposed before the async operation completes. Ignore the
-        // "ObjectDisposedException" exception in this case.
+        // Handle the case where the user navigates away during async operations
+        // The JSModule may be disposed before the operation completes, which is expected
         catch (ObjectDisposedException)
         {
+            // Safe to ignore - this happens during normal navigation scenarios
         }
     }
 
     /// <summary>
-    /// Gets the URL for the preview frame, from the component parameters(args).
+    /// Constructs the complete iframe URL with all current parameters and global settings.
+    /// This URL determines what content is displayed in the preview iframe.
     /// </summary>
+    /// <returns>A complete URL string for the iframe src attribute</returns>
     private string GetPreviewFrameUrl()
     {
+        // Default to basic iframe page if no story is available
         if (this.Story is null) return "./iframe.html";
-        // IMPORTANT: Filter out EventCallbacks - they should NEVER be in the iframe URL
+
+        // CRITICAL: Filter out EventCallbacks - they should NEVER be serialized to URLs
+        // EventCallbacks are .NET objects that cannot be represented in URLs
         var args = this.Args?
             .Where(x => x.Value == null || !x.Value.GetType().Name.StartsWith("EventCallback"))
             .ToDictionary(
                 keySelector: x => x.Key,
                 elementSelector: x => (object?)this.Story.Context.ConvertParameterValueToString(x.Key, x.Value)
             );
+
+        // Encode and compress the arguments for URL transmission
         var encodeArgs = UriParameterKit.EncodeKeyValues(args);
         var encodeGlobals = UriParameterKit.EncodeKeyValues(this.Globals);
         var compressedArgs = UrlParameterShortener.CompressAndEncode(encodeArgs);
+
+        // Build the complete iframe URL with all necessary parameters
         return UriParameterKit.GetUri(
             uri: "./iframe.html",
             parameters: new Dictionary<string, object?>
             {
-                ["viewMode"] = this.ViewMode,
-                ["id"] = this.Id,
-                ["args"] = compressedArgs,
-                ["globals"] = encodeGlobals,
-                ["frameId"] = this._IframeElementId
+                ["viewMode"] = this.ViewMode,        // Controls the display mode (story, docs, etc.)
+                ["id"] = this.Id,                    // Story identifier for routing
+                ["args"] = compressedArgs,           // Component parameters (compressed for efficiency)
+                ["globals"] = encodeGlobals,         // Global settings (theme, background, etc.)
+                ["frameId"] = this._IframeElementId  // Unique frame identifier for event routing
             });
     }
 
+    /// <summary>
+    /// Reloads the preview iframe, forcing a fresh render of the current story.
+    /// Useful for recovering from errors or applying configuration changes.
+    /// </summary>
     internal async ValueTask ReloadAsync()
     {
         if (this._JSModule is not null)
@@ -194,6 +317,10 @@
         }
     }
 
+    /// <summary>
+    /// Increases the zoom level of the preview iframe content.
+    /// Allows users to get a closer look at component details.
+    /// </summary>
     internal async ValueTask ZoomInAsync()
     {
         if (this._JSModule is not null)
@@ -202,6 +329,10 @@
         }
     }
 
+    /// <summary>
+    /// Decreases the zoom level of the preview iframe content.
+    /// Allows users to see more of the component in the available space.
+    /// </summary>
     internal async ValueTask ZoomOutAsync()
     {
         if (this._JSModule is not null)
@@ -210,6 +341,10 @@
         }
     }
 
+    /// <summary>
+    /// Resets the zoom level of the preview iframe to 100% (default).
+    /// Returns the component to its natural display size.
+    /// </summary>
     internal async ValueTask ResetZoomAsync()
     {
         if (this._JSModule is not null)
@@ -218,6 +353,10 @@
         }
     }
 
+    /// <summary>
+    /// Ensures that the .NET hot reload script is injected into the iframe for development scenarios.
+    /// This enables live reloading when code changes are made during development.
+    /// </summary>
     private async ValueTask EnsureDotnetWatchScriptInjected()
     {
         if (this._JSModule is not null)
@@ -226,184 +365,136 @@
         }
     }
 
+    /// <summary>
+    /// JavaScript-invokable callback for handling component action events from the iframe.
+    /// This method processes all component events, with special handling for two-way binding events.
+    /// Implements debouncing to prevent excessive updates during rapid user interactions.
+    /// </summary>
+    /// <param name="name">The name of the event (e.g., "ValueChanged", "ItemsChanged")</param>
+    /// <param name="argsJson">JSON-serialized event arguments containing the new values</param>
     [JSInvokable(nameof(ComponentActionEventCallback))]
     public async Task ComponentActionEventCallback(string name, string argsJson)
     {
+        // Early exit if dependencies are not available
         if (this._JSModule is null || this.Story is null) return;
 
-        // Log every event immediately with timestamp
-        var timestamp = DateTime.Now.ToString("HH:mm:ss.fff");
+        var storyId = this.Story?.NavigationPath ?? "Unknown";
 
+        // Always fire the component action event for monitoring/logging purposes
         await this.OnComponentAction.InvokeAsync(new(name, argsJson));
 
+        // Special processing for two-way binding events (events ending with "Changed")
         if (name.EndsWith("Changed") && !string.IsNullOrEmpty(argsJson))
         {
-            // Store the latest event for debounced processing
+            // Validate that this event follows proper two-way binding patterns
+            if (!EventArgumentsProcessor.ValidateTwoWayBindingPattern(name, this.Story, $"PreviewFrame[{storyId}]"))
+            {
+                return; // Skip processing if validation fails
+            }
+
+            // Store the latest event for debounced processing (overwriting any previous pending update)
             this._PendingUpdate = (name, argsJson);
 
-            // Cancel any existing debounce timer
+            // Cancel any existing debounce timer to restart the delay period
             if (this._DebounceCts != null)
                 await this._DebounceCts.CancelAsync();
             this._DebounceCts = new CancellationTokenSource();
 
             try
             {
-                // Wait for debounce delay
+                // Wait for the debounce delay period to batch rapid events together
                 await Task.Delay(this._DebounceDelay, this._DebounceCts.Token);
 
-                // Process the latest pending update (use _PendingUpdate, not the captured argsJson)
+                // Process the latest pending update (use _PendingUpdate to get most recent data)
                 if (this._PendingUpdate.HasValue && this._PendingUpdate.Value.Name == name)
                 {
                     var latestArgsJson = this._PendingUpdate.Value.ArgsJson;
 
                     try
                     {
+                        // Deserialize the JSON event arguments into a workable dictionary
                         var updatedArgs = JsonSerializer.Deserialize<Dictionary<string, object?>>(latestArgsJson);
                         if (updatedArgs != null)
                         {
-                            var paramName = name.Replace("Changed", "");
-                            var parameter = this.Story.Context.Parameters.FirstOrDefault(p => p.Name == paramName);
-                            var expectedType = parameter?.TypeStructure.PrimaryType;
-                            object? value = null;
+                            // Map the event name to the corresponding parameter name (remove "Changed" suffix)
+                            var paramName = EventArgumentsProcessor.MapEventNameToParameterName(name);
+                            var parameter = EventArgumentsProcessor.FindParameter(paramName, this.Story);
+                            if (parameter == null) return; // Skip if parameter doesn't exist
 
-                            if (updatedArgs.TryGetValue(paramName, out var directValue) && directValue != null)
-                            {
-                                value = directValue;
-                            }
-                            else if (updatedArgs.TryGetValue("Keys", out var keysObj) && keysObj is JsonElement keysElement && keysElement.ValueKind == JsonValueKind.Array &&
-                                     updatedArgs.TryGetValue("Values", out var valuesObj) && valuesObj is JsonElement valuesElement && valuesElement.ValueKind == JsonValueKind.Array)
-                            {
-                                var keys = keysElement.EnumerateArray().Select(e => e.GetString()).Where(s => s != null).ToList();
-                                var values = valuesElement.EnumerateArray().Select(e => e.ValueKind == JsonValueKind.String ? e.GetString() : (object)e).ToList();
-                                var keyIndex = keys.IndexOf(paramName);
-                                if (keyIndex >= 0 && keyIndex < values.Count)
-                                {
-                                    value = values[keyIndex];
-                                }
-                            }
+                            // Extract and convert the parameter value to the expected type
+                            var expectedType = parameter.TypeStructure.PrimaryType;
+                            var value = EventArgumentsProcessor.ExtractParameterValue(updatedArgs, paramName, expectedType);
 
-                            // Convert value to expected type
-                            if (value != null && expectedType != null)
-                            {
-                                if (expectedType == typeof(string))
-                                {
-                                    value = value.ToString();
-                                }
-                                else if (expectedType.IsArray || (expectedType.IsGenericType && expectedType.GetGenericTypeDefinition() == typeof(IList<>)))
-                                {
-                                    if (value is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.Array)
-                                    {
-                                        var elementType = expectedType.IsArray ? expectedType.GetElementType() : expectedType.GetGenericArguments()[0];
-
-                                        // Determine if we need to convert to array or list
-                                        bool isArray = expectedType.IsArray;
-
-                                        if (elementType == typeof(string))
-                                        {
-                                            var enumerable = jsonElement.EnumerateArray().Select(e => e.GetString()).Where(s => s != null);
-                                            value = isArray ? enumerable.ToArray() : enumerable.ToList();
-                                        }
-                                        else if (elementType == typeof(int))
-                                        {
-                                            var enumerable = jsonElement.EnumerateArray().Select(e => e.GetInt32());
-                                            value = isArray ? enumerable.ToArray() : enumerable.ToList();
-                                        }
-                                        else if (elementType == typeof(double))
-                                        {
-                                            var enumerable = jsonElement.EnumerateArray().Select(e => e.GetDouble());
-                                            value = isArray ? enumerable.ToArray() : enumerable.ToList();
-                                        }
-                                        else if (elementType == typeof(long))
-                                        {
-                                            var enumerable = jsonElement.EnumerateArray().Select(e => e.GetInt64());
-                                            value = isArray ? enumerable.ToArray() : enumerable.ToList();
-                                        }
-                                        else if (elementType == typeof(float))
-                                        {
-                                            var enumerable = jsonElement.EnumerateArray().Select(e => (float)e.GetDouble());
-                                            value = isArray ? enumerable.ToArray() : enumerable.ToList();
-                                        }
-                                        else if (elementType == typeof(decimal))
-                                        {
-                                            var enumerable = jsonElement.EnumerateArray().Select(e => e.GetDecimal());
-                                            value = isArray ? enumerable.ToArray() : enumerable.ToList();
-                                        }
-                                        else if (elementType == typeof(bool))
-                                        {
-                                            var enumerable = jsonElement.EnumerateArray().Select(e => e.GetBoolean());
-                                            value = isArray ? enumerable.ToArray() : enumerable.ToList();
-                                        }
-                                    }
-                                    else if (value is IList<object> list)
-                                    {
-                                        value = list;
-                                    }
-                                }
-                                else if (expectedType == typeof(int) && value is string str && int.TryParse(str, out var intValue))
-                                {
-                                    value = intValue;
-                                }
-                                else if (expectedType == typeof(bool) && value is string boolStr && bool.TryParse(boolStr, out var boolValue))
-                                {
-                                    value = boolValue;
-                                }
-                            }
-
-                            // Check if the value has actually changed
+                            // Performance optimization: skip updates if the value hasn't actually changed
                             if (this.Args != null && this.Args.TryGetValue(paramName, out var currentValue))
                             {
-                                var currentValueJson = JsonSerializer.Serialize(currentValue);
-                                var newValueJson = JsonSerializer.Serialize(value);
-                                if (currentValueJson == newValueJson)
+                                if (TypeConversionHelper.AreValuesEqual(currentValue, value))
                                 {
-                                    return;
+                                    return; // No change detected, skip the update
                                 }
                             }
 
-                            // Merge the new arg with existing args instead of replacing them all
+                            // Merge the new argument with existing arguments (preserving other parameters)
                             var mergedArgs = new Dictionary<string, object?>(this.Args ?? new Dictionary<string, object?>());
                             mergedArgs[paramName] = value;
 
+                            // Update the local Args property
                             this.Args = mergedArgs;
 
-                            // Only send the changed arg in the event
+                            // Notify parent components of the change (send only the changed parameter)
                             var changedArg = new Dictionary<string, object?> { { paramName, value } };
                             await this.ArgsChanged.InvokeAsync(changedArg);
+
+                            // Update the iframe URL to reflect the new parameter values
                             await this.UpdatePreviewFrameUrlAsync();
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        // KEEP this log - it's critical for debugging production errors
+                        Console.WriteLine($"PreviewFrame[{storyId}]: Error processing debounced ComponentActionEventCallback: {ex.Message}");
                     }
                 }
             }
             catch (TaskCanceledException)
             {
-                // Debounce was cancelled by a new event; ignore
+                // Debounce was cancelled by a new event; this is expected behavior, ignore silently
             }
             finally
             {
+                // Clean up the cancellation token source
                 this._DebounceCts?.Dispose();
                 this._DebounceCts = null;
             }
         }
     }
 
+    /// <summary>
+    /// Asynchronously disposes of all resources used by the PreviewFrame component.
+    /// This includes cancelling any pending operations, disposing JavaScript objects, and cleaning up references.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
+        // Cancel and dispose any pending debounce operations
         if (this._DebounceCts != null)
         {
             await this._DebounceCts.CancelAsync();
             this._DebounceCts.Dispose();
         }
+
+        // Dispose the JavaScript event monitor subscription
         if (this._EventMonitorSubscriber is not null)
         {
             await this._EventMonitorSubscriber.DisposeIfConnectedAsync("dispose");
         }
+
+        // Dispose the JavaScript module wrapper
         if (this._JSModule is not null)
         {
             await this._JSModule.DisposeAsync();
         }
+
+        // Dispose the .NET object reference used for JavaScript callbacks
         this._ThisRef?.Dispose();
-    }
+    }    
 }
