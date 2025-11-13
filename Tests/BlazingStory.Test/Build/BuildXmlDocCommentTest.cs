@@ -1,26 +1,37 @@
-﻿#if NET9_0
+﻿#if NET10_0
 using System.Xml.Linq;
 using BlazingStory.Test._Fixtures;
 using Toolbelt.Diagnostics;
 
 namespace BlazingStory.Test.Build;
 
+[Parallelizable(ParallelScope.Children)]
 internal class BuildXmlDocCommentTest
 {
-    [Parallelizable(ParallelScope.Self)]
-    [TestCase("net8.0", "8.0.0", false)]
-    [TestCase("net9.0", "9.0.0", false)]
-    public async Task BlazorWasm_DotNetRun_Test(string targetFramework, string SDKVersion, bool allowPrerelease)
+    private static async ValueTask<(TestFixtureSpace, string)> CreateTestFixtureSpace(int targetFramework, int sdkVersion, bool allowPrerelease, string projectName)
+    {
+        var testFixtureSpace = new TestFixtureSpace();
+
+        // Rewrite the test app's .csproj to set TargetFramework and import BlazingStory MSBuild targets.
+        var appProjDir = testFixtureSpace.GetTestAppProjDir(projectName);
+        CsprojTools.Rewrite(appProjDir, $"net{targetFramework}.0", testFixtureSpace.BlazingStoryTargetsPath);
+
+        // Create global.json to set SDK version, and verify the used SDK version number.
+        testFixtureSpace.CreateGlobalJson($"{sdkVersion}.0.0", "latestMinor", allowPrerelease);
+        var dotnetVersion = await XProcess.Start("dotnet", "--version", appProjDir, TestHelper.XProcessOptions).WaitForExitAsync();
+        var foundOutput = await dotnetVersion.WaitForOutputAsync(output => output.StartsWith($"{sdkVersion}.0"), millsecondsTimeout: 3000);
+        foundOutput.IsTrue(message: $"dotnetVersion.Output is: \"{dotnetVersion.Output}\"");
+        dotnetVersion.ExitCode.Is(0, message: dotnetVersion.Output);
+        return (testFixtureSpace, appProjDir);
+    }
+
+    [TestCase(8, 8, false)]
+    [TestCase(8, 9, false)]
+    [TestCase(9, 9, false)]
+    public async Task BlazorWasm_DotNetRun_Test(int targetFramework, int sdkVersion, bool allowPrerelease)
     {
         // Given
-        var testFixtureSpace = new TestFixtureSpace();
-        testFixtureSpace.CreateGlobalJson(SDKVersion, "latestMinor", allowPrerelease);
-        var emptyBlazorWasmApp1Dir = testFixtureSpace.GetTestAppProjDir("EmptyBlazorWasmApp1");
-        CsprojTools.Rewrite(emptyBlazorWasmApp1Dir, targetFramework, testFixtureSpace.BlazingStoryTargetsPath);
-
-        var dotnetVersion = await XProcess.Start("dotnet", "--version", emptyBlazorWasmApp1Dir, TestHelper.XProcessOptions).WaitForExitAsync();
-        dotnetVersion.ExitCode.Is(0, message: dotnetVersion.Output);
-        dotnetVersion.Output.Is(ver => ver.StartsWith(SDKVersion.Substring(0, 4)), message: dotnetVersion.Output);
+        var (testFixtureSpace, emptyBlazorWasmApp1Dir) = await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorWasmApp1");
 
         // When
         var listenUrl = $"http://localhost:{TestHelper.GetAvailableTCPv4Port()}";
@@ -41,20 +52,13 @@ internal class BuildXmlDocCommentTest
         dotnetRun.Process.Kill(entireProcessTree: true);
     }
 
-    [Parallelizable(ParallelScope.Self)]
-    [TestCase("net8.0", "8.0.0", false)]
-    [TestCase("net9.0", "9.0.0", false)]
-    public async Task BlazorWasm_Publish_Test(string targetFramework, string SDKVersion, bool allowPrerelease)
+    [TestCase(8, 8, false)]
+    [TestCase(8, 9, false)]
+    [TestCase(9, 9, false)]
+    public async Task BlazorWasm_Publish_Test(int targetFramework, int sdkVersion, bool allowPrerelease)
     {
         // Given
-        var testFixtureSpace = new TestFixtureSpace();
-        testFixtureSpace.CreateGlobalJson(SDKVersion, "latestMinor", allowPrerelease);
-        var emptyBlazorWasmApp1Dir = testFixtureSpace.GetTestAppProjDir("EmptyBlazorWasmApp1");
-        CsprojTools.Rewrite(emptyBlazorWasmApp1Dir, targetFramework, testFixtureSpace.BlazingStoryTargetsPath);
-
-        var dotnetVersion = await XProcess.Start("dotnet", "--version", emptyBlazorWasmApp1Dir, TestHelper.XProcessOptions).WaitForExitAsync();
-        dotnetVersion.ExitCode.Is(0, message: dotnetVersion.Output);
-        dotnetVersion.Output.Is(ver => ver.StartsWith(SDKVersion.Substring(0, 4)), message: dotnetVersion.Output);
+        var (testFixtureSpace, emptyBlazorWasmApp1Dir) = await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorWasmApp1");
 
         // When
         using var dotnetPublish = XProcess.Start("dotnet", "publish -c Release -p BlazorEnableCompression=false", emptyBlazorWasmApp1Dir, TestHelper.XProcessOptions);
@@ -62,7 +66,7 @@ internal class BuildXmlDocCommentTest
         dotnetPublish.ExitCode.Is(0, message: dotnetPublish.Output);
 
         // Then
-        var frameworkDir = Path.Combine(emptyBlazorWasmApp1Dir, "bin", "Release", targetFramework, "publish", "wwwroot", "_framework");
+        var frameworkDir = Path.Combine(emptyBlazorWasmApp1Dir, "bin", "Release", $"net{targetFramework}.0", "publish", "wwwroot", "_framework");
         var xdocCommentForApp = XDocument.Load(uri: Path.Combine(frameworkDir, "EmptyBlazorWasmApp1.xml"));
         (xdocCommentForApp.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("EmptyBlazorWasmApp1");
 
@@ -73,20 +77,13 @@ internal class BuildXmlDocCommentTest
         (xdocCommentForFramework.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("Microsoft.AspNetCore.Components.Web");
     }
 
-    [Parallelizable(ParallelScope.Self)]
-    [TestCase("net8.0", "8.0.0", false)]
-    [TestCase("net9.0", "9.0.0", false)]
-    public async Task BlazorServer_DotNetRun_Test(string targetFramework, string SDKVersion, bool allowPrerelease)
+    [TestCase(8, 8, false)]
+    [TestCase(8, 9, false)]
+    [TestCase(9, 9, false)]
+    public async Task BlazorServer_DotNetRun_Test(int targetFramework, int sdkVersion, bool allowPrerelease)
     {
         // Given
-        var testFixtureSpace = new TestFixtureSpace();
-        testFixtureSpace.CreateGlobalJson(SDKVersion, "latestMinor", allowPrerelease);
-        var emptyBlazorServerApp1Dir = testFixtureSpace.GetTestAppProjDir("EmptyBlazorServerApp1");
-        CsprojTools.Rewrite(emptyBlazorServerApp1Dir, targetFramework, testFixtureSpace.BlazingStoryTargetsPath);
-
-        var dotnetVersion = await XProcess.Start("dotnet", "--version", emptyBlazorServerApp1Dir, TestHelper.XProcessOptions).WaitForExitAsync();
-        dotnetVersion.ExitCode.Is(0, message: dotnetVersion.Output);
-        dotnetVersion.Output.Is(ver => ver.StartsWith(SDKVersion.Substring(0, 4)), message: dotnetVersion.Output);
+        var (testFixtureSpace, emptyBlazorServerApp1Dir) = await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorServerApp1");
 
         // When
         var listenUrl = $"http://localhost:{TestHelper.GetAvailableTCPv4Port()}";
@@ -95,7 +92,7 @@ internal class BuildXmlDocCommentTest
         success.IsTrue(message: dotnetRun.Output);
 
         // Then
-        var outputDir = Path.Combine(emptyBlazorServerApp1Dir, "bin", "Debug", targetFramework);
+        var outputDir = Path.Combine(emptyBlazorServerApp1Dir, "bin", "Debug", $"net{targetFramework}.0");
         var xdocCommentForApp = XDocument.Load(uri: Path.Combine(outputDir, "EmptyBlazorServerApp1.xml"));
         (xdocCommentForApp.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("EmptyBlazorServerApp1");
 
@@ -108,20 +105,13 @@ internal class BuildXmlDocCommentTest
         dotnetRun.Process.Kill(entireProcessTree: true);
     }
 
-    [Parallelizable(ParallelScope.Self)]
-    [TestCase("net8.0", "8.0.0", false)]
-    [TestCase("net9.0", "9.0.0", false)]
-    public async Task BlazorServer_Publish_Test(string targetFramework, string SDKVersion, bool allowPrerelease)
+    [TestCase(8, 8, false)]
+    [TestCase(8, 9, false)]
+    [TestCase(9, 9, false)]
+    public async Task BlazorServer_Publish_Test(int targetFramework, int sdkVersion, bool allowPrerelease)
     {
         // Given
-        var testFixtureSpace = new TestFixtureSpace();
-        testFixtureSpace.CreateGlobalJson(SDKVersion, "latestMinor", allowPrerelease);
-        var emptyBlazorServerApp1Dir = testFixtureSpace.GetTestAppProjDir("EmptyBlazorServerApp1");
-        CsprojTools.Rewrite(emptyBlazorServerApp1Dir, targetFramework, testFixtureSpace.BlazingStoryTargetsPath);
-
-        var dotnetVersion = await XProcess.Start("dotnet", "--version", emptyBlazorServerApp1Dir, TestHelper.XProcessOptions).WaitForExitAsync();
-        dotnetVersion.ExitCode.Is(0, message: dotnetVersion.Output);
-        dotnetVersion.Output.Is(ver => ver.StartsWith(SDKVersion.Substring(0, 4)), message: dotnetVersion.Output);
+        var (testFixtureSpace, emptyBlazorServerApp1Dir) = await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorServerApp1");
 
         // When
         using var dotnetPublish = XProcess.Start("dotnet", "publish -c Release", emptyBlazorServerApp1Dir, TestHelper.XProcessOptions);
@@ -129,7 +119,7 @@ internal class BuildXmlDocCommentTest
         dotnetPublish.ExitCode.Is(0, message: dotnetPublish.Output);
 
         // Then
-        var publishDir = Path.Combine(emptyBlazorServerApp1Dir, "bin", "Release", targetFramework, "publish");
+        var publishDir = Path.Combine(emptyBlazorServerApp1Dir, "bin", "Release", $"net{targetFramework}.0", "publish");
         var xdocCommentForApp = XDocument.Load(uri: Path.Combine(publishDir, "EmptyBlazorServerApp1.xml"));
         (xdocCommentForApp.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("EmptyBlazorServerApp1");
 

@@ -24,7 +24,7 @@ internal class TestFixtureSpace : IDisposable
     /// </summary>
     internal TestFixtureSpace()
     {
-        var solutionDir = FileIO.FindContainerDirToAncestor("*.sln");
+        var solutionDir = FileIO.FindContainerDirToAncestor("*.slnx");
         var fixtureDir = Path.Combine(solutionDir, "Tests", "Fixtures");
         var blazingStoryProjDir = Path.Combine(solutionDir, "BlazingStory");
         this.WorkDir = WorkDirectory.CreateCopyFrom(fixtureDir, file => file.Name is not "obj" and not "bin");
