@@ -9,12 +9,12 @@ internal class BuildXmlDocCommentTest
 {
     private static void ConfigureXProcessOptions(XProcessOptions options) => options.WhenDisposing = XProcessTerminate.EntireProcessTree;
 
-    private static async ValueTask<(TestFixtureSpace, string)> CreateTestFixtureSpace(int targetFramework, int sdkVersion, bool allowPrerelease, string projectName)
+    private static async ValueTask<TestFixtureSpace> CreateTestFixtureSpace(int targetFramework, int sdkVersion, bool allowPrerelease, string projectName)
     {
-        var testFixtureSpace = new TestFixtureSpace();
+        var testFixtureSpace = new TestFixtureSpace(projectName);
 
         // Rewrite the test app's .csproj to set TargetFramework and import BlazingStory MSBuild targets.
-        var appProjDir = testFixtureSpace.GetTestAppProjDir(projectName);
+        var appProjDir = testFixtureSpace.TestAppProjDir;
         CsprojTools.Rewrite(appProjDir, $"net{targetFramework}.0", testFixtureSpace.BlazingStoryTargetsPath);
 
         // Create global.json to set SDK version, and verify the used SDK version number.
@@ -23,7 +23,7 @@ internal class BuildXmlDocCommentTest
         var foundOutput = await dotnetVersion.WaitForOutputAsync(output => output.StartsWith($"{sdkVersion}.0"), millsecondsTimeout: 3000);
         foundOutput.IsTrue(message: $"dotnetVersion.Output is: \"{dotnetVersion.Output}\"");
         dotnetVersion.ExitCode.Is(0, message: dotnetVersion.Output);
-        return (testFixtureSpace, appProjDir);
+        return testFixtureSpace;
     }
 
     [TestCase(8, 8, false)]
@@ -32,11 +32,11 @@ internal class BuildXmlDocCommentTest
     public async Task BlazorWasm_DotNetRun_Test(int targetFramework, int sdkVersion, bool allowPrerelease)
     {
         // Given
-        var (testFixtureSpace, emptyBlazorWasmApp1Dir) = await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorWasmApp1");
+        using var testFixtureSpace = await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorWasmApp1");
 
         // When
         var listenUrl = $"http://localhost:{TcpNetwork.GetAvailableTCPv4Port()}";
-        using var dotnetRun = XProcess.Start("dotnet", $"run --urls {listenUrl}", emptyBlazorWasmApp1Dir, ConfigureXProcessOptions);
+        using var dotnetRun = XProcess.Start("dotnet", $"run --urls {listenUrl}", testFixtureSpace.TestAppProjDir, ConfigureXProcessOptions);
         var success = await dotnetRun.WaitForOutputAsync(output => output.TrimStart().StartsWith("Now listening on: http"), millsecondsTimeout: 30000);
         success.IsTrue(message: dotnetRun.Output);
 
@@ -59,15 +59,15 @@ internal class BuildXmlDocCommentTest
     public async Task BlazorWasm_Publish_Test(int targetFramework, int sdkVersion, bool allowPrerelease)
     {
         // Given
-        var (testFixtureSpace, emptyBlazorWasmApp1Dir) = await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorWasmApp1");
+        using var testFixtureSpace = await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorWasmApp1");
 
         // When
-        using var dotnetPublish = XProcess.Start("dotnet", "publish -c Release -p BlazorEnableCompression=false", emptyBlazorWasmApp1Dir, ConfigureXProcessOptions);
+        using var dotnetPublish = XProcess.Start("dotnet", "publish -c Release -p BlazorEnableCompression=false", testFixtureSpace.TestAppProjDir, ConfigureXProcessOptions);
         await dotnetPublish.WaitForExitAsync();
         dotnetPublish.ExitCode.Is(0, message: dotnetPublish.Output);
 
         // Then
-        var frameworkDir = Path.Combine(emptyBlazorWasmApp1Dir, "bin", "Release", $"net{targetFramework}.0", "publish", "wwwroot", "_framework");
+        var frameworkDir = Path.Combine(testFixtureSpace.TestAppProjDir, "bin", "Release", $"net{targetFramework}.0", "publish", "wwwroot", "_framework");
         var xdocCommentForApp = XDocument.Load(uri: Path.Combine(frameworkDir, "EmptyBlazorWasmApp1.xml"));
         (xdocCommentForApp.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("EmptyBlazorWasmApp1");
 
@@ -84,16 +84,16 @@ internal class BuildXmlDocCommentTest
     public async Task BlazorServer_DotNetRun_Test(int targetFramework, int sdkVersion, bool allowPrerelease)
     {
         // Given
-        var (testFixtureSpace, emptyBlazorServerApp1Dir) = await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorServerApp1");
+        using var testFixtureSpace= await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorServerApp1");
 
         // When
         var listenUrl = $"http://localhost:{TcpNetwork.GetAvailableTCPv4Port()}";
-        using var dotnetRun = XProcess.Start("dotnet", $"run --urls {listenUrl}", emptyBlazorServerApp1Dir, ConfigureXProcessOptions);
+        using var dotnetRun = XProcess.Start("dotnet", $"run --urls {listenUrl}", testFixtureSpace.TestAppProjDir, ConfigureXProcessOptions);
         var success = await dotnetRun.WaitForOutputAsync(output => output.TrimStart().StartsWith("Now listening on: http"), millsecondsTimeout: 30000);
         success.IsTrue(message: dotnetRun.Output);
 
         // Then
-        var outputDir = Path.Combine(emptyBlazorServerApp1Dir, "bin", "Debug", $"net{targetFramework}.0");
+        var outputDir = Path.Combine(testFixtureSpace.TestAppProjDir, "bin", "Debug", $"net{targetFramework}.0");
         var xdocCommentForApp = XDocument.Load(uri: Path.Combine(outputDir, "EmptyBlazorServerApp1.xml"));
         (xdocCommentForApp.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("EmptyBlazorServerApp1");
 
@@ -112,15 +112,15 @@ internal class BuildXmlDocCommentTest
     public async Task BlazorServer_Publish_Test(int targetFramework, int sdkVersion, bool allowPrerelease)
     {
         // Given
-        var (testFixtureSpace, emptyBlazorServerApp1Dir) = await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorServerApp1");
+        using var testFixtureSpace = await CreateTestFixtureSpace(targetFramework, sdkVersion, allowPrerelease, "EmptyBlazorServerApp1");
 
         // When
-        using var dotnetPublish = XProcess.Start("dotnet", "publish -c Release", emptyBlazorServerApp1Dir, ConfigureXProcessOptions);
+        using var dotnetPublish = XProcess.Start("dotnet", "publish -c Release", testFixtureSpace.TestAppProjDir, ConfigureXProcessOptions);
         await dotnetPublish.WaitForExitAsync();
         dotnetPublish.ExitCode.Is(0, message: dotnetPublish.Output);
 
         // Then
-        var publishDir = Path.Combine(emptyBlazorServerApp1Dir, "bin", "Release", $"net{targetFramework}.0", "publish");
+        var publishDir = Path.Combine(testFixtureSpace.TestAppProjDir, "bin", "Release", $"net{targetFramework}.0", "publish");
         var xdocCommentForApp = XDocument.Load(uri: Path.Combine(publishDir, "EmptyBlazorServerApp1.xml"));
         (xdocCommentForApp.Element("doc")?.Element("assembly")?.Element("name")?.Value).Is("EmptyBlazorServerApp1");
 
