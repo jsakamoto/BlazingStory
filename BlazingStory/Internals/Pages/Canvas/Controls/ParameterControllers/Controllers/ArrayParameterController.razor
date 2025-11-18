@@ -1,0 +1,313 @@
+﻿@using System.Collections
+@inherits ParameterControllerBase
+
+@if (this.Parameter != null && IsElementTypeSupported())
+{
+    <div class="array-parameter-controller">
+        <div class="array-header">
+            <span>@GetArrayTypeName() [@_arrayItems.Count]</span>
+            <SquareButton Text="Add Item" OnClick="AddItem" />
+        </div>
+
+        @if (_arrayItems.Count == 0)
+        {
+            <div class="empty-state">
+                <em>Empty array - click "Add Item" to insert items</em>
+            </div>
+        }
+        else
+        {
+            <div class="array-items">
+                @for (int i = 0; i < _arrayItems.Count; i++)
+                {
+                    var index = i; // Capture for closure
+
+                    <div class="array-item">
+                        <span class="item-index">[@index]</span>
+                        <div class="item-control">
+                            @if (_elementType == typeof(string))
+                            {
+                                <TextArea Value="@(_arrayItems[index]?.ToString() ?? "")" PlaceHolder="Enter text..."
+                                          OnInput="@(e => UpdateItem(index, e.Value?.ToString()))" />
+                            }
+                            else if (_elementType == typeof(bool))
+                            {
+                                <ToggleButton Value="@(bool.TryParse(_arrayItems[index]?.ToString(), out var boolVal) && boolVal)"
+                                              OnChange="@(value => UpdateItem(index, value))" />
+                            }
+                            else if (_elementType == typeof(int) || _elementType == typeof(double) || _elementType == typeof(float) || _elementType == typeof(decimal))
+                            {
+                                <NumberInput Value="@(_arrayItems[index]?.ToString() ?? "")" PlaceHolder="Enter number..."
+                                             OnInput="@(e => UpdateItem(index, e.Value?.ToString()))" />
+                            }
+                            else if (_elementType?.IsEnum == true)
+                            {
+                                <Select Value="@(_arrayItems[index]?.ToString() ?? "")" Items="@GetEnumOptions()"
+                                        OnChange="@(e => UpdateItem(index, e.Value?.ToString()))" />
+                            }
+                            else
+                            {
+                                <span>@(_arrayItems[index]?.ToString() ?? "-")</span>
+                            }
+                        </div>
+                        <IconButton Icon="SvgIconType.Close" OnClick="@(() => RemoveItem(index))" />
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}
+else
+{
+    <span>@(Value?.ToString() ?? "-")</span>
+}
+
+<style>
+    .array-parameter-controller {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .array-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 4px;
+        border-bottom: 1px solid var(--bs-border-color);
+        font-size: 0.9em;
+        font-weight: 500;
+    }
+
+    .empty-state {
+        text-align: center;
+        color: var(--bs-dimmed-text-color);
+        padding: 12px;
+        font-style: italic;
+        font-size: 0.9em;
+    }
+
+    .array-items {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .array-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 4px;
+        background: var(--bs-dimmed-back-color);
+        border-radius: 4px;
+        border: 1px solid var(--bs-border-color);
+    }
+
+    .item-index {
+        font-family: monospace;
+        font-size: 0.85em;
+        color: var(--bs-dimmed-text-color);
+        min-width: 30px;
+        padding-top: 6px;
+        text-align: right;
+    }
+
+    .item-control {
+        flex: 1;
+    }
+</style>
+
+@code {
+    private List<object?> _arrayItems = [];
+    private Type? _elementType;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        this.InitializeArrayItems();
+    }
+
+    private void InitializeArrayItems()
+    {
+        if (this.Parameter == null) return;
+
+        var primaryType = this.Parameter.TypeStructure.PrimaryType;
+
+        // Determine element type
+        if (primaryType.IsArray)
+        {
+            this._elementType = primaryType.GetElementType();
+        }
+        else if (primaryType.IsGenericType)
+        {
+            this._elementType = primaryType.GetGenericArguments().FirstOrDefault();
+        }
+
+        // Initialize items from current value
+        this._arrayItems.Clear();
+        if (this.Value is IEnumerable enumerable and not string)
+        {
+            foreach (var item in enumerable)
+            {
+                this._arrayItems.Add(item);
+            }
+        }
+    }
+
+    private bool IsElementTypeSupported()
+    {
+        if (this._elementType == null) return false;
+
+        return this._elementType == typeof(string) ||
+               this._elementType == typeof(bool) ||
+               this._elementType == typeof(int) ||
+               this._elementType == typeof(double) ||
+               this._elementType == typeof(float) ||
+               this._elementType == typeof(decimal) ||
+               this._elementType.IsEnum;
+    }
+
+    private string GetArrayTypeName()
+    {
+        if (this._elementType == null) return "Array";
+
+        return this._elementType.Name switch
+        {
+            "String" => "string[]",
+            "Int32" => "int[]",
+            "Double" => "double[]",
+            "Boolean" => "bool[]",
+            "Single" => "float[]",
+            "Decimal" => "decimal[]",
+            _ => $"{this._elementType.Name}[]"
+        };
+    }
+
+    private async Task AddItem()
+    {
+        if (this._elementType == null) return;
+
+        // Add default value based on type
+        var defaultValue = this._elementType switch
+        {
+            var t when t == typeof(string) => string.Empty,
+            var t when t == typeof(int) => 0,
+            var t when t == typeof(double) => 0.0,
+            var t when t == typeof(float) => 0.0f,
+            var t when t == typeof(decimal) => 0m,
+            var t when t == typeof(bool) => false,
+            var t when t.IsEnum => Enum.GetValues(t).GetValue(0),
+            _ => null
+        };
+
+        this._arrayItems.Add(defaultValue);
+        await this.UpdateArray();
+    }
+
+    private async Task RemoveItem(int index)
+    {
+        if (index >= 0 && index < this._arrayItems.Count)
+        {
+            this._arrayItems.RemoveAt(index);
+            await this.UpdateArray();
+        }
+    }
+
+    private async Task UpdateItem(int index, object? value)
+    {
+        if (index < 0 || index >= this._arrayItems.Count || this._elementType == null) return;
+
+        // Convert value to correct type
+        var convertedValue = this.ConvertToElementType(value);
+        this._arrayItems[index] = convertedValue;
+        await this.UpdateArray();
+    }
+
+    private string[] GetEnumOptions()
+    {
+        if (this._elementType == null || !this._elementType.IsEnum) return Array.Empty<string>();
+
+        return Enum.GetNames(this._elementType);
+    }
+
+    private object? ConvertToElementType(object? value)
+    {
+        if (this._elementType == null || value == null) return null;
+
+        try
+        {
+            if (this._elementType == typeof(string))
+                return value.ToString();
+
+            if (this._elementType == typeof(int))
+                return int.TryParse(value.ToString(), out var intVal) ? intVal : 0;
+
+            if (this._elementType == typeof(double))
+                return double.TryParse(value.ToString(), out var doubleVal) ? doubleVal : 0.0;
+
+            if (this._elementType == typeof(float))
+                return float.TryParse(value.ToString(), out var floatVal) ? floatVal : 0.0f;
+
+            if (this._elementType == typeof(decimal))
+                return decimal.TryParse(value.ToString(), out var decimalVal) ? decimalVal : 0m;
+
+            if (this._elementType == typeof(bool))
+                return bool.TryParse(value.ToString(), out var boolVal) && boolVal;
+
+            if (this._elementType.IsEnum)
+                return Enum.TryParse(this._elementType, value.ToString(), out var enumVal) ? enumVal : Enum.GetValues(this._elementType).GetValue(0);
+
+            return value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private async Task UpdateArray()
+    {
+        if (this.Parameter == null || this._elementType == null) return;
+
+        var primaryType = this.Parameter.TypeStructure.PrimaryType;
+        object? arrayValue = null;
+
+        try
+        {
+            if (primaryType.IsArray)
+            {
+                // Create typed array
+                var array = Array.CreateInstance(this._elementType, this._arrayItems.Count);
+                for (var i = 0; i < this._arrayItems.Count; i++)
+                {
+                    array.SetValue(this._arrayItems[i], i);
+                }
+                arrayValue = array;
+            }
+            else if (primaryType.IsGenericType)
+            {
+                // Create generic list
+                var listType = typeof(List<>).MakeGenericType(this._elementType);
+                var list = Activator.CreateInstance(listType) as IList;
+
+                if (list != null)
+                {
+                    foreach (var item in this._arrayItems)
+                    {
+                        list.Add(item);
+                    }
+                    arrayValue = list;
+                }
+            }
+
+            await this.OnInputAsync(arrayValue);
+        }
+        catch (Exception ex)
+        {
+            // Log error or handle gracefully
+            Console.WriteLine($"Error updating array: {ex.Message}");
+        }
+    }
+}

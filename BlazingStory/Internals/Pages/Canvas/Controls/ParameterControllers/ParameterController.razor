@@ -1,9 +1,14 @@
 @using BlazingStory.Internals.Pages.Canvas.Controls.ParameterControllers.Controllers
 
 @{
-    var primaryType = this.Parameter.TypeStructure.PrimaryType;
+    var primaryType = this.Parameter?.TypeStructure.PrimaryType;
 }
-@if (primaryType == typeof(string))
+
+@if (primaryType is null || this.Parameter is null)
+{
+    <span>@(Value?.ToString() ?? "-")</span>
+}
+else if (primaryType == typeof(string))
 {
     <TextParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
 }
@@ -18,6 +23,12 @@ else if (primaryType.IsEnum == true)
 else if (TypeUtility.IsNumericType(primaryType))
 {
     <NumberParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
+}
+else if (primaryType.IsArray || (primaryType.IsGenericType && (primaryType.GetGenericTypeDefinition() == typeof(List<>)
+|| primaryType.GetGenericTypeDefinition() == typeof(IList<>) || primaryType.GetGenericTypeDefinition() ==
+typeof(IEnumerable<>))))
+{
+    <ArrayParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
 }
 else if (RenderFragmentKit.IsRenderFragment(Parameter.Type))
 {
