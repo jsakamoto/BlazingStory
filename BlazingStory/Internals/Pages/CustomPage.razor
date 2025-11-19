@@ -32,7 +32,13 @@
         </ToolBar>
         <div class="custom-page-main fill">
             <div class="custom-page-contents">
+                @{
+                #pragma warning disable IL2111
+                }
                 <DynamicComponent Type="this._CustomPage.CustomPageRazorDescriptor.TypeOfCustomPageRazor" />
+                @{
+                #pragma warning restore IL2111
+                }
             </div>
         </div>
     </div>

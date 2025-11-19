@@ -51,12 +51,16 @@
     <CascadingValue Value="this._AddonsStore">
 
         <div style="display:none;">
-            @{ #pragma warning disable IL2111 }
+            @{ 
+            #pragma warning disable IL2111 
+            }
             @foreach (var addonType in this._AddonsTypes)
             {
                 <DynamicComponent @key="addonType" Type="addonType" />
             }
-            @{ #pragma warning restore IL2111 }
+            @{
+            #pragma warning restore IL2111
+            }
         </div>
 
         <div class="color-scheme-container preferes-color-scheme-@this._PreferesColorScheme" style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >=2 ? 1 : 0); visibility: @(this._InitLevel >= 1 ? "visible" : "hidden");">
@@ -64,19 +68,29 @@
                 <CascadingValue Value="this._CustomPageStore">
                     <CascadingValue Value="this">
 
+                        @{
+                        #pragma warning disable IL2111
+                        }
                         <Router AppAssembly="@typeof(BlazingStoryApp).Assembly">
                             <Found Context="routeData">
                                 <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
                             </Found>
                             <NotFound>
                                 <PageTitle>Not found</PageTitle>
-                                @{ #pragma warning disable IL2111 }
+                                @{
+                                #pragma warning disable IL2110
+                                }
                                 <LayoutView Layout="@typeof(MainLayout)">
                                     <p role="alert" style="padding:12px 32px;">Sorry, there's nothing at this address.</p>
                                 </LayoutView>
-                                @{ #pragma warning restore IL2111 }
+                                @{
+                                #pragma warning restore IL2110
+                                }
                             </NotFound>
                         </Router>
+                        @{
+                        #pragma warning restore IL2111
+                        }
 
                     </CascadingValue>
                 </CascadingValue>

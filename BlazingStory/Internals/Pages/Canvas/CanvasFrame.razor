@@ -12,7 +12,11 @@
 @inject ILogger<CanvasFrame> Logger
 @inject NavigationManager NavigationManager
 
-@{ #pragma warning disable IL2111 }
+@{
+#pragma warning disable IL2111
+#pragma warning disable IL2110
+
+}
 @if (this._Story == null)
 {
     <CanvasFrameNothingToAddress />
@@ -29,7 +33,10 @@ else
         </LayoutView>
     </LayoutView>
 }
-@{ #pragma warning restore IL2111 }
+@{
+#pragma warning restore IL2111
+#pragma warning restore IL2110
+}
 
 @if (this._EnableMeasure)
 {
