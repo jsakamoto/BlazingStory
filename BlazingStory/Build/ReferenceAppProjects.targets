@@ -167,7 +167,10 @@
     <!-- Fix StaticWebAsset items.
           - Remove StaticWebAsset items coming from referenced Blazor WebAssembly projects and whose path starts with "_framework".
           - Fix the path of StaticWebAsset items from referenced Blazor WebAssembly projects to start with "_content/{project name}/". -->
-    <_BS_FilterAndRebaseItems Items="@(StaticWebAsset)" ReferencedAppProjects="@(_BS_ReferencedAppProject)">
+    <_BS_FilterAndRebaseItems
+      Items="@(StaticWebAsset)"
+      ReferencedAppProjects="@(_BS_ReferencedAppProject)"
+      FrameworkStaticWebAssets="@(_FrameworkStaticWebAsset)">
       <Output TaskParameter="PrunedItems" ItemName="_BS_PrunedStaticWebAsset" />
     </_BS_FilterAndRebaseItems>
     <ItemGroup>

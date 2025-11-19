@@ -5,6 +5,7 @@
             <!-- Input parameters -->
             <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
             <ReferencedAppProjects ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+            <FrameworkStaticWebAssets ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="false" />
             <PruneByPath ParameterType="System.Boolean" />
             <!-- Outout parameters -->
             <PrunedItems ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
@@ -14,6 +15,9 @@
             <Code Type="Fragment" Language="cs"><![CDATA[
 
 static string GetPath(ITaskItem item) => item.GetMetadata("RootDir") + item.GetMetadata("Directory");
+
+if (this.FrameworkStaticWebAssets == null) this.FrameworkStaticWebAssets = new TaskItem[0];
+var frameworkStaticWebAssetsHash = new HashSet<string>(this.FrameworkStaticWebAssets.Select(item => item.ItemSpec));
 
 var prunedItems = new List<ITaskItem>();
 
@@ -30,7 +34,8 @@ foreach (var appProj in this.ReferencedAppProjects)
         .Where(item => item.GetMetadata("AssetKind") == "All")
 
         // Exclude the framework files that are under the "_framework" folder, such as "_framework/blazor.webassembly.js", "_framework/blazor.boot.json", etc.
-        .Where(item => item.GetMetadata("RelativePath")?.StartsWith("_framework/") != true)
+        // But keep those that are explicitly listed in the FrameworkStaticWebAssets input parameter.
+        .Where(item => item.GetMetadata("RelativePath")?.StartsWith("_framework/") != true || frameworkStaticWebAssetsHash.Contains(item.ItemSpec))
 
         // Exclude the app-bundled scoped css files, such as "*.styles.css", not "*.bundle.scp.css".
         .Where(item => item.GetMetadata("AssetTraitName") == "ScopedCss" ? item.GetMetadata("AssetTraitValue") == "ProjectBundle" : true)
