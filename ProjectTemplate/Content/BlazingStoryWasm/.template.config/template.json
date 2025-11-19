@@ -153,6 +153,12 @@
       "defaultValue": "false",
       "description": "If specified, adds a solution file for the standalone Blazor WebAssembly app."
     },
+    "SolutionX": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "If specified, adds an XML solution file for the standalone Blazor Web app."
+    },
     "IncludeSampleContent": {
       "type": "parameter",
       "datatype": "bool",
@@ -190,11 +196,13 @@
           "exclude": [
             "Server/**",
             "Shared/**",
-            "StoryWasmApp.1.sln"
+            "StoryWasmApp.1.sln",
+            "StoryWasmApp.1.slnx"
           ],
           "rename": {
             ".Client.csproj": ".csproj",
             ".Client.sln": ".sln",
+            ".Client.slnx": ".slnx",
             "Client": "."
           }
         },
@@ -205,23 +213,35 @@
           ]
         },
         {
-          "condition": "(!Hosted && !Solution)",
+          "condition": "(!Hosted && !Solution) || (HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
           "exclude": [
             "Client/StoryWasmApp.1.Client.sln"
+          ]
+        },
+        {
+          "condition": "(!Hosted && !SolutionX) || (HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+          "exclude": [
+            "Client/StoryWasmApp.1.Client.slnx"
           ]
         },
         {
           "condition": "(Hosted)",
           "exclude": [
             "Client/StoryWasmApp.1.Client.sln",
+            "Client/StoryWasmApp.1.Client.slnx",
             "Client/Properties/launchSettings.json"
           ]
         },
         {
-          "condition": "(Hosted && HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+          "condition": "(Hosted && SolutionX) || (HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
           "exclude": [
-            "StoryWasmApp.1.sln",
-            "Client/StoryWasmApp.1.Client.sln"
+            "StoryWasmApp.1.sln"
+          ]
+        },
+        {
+          "condition": "(Hosted && !SolutionX) || (HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+          "exclude": [
+            "StoryWasmApp.1.slnx"
           ]
         }
       ]
