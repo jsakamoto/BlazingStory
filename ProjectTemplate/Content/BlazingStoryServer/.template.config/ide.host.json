@@ -36,6 +36,12 @@
       },
       "isVisible": true,
       "persistenceScope": "templateGroup"
+    },
+    {
+      "id": "LocalhostTld",
+      "isVisible": true,
+      "persistenceScope": "shared",
+      "persistenceScopeName": "Microsoft"
     }
   ]
 }

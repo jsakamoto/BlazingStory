@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Client\BlazingStoryWasm.Client.csproj" />
+    <ProjectReference Include="..\Client\StoryWasmApp.1.Client.csproj" />
   </ItemGroup>
 
 </Project>

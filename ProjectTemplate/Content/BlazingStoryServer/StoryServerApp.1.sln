@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.34607.79
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoryServerApp", "StoryServerApp.csproj", "{E4F5C735-BB90-4C44-8B6D-B7723A985B38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoryServerApp.1", "StoryServerApp.1.csproj", "{E4F5C735-BB90-4C44-8B6D-B7723A985B38}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

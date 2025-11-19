@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.32804.182
 MinimumVisualStudioVersion = 16.0.0.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazingStoryWasm", "BlazingStoryWasm.csproj", "{E4F5C735-BB90-4C44-8B6D-B7723A985B38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoryWasmApp.1", "StoryWasmApp.1.csproj", "{E4F5C735-BB90-4C44-8B6D-B7723A985B38}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

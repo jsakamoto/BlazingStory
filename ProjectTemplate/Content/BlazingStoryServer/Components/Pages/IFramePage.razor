@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>StoryServerApp</title>
+    <title>StoryServerApp.1</title>
     <base href="@(new Uri(NavigationManager.BaseUri).AbsolutePath)" />
 @*#if (Framework != "net8.0" && Framework != "net9.0")*@
     <ResourcePreloader />
@@ -20,16 +20,16 @@
     -->
 @*#if (Framework == "net8.0")*@
     <link rel="stylesheet" href="css/blazor-ui.css" />
-    <link rel="stylesheet" href="StoryServerApp.styles.css" />
+    <link rel="stylesheet" href="StoryServerApp.1.styles.css" />
 @*#else*@
     <link rel="stylesheet" href="@Assets["css/blazor-ui.css"]" />
-    <link rel="stylesheet" href="@Assets["StoryServerApp.styles.css"]" />
+    <link rel="stylesheet" href="@Assets["StoryServerApp.1.styles.css"]" />
 @*#endif*@
     <HeadOutlet @rendermode="@InteractiveServer" />
 </head>
 
 <body>
-    <StoryServerApp.Components.App @rendermode="@InteractiveServer" />
+    <StoryServerApp._1.Components.App @rendermode="@InteractiveServer" />
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.

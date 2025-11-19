@@ -1,22 +1,14 @@
 {
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:8080/",
-      //#if(NoHttps)
-      "sslPort": 0
-      //#else
-      "sslPort": 44300
-      //#endif
-    }
-  },
   "profiles": {
     "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
+      //#if (LocalhostTld)
+      "applicationUrl": "http://storyserverapp__1.dev.localhost:5000",
+      //#else
       "applicationUrl": "http://localhost:5000",
+      //#endif
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -26,18 +18,15 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
+      //#if (LocalhostTld)
+      "applicationUrl": "https://storyserverapp__1.dev.localhost:5001;http://storyserverapp__1.dev.localhost:5000",
+      //#else
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    //#endif
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
+      //#endif
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
+    //#endif
   }
 }

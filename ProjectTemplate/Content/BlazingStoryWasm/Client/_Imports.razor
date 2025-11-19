@@ -9,17 +9,17 @@
 @using BlazingStory.Components
 @using BlazingStory.Types
 @*#if (Hosted)
-@using BlazingStoryWasm.Client
-@using BlazingStoryWasm.Client.Shared
+@using StoryWasmApp._1.Client
+@using StoryWasmApp._1.Client.Shared
 #endif*@
 @*#if (Hosted && IncludeSampleContent)
-@using BlazingStoryWasm.Client.Stories
+@using StoryWasmApp._1.Client.Stories
 #endif*@
 @*#if (!Hosted)
-@using BlazingStoryWasm
-@using BlazingStoryWasm.Shared
+@using StoryWasmApp._1
+@using StoryWasmApp._1.Shared
 #endif*@
 @*#if (!Hosted && IncludeSampleContent)
-@using BlazingStoryWasm.Stories
+@using StoryWasmApp._1.Stories
 #endif*@
 

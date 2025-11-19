@@ -22,6 +22,10 @@
       "longName": "mcp-server",
       "shortName": "mcp"
     },
+    "LocalhostTld": {
+      "longName": "localhost-tld",
+      "shortName": ""
+    },
     "kestrelHttpPort": {
       "isHidden": true
     },

@@ -3,7 +3,7 @@ using BlazingStory.Components;
 using BlazingStory.McpServer;
 #endif
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using StoryServerApp.Components.Pages;
+using StoryServerApp.1.Components.Pages;
 
 var builder = WebApplication.CreateBuilder(args);
 

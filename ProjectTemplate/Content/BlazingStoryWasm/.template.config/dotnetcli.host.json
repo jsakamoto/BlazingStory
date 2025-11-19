@@ -21,6 +21,10 @@
     "IncludeSampleContent": {
       "longName": "include-sample"
     },
+    "LocalhostTld": {
+      "longName": "localhost-tld",
+      "shortName": ""
+    },
     "kestrelHttpPort": {
       "isHidden": true
     },

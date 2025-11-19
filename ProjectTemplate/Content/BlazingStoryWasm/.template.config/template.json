@@ -158,6 +158,14 @@
       "datatype": "bool",
       "defaultValue": "true",
       "description": "If specified, adds a sample component and its stories."
+    },
+    "LocalhostTld": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "displayName": "Use the .dev.localhost TLD in the application URL",
+      "description": "Whether to combine the project name with the .dev.localhost TLD in the application URL for local development, e.g. https://myapp.dev.localhost:12345.",
+      "isEnabled": "(Framework == \"net10.0\")"
     }
   },
   "guids": [
@@ -166,7 +174,7 @@
     "0341B023-80E5-4FEA-B58E-CD70D1D432EC",
     "12616DCF-E921-48CA-A211-A262FA10D5E9"
   ],
-  "sourceName": "BlazingStoryWasm",
+  "sourceName": "StoryWasmApp.1",
   "sources": [
     {
       "source": "./",
@@ -182,7 +190,7 @@
           "exclude": [
             "Server/**",
             "Shared/**",
-            "BlazingStoryWasm.sln"
+            "StoryWasmApp.1.sln"
           ],
           "rename": {
             ".Client.csproj": ".csproj",
@@ -199,21 +207,21 @@
         {
           "condition": "(!Hosted && !Solution)",
           "exclude": [
-            "Client/BlazingStoryWasm.Client.sln"
+            "Client/StoryWasmApp.1.Client.sln"
           ]
         },
         {
           "condition": "(Hosted)",
           "exclude": [
-            "Client/BlazingStoryWasm.Client.sln",
+            "Client/StoryWasmApp.1.Client.sln",
             "Client/Properties/launchSettings.json"
           ]
         },
         {
           "condition": "(Hosted && HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
           "exclude": [
-            "BlazingStoryWasm.sln",
-            "Client/BlazingStoryWasm.Client.sln"
+            "StoryWasmApp.1.sln",
+            "Client/StoryWasmApp.1.Client.sln"
           ]
         }
       ]
@@ -222,19 +230,19 @@
   "primaryOutputs": [
     {
       "condition": "(Hosted && (HostIdentifier == \"dotnetcli\" || HostIdentifier == \"dotnetcli-preview\"))",
-      "path": "BlazingStoryWasm.sln"
+      "path": "StoryWasmApp.1.sln"
     },
     {
       "condition": "(Hosted && HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
-      "path": "Server/BlazingStoryWasm.Server.csproj"
+      "path": "Server/StoryWasmApp.1.Server.csproj"
     },
     {
       "condition": "(!Hosted)",
-      "path": "BlazingStoryWasm.Client.csproj"
+      "path": "StoryWasmApp.1.Client.csproj"
     },
     {
       "condition": "(Hosted && HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
-      "path": "Client/BlazingStoryWasm.Client.csproj"
+      "path": "Client/StoryWasmApp.1.Client.csproj"
     }
   ],
   "postActions": [
@@ -259,7 +267,7 @@
       ],
       "args": {
         "files": [
-          "BlazingStoryWasm.Client.csproj"
+          "StoryWasmApp.1.Client.csproj"
         ]
       },
       "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
