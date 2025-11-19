@@ -68,6 +68,29 @@ var otherAssets = this.PruneByPath
     : this.Items.Where(item => !appNames.Any(name => item.GetMetadata("SourceId") == name)).ToArray();
 
 prunedItems.AddRange(otherAssets);
+
+// Eliminate compressed items without corresponding items referenced by the "Related Asset" metadata value.
+var itemsToBeEliminated = prunedItems
+    .Where(item => 
+    {
+        var relatedAsset = item.GetMetadata("RelatedAsset");
+        var assetTraitName = item.GetMetadata("AssetTraitName");
+        var assetTraitValue = item.GetMetadata("AssetTraitValue");
+
+        // When the item is a compressed static web asset...
+        if (assetTraitName == "Content-Encoding" && (assetTraitValue == "gzip" || assetTraitValue == "br") && !string.IsNullOrEmpty(relatedAsset))
+        {
+            // But if the related asset of that compressed asset doesn't exist, it should be eliminated.
+            return !prunedItems.Any(prunedItem => prunedItem.ItemSpec == relatedAsset);
+        }
+
+        return false;
+    })
+    .ToArray();
+
+foreach (var itemToBeEliminated in itemsToBeEliminated) prunedItems.Remove(itemToBeEliminated);
+
+// Retun the results.
 this.PrunedItems = prunedItems.ToArray();
 
         ]]></Code>
