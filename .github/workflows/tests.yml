@@ -19,9 +19,8 @@ jobs:
           dotnet-version: |
             8.0.x
             9.0.x
+            10.0.x
 
       # Invoke tests
-      - name: Invoke tests on net8.0
-        run: dotnet run --project ./Tests/BlazingStory.Test -f net8.0
-      - name: Invoke tests on net9.0
-        run: dotnet run --project ./Tests/BlazingStory.Test -f net9.0
+      - name: Invoke tests
+        run: dotnet test --project ./Tests/BlazingStory.Test/BlazingStory.Test.csproj --output detailed

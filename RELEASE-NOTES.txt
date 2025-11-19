@@ -1,3 +1,7 @@
+v.1.0.0-preview.62
+- Update: .NET 10 support.
+- Update: Improve canvas preview pane splitter behavior.
+
 v.1.0.0-preview.61
 - Fix: The browser title did not update when a Custom Page was selected.
 - Update: Refined the navigation tree and settings menu design to align with Storybook v9.
