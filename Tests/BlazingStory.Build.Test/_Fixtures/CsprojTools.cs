@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace BlazingStory.Test._Fixtures;
+namespace BlazingStory.Build.Test._Fixtures;
 
 internal static class CsprojTools
 {

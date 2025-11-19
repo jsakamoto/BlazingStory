@@ -1,6 +1,6 @@
 ﻿using Toolbelt;
 
-namespace BlazingStory.Test._Fixtures;
+namespace BlazingStory.Build.Test._Fixtures;
 
 /// <summary>
 /// A class that provides a working directory that contains the fixture test project files.
@@ -20,22 +20,23 @@ internal class TestFixtureSpace : IDisposable
     internal string BlazingStoryTargetsPath { get; }
 
     /// <summary>
+    /// Get the full path of the appplication project directory
+    /// </summary>
+    internal string TestAppProjDir { get; }
+
+    /// <summary>
     /// A class that provides a working directory that contains the fixture test project files.
     /// </summary>
-    internal TestFixtureSpace()
+    internal TestFixtureSpace(string projectName)
     {
-        var solutionDir = FileIO.FindContainerDirToAncestor("*.sln");
+        var solutionDir = FileIO.FindContainerDirToAncestor("*.slnx");
         var fixtureDir = Path.Combine(solutionDir, "Tests", "Fixtures");
         var blazingStoryProjDir = Path.Combine(solutionDir, "BlazingStory");
         this.WorkDir = WorkDirectory.CreateCopyFrom(fixtureDir, file => file.Name is not "obj" and not "bin");
         this.BlazingStoryProjDir = Path.Combine(solutionDir, "BlazingStory");
         this.BlazingStoryTargetsPath = Path.Combine(this.BlazingStoryProjDir, "Build", "BlazingStory.targets");
+        this.TestAppProjDir = Path.Combine(this.WorkDir, projectName);
     }
-
-    /// <summary>
-    /// Get the full path of the project directory of the specified test app project.
-    /// </summary>
-    internal string GetTestAppProjDir(string projectName) => Path.Combine(this.WorkDir, projectName);
 
     /// <summary>
     /// Create a global.json file with the specified parameters in the working directory.

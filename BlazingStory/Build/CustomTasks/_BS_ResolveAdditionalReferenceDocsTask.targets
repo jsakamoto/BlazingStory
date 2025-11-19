@@ -1,0 +1,75 @@
+<Project>
+
+  <UsingTask TaskName="_BS_ResolveAdditionalReferenceDocsTask" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <!-- Input parameters -->
+      <ReferencePaths ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <ReferenceCopyLocalPaths ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <TargetAssemblyPattern ParameterType="System.String" Required="true" />
+      <!-- Outout parameters -->
+      <AdditionalReferenceCopyLocalPaths ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.Collections.Generic" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Linq" />
+      <Using Namespace="System.Text.RegularExpressions" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+static bool MatchesWildcard(string fileName, string pattern)
+{
+    // Convert the pattern to a regular expression
+    var regexPattern = "^" + Regex.Escape(pattern)
+        .Replace(@"\*", ".*")
+        .Replace(@"\?", ".") + "$";
+
+    return Regex.IsMatch(fileName, regexPattern, RegexOptions.IgnoreCase);
+}
+
+// Split TargetAssemblyPattern by semicolon to get the list of wildcard patterns
+var patterns = TargetAssemblyPattern
+    .Split(new[] { ';' })
+    .Select(p => p.Trim())
+    .Where(p => !string.IsNullOrEmpty(p))
+    .ToArray();
+
+if (patterns.Length == 0)
+{
+    Log.LogMessage(MessageImportance.Low, "No patterns specified in TargetAssemblyPattern.");
+    return true;
+}
+
+// Filter ITaskItems from ReferencePaths that match the patterns
+var matchedItems = ReferencePaths
+    .Where(item => patterns.Any(pattern => MatchesWildcard(Path.GetFileName(item.ItemSpec), pattern)))
+    .ToArray();
+
+// Generate a collection of absolute path strings with the extension changed to ".xml"
+var xmlPaths = matchedItems
+    .Select(item => Path.ChangeExtension(item.ItemSpec, ".xml"))
+    .ToArray();
+
+// Filter to only files that actually exist
+var existingXmlPaths = xmlPaths
+    .Where(xmlPath => File.Exists(xmlPath))
+    .ToArray();
+
+// Remove items that already exist in ReferenceCopyLocalPaths
+var existingCopyLocalPaths = new HashSet<string>(
+    ReferenceCopyLocalPaths.Select(item => item.ItemSpec),
+    StringComparer.OrdinalIgnoreCase);
+
+var additionalXmlPaths = existingXmlPaths
+    .Where(xmlPath => !existingCopyLocalPaths.Contains(xmlPath))
+    .ToArray();
+
+// Store the result as TaskItems in AdditionalReferenceCopyLocalPaths
+AdditionalReferenceCopyLocalPaths = additionalXmlPaths
+    .Select(xmlPath => new TaskItem(xmlPath))
+    .ToArray();
+]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+</Project>

@@ -4,9 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 using RazorClassLib1.Components.Button;
 using RazorClassLib1.Components.TextInput;
 
-namespace BlazingStory.Test.Internals.Services;
+namespace BlazingStory.Test.Internals.Services.XmlDocComment;
 
-internal class XmlDocCommentTest
+internal class XmlDocCommentForWasmTest
 {
     private static TestHost CreateTestHost() => new(services =>
     {

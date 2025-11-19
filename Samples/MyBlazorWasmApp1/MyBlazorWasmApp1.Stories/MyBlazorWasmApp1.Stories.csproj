@@ -1,21 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
+
     <InvariantGlobalization>true</InvariantGlobalization>
     <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
-    <MD2RazorDefaultBaseClass>global::BlazingStory.Internals.Pages.MarkdownPageBase</MD2RazorDefaultBaseClass>
+
+    <!-- <MD2RazorDefaultBaseClass>global::BlazingStory.Internals.Pages.MarkdownPageBase</MD2RazorDefaultBaseClass> -->
+
     <PublishTrimmed>false</PublishTrimmed>
     <TrimMode>none</TrimMode>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlazingStory" Version="1.0.0-preview.61" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.9" PrivateAssets="all" />
+    <PackageReference Include="BlazingStory" Version="1.0.0-preview.62" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.0" PrivateAssets="all" />
     <PackageReference Include="PublishSPAforGitHubPages.Build" Version="3.0.1" />
     <PackageReference Include="MD2RazorGenerator" Version="1.2.2">
       <PrivateAssets>all</PrivateAssets>

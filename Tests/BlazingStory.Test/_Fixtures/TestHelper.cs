@@ -1,13 +1,10 @@
-﻿using System.Net;
-using System.Net.Sockets;
-using BlazingStory.Internals.Models;
+﻿using BlazingStory.Internals.Models;
 using BlazingStory.Internals.Services;
 using BlazingStoryApp1.Stories;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using RazorClassLib1.Components.Button;
 using RazorClassLib1.Components.Select;
-using Toolbelt.Diagnostics;
 
 namespace BlazingStory.Test._Fixtures;
 
@@ -41,19 +38,4 @@ internal static class TestHelper
             CreateStory<Button>(title: "Examples/Select", name: "Select"),
         }}
     ];
-
-    internal static void XProcessOptions(XProcessOptions options)
-    {
-        options.WhenDisposing = XProcessTerminate.EntireProcessTree;
-    }
-
-    /// <summary>Get an available TCP v4 port number.</summary>
-    internal static int GetAvailableTCPv4Port()
-    {
-        var listener = new TcpListener(IPAddress.Loopback, 0);
-        listener.Start();
-        var port = ((IPEndPoint)listener.LocalEndpoint).Port;
-        listener.Stop();
-        return port;
-    }
 }

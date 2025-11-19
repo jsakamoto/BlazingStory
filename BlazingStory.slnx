@@ -1,0 +1,30 @@
+<Solution>
+  <Folder Name="/README/">
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+    <File Path="RELEASE-NOTES.txt" />
+    <File Path="THIRD-PARTY-NOTICES.txt" />
+    <File Path="VersionInfo.props" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/BlazingStory.Build.Test/BlazingStory.Build.Test.csproj" />
+    <Project Path="Tests/BlazingStory.Test/BlazingStory.Test.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Fixtures/">
+    <Project Path="Tests/Fixtures/BlazingStoryApp1/BlazingStoryApp1.csproj" />
+    <Project Path="Tests/Fixtures/BlazingStoryApp2/BlazingStoryApp2.csproj" />
+    <Project Path="Tests/Fixtures/BlazingStoryApp3/BlazingStoryApp3.csproj" />
+    <Project Path="Tests/Fixtures/ComponentPack1/ComponentPack1.csproj" />
+    <Project Path="Tests/Fixtures/EmptyBlazorServerApp1/EmptyBlazorServerApp1.csproj" />
+    <Project Path="Tests/Fixtures/EmptyBlazorWasmApp1/EmptyBlazorWasmApp1.csproj" />
+    <Project Path="Tests/Fixtures/RazorClassLib1/RazorClassLib1.csproj" />
+    <Project Path="Tests/Fixtures/RazorClassLib2/RazorClassLib2.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Fixtures/ToDoApp/">
+    <Project Path="Tests/Fixtures/BlazorToDoApp/BlazorToDoApp.Stories/BlazorToDoApp.Stories.csproj" />
+    <Project Path="Tests/Fixtures/BlazorToDoApp/BlazorToDoApp/BlazorToDoApp.csproj" />
+  </Folder>
+  <Project Path="BlazingStory.McpServer/BlazingStory.McpServer.csproj" />
+  <Project Path="BlazingStory.Stories/BlazingStory.Stories.csproj" />
+  <Project Path="BlazingStory/BlazingStory.csproj" />
+</Solution>
