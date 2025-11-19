@@ -6,11 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BlazingStoryWasm</title>
     <base href="/" />
+<!--#if (!Hosted && Framework != 'net8.0' && Framework != 'net9.0') -->
+    <link rel="preload" id="webassembly" />
+<!--#endif -->
     <!--
     DON'T PUT ANY ADDITIONAL CSS OR JAVASCRIPT LINKS IN THIS FILE.
     Please do that in the "iframe.html" instead.
     -->
     <link rel="stylesheet" href="css/blazor-ui.css" />
+<!--#if (!Hosted && Framework != 'net8.0' && Framework != 'net9.0') -->
+    <script type="importmap"></script>
+<!--#endif -->
 </head>
 
 <body>
@@ -35,7 +41,11 @@
     DON'T PUT ANY ADDITIONAL JAVASCRIPT LINKS IN THIS FILE.
     Please do that in the "iframe.html" instead.
     -->
+<!--#if (!Hosted && Framework != 'net8.0' && Framework != 'net9.0') -->
+    <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
+<!--#else -->
     <script src="_framework/blazor.webassembly.js"></script>
+<!--#endif -->
 </body>
 
 </html>

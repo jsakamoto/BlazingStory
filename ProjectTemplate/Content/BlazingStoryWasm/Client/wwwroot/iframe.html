@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BlazingStoryWasm</title>
     <base href="/" />
+<!--#if (!Hosted && Framework != 'net8.0' && Framework != 'net9.0') -->
+    <link rel="preload" id="webassembly" />
+<!--#endif -->
     <!--
     If you need to add <link> or <script> elements to include CSS
     or JavaScript files for canvas views of your Stories, 
@@ -17,6 +20,9 @@
 <!--#else  -->
     <link rel="stylesheet" href="BlazingStoryWasm.styles.css" />
 <!--#endif  -->
+<!--#if (!Hosted && Framework != 'net8.0' && Framework != 'net9.0') -->
+    <script type="importmap"></script>
+<!--#endif -->
 </head>
 
 <body>
@@ -34,7 +40,11 @@
     JavaScript files for canvas views of your Stories, 
     YOU SHOULD PLACE THEM HERE, not in the "index.html" file.
     -->
+<!--#if (!Hosted && Framework != 'net8.0' && Framework != 'net9.0') -->
+    <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
+<!--#else -->
     <script src="_framework/blazor.webassembly.js"></script>
+<!--#endif -->
 </body>
 
 </html>

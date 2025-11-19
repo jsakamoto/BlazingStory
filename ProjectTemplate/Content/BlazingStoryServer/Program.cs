@@ -10,9 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-
-var serverUrl = builder.Configuration[WebHostDefaults.ServerUrlsKey]?.Split(';').FirstOrDefault() ?? "http://localhost:5000";
-builder.Services.TryAddScoped(sp => new HttpClient { BaseAddress = new Uri(serverUrl) });
 #if (McpServer)
 builder.Services.AddBlazingStoryMcpServer();
 #endif
@@ -29,6 +26,12 @@ if (!app.Environment.IsDevelopment())
 #endif
 }
 
+#if (Framework == "net9.0")
+app.UseStatusCodePagesWithReExecute("/not-found");
+#endif
+#if (Framework == "net10.0")
+app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+#endif
 #if (!NoHttps)
 app.UseHttpsRedirection();
 

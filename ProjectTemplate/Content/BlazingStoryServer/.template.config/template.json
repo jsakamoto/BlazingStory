@@ -36,16 +36,20 @@
       "datatype": "choice",
       "choices": [
         {
-          "choice": "net9.0",
-          "description": "Target net90"
+          "choice": "net8.0",
+          "description": "Target net8.0"
         },
         {
-          "choice": "net8.0",
-          "description": "Target net80"
+          "choice": "net9.0",
+          "description": "Target net9.0"
+        },
+        {
+          "choice": "net10.0",
+          "description": "Target net10.0"
         }
       ],
       "replaces": "net8.0",
-      "defaultValue": "net9.0"
+      "defaultValue": "net10.0"
     },
     "kestrelHttpPort": {
       "type": "parameter",
@@ -174,9 +178,9 @@
       ],
       "modifiers": [
         {
-          "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+          "condition": "!Solution || (HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
           "exclude": [
-            "*.sln"
+            "StoryServerApp.sln"
           ]
         },
         {
