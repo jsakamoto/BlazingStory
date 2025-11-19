@@ -1,0 +1,233 @@
+v.1.0.0-preview.62
+- Update: .NET 10 support.
+- Update: Improve canvas preview pane splitter behavior.
+
+v.1.0.0-preview.61
+- Fix: The browser title did not update when a Custom Page was selected.
+- Update: Refined the navigation tree and settings menu design to align with Storybook v9.
+- Fix: The navigation tree layout broke when the first item was not a container (e.g., a custom document or a component).
+- Fix: The sorting algorithm of the navigation items.
+
+v.1.0.0-preview.60
+- Update: Upgraded the UI design to match Storybook v9, bringing a more modern and refined user interface.
+- Enhancement: Added "Documentation" menu item to the settings menu, providing easy access to the newly launched Blazing Story documentation site.
+
+v.1.0.0-preview.59
+- Enhancement: Added the NavigationTreeOrder parameter to BlazingStoryApp, enabling declarative custom ordering of sidebar navigation tree items (equivalent to Storybook's storySort.order). (Issue #80, thanks to @WimVdSElia)
+- Breaking Change: Custom documentation pages are now always placed after stories instead of before them, aligning with Storybook's behavior. By default (when no custom order is specified), documentation pages appear after containers and components.
+
+v.1.0.0-preview.58
+- Fix: "Show Code" does not display story code when *.stories.razor is in folders starting with digits or containing certain symbols (Issue #77)
+
+v.1.0.0-preview.57
+- Enhancement: Improved initial font and stylesheet loading performance. (PR #74 contributed by @Zettersten)
+
+v.1.0.0-preview.56
+- Improve: the scroll bars design.
+
+v.1.0.0-preview.55
+- Update: Upgraded the MCP server package version, and enabled structured tool output.
+
+v.1.0.0-preview.54
+- Enhancement: Made the return types of the MCP server feature strongly typed.
+
+v.1.0.0-preview.53
+- Fix: Primitive values in event arguments were not displayed correctly in the Action log panel.
+
+v.1.0.0-preview.52
+- Enhancement: Introduced the MCP (Model Context Protocol) server feature, enabling Blazing Story applications to interact with MCP clients and facilitating integration with AI agents.
+
+v.1.0.0-preview.51
+- Fix: A build error that occurred under certain conditions.
+- Improve: The design of story descriptions on Docs pages.
+
+v.1.0.0-preview.50
+- Fix: Resolved the build error 'File length for "<path>" is not defined' when using .NET SDK 9.0.300.
+
+v.1.0.0-preview.49
+- Enhancement: Added support for adding descriptions to individual stories. (PR #72 contributed by @HaunBa)
+
+v.1.0.0-preview.48
+- Enhancement: Added support for using Markdown files (.md) directly as Custom Pages through integration with the "MD2RazorGenerator" NuGet package.
+
+v.1.0.0-preview.47
+- Fix: Documentation comments from other NuGet packages were not displayed on the "Docs" page or in the control panel. (Issue #61, PR #70, contributed by @leonardstruck)
+
+v.1.0.0-preview.46
+- Enhancement: The Custom Pages feature is now available. (Issue #31, PR #67 contributed by @Snellingen)
+
+v.1.0.0-preview.45
+- Fix: The Action log panel crashes when the event argument type has indexer property. (PR #68 contributed by @Snellingen)
+
+v.1.0.0-preview.44
+- Fix: The Action log panel crashes when the event argument type has the unsupported type of properties or cyclic reference. (Issue #65, PR #66 contributed by @Snellingen)
+
+v.1.0.0-preview.43
+- Enhancement: The Keyboard Shortcuts page is now available.
+- Fix: The search view did not close after clicking a search result.
+- Fix: Clicking a component in the search results always directs to the first component's documentation page.
+
+v.1.0.0-preview.42
+- Update: Add support for .NET 9
+
+v.1.0.0-preview.41
+- Improve: Make the numeric parameter control keep precision when the input value is spinning up and down. (Issue #50)
+
+v.1.0.0-preview.40
+- Improve: Added support for float, decimal, and double numbers in parameter control. (Issue #50)
+
+v.1.0.0-preview.38
+- Fix: the summary text for a generic type component couldn't be retrieved. (Issue #51)
+
+v.1.0.0-preview.37
+- Fix: Property descriptions did not appear when the component was inherited from a generic typed component.
+- Update: Drop the support for .NET 7
+
+v.1.0.0-preview.36
+- Fix: hotkeys didn't work on Blazor Server hosting model.
+
+v.1.0.0-preview.35
+- Fix: a Story server app deployed under the subpath didn't work.
+
+v.1.0.0-preview.34
+- Fix: navigation next/prev stories, docs, and components didn't work.
+- Improve: Brush up the project templates and add new item templates.
+
+v.1.0.0-preview.33
+- Improve: the "Blazing Story" is now IL trimmable on Blazor WebAssembly platforms.
+- Fix: The "Release Notes" page crashed in some Blazor Server deployment environments.
+
+v.1.0.0-preview.32
+- Now, the "Blazing Story" officially supports the Blazor Server deployment model.
+  - Fix: unexpected "JSDisconnectedException" was thrown when running on a Blazor Server.
+  - Fix: the server-side pre-rendering process crashed.
+
+v.1.0.0-preview.31
+- Improve: Add an ability to reference application projects, not class libraries
+- Improve: XML doc comments are now fetched even when it is running on a Blazor Server project
+
+v.1.0.0-preview.30
+- Fix: the improvement of preview 28 (the design of the description items on the "Docs" page by wrapping them when there are many) was not applied correctly.
+
+v.1.0.0-preview.28
+- Improve:  The design of the description items on the "Docs" page by wrapping them when there are many.
+
+v.1.0.0-preview.27
+- Fix: unassigned parameters show "Unknown", not "-", on the control panel.
+- Experimental: Add Blazor Server support.
+
+v.1.0.0-preview.26
+- Improve: Add support for the Nullable<T> type on the component's parameters.
+
+v.1.0.0-preview.25
+- Improve: The code view on a Docs page now syntax highlights and reflects user-entered parameters in real-time.
+
+v.1.0.0-preview.24
+- Fix: the XML doc comments markup <see href> was not displayed on the Docs page.
+
+v.1.0.0-preview.23
+- Improve: get XML Doc comments for parameters even when inherited from other assemblies or NuGet packages.
+
+v.1.0.0-preview.22
+- Fix: the text box didn't appear correctly on Safari browser.
+- Fix: timeout errors have happened so often.
+
+v.1.0.0-preview.21
+- New: Added an "Actions" panel on the canvas page.
+- Improved: Made hot-reloading more stable.
+
+v.1.0.0-preview.20
+- Add support for RenderFragment on the parameter controller.
+- Fix the styles to be the same as the Storybook v.7.6.10.
+
+v.1.0.0-preview.19
+- [Preview feature] Hot Reloading is now available when you opt out of it. (Please remember that Hot Reloading on Blazing Story is still preview and not stable at all.)
+
+v.1.0.0-preview.18
+- Improve: The height of preview frames on the "Docs" page will be adjusted automatically to fit its preview contents.
+
+v.1.0.0-preview.17
+- Fix: In some cases, the uncaught (in promise) error "No .NET call dispatcher has been set" was shown in the browser's console.
+
+v.1.0.0-preview.16
+- Fix: The unhandled exception "Microsoft.JSInterop.JSException: SecurityError: Failed to execute 'pushState' on 'History'" was thrown in some cases.
+
+v.1.0.0-preview.15
+- Improve: the release note page shows the RELEASE-NOTES.txt at runtime with formatting
+
+v.1.0.0-preview.14
+- Fix Issue #12: Only a blank page is shown on Firefox.
+- Upgrade package references for .NET 8 from prev.6 to prev.7.
+
+v.1.0.0-preview.13
+- Improve: Prefer color scheme now can be pinned the dark or light mode from the BlazingStoryApp component's parameter.
+- Fix: The brand logo icon was cut off.
+
+v.1.0.0-preview.12
+- Change: "Copy canvas link" now provides full absolute URL.
+- Fix: the reset button in the control panel wasn't placed right side.
+- Fix: the result of fetching XML doc comments was not cached if it respond "404 not found".
+
+v.1.0.0-preview.11
+- Fix: keyboard shortcuts were fired unexpectedly when a user typed on an input element existing in a story preview (canvas).
+- Fix: XML document comment files were not deployed when using .NET 8 SDK.
+
+v.1.0.0-preview.10
+- Fix: A canvas frame (preview frame) was not re-rendered when a state of a story has been changed.
+
+v.1.0.0-preview.9
+- Improve: Sorts sub items recursively by its caption, except stories.
+
+v.1.0.0-preview.8
+- Fix: radio button groups for a component parameter are not isolated.
+
+v.1.0.0-preview.7
+- Fix: New added *.stories.razor files are not recognized as a Blazor component
+
+v.1.0.0-preview.6
+- Improvement: The branding logo area to be customizable
+
+v.1.0.0-preview.5
+- Improvement: Stories now can have shared layouts
+- Fix: deindentation of the code in the "Show code" window is sometimes incorrect
+- Fix: Navigation will be corrupted when the name of the story includes some symbol
+- Fix: the first story on the "Docs" pages shearing a state of showing code with other pages unexpectedly
+
+v.1.0.0-preview.4
+- Docs page - Added the "Show code" feature
+
+v.1.0.0-preview.3.2
+- Add support for .NET 8 (Preview)
+
+v.1.0.0-preview.3.1
+- Fix: README - typo in the creating a new Blazing Story app command
+- Fix: Settings pages - The toolbar was hidden in some cases
+- Fix: Default color scheme values were not applied correctly
+- Docs page - Enabled toggling the toolbar visibility
+- Docs page - Added "Go fullscreen" button on the toolbar
+- Docs page - Added the "Show sidebar" button on the toolbar
+- Docs page - Enabled the "Background" Add-on
+
+v.1.0.0-preview.3
+- Implemented the "Docs" pages
+
+v.1.0.0-preview.2.1
+- Improved Dark Theme support
+
+v.1.0.0-preview.2
+- Added Dark Theme support
+
+v.1.0.0-preview.1.4
+- Improve the "About" page - to show the version text of the assembly of Blazing Story
+
+v.1.0.0-preview.1.3
+- Fix: When the page is initially loading, icons are revealed unexpectedly.
+
+v.1.0.0-preview.1.2
+- Improve the README and the project template to explain how to add custom css and js files for stories.
+
+v.1.0.0-preview.1.1
+- Fix: 3rd party libraries CSS file importing failed if the app deployed under subpath.
+
+v.1.0.0-preview.1
+- 1st release.
