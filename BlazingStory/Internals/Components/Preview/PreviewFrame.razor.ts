@@ -5,21 +5,21 @@ class TimeoutError extends Error {
 }
 
 const waitFor = async <T>(arg: { predecate: () => false | T, maxRetryCount?: number, retryInterval?: number }): Promise<T> => {
-    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     let retryCount = 0;
     while (true) {
         const result = arg.predecate();
         if (result !== false) return result as T;
         if (retryCount >= (arg.maxRetryCount ?? 500)) throw new TimeoutError("Timeout");
         retryCount++;
-        await delay(arg.retryInterval ?? 10);
+        await new Promise(resolve => setTimeout(resolve, arg.retryInterval ?? 10));
     }
 }
 
 const waitForIFrameReady = async <T>(iframe: HTMLIFrameElement) => {
     return await waitFor({
         predecate: () => {
-            if (iframe.contentWindow === null || iframe.contentDocument === null) return false;
+            if (!iframe.contentDocument) return false;
+            if (!iframe.contentWindow) return false;
             if (iframe.contentWindow.location.href === "about:blank") return false;
             if (iframe.contentWindow.BlazingStory?.canvasFrameInitialized !== true) return false;
             return ({ contentWindow: iframe.contentWindow, contentDocument: iframe.contentDocument });
@@ -28,7 +28,7 @@ const waitForIFrameReady = async <T>(iframe: HTMLIFrameElement) => {
 }
 
 export const navigatePreviewFrameTo = async (iframe: HTMLIFrameElement | null, url: string) => {
-    if (iframe === null) return;
+    if (!(iframe instanceof HTMLIFrameElement)) return;
     const { contentWindow, contentDocument } = await waitForIFrameReady(iframe);
     const event = new PopStateEvent("popstate", { state: {}, bubbles: true, cancelable: true });
     contentWindow.history.pushState({}, "", url);

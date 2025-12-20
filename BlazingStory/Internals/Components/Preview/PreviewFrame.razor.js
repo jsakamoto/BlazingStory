@@ -2,35 +2,34 @@ class TimeoutError extends Error {
     constructor(message) { super(message); }
 }
 const waitFor = async (arg) => {
-    var _a, _b;
-    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
     let retryCount = 0;
     while (true) {
         const result = arg.predecate();
         if (result !== false)
             return result;
-        if (retryCount >= ((_a = arg.maxRetryCount) !== null && _a !== void 0 ? _a : 500))
+        if (retryCount >= (arg.maxRetryCount ?? 500))
             throw new TimeoutError("Timeout");
         retryCount++;
-        await delay((_b = arg.retryInterval) !== null && _b !== void 0 ? _b : 10);
+        await new Promise(resolve => setTimeout(resolve, arg.retryInterval ?? 10));
     }
 };
 const waitForIFrameReady = async (iframe) => {
     return await waitFor({
         predecate: () => {
-            var _a;
-            if (iframe.contentWindow === null || iframe.contentDocument === null)
+            if (!iframe.contentDocument)
+                return false;
+            if (!iframe.contentWindow)
                 return false;
             if (iframe.contentWindow.location.href === "about:blank")
                 return false;
-            if (((_a = iframe.contentWindow.BlazingStory) === null || _a === void 0 ? void 0 : _a.canvasFrameInitialized) !== true)
+            if (iframe.contentWindow.BlazingStory?.canvasFrameInitialized !== true)
                 return false;
             return ({ contentWindow: iframe.contentWindow, contentDocument: iframe.contentDocument });
         }
     });
 };
 export const navigatePreviewFrameTo = async (iframe, url) => {
-    if (iframe === null)
+    if (!(iframe instanceof HTMLIFrameElement))
         return;
     const { contentWindow, contentDocument } = await waitForIFrameReady(iframe);
     const event = new PopStateEvent("popstate", { state: {}, bubbles: true, cancelable: true });
@@ -69,9 +68,8 @@ export const subscribeComponentActionEvent = async (iframe, dotNetObj, methodNam
     }
 };
 const isDotnetWatchScriptInjected = (window) => {
-    var _a;
     const scriptInjectedSentinel = '_dotnet_watch_ws_injected';
-    return (_a = window === null || window === void 0 ? void 0 : window.hasOwnProperty(scriptInjectedSentinel)) !== null && _a !== void 0 ? _a : false;
+    return window?.hasOwnProperty(scriptInjectedSentinel) ?? false;
 };
 export const ensureDotnetWatchScriptInjected = async (iframe) => {
     try {

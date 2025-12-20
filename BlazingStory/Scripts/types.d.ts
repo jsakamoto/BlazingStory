@@ -24,3 +24,10 @@ export type MessageArgument =
     { action: "pointerdown" } |
     { action: "reload" } |
     { action: "frameview-height", frameId: string, height: number };
+
+declare global {
+
+    interface IntersectionObserverInit {
+        scrollMargin?: string;
+    }
+}
