@@ -1,8 +1,8 @@
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 
-<IntersectionView class="preview-frame">
-    <iframe id="@this._IframeElementId" @ref="_Iframe" src="@_InitialPreviewFrameUrl" @onload="OnPreviewIFrameLoaded"></iframe>
+<IntersectionView @ref="_IntersectionView" class="preview-frame">
+    <PooledIFrame Src="@_PreviewFrameUrl" Attached="OnPreviewIFrameAttached" Detached="OnPreviewIFrameDetached" />
 </IntersectionView>
 
 @code
@@ -28,24 +28,20 @@
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
 
-    private readonly string _IframeElementId = "F" + Guid.NewGuid().ToString();
-
     /// <summary>
     /// Gets the initial preview frame URL.
     /// </summary>
-    public string CurrentPreviewFrameUrl => this._CurrentPreviewFrameUrl;
+    public string CurrentPreviewFrameUrl => this._PreviewFrameUrl;
 
-    private ElementReference _Iframe;
+    private IntersectionView? _IntersectionView;
 
-    private string _InitialPreviewFrameUrl = "";
+    private ElementReference _IframeContainer => this._IntersectionView?.ElementReference ?? default;
 
-    private string _CurrentPreviewFrameUrl = "";
+    private string _PreviewFrameUrl = "";
 
     private readonly JSModule _JSModule;
 
-    private bool _AfterFirstRendered = false;
-
-    private DotNetObjectReference<PreviewFrame>? _ThisRef;
+    private DotNetObjectReference<PreviewFrame> _ThisRef;
 
     private IJSObjectReference? _EventMonitorSubscriber;
 
@@ -55,35 +51,21 @@
     public PreviewFrame()
     {
         this._JSModule = new(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
+        this._ThisRef = DotNetObjectReference.Create(this);
     }
 
     protected override void OnInitialized()
     {
-        this._InitialPreviewFrameUrl = this._CurrentPreviewFrameUrl = this.GetPreviewFrameUrl();
+        this._PreviewFrameUrl = this.GetPreviewFrameUrl();
     }
 
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
-        await this.UpdatePreviewFrameUrlAsync();
+        base.OnParametersSet();
+        this._PreviewFrameUrl = this.GetPreviewFrameUrl();
     }
 
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (!firstRender) return;
-        this.StateHasChanged();
-        this._AfterFirstRendered = true;
-    }
-
-    private async ValueTask UpdatePreviewFrameUrlAsync()
-    {
-        if (!this._AfterFirstRendered) return;
-        var nextPreviewFrameUrl = this.GetPreviewFrameUrl();
-        if (this._CurrentPreviewFrameUrl == nextPreviewFrameUrl) return;
-        this._CurrentPreviewFrameUrl = nextPreviewFrameUrl;
-        await _JSModule.InvokeVoidAsync("navigatePreviewFrameTo", this._Iframe, nextPreviewFrameUrl);
-    }
-
-    private async Task OnPreviewIFrameLoaded(ProgressEventArgs obj)
+    private async Task OnPreviewIFrameAttached()
     {
         try
         {
@@ -93,14 +75,25 @@
                 await EnsureDotnetWatchScriptInjected();
             }
 
-            // TODO: this._ThisRef = DotNetObjectReference.Create(this);
-            // TODO: this._EventMonitorSubscriber = await _JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentActionEvent", this._Iframe, this._ThisRef, nameof(ComponentActionEventCallback));
+            this._EventMonitorSubscriber = await _JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentActionEvent", this._IframeContainer, this._ThisRef, nameof(ComponentActionEventCallback));
         }
 
         // In some cases, such as when a user navigates away from the page during this async operation,
         // the JSModule may be disposed before the async operation completes.
         // Ignore the "ObjectDisposedException" exception in this case.
-        catch (ObjectDisposedException){ }
+        catch (ObjectDisposedException) { }
+    }
+
+    private async Task OnPreviewIFrameDetached()
+    {
+        await this.UnsubscribeEventMonitorAsync();
+    }
+
+    private async ValueTask UnsubscribeEventMonitorAsync()
+    {
+        var eventMonitorSubscriber = _EventMonitorSubscriber;
+        _EventMonitorSubscriber = null;
+        await eventMonitorSubscriber.DisposeIfConnectedAsync("dispose");
     }
 
     /// <summary>
@@ -128,27 +121,27 @@
 
     internal async ValueTask ReloadAsync()
     {
-        await this._JSModule.InvokeVoidAsync("reloadPreviewFrame", this._Iframe);
+        await this._JSModule.InvokeVoidAsync("reloadPreviewFrame", this._IframeContainer);
     }
 
     internal async ValueTask ZoomInAsync()
     {
-        await this._JSModule.InvokeVoidAsync("zoomInPreviewFrame", this._Iframe);
+        await this._JSModule.InvokeVoidAsync("zoomInPreviewFrame", this._IframeContainer);
     }
 
     internal async ValueTask ZoomOutAsync()
     {
-        await this._JSModule.InvokeVoidAsync("zoomOutPreviewFrame", this._Iframe);
+        await this._JSModule.InvokeVoidAsync("zoomOutPreviewFrame", this._IframeContainer);
     }
 
     internal async ValueTask ResetZoomAsync()
     {
-        await this._JSModule.InvokeVoidAsync("resetZoomPreviewFrame", this._Iframe);
+        await this._JSModule.InvokeVoidAsync("resetZoomPreviewFrame", this._IframeContainer);
     }
 
     private async ValueTask EnsureDotnetWatchScriptInjected()
     {
-        await this._JSModule.InvokeVoidAsync("ensureDotnetWatchScriptInjected", this._Iframe);
+        await this._JSModule.InvokeVoidAsync("ensureDotnetWatchScriptInjected", this._IframeContainer);
     }
 
     [JSInvokable(nameof(ComponentActionEventCallback))]
@@ -159,8 +152,8 @@
 
     public async ValueTask DisposeAsync()
     {
-        await _EventMonitorSubscriber.DisposeIfConnectedAsync("dispose");
+        await this.UnsubscribeEventMonitorAsync();
         await _JSModule.DisposeAsync();
-        _ThisRef?.Dispose();
+        _ThisRef.Dispose();
     }
 }

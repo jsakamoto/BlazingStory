@@ -14,6 +14,8 @@
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
+    public ElementReference ElementReference => _containerElement;
+
     private ElementReference _containerElement;
 
     private bool _isIntersecting;
@@ -27,7 +29,7 @@
         if (firstRender)
         {
             _dotNetRef = DotNetObjectReference.Create(this);
-            await using var module = await JSRuntime.ImportAsync("./Internals/Components/Layouts/IntersectionView.razor.js");
+            await using var module = await JSRuntime.ImportAsync("Internals/Components/Layouts/IntersectionView.razor.js");
             _observer = await module.InvokeAsync<IJSObjectReference>("observe", _containerElement, _dotNetRef);
         }
     }
