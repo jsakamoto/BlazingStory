@@ -1174,6 +1174,17 @@ a.icon-button {
   }
 }
 
+.pooled-iframe {
+  position: relative;
+}
+.pooled-iframe iframe {
+  border: none;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+
 .popup-menu-trigger {
   display: inline-flex;
   flex-direction: column;
@@ -1274,12 +1285,13 @@ a.menu-item.command-menu-item {
   justify-items: center;
   align-items: center;
 }
-.preview-frame iframe {
+.preview-frame .pooled-iframe {
+  position: absolute;
+  inset: 0;
+}
+.preview-frame .pooled-iframe iframe {
   transition: width 0.3s, height 0.3s;
   box-sizing: content-box;
-  border: none;
-  width: 100%;
-  height: 100%;
 }
 
 .body {

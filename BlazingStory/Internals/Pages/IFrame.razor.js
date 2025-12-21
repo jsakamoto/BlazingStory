@@ -1,8 +1,8 @@
+import { CSSStyle, MessageArgument } from "../../Scripts/types";
 const keydown = "keydown";
 const pointerdown = "pointerdown";
 const SessionStateKey = "IFrame.SessionState";
 export const initializeCanvasFrame = () => {
-    var _a;
     const doc = document;
     const wnd = window;
     const sessionState = {
@@ -42,13 +42,6 @@ export const initializeCanvasFrame = () => {
     });
     wnd.BlazingStory = wnd.BlazingStory || {};
     wnd.BlazingStory.canvasFrameInitialized = true;
-    const frameElementId = ((_a = wnd.frameElement) === null || _a === void 0 ? void 0 : _a.id) || '';
-    const htmlElement = document.body.parentElement;
-    const scrollHeight = (htmlElement === null || htmlElement === void 0 ? void 0 : htmlElement.scrollHeight) || 0;
-    wnd.parent.postMessage({
-        action: "frameview-height",
-        frameId: frameElementId,
-        height: scrollHeight
-    }, location.origin);
-    setTimeout(() => htmlElement === null || htmlElement === void 0 ? void 0 : htmlElement.classList.add("_blazing_story_ready_for_visible"), 300);
+    const htmlElement = doc.body.parentElement;
+    setTimeout(() => htmlElement?.classList.add("_blazing_story_ready_for_visible"), 300);
 };

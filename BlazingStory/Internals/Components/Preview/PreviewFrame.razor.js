@@ -45,6 +45,10 @@ const zoomPreviewFrame = async (container, getNextZoomLevel) => {
 export const zoomInPreviewFrame = (container) => zoomPreviewFrame(container, zoom => zoom * 1.25);
 export const zoomOutPreviewFrame = (container) => zoomPreviewFrame(container, zoom => zoom / 1.25);
 export const resetZoomPreviewFrame = (container) => zoomPreviewFrame(container, _ => 1);
+export const getFrameScrollHeight = async (container) => {
+    const { contentDocument } = await getIFrame(container);
+    return contentDocument.body.parentElement?.scrollHeight || 0;
+};
 export const subscribeComponentActionEvent = async (container, dotNetObj, methodName) => {
     try {
         const { contentDocument } = await getIFrame(container);

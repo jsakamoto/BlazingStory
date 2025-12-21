@@ -6,11 +6,13 @@
     justify-items: center;
     align-items: center;
 
-    iframe {
-        transition: width .3s,height .3s;
-        box-sizing: content-box;
-        border: none;
-        width: 100%;
-        height: 100%;
+    .pooled-iframe {
+        position: absolute;
+        inset: 0;
+
+        iframe {
+            transition: width .3s,height .3s;
+            box-sizing: content-box;
+        }
     }
 }

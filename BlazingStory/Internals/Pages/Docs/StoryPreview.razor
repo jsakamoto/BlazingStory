@@ -13,13 +13,14 @@
                 </ToolBar>
             }
 
-            <div class="preview-frame-viewport">
+            <div class="preview-frame-viewport" style="@this.StyleString">
                 <PreviewFrame @ref="_PreviewFrame"
                               Story="this.Story"
                               ViewMode="story"
                               Id="@this.Story.NavigationPath"
                               Args="this.Story.Context.Args"
-                              Globals="this.Globals" />
+                              Globals="this.Globals"
+                              OnFrameScrollHeightChanged="OnFrameScrollHeightChanged" />
             </div>
 
             <!-- "Show Code" -->
@@ -51,6 +52,18 @@
     private PreviewFrame? _PreviewFrame;
 
     private bool _ShowCode = false;
+
+    private int _FrameScrollHeight = -1;
+
+    private string StyleString => _FrameScrollHeight >= 0 ? $"height: {_FrameScrollHeight}px;" : "";
+
+    /// <summary>
+    /// Invoked when the frame scroll height changes, and updates the style accordingly to prevent nested scrolling.
+    /// </summary>
+    private void OnFrameScrollHeightChanged(int height)
+    {
+        _FrameScrollHeight = height;
+    }
 
     private async void OnClickZoomIn()
     {

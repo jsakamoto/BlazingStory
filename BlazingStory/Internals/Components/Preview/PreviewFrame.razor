@@ -25,6 +25,9 @@
     [Parameter]
     public EventCallback<ComponentActionEventArgs> OnComponentAction { get; set; }
 
+    [Parameter]
+    public EventCallback<int> OnFrameScrollHeightChanged { get; set; }
+
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
 
@@ -76,6 +79,8 @@
             }
 
             this._EventMonitorSubscriber = await _JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentActionEvent", this._IframeContainer, this._ThisRef, nameof(ComponentActionEventCallback));
+            var scrollHeight = await _JSModule.InvokeAsync<int>("getFrameScrollHeight", this._IframeContainer);
+            await this.OnFrameScrollHeightChanged.InvokeAsync(scrollHeight);
         }
 
         // In some cases, such as when a user navigates away from the page during this async operation,
