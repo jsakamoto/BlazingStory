@@ -1,6 +1,9 @@
-class TimeoutError extends Error {
-    constructor(message) { super(message); }
-}
+Blazor?.registerCustomEventType('frameheightchange', {
+    createEventArgs: (e) => e.detail
+});
+Blazor?.registerCustomEventType('componentaction', {
+    createEventArgs: (e) => e.detail
+});
 const waitFor = async (arg) => {
     let retryCount = 0;
     while (true) {
@@ -8,7 +11,7 @@ const waitFor = async (arg) => {
         if (result !== false)
             return result;
         if (retryCount >= (arg.maxRetryCount ?? 500))
-            throw new TimeoutError("Timeout");
+            return null;
         retryCount++;
         await new Promise(resolve => setTimeout(resolve, arg.retryInterval ?? 10));
     }
@@ -27,17 +30,19 @@ const getIFrame = async (container) => {
                 return false;
             if (iframe.contentWindow.BlazingStory?.canvasFrameInitialized !== true)
                 return false;
-            return { iframe, contentWindow: iframe.contentWindow, contentDocument: iframe.contentDocument };
+            return { contentWindow: iframe.contentWindow, contentDocument: iframe.contentDocument };
         }
     });
 };
 export const reloadPreviewFrame = async (container) => {
-    const { contentWindow } = await getIFrame(container);
-    contentWindow.postMessage({ action: "reload" });
+    const result = await getIFrame(container);
+    result?.contentWindow.postMessage({ action: "reload" });
 };
 const zoomPreviewFrame = async (container, getNextZoomLevel) => {
-    const { contentDocument } = await getIFrame(container);
-    const style = contentDocument.body.style;
+    const result = await getIFrame(container);
+    if (!result)
+        return;
+    const style = result.contentDocument.body.style;
     const currentZoomLevel = parseFloat(style.zoom || '1');
     const nextZoomLevel = getNextZoomLevel(currentZoomLevel);
     style.zoom = '' + nextZoomLevel;
@@ -45,41 +50,24 @@ const zoomPreviewFrame = async (container, getNextZoomLevel) => {
 export const zoomInPreviewFrame = (container) => zoomPreviewFrame(container, zoom => zoom * 1.25);
 export const zoomOutPreviewFrame = (container) => zoomPreviewFrame(container, zoom => zoom / 1.25);
 export const resetZoomPreviewFrame = (container) => zoomPreviewFrame(container, _ => 1);
-export const getFrameScrollHeight = async (container) => {
-    const { contentDocument } = await getIFrame(container);
-    return contentDocument.body.parentElement?.scrollHeight || 0;
-};
-export const subscribeComponentActionEvent = async (container, dotNetObj, methodName) => {
-    try {
-        const { contentDocument } = await getIFrame(container);
-        const componentActionEventListener = (e) => dotNetObj.invokeMethodAsync(methodName, e.detail.name, e.detail.argsJson);
-        contentDocument.addEventListener('componentActionEvent', componentActionEventListener);
-        return { dispose: () => contentDocument.removeEventListener('componentActionEvent', componentActionEventListener) };
-    }
-    catch (e) {
-        if (e instanceof TimeoutError)
-            return { dispose: () => { } };
-        throw e;
-    }
+export const getFrameHeight = async (container) => {
+    const result = await getIFrame(container);
+    return Math.ceil(result?.contentDocument.body.parentElement?.getBoundingClientRect().height || 0);
 };
 const isDotnetWatchScriptInjected = (window) => {
     const scriptInjectedSentinel = '_dotnet_watch_ws_injected';
     return window?.hasOwnProperty(scriptInjectedSentinel) ?? false;
 };
 export const ensureDotnetWatchScriptInjected = async (container) => {
-    try {
-        const { contentWindow, contentDocument } = await getIFrame(container);
-        if (!isDotnetWatchScriptInjected(window))
-            return;
-        if (isDotnetWatchScriptInjected(contentWindow))
-            return;
-        const script = contentDocument.createElement('script');
-        script.src = '_framework/aspnetcore-browser-refresh.js';
-        contentDocument.body.appendChild(script);
-    }
-    catch (e) {
-        if (e instanceof TimeoutError)
-            return;
-        throw e;
-    }
+    const result = await getIFrame(container);
+    if (!result)
+        return;
+    const { contentWindow, contentDocument } = result;
+    if (!isDotnetWatchScriptInjected(window))
+        return;
+    if (isDotnetWatchScriptInjected(contentWindow))
+        return;
+    const script = contentDocument.createElement('script');
+    script.src = '_framework/aspnetcore-browser-refresh.js';
+    contentDocument.body.appendChild(script);
 };

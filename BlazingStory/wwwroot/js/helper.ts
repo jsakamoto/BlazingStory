@@ -1,4 +1,4 @@
-import { MessageArgument } from "../../Scripts/types";
+import type { MessageArgument } from "../../Scripts/types";
 
 const doc = document;
 const lstorage = localStorage;

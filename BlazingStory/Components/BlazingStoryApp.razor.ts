@@ -1,4 +1,4 @@
-import { DotNetObjectReference, IDisposable } from "../Scripts/types";
+import type { DotNetObjectReference, IDisposable } from "../Scripts/types";
 
 const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
@@ -33,18 +33,18 @@ const darkModeMediaQuery = matchMedia("(prefers-color-scheme: dark)");
 /**
  * Returns current color scheme preference
  */
-export const getPrefersColorScheme = (): "dark" | "light" => 
+export const getPrefersColorScheme = (): "dark" | "light" =>
     darkModeMediaQuery.matches ? "dark" : "light";
 
 /**
  * Subscribes to color scheme changes with automatic cleanup
  */
 export const subscribePreferesColorSchemeChanged = (
-    dotnetObjRef: DotNetObjectReference, 
+    dotnetObjRef: DotNetObjectReference,
     methodName: string
 ): IDisposable => {
     const handler = (): void => void dotnetObjRef.invokeMethodAsync(methodName, getPrefersColorScheme());
-    
+
     darkModeMediaQuery.addEventListener("change", handler);
     return { dispose: () => darkModeMediaQuery.removeEventListener("change", handler) };
 };

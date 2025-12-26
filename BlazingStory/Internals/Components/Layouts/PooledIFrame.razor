@@ -11,14 +11,13 @@
     [Parameter]
     public EventCallback Attached { get; set; }
 
-    [Parameter]
-    public EventCallback Detached { get; set; }
-
     private ElementReference _containerRef;
 
     private readonly JSModule _JSModule;
 
     private bool _initialized;
+
+    private bool _disposing;
 
     private string? _previousSrc;
 
@@ -46,6 +45,9 @@
     {
         if (firstRender)
         {
+            await this._JSModule.EnsureModuleAsync();
+            if (_disposing) return;
+
             await _JSModule.InvokeVoidAsync("rent", _containerRef, Src, this.NavigationManager.BaseUri);
             _initialized = true;
 
@@ -55,8 +57,8 @@
 
     public async ValueTask DisposeAsync()
     {
+        _disposing = true;
         await _JSModule.InvokeVoidIfConnectedAsync("release", _containerRef);
         await _JSModule.DisposeAsync();
-        await this.Detached.InvokeAsync();
     }
 }

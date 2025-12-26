@@ -1,6 +1,8 @@
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
-<div @ref="_containerElement" @attributes="AdditionalAttributes">
+<div @ref="_containerElement"
+     @onintersectionchange="OnIntersectionChange"
+     @attributes="AdditionalAttributes">
     @if (_isIntersecting)
     {
         @this.ChildContent
@@ -22,28 +24,27 @@
 
     private IJSObjectReference? _observer;
 
-    private DotNetObjectReference<IntersectionView>? _dotNetRef;
+    private bool _isDisposing = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _dotNetRef = DotNetObjectReference.Create(this);
             await using var module = await JSRuntime.ImportAsync("Internals/Components/Layouts/IntersectionView.razor.js");
-            _observer = await module.InvokeAsync<IJSObjectReference>("observe", _containerElement, _dotNetRef);
+            if (_isDisposing) return;
+            _observer = await module.InvokeAsync<IJSObjectReference>("observe", _containerElement);
         }
     }
 
-    [JSInvokable(nameof(OnIntersectionChange)), EditorBrowsable(EditorBrowsableState.Never)]
-    public void OnIntersectionChange(bool isIntersecting)
+    private void OnIntersectionChange(IntersectionChangeEventArgs args)
     {
-        _isIntersecting = isIntersecting;
+        _isIntersecting = args.IsIntersecting;
         this.StateHasChanged();
     }
 
     public async ValueTask DisposeAsync()
     {
+        _isDisposing = true;
         await _observer.DisposeIfConnectedAsync("dispose");
-        if (_dotNetRef is not null) _dotNetRef.Dispose();
     }
 }

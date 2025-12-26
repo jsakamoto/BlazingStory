@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using BlazingStory.Internals.Extensions;
 using Microsoft.JSInterop;
 using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
@@ -28,6 +28,11 @@ internal class JSModule : IAsyncDisposable
         }
         return this._Module;
     }
+
+    /// <summary>
+    /// Ensures that the required JavaScript module is loaded and ready for use.
+    /// </summary>
+    public async ValueTask EnsureModuleAsync() => await this.GetModuleAsync();
 
     public ValueTask InvokeVoidIfConnectedAsync(string identifier, params object?[]? args) => this._Module.InvokeVoidIfConnectedAsync(identifier, args);
 

@@ -1,4 +1,4 @@
-import { DotNetObjectReference, IDisposable } from "../../../Scripts/types";
+import type { DotNetObjectReference, IDisposable } from "../../../Scripts/types";
 
 export const subscribeDocumentEvent = (eventType: string, dotnetObj: DotNetObjectReference, methodName: string, popupMenuElement: HTMLElement): IDisposable => {
 

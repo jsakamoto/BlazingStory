@@ -1,38 +1,28 @@
-import type { DotNetObjectReference } from "../../../Scripts/types";
+import type { IntersectionChangeEvent } from "../../../wwwroot/js/lib";
 
-declare global {
-    interface HTMLElementEventMap {
-        'intersectionchange': CustomEvent<{ isIntersecting: boolean }>;
-    }
-}
-
-const callback = (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
-    entries.forEach(entry => {
-        const customEvent = new CustomEvent('intersectionchange', {
-            cancelable: false,
-            bubbles: true,
-            detail: { isIntersecting: entry.isIntersecting }
-        });
-        entry.target.dispatchEvent(customEvent);
-    });
-};
-
-const observer = new IntersectionObserver(callback, {
-    root: null,
-    scrollMargin: '50px',
-    threshold: 0
+// Register custom event types
+Blazor?.registerCustomEventType('intersectionchange', {
+    createEventArgs: (e: IntersectionChangeEvent) => e.detail
 });
 
-export const observe = (element: HTMLElement, dotNetObj: DotNetObjectReference): { dispose: () => void } => {
-    const handler = (event: CustomEvent) => {
-        dotNetObj.invokeMethodAsync('OnIntersectionChange', event.detail.isIntersecting);
+export const observe = (element: HTMLElement): { dispose: () => void } => {
+
+    const callback = (entries: IntersectionObserverEntry[]) => {
+        entries.forEach(entry => {
+            const customEvent = new CustomEvent('intersectionchange', {
+                cancelable: false,
+                bubbles: true,
+                detail: { isIntersecting: entry.isIntersecting }
+            });
+            entry.target.dispatchEvent(customEvent);
+        });
     };
-    element.addEventListener('intersectionchange', handler);
+
+    const observer = new IntersectionObserver(callback, {
+        root: null,
+        scrollMargin: '50px',
+        threshold: 0
+    });
     observer.observe(element);
-    return {
-        dispose: async () => {
-            element.removeEventListener('intersectionchange', handler);
-            observer.unobserve(element);
-        }
-    };
+    return { dispose: () => observer.unobserve(element) };
 }

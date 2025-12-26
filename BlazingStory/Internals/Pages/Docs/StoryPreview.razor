@@ -20,7 +20,7 @@
                               Id="@this.Story.NavigationPath"
                               Args="this.Story.Context.Args"
                               Globals="this.Globals"
-                              OnFrameScrollHeightChanged="OnFrameScrollHeightChanged" />
+                              OnFrameHeightChanged="OnFrameHeightChanged" />
             </div>
 
             <!-- "Show Code" -->
@@ -53,16 +53,16 @@
 
     private bool _ShowCode = false;
 
-    private int _FrameScrollHeight = -1;
+    private int _FrameHeight = -1;
 
-    private string StyleString => _FrameScrollHeight >= 0 ? $"height: {_FrameScrollHeight}px;" : "";
+    private string StyleString => _FrameHeight >= 0 ? $"height: {_FrameHeight}px;" : "";
 
     /// <summary>
-    /// Invoked when the frame scroll height changes, and updates the style accordingly to prevent nested scrolling.
+    /// Invoked when the frame height changes, and updates the style accordingly to prevent nested scrolling.
     /// </summary>
-    private void OnFrameScrollHeightChanged(int height)
+    private void OnFrameHeightChanged(int height)
     {
-        _FrameScrollHeight = height;
+        _FrameHeight = height;
     }
 
     private async void OnClickZoomIn()

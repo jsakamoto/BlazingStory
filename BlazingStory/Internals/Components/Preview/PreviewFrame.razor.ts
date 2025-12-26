@@ -1,15 +1,20 @@
-import { CSSStyle, MessageArgument, DotNetObjectReference } from "../../../Scripts/types";
+import type { FrameHeightChangeEvent, ComponentActionEvent } from "../../../wwwroot/js/lib";
+import type { CSSStyle, MessageArgument } from "../../../Scripts/types";
 
-class TimeoutError extends Error {
-    constructor(message: string) { super(message); }
-}
+// Register custom event types
+Blazor?.registerCustomEventType('frameheightchange', {
+    createEventArgs: (e: FrameHeightChangeEvent) => e.detail
+});
+Blazor?.registerCustomEventType('componentaction', {
+    createEventArgs: (e: ComponentActionEvent) => e.detail
+});
 
-const waitFor = async <T>(arg: { predecate: () => false | T, maxRetryCount?: number, retryInterval?: number }): Promise<T> => {
+const waitFor = async <T>(arg: { predecate: () => false | T, maxRetryCount?: number, retryInterval?: number }): Promise<T | null> => {
     let retryCount = 0;
     while (true) {
         const result = arg.predecate();
         if (result !== false) return result as T;
-        if (retryCount >= (arg.maxRetryCount ?? 500)) throw new TimeoutError("Timeout");
+        if (retryCount >= (arg.maxRetryCount ?? 500)) return null;
         retryCount++;
         await new Promise(resolve => setTimeout(resolve, arg.retryInterval ?? 10));
     }
@@ -24,19 +29,20 @@ const getIFrame = async (container: HTMLElement) => {
             if (!iframe.contentDocument) return false;
             if (iframe.contentWindow.location.href === "about:blank") return false;
             if (iframe.contentWindow.BlazingStory?.canvasFrameInitialized !== true) return false;
-            return { iframe, contentWindow: iframe.contentWindow, contentDocument: iframe.contentDocument };
+            return { contentWindow: iframe.contentWindow, contentDocument: iframe.contentDocument };
         }
     });
 }
 
 export const reloadPreviewFrame = async (container: HTMLElement): Promise<void> => {
-    const { contentWindow } = await getIFrame(container);
-    contentWindow.postMessage({ action: "reload" } as MessageArgument);
+    const result = await getIFrame(container);
+    result?.contentWindow.postMessage({ action: "reload" } as MessageArgument);
 }
 
 const zoomPreviewFrame = async (container: HTMLElement, getNextZoomLevel: (zoomLevel: number) => number): Promise<void> => {
-    const { contentDocument } = await getIFrame(container);
-    const style = contentDocument.body.style as CSSStyle;
+    const result = await getIFrame(container);
+    if (!result) return;
+    const style = result.contentDocument.body.style as CSSStyle;
     const currentZoomLevel = parseFloat(style.zoom || '1');
     const nextZoomLevel = getNextZoomLevel(currentZoomLevel);
     style.zoom = '' + nextZoomLevel;
@@ -48,23 +54,9 @@ export const zoomOutPreviewFrame = (container: HTMLElement) => zoomPreviewFrame(
 
 export const resetZoomPreviewFrame = (container: HTMLElement) => zoomPreviewFrame(container, _ => 1);
 
-export const getFrameScrollHeight = async (container: HTMLElement): Promise<number> => {
-    const { contentDocument } = await getIFrame(container);
-    return contentDocument.body.parentElement?.scrollHeight || 0;
-}
-
-export const subscribeComponentActionEvent = async (container: HTMLElement, dotNetObj: DotNetObjectReference, methodName: string) => {
-    try {
-        const { contentDocument } = await getIFrame(container);
-        const componentActionEventListener = (e: Event & { detail?: any }) => dotNetObj.invokeMethodAsync(methodName, e.detail.name, e.detail.argsJson);
-        contentDocument.addEventListener('componentActionEvent', componentActionEventListener);
-
-        return { dispose: () => contentDocument.removeEventListener('componentActionEvent', componentActionEventListener) };
-    }
-    catch (e) {
-        if (e instanceof TimeoutError) return { dispose: () => { } };
-        throw e;
-    }
+export const getFrameHeight = async (container: HTMLElement): Promise<number> => {
+    const result = await getIFrame(container);
+    return Math.ceil(result?.contentDocument.body.parentElement?.getBoundingClientRect().height || 0);
 }
 
 // Checks the '_dotnet_watch_ws_injected' property has been added to the window object,
@@ -76,21 +68,17 @@ const isDotnetWatchScriptInjected = (window: Window | null): boolean => {
 }
 
 export const ensureDotnetWatchScriptInjected = async (container: HTMLElement): Promise<void> => {
-    try {
-        const { contentWindow, contentDocument } = await getIFrame(container);
+    const result = await getIFrame(container);
+    if (!result) return;
+    const { contentWindow, contentDocument } = result;
 
-        if (!isDotnetWatchScriptInjected(window))
-            return; // Hot reloading is not available
-        if (isDotnetWatchScriptInjected(contentWindow))
-            return; // Already injected
+    if (!isDotnetWatchScriptInjected(window))
+        return; // Hot reloading is not available
+    if (isDotnetWatchScriptInjected(contentWindow))
+        return; // Already injected
 
-        const script = contentDocument.createElement('script');
-        script.src = '_framework/aspnetcore-browser-refresh.js';
-        contentDocument.body.appendChild(script);
-    }
-    catch (e) {
-        if (e instanceof TimeoutError) return;
-        throw e;
-    }
+    const script = contentDocument.createElement('script');
+    script.src = '_framework/aspnetcore-browser-refresh.js';
+    contentDocument.body.appendChild(script);
 }
 

@@ -1,8 +1,11 @@
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 
-<IntersectionView @ref="_IntersectionView" class="preview-frame">
-    <PooledIFrame Src="@_PreviewFrameUrl" Attached="OnPreviewIFrameAttached" Detached="OnPreviewIFrameDetached" />
+<IntersectionView @ref="_IntersectionView"
+                    class="preview-frame"
+                    @oncomponentaction="ComponentActionEventCallback"
+                    @onframeheightchange="FrameHeightChangeEventCallback">
+    <PooledIFrame Src="@_PreviewFrameUrl" Attached="OnPreviewIFrameAttached" />
 </IntersectionView>
 
 @code
@@ -26,7 +29,7 @@
     public EventCallback<ComponentActionEventArgs> OnComponentAction { get; set; }
 
     [Parameter]
-    public EventCallback<int> OnFrameScrollHeightChanged { get; set; }
+    public EventCallback<int> OnFrameHeightChanged { get; set; }
 
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
@@ -44,17 +47,12 @@
 
     private readonly JSModule _JSModule;
 
-    private DotNetObjectReference<PreviewFrame> _ThisRef;
-
-    private IJSObjectReference? _EventMonitorSubscriber;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="PreviewFrame"/> class.
     /// </summary>
     public PreviewFrame()
     {
         this._JSModule = new(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
-        this._ThisRef = DotNetObjectReference.Create(this);
     }
 
     protected override void OnInitialized()
@@ -78,27 +76,14 @@
                 await EnsureDotnetWatchScriptInjected();
             }
 
-            this._EventMonitorSubscriber = await _JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentActionEvent", this._IframeContainer, this._ThisRef, nameof(ComponentActionEventCallback));
-            var scrollHeight = await _JSModule.InvokeAsync<int>("getFrameScrollHeight", this._IframeContainer);
-            await this.OnFrameScrollHeightChanged.InvokeAsync(scrollHeight);
+            var frameHeight = await _JSModule.InvokeAsync<int>("getFrameHeight", this._IframeContainer);
+            await this.OnFrameHeightChanged.InvokeAsync(frameHeight);
         }
 
         // In some cases, such as when a user navigates away from the page during this async operation,
         // the JSModule may be disposed before the async operation completes.
         // Ignore the "ObjectDisposedException" exception in this case.
         catch (ObjectDisposedException) { }
-    }
-
-    private async Task OnPreviewIFrameDetached()
-    {
-        await this.UnsubscribeEventMonitorAsync();
-    }
-
-    private async ValueTask UnsubscribeEventMonitorAsync()
-    {
-        var eventMonitorSubscriber = _EventMonitorSubscriber;
-        _EventMonitorSubscriber = null;
-        await eventMonitorSubscriber.DisposeIfConnectedAsync("dispose");
     }
 
     /// <summary>
@@ -115,14 +100,13 @@
         return UriParameterKit.GetUri(
             uri: "./iframe.html",
             parameters: new Dictionary<string, object?>
-                {
-                    ["viewMode"] = this.ViewMode,
-                    ["id"] = this.Id,
-                    ["args"] = UriParameterKit.EncodeKeyValues(args),
-                    ["globals"] = UriParameterKit.EncodeKeyValues(this.Globals)
-                });
+            {
+                ["viewMode"] = this.ViewMode,
+                ["id"] = this.Id,
+                ["args"] = UriParameterKit.EncodeKeyValues(args),
+                ["globals"] = UriParameterKit.EncodeKeyValues(this.Globals)
+            });
     }
-
 
     internal async ValueTask ReloadAsync()
     {
@@ -149,16 +133,24 @@
         await this._JSModule.InvokeVoidAsync("ensureDotnetWatchScriptInjected", this._IframeContainer);
     }
 
-    [JSInvokable(nameof(ComponentActionEventCallback))]
-    public async Task ComponentActionEventCallback(string name, string argsJson)
+    /// <summary>
+    /// Invoked when a component action event occurs in the preview frame.
+    /// </summary>
+    private async Task ComponentActionEventCallback(ComponentActionEventArgs args)
     {
-        await this.OnComponentAction.InvokeAsync(new(name, argsJson));
+        await this.OnComponentAction.InvokeAsync(args);
+    }
+
+    /// <summary>
+    /// Invoked when the frame height changes.
+    /// </summary>
+    private async Task FrameHeightChangeEventCallback(FrameHeightChangeEventArgs args)
+    {
+        await this.OnFrameHeightChanged.InvokeAsync(args.Height);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await this.UnsubscribeEventMonitorAsync();
         await _JSModule.DisposeAsync();
-        _ThisRef.Dispose();
     }
 }
