@@ -1,3 +1,7 @@
+v.1.0.0-preview.63
+- Enhancement: Dramatically reduced preview frame display time by implementing iframe pooling, which reuses initialized Blazor runtime instances.
+- Enhancement: Preview frames are now rendered only when visible in the viewport, significantly reducing resource consumption.
+
 v.1.0.0-preview.62
 - Update: .NET 10 support.
 - Update: Improve canvas preview pane splitter behavior.
