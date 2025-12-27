@@ -1,0 +1,50 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+<div @ref="_containerElement"
+     @onintersectionchange="OnIntersectionChange"
+     @attributes="AdditionalAttributes">
+    @if (_isIntersecting)
+    {
+        @this.ChildContent
+    }
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    public ElementReference ElementReference => _containerElement;
+
+    private ElementReference _containerElement;
+
+    private bool _isIntersecting;
+
+    private IJSObjectReference? _observer;
+
+    private bool _isDisposing = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await using var module = await JSRuntime.ImportAsync("Internals/Components/Layouts/IntersectionView.razor.js");
+            if (_isDisposing) return;
+            _observer = await module.InvokeAsync<IJSObjectReference>("observe", _containerElement);
+        }
+    }
+
+    private void OnIntersectionChange(IntersectionChangeEventArgs args)
+    {
+        _isIntersecting = args.IsIntersecting;
+        this.StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        _isDisposing = true;
+        await _observer.DisposeIfConnectedAsync("dispose");
+    }
+}

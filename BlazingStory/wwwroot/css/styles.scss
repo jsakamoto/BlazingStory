@@ -1,4 +1,4 @@
-﻿@import "variables.scss";
+@import "variables.scss";
 @import "variables.colors.light.scss";
 @import "variables.colors.dark.scss";
 
@@ -42,6 +42,8 @@
 @import "../../Internals/Components/Inputs/Select.razor.scss";
 @import "../../Internals/Components/Inputs/TextArea.razor.scss";
 @import "../../Internals/Components/Inputs/HotKeyEditorInput.razor.scss";
+
+@import "../../Internals/Components/Layouts/PooledIFrame.razor.scss";
 
 @import "../../Internals/Components/Menus/PopupMenu.razor.scss";
 @import "../../Internals/Components/Menus/MenuItem.razor.scss";

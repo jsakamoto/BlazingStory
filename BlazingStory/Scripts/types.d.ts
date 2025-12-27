@@ -22,5 +22,15 @@ export type KeyEventArgument = {
 export type MessageArgument =
     { action: "keydown", eventArgs: KeyEventArgument } |
     { action: "pointerdown" } |
-    { action: "reload" } |
-    { action: "frameview-height", frameId: string, height: number };
+    { action: "reload" };
+
+declare global {
+
+    interface IntersectionObserverInit {
+        scrollMargin?: string;
+    }
+
+    interface Element {
+        moveBefore?: (movedNode: Element, referenceNode: Element | null) => void;
+    }
+}

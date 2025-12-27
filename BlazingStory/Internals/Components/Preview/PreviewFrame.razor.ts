@@ -1,72 +1,62 @@
-import { CSSStyle, MessageArgument, DotNetObjectReference } from "../../../Scripts/types";
+import type { FrameHeightChangeEvent, ComponentActionEvent } from "../../../wwwroot/js/lib";
+import type { CSSStyle, MessageArgument } from "../../../Scripts/types";
 
-class TimeoutError extends Error {
-    constructor(message: string) { super(message); }
-}
+// Register custom event types
+Blazor?.registerCustomEventType('frameheightchange', {
+    createEventArgs: (e: FrameHeightChangeEvent) => e.detail
+});
+Blazor?.registerCustomEventType('componentaction', {
+    createEventArgs: (e: ComponentActionEvent) => e.detail
+});
 
-const waitFor = async <T>(arg: { predecate: () => false | T, maxRetryCount?: number, retryInterval?: number }): Promise<T> => {
-    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const waitFor = async <T>(arg: { predecate: () => false | T, maxRetryCount?: number, retryInterval?: number }): Promise<T | null> => {
     let retryCount = 0;
     while (true) {
         const result = arg.predecate();
         if (result !== false) return result as T;
-        if (retryCount >= (arg.maxRetryCount ?? 500)) throw new TimeoutError("Timeout");
+        if (retryCount >= (arg.maxRetryCount ?? 500)) return null;
         retryCount++;
-        await delay(arg.retryInterval ?? 10);
+        await new Promise(resolve => setTimeout(resolve, arg.retryInterval ?? 10));
     }
 }
 
-const waitForIFrameReady = async <T>(iframe: HTMLIFrameElement) => {
+const getIFrame = async (container: HTMLElement) => {
     return await waitFor({
         predecate: () => {
-            if (iframe.contentWindow === null || iframe.contentDocument === null) return false;
+            const iframe = container.querySelector('iframe');
+            if (!iframe) return false;
+            if (!iframe.contentWindow) return false;
+            if (!iframe.contentDocument) return false;
             if (iframe.contentWindow.location.href === "about:blank") return false;
             if (iframe.contentWindow.BlazingStory?.canvasFrameInitialized !== true) return false;
-            return ({ contentWindow: iframe.contentWindow, contentDocument: iframe.contentDocument });
+            return { contentWindow: iframe.contentWindow, contentDocument: iframe.contentDocument };
         }
     });
 }
 
-export const navigatePreviewFrameTo = async (iframe: HTMLIFrameElement | null, url: string) => {
-    if (iframe === null) return;
-    const { contentWindow, contentDocument } = await waitForIFrameReady(iframe);
-    const event = new PopStateEvent("popstate", { state: {}, bubbles: true, cancelable: true });
-    contentWindow.history.pushState({}, "", url);
-    contentDocument.dispatchEvent(event);
+export const reloadPreviewFrame = async (container: HTMLElement): Promise<void> => {
+    const result = await getIFrame(container);
+    result?.contentWindow.postMessage({ action: "reload" } as MessageArgument);
 }
 
-export const reloadPreviewFrame = (iframe: HTMLIFrameElement | null) => {
-    if (iframe === null || iframe.contentWindow === null) return;
-    iframe.contentWindow.postMessage({ action: "reload" } as MessageArgument);
-}
-
-const zoomPreviewFrame = (iframe: HTMLIFrameElement | null, getNextZoomLevel: (zoomLevel: number) => number) => {
-    if (iframe === null || iframe.contentDocument === null) return;
-    const style = iframe.contentDocument.body.style as CSSStyle;
+const zoomPreviewFrame = async (container: HTMLElement, getNextZoomLevel: (zoomLevel: number) => number): Promise<void> => {
+    const result = await getIFrame(container);
+    if (!result) return;
+    const style = result.contentDocument.body.style as CSSStyle;
     const currentZoomLevel = parseFloat(style.zoom || '1');
     const nextZoomLevel = getNextZoomLevel(currentZoomLevel);
     style.zoom = '' + nextZoomLevel;
 }
 
-export const zoomInPreviewFrame = (iframe: HTMLIFrameElement | null) => zoomPreviewFrame(iframe, zoom => zoom * 1.25);
+export const zoomInPreviewFrame = (container: HTMLElement) => zoomPreviewFrame(container, zoom => zoom * 1.25);
 
-export const zoomOutPreviewFrame = (iframe: HTMLIFrameElement | null) => zoomPreviewFrame(iframe, zoom => zoom / 1.25);
+export const zoomOutPreviewFrame = (container: HTMLElement) => zoomPreviewFrame(container, zoom => zoom / 1.25);
 
-export const resetZoomPreviewFrame = (iframe: HTMLIFrameElement | null) => zoomPreviewFrame(iframe, _ => 1);
+export const resetZoomPreviewFrame = (container: HTMLElement) => zoomPreviewFrame(container, _ => 1);
 
-export const subscribeComponentActionEvent = async (iframe: HTMLIFrameElement | null, dotNetObj: DotNetObjectReference, methodName: string) => {
-    try {
-        if (iframe === null) return { dispose: () => { } };
-        const { contentDocument } = await waitForIFrameReady(iframe);
-        const componentActionEventListener = (e: Event & { detail?: any }) => dotNetObj.invokeMethodAsync(methodName, e.detail.name, e.detail.argsJson);
-        contentDocument.addEventListener('componentActionEvent', componentActionEventListener);
-
-        return { dispose: () => contentDocument.removeEventListener('componentActionEvent', componentActionEventListener) };
-    }
-    catch (e) {
-        if (e instanceof TimeoutError) return { dispose: () => { } };
-        throw e;
-    }
+export const getFrameHeight = async (container: HTMLElement): Promise<number> => {
+    const result = await getIFrame(container);
+    return Math.ceil(result?.contentDocument.body.parentElement?.getBoundingClientRect().height || 0);
 }
 
 // Checks the '_dotnet_watch_ws_injected' property has been added to the window object,
@@ -77,24 +67,18 @@ const isDotnetWatchScriptInjected = (window: Window | null): boolean => {
     return window?.hasOwnProperty(scriptInjectedSentinel) ?? false;
 }
 
-export const ensureDotnetWatchScriptInjected = async (iframe: HTMLIFrameElement | null): Promise<void> => {
-    try {
-        if (iframe === null) return;
+export const ensureDotnetWatchScriptInjected = async (container: HTMLElement): Promise<void> => {
+    const result = await getIFrame(container);
+    if (!result) return;
+    const { contentWindow, contentDocument } = result;
 
-        const { contentWindow, contentDocument } = await waitForIFrameReady(iframe);
+    if (!isDotnetWatchScriptInjected(window))
+        return; // Hot reloading is not available
+    if (isDotnetWatchScriptInjected(contentWindow))
+        return; // Already injected
 
-        if (!isDotnetWatchScriptInjected(window))
-            return; // Hot reloading is not available
-        if (isDotnetWatchScriptInjected(contentWindow))
-            return; // Already injected
-
-        const script = contentDocument.createElement('script');
-        script.src = '_framework/aspnetcore-browser-refresh.js';
-        contentDocument.body.appendChild(script);
-    }
-    catch (e) {
-        if (e instanceof TimeoutError) return;
-        throw e;
-    }
+    const script = contentDocument.createElement('script');
+    script.src = '_framework/aspnetcore-browser-refresh.js';
+    contentDocument.body.appendChild(script);
 }
 

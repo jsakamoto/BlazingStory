@@ -1,0 +1,64 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+<div @ref="_containerRef" class="pooled-iframe"></div>
+
+@code {
+    [Parameter]
+    public string? Src { get; set; }
+
+    [Parameter]
+    public EventCallback Attached { get; set; }
+
+    private ElementReference _containerRef;
+
+    private readonly JSModule _JSModule;
+
+    private bool _initialized;
+
+    private bool _disposing;
+
+    private string? _previousSrc;
+
+    public PooledIFrame()
+    {
+        this._JSModule = new(() => this.JSRuntime, "Internals/Components/Layouts/PooledIFrame.razor.js");
+    }
+
+    override protected async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        if (_previousSrc != Src)
+        {
+            _previousSrc = Src;
+            if (_initialized)
+            {
+                await _JSModule.InvokeVoidAsync("navigate", _containerRef, Src, this.NavigationManager.BaseUri);
+            }
+        }
+    }
+
+    protected override bool ShouldRender() => false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await this._JSModule.EnsureModuleAsync();
+            if (_disposing) return;
+
+            await _JSModule.InvokeVoidAsync("rent", _containerRef, Src, this.NavigationManager.BaseUri);
+            _initialized = true;
+
+            await this.Attached.InvokeAsync();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        _disposing = true;
+        await _JSModule.InvokeVoidIfConnectedAsync("release", _containerRef);
+        await _JSModule.DisposeAsync();
+    }
+}

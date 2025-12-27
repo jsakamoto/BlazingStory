@@ -1,4 +1,4 @@
-import { DotNetObjectReference, IDisposable } from "../../../Scripts/types";
+import type { DotNetObjectReference, IDisposable } from "../../../Scripts/types";
 
 type SpacingSize = {
     top: number;
@@ -42,7 +42,7 @@ const handler = (context: Context, ev: MouseEvent | Event) => {
         context.lastHoveredElement = null;
     }
     else if (hoveredElement !== null && context.lastHoveredElement !== hoveredElement) {
-        context.lastHoveredElement = hoveredElement === false ? context.lastHoveredElement : hoveredElement;
+        context.lastHoveredElement = hoveredElement ?? context.lastHoveredElement;
         if (context.lastHoveredElement !== null) {
             const computedStyle = window.getComputedStyle(context.lastHoveredElement);
             measurement = {
@@ -58,7 +58,7 @@ const handler = (context: Context, ev: MouseEvent | Event) => {
 }
 
 export const subscribeTargetElementChanged = (owner: DotNetObjectReference): IDisposable => {
-    const context = { owner, lastHoveredElement: null as (HTMLElement | null)};
+    const context = { owner, lastHoveredElement: null as (HTMLElement | null) };
     const h = (ev: MouseEvent | Event) => handler(context, ev);
     targetEvents.forEach(eventName => doc.addEventListener(eventName, h));
     return ({ dispose: () => { targetEvents.forEach(eventName => doc.removeEventListener(eventName, h)); } });
