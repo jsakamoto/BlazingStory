@@ -1,4 +1,5 @@
-import type { DotNetObjectReference, IDisposable } from "../../../Scripts/types";
+import type { IDisposable } from "../../../wwwroot/js/types/disposable";
+import type { DotNetObjectReference } from "../../../wwwroot/js/types/blazor";
 
 type SpacingSize = {
     top: number;
@@ -29,20 +30,20 @@ type Context = {
 const pxToNumber = (px: string) => parseInt(px.replace("px", ""), 10);
 
 const getSpacingSize = (style: CSSStyleDeclaration, prefix: "margin" | "padding"): SpacingSize => {
-    const [top, left, bottom, right] = ["Top", "Left", "Bottom", "Right"].map(sufix => pxToNumber(style[prefix + sufix as any]));
+    const [top, left, bottom, right] = ["Top", "Left", "Bottom", "Right"].map(sufix => pxToNumber(style[prefix + sufix as keyof CSSStyleDeclaration] as string)) as [number, number, number, number];
     return { top, left, bottom, right };
 }
 
 const handler = (context: Context, ev: MouseEvent | Event) => {
 
-    let hoveredElement = (ev instanceof MouseEvent) && document.elementFromPoint(ev.clientX, ev.clientY) as HTMLElement | null;
+    let hoveredElement = ((ev instanceof MouseEvent) && document.elementFromPoint(ev.clientX, ev.clientY) as HTMLElement | null) || null;
 
     let measurement: Measurement | null = null;
     if (context.lastHoveredElement !== null && hoveredElement === null) {
         context.lastHoveredElement = null;
     }
     else if (hoveredElement !== null && context.lastHoveredElement !== hoveredElement) {
-        context.lastHoveredElement = hoveredElement ?? context.lastHoveredElement;
+        context.lastHoveredElement = hoveredElement;
         if (context.lastHoveredElement !== null) {
             const computedStyle = window.getComputedStyle(context.lastHoveredElement);
             measurement = {

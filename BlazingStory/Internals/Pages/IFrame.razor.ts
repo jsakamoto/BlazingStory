@@ -1,4 +1,5 @@
-import type { CSSStyle, MessageArgument } from "../../Scripts/types";
+import type { } from "../../wwwroot/js/types/browser-dom";
+import type { MessageArgument } from "../../wwwroot/js/types/custom-messages";
 
 const keydown = "keydown";
 const pointerdown = "pointerdown";
@@ -20,7 +21,7 @@ export const initializeCanvasFrame = () => {
     const sessionState = {
         ...{ zoom: 1 }, ...JSON.parse(sessionStorage.getItem(SessionStateKey) || "{}")
     } as IFrameSessionState;
-    (doc.body.style as CSSStyle).zoom = "" + sessionState.zoom;
+    doc.body.style.zoom = "" + sessionState.zoom;
 
     // Handle "Reload" message
     wnd.addEventListener("message", (event) => {
@@ -28,7 +29,7 @@ export const initializeCanvasFrame = () => {
         if (event.origin !== location.origin || message.action !== "reload") return;
 
         // Save state to session storage before reloading.
-        sessionState.zoom = (doc.body.style as CSSStyle).zoom || "1";
+        sessionState.zoom = doc.body.style.zoom || "1";
         sessionStorage.setItem(SessionStateKey, JSON.stringify(sessionState));
 
         location.reload();

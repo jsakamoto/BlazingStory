@@ -8,6 +8,6 @@ export const init = (elementRef: HTMLElement) => {
     elementRef.addEventListener("keydown", handler, true);
 
     return ({
-        dispose: () => elementRef.removeEventListener("keydown", handler);
+        dispose: () => elementRef.removeEventListener("keydown", handler)
     });
 }

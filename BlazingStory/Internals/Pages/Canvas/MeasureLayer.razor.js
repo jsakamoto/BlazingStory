@@ -11,13 +11,13 @@ const getSpacingSize = (style, prefix) => {
     return { top, left, bottom, right };
 };
 const handler = (context, ev) => {
-    let hoveredElement = (ev instanceof MouseEvent) && document.elementFromPoint(ev.clientX, ev.clientY);
+    let hoveredElement = ((ev instanceof MouseEvent) && document.elementFromPoint(ev.clientX, ev.clientY)) || null;
     let measurement = null;
     if (context.lastHoveredElement !== null && hoveredElement === null) {
         context.lastHoveredElement = null;
     }
     else if (hoveredElement !== null && context.lastHoveredElement !== hoveredElement) {
-        context.lastHoveredElement = hoveredElement === false ? context.lastHoveredElement : hoveredElement;
+        context.lastHoveredElement = hoveredElement;
         if (context.lastHoveredElement !== null) {
             const computedStyle = window.getComputedStyle(context.lastHoveredElement);
             measurement = {

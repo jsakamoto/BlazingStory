@@ -1,4 +1,5 @@
-import type { DotNetObjectReference, IDisposable } from "../../../Scripts/types";
+import type { IDisposable } from "../../../wwwroot/js/types/disposable";
+import type { DotNetObjectReference } from "../../../wwwroot/js/types/blazor";
 
 export const subscribeDocumentEvent = (eventType: string, dotnetObj: DotNetObjectReference, methodName: string, popupMenuElement: HTMLElement): IDisposable => {
 

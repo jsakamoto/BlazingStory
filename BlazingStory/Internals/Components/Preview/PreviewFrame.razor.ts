@@ -1,5 +1,6 @@
-import type { FrameHeightChangeEvent, ComponentActionEvent } from "../../../wwwroot/js/lib";
-import type { CSSStyle, MessageArgument } from "../../../Scripts/types";
+import type { } from "../../../wwwroot/js/types/browser-dom";
+import type { MessageArgument } from "../../../wwwroot/js/types/custom-messages";
+import type { FrameHeightChangeEvent, ComponentActionEvent } from "../../../wwwroot/js/types/custom-events";
 
 // Register custom event types
 Blazor?.registerCustomEventType('frameheightchange', {
@@ -42,7 +43,7 @@ export const reloadPreviewFrame = async (container: HTMLElement): Promise<void> 
 const zoomPreviewFrame = async (container: HTMLElement, getNextZoomLevel: (zoomLevel: number) => number): Promise<void> => {
     const result = await getIFrame(container);
     if (!result) return;
-    const style = result.contentDocument.body.style as CSSStyle;
+    const style = result.contentDocument.body.style;
     const currentZoomLevel = parseFloat(style.zoom || '1');
     const nextZoomLevel = getNextZoomLevel(currentZoomLevel);
     style.zoom = '' + nextZoomLevel;

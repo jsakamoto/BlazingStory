@@ -1,3 +1,5 @@
+import type { } from "../../../wwwroot/js/types/browser-dom";
+
 type StyleDescriptor = {
     id: string,
     href: string,
