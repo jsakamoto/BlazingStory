@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using System.Web;
 using BlazingStory.Internals.Utils;
 using Microsoft.JSInterop;
@@ -83,11 +83,17 @@ internal class UriParameterKitTest
     {
         // Given
         var jsInProcRuntime = new Mock<IJSInProcessRuntime>();
+#if NET10_0_OR_GREATER
+        jsInProcRuntime
+            .Setup(js => js.GetValue<bool>(It.Is<string>(arg => arg == "navigator.onLine")))
+            .Returns(true);
+#else
         jsInProcRuntime
             .Setup(js => js.Invoke<bool>(
                 It.Is<string>(arg => arg == "Toolbelt.Blazor.getProperty"),
                 It.Is<string>(arg => arg == "navigator.onLine")))
             .Returns(true);
+#endif
 
         // When
         var token = UriParameterKit.GetUpdateToken(jsInProcRuntime.Object);
@@ -101,11 +107,17 @@ internal class UriParameterKitTest
     {
         // Given
         var jsInProcRuntime = new Mock<IJSInProcessRuntime>();
+#if NET10_0_OR_GREATER
+        jsInProcRuntime
+            .Setup(js => js.GetValue<bool>(It.Is<string>(arg => arg == "navigator.onLine")))
+            .Returns(false);
+#else
         jsInProcRuntime
             .Setup(js => js.Invoke<bool>(
                 It.Is<string>(arg => arg == "Toolbelt.Blazor.getProperty"),
                 It.Is<string>(arg => arg == "navigator.onLine")))
             .Returns(false);
+#endif
 
         // When
         var token = UriParameterKit.GetUpdateToken(jsInProcRuntime.Object);

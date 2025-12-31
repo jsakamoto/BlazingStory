@@ -30,11 +30,13 @@
   <ItemGroup Condition=" $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '8.0')) ">
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Toolbelt.Blazor.GetProperty.Script" Version="1.3.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '9.0')) ">
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="9.0.0" />
+    <PackageReference Include="Toolbelt.Blazor.GetProperty.Script" Version="1.3.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '10.0')) ">
@@ -43,10 +45,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Toolbelt.Blazor.GetProperty.Script" Version="1.3.0" />
-    <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="6.0.1" />
+    <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="6.1.0" />
     <PackageReference Include="Toolbelt.Web.CssClassInlineBuilder" Version="3.1.0.1" />
-    <PackageReference Include="Toolbelt.Blazor.SplitContainer" Version="2.0.2" />
+    <PackageReference Include="Toolbelt.Blazor.SplitContainer" Version="2.1.0" />
     <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.9.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

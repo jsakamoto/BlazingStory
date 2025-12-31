@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.JSInterop;
 
 namespace BlazingStory.Internals.Utils;
@@ -46,8 +46,11 @@ internal static class UriParameterKit
     {
         var jsInProcRuntime = jSRuntime as IJSInProcessRuntime;
         if (jsInProcRuntime == null) return "";
-
+#if NET10_0_OR_GREATER
+        var isOnLine = jsInProcRuntime.GetValue<bool>("navigator.onLine");
+#else
         var isOnLine = jsInProcRuntime.Invoke<bool>("Toolbelt.Blazor.getProperty", "navigator.onLine");
+#endif
         if (!isOnLine) return "";
 
         return "?v=" + VersionInfo.GetEscapedVersionText();
