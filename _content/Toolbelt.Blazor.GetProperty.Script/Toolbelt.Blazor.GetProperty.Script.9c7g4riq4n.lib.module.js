@@ -1,0 +1,1 @@
+export function beforeWebStart(){n()}export function beforeStart(){n()}const n=()=>{const n=window.Toolbelt=window.Toolbelt||{},t=n.Blazor=n.Blazor||{};t.getProperty=n=>n.replace(/^window\./,"").split(".").reduce((n,t)=>typeof n=="undefined"||n===null?n:n[t],window)};
