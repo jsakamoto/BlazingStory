@@ -1566,7 +1566,7 @@ a.menu-item.command-menu-item {
 .code-view pre:has(code) code .token.attr-value {
   color: #b474dd;
 }
-.code-view pre:has(code) code .token.attr-value .punctuation {
+.code-view pre:has(code) code .token.punctuation {
   color: #ededed;
 }
 .code-view pre:has(code) code .token.comment {
