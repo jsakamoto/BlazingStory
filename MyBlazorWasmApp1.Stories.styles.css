@@ -1,0 +1,17 @@
+@import '_content/MyBlazorWasmApp1/MyBlazorWasmApp1.fmyo5hpd0u.bundle.scp.css';
+@import '_content/Toolbelt.Blazor.SplitContainer/Toolbelt.Blazor.SplitContainer.3tn86i4s1u.bundle.scp.css';
+
+/* /App.razor.rz.scp.css */
+/* /Shared/Centered.razor.rz.scp.css */
+.bs-main-centered[b-z0o9r6dnqa] {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/* /Shared/FullScreen.razor.rz.scp.css */
+.bs-main-fullscreen[b-i6txt13bf9] {
+    position: fixed;
+    inset: 0;
+}

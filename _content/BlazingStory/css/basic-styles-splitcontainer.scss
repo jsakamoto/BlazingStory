@@ -1,0 +1,55 @@
+.split-container[b-split-container] {
+    --splitter-bar-size: 0;
+
+    & > .spliter-bar {
+        position: relative;
+
+        &::after {
+            content: "";
+            position: absolute;
+            z-index: 1;
+            transition: color 0.2s linear,background-position 0.2s linear,background-size 0.2s linear,background 0.2s linear;
+            background-image: radial-gradient(at center center,rgba(0,0,0,0.2) 0%,transparent 70%,transparent 100%);
+            background-repeat: no-repeat;
+        }
+    }
+
+    &.splitter-orientation-vertical > .spliter-bar {
+        &::after {
+            width: 10px;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background-size: 50px 100%;
+            background-position: 10px 50%;
+        }
+
+        &:hover::after {
+            background-position: 0 50%;
+        }
+    }
+
+    &.splitter-orientation-horizontal > .spliter-bar {
+        &::after {
+            height: 10px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-size: 100% 50px;
+            background-position: 50% 10px;
+        }
+
+        &:hover::after {
+            background-position: 50% 0;
+        }
+    }
+}
+
+.pane-of-split-container {
+    display: flex;
+    flex-direction: column;
+
+    .fill {
+        flex: 1;
+    }
+}

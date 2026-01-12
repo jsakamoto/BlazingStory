@@ -1,0 +1,14 @@
+:root {
+    --bs-scrollbar-transition: scrollbar-color 0.2s linear;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    transition: var(--bs-scrollbar-transition);
+
+    &:hover {
+        scrollbar-color: var(--bs-scrollbar-thumb-color) var(--bs-scrollbar-back-color);
+    }
+}
+
