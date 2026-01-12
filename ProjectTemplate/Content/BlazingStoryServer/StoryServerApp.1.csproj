@@ -9,9 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlazingStory" Version="1.0.0-preview.64" />
+    <PackageReference Include="BlazingStory" Version="1.0.0-preview.65" />
     <!--#if McpServer -->
-    <PackageReference Include="BlazingStory.McpServer" Version="1.0.0-preview.64" />
+    <PackageReference Include="BlazingStory.McpServer" Version="1.0.0-preview.65" />
     <!--#endif -->
     <PackageReference Include="MD2RazorGenerator" Version="1.2.2">
       <PrivateAssets>all</PrivateAssets>

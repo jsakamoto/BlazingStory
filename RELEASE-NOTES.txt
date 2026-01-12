@@ -1,3 +1,7 @@
+v.1.0.0-preview.65
+- Fix: An InvalidOperationException was thrown when IL trimming was enabled on a published Blazor WebAssembly app. (Issue #89)
+- Fix: CSS from certain NuGet packages was not loaded correctly.
+
 v.1.0.0-preview.64
 - Improve: Removed the dependency on the Toolbelt.Blazor.GetProperty.Script NuGet package for .NET 10 or later projects.
 
