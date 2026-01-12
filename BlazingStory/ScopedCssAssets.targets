@@ -1,0 +1,24 @@
+<Project>
+
+  <PropertyGroup>
+    <PrepareForBuildDependsOn>$(PrepareForBuildDependsOn);_GenerateScopedCssAssetsClass</PrepareForBuildDependsOn>
+  </PropertyGroup>
+
+  <Target Name="_GenerateScopedCssAssetsClass" Inputs="BlazingStory.csproj" Outputs="ScopedCssAssets.css">
+
+    <ItemGroup>
+      <SplitContainerScopedCss Include="@(StaticWebAsset)" Condition=" '%(SourceId)' == 'Toolbelt.Blazor.SplitContainer' AND '%(AssetTraitName)' == 'ScopedCss' " />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ScopedCssAssetsLines Include="namespace $(RootNamespace)%3b%0d%0a"/>
+      <ScopedCssAssetsLines Include="internal static class ScopedCssAssets"/>
+      <ScopedCssAssetsLines Include="{"/>
+      <ScopedCssAssetsLines Include="%20%20%20%20internal const string SplitContainer = &quot;%(SplitContainerScopedCss.BasePath)/%(SplitContainerScopedCss.RelativePath)&quot;%3b"/>
+      <ScopedCssAssetsLines Include="}"/>
+    </ItemGroup>
+    <WriteLinesToFile File="ScopedCssAssets.cs" Overwrite="true" Lines="@(ScopedCssAssetsLines)"></WriteLinesToFile>
+
+  </Target>
+
+</Project>

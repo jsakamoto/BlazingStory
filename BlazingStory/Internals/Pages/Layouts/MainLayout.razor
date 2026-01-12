@@ -1,4 +1,4 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 @using Toolbelt.Blazor.HotKeys2
 @using static Toolbelt.Blazor.HotKeys2.ModCode
 @inject NavigationManager NavigationManager
@@ -8,7 +8,7 @@
 	@{
 		var updateToken = UriParameterKit.GetUpdateToken(this.JSRuntime);
 	}
-	<link rel="stylesheet" href="_content/Toolbelt.Blazor.SplitContainer/Toolbelt.Blazor.SplitContainer.bundle.scp.css@(updateToken)" />
+	<link rel="stylesheet" href="@ScopedCssAssets.SplitContainer" />
 	<link rel="preload" href="_content/BlazingStory/fonts/nunito-sans-regular.woff2@(updateToken)" as="font" type="font/woff2" crossorigin />
 	<link rel="preload" href="_content/BlazingStory/fonts/nunito-sans-bold.woff2@(updateToken)" as="font" type="font/woff2" crossorigin />
 	<link rel="stylesheet" href="_content/BlazingStory/fonts/fonts.css@(updateToken)" />
