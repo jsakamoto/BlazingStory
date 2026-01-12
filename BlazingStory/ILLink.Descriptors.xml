@@ -1,8 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <linker>
   <assembly fullname="BlazingStory">
     <type fullname="BlazingStory.Internals.Addons.*" preserve="all" />
     <type fullname="BlazingStory.Internals.Components.*" preserve="all" />
     <type fullname="BlazingStory.Internals.Pages.*" preserve="all" />
+    <type fullname="BlazingStory.Internals.Events.Args.*" preserve="all" />
   </assembly>
 </linker>
