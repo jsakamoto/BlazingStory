@@ -1,3 +1,6 @@
+v.1.0.0-preview.66
+- Fix: Split view resizing doesn't work on recent browser versions.
+
 v.1.0.0-preview.65
 - Fix: An InvalidOperationException was thrown when IL trimming was enabled on a published Blazor WebAssembly app. (Issue #89)
 - Fix: CSS from certain NuGet packages was not loaded correctly.
