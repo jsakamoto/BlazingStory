@@ -12,7 +12,7 @@
             {
                 <div class="popup-menu-holder" style="@this._PopupStylesString">
                     <div class="popup-menu-leader"></div>
-                    <div class="popup-menu-body">
+                    <div class="popup-menu-body" @onclick="@(async () => await ClosePopup())">
                         @MenuItems
                     </div>
                 </div>
