@@ -1,3 +1,7 @@
+v.1.0.0-preview.67
+- Fix: Resolved a bug where DateTime, DateTimeOffset, DateOnly, and TimeOnly values could not be parsed in the Action Log panel. (PR #96, contributed by @Shrumpf)
+- Fix: Fixed the PopupMenu to close when a menu item is clicked.
+
 v.1.0.0-preview.66
 - Fix: Split view resizing doesn't work on recent browser versions.
 
