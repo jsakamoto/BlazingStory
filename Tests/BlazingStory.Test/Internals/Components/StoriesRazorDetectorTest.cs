@@ -14,11 +14,11 @@ internal class StoriesRazorDetectorTest
     {
         await using var host = new TestHost();
         var storiesStore = new StoriesStore();
-        using var ctx = new Bunit.TestContext();
+        using var ctx = new Bunit.BunitContext();
         ctx.RenderTree.Add<CascadingValue<IServiceProvider>>(p => p.Add(p => p.Value, host.Services));
 
         ctx.Services.AddSingleton(_ => Mock.Of<IXmlDocComment>());
-        var cut = ctx.RenderComponent<BlazingStory.Internals.Components.StoriesRazorDetector>(builder => builder
+        var cut = ctx.Render<BlazingStory.Internals.Components.StoriesRazorDetector>(builder => builder
             .Add(_ => _.Assemblies, [])
             .Add(_ => _.StoriesStore, storiesStore));
 
@@ -31,11 +31,11 @@ internal class StoriesRazorDetectorTest
         // Given
         await using var host = new TestHost();
         var storiesStore = new StoriesStore();
-        using var ctx = new Bunit.TestContext();
+        using var ctx = new Bunit.BunitContext();
         ctx.RenderTree.Add<CascadingValue<IServiceProvider>>(p => p.Add(p => p.Value, host.Services));
 
         // When
-        var cut = ctx.RenderComponent<BlazingStory.Internals.Components.StoriesRazorDetector>(builder => builder
+        var cut = ctx.Render<BlazingStory.Internals.Components.StoriesRazorDetector>(builder => builder
             .Add(_ => _.Assemblies, [
                 typeof(BlazingStoryApp1.App).Assembly,
                 typeof(BlazingStoryApp2.App).Assembly,

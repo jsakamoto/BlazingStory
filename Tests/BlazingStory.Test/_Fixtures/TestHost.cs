@@ -15,7 +15,7 @@ internal class TestHost : IAsyncDisposable
 {
     private readonly IServiceScope _Scope;
 
-    internal Bunit.TestContext BunitContext { get; private set; }
+    internal Bunit.BunitContext BunitContext { get; private set; }
 
     internal IServiceProvider Services { get; }
 
@@ -34,7 +34,7 @@ internal class TestHost : IAsyncDisposable
         this._Scope = services.BuildServiceProvider().CreateScope();
         this.Services = this._Scope.ServiceProvider;
 
-        this.BunitContext = new Bunit.TestContext();
+        this.BunitContext = new Bunit.BunitContext();
         this.BunitContext.Services.AddScoped(_ => this.Services.GetRequiredService<NavigationManager>());
     }
 
