@@ -1,4 +1,5 @@
-﻿using BlazingStory.Internals.Utils;
+﻿using System.Text.Json;
+using BlazingStory.Internals.Utils;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -30,6 +31,8 @@ public class JsonFallbackSerializerTest
               "Type": "progress"
             }
             """);
+
+        Assert.DoesNotThrow(() => JsonDocument.Parse(json));
     }
 
     public class TestEvent : EventArgs
@@ -104,6 +107,8 @@ public class JsonFallbackSerializerTest
               }
             }
             """);
+
+        Assert.DoesNotThrow(() => JsonDocument.Parse(json));
     }
 
     [Test]
@@ -123,6 +128,8 @@ public class JsonFallbackSerializerTest
         // The indexer should not appear, since it's skipped by p.GetIndexParameters().Length == 0
         Assert.That(json, Does.Contain("NormalProperty"));
         Assert.That(json, Does.Not.Contain("42")); // or any marker for the indexer value
+
+        Assert.DoesNotThrow(() => JsonDocument.Parse(json));
     }
 
     private class TestComponent : ComponentBase
@@ -194,6 +201,8 @@ public class JsonFallbackSerializerTest
               }
             }
             """);
+
+        Assert.DoesNotThrow(() => JsonDocument.Parse(json));
     }
 
     [Test]
@@ -206,7 +215,9 @@ public class JsonFallbackSerializerTest
         var json = JsonFallbackSerializer.Serialize(args);
 
         // THEN
-        json.Is("2023-10-01T14:03:01.0230000Z");
+        json.Is("\"2023-10-01T14:03:01.0230000Z\"");
+
+        Assert.DoesNotThrow(() => JsonDocument.Parse(json));
     }
 
     [Test]
@@ -219,7 +230,9 @@ public class JsonFallbackSerializerTest
         var json = JsonFallbackSerializer.Serialize(args);
 
         // THEN
-        json.Is("2025-09-19T22:01:03.6520000Z");
+        json.Is("\"2025-09-19T22:01:03.6520000Z\"");
+
+        Assert.DoesNotThrow(() => JsonDocument.Parse(json));
     }
 
     [Test]
@@ -232,7 +245,9 @@ public class JsonFallbackSerializerTest
         var json = JsonFallbackSerializer.Serialize(args);
 
         // THEN
-        json.Is("2024-01-20");
+        json.Is("\"2024-01-20\"");
+
+        Assert.DoesNotThrow(() => JsonDocument.Parse(json));
     }
 
     [Test]
@@ -245,7 +260,9 @@ public class JsonFallbackSerializerTest
         var json = JsonFallbackSerializer.Serialize(args);
 
         // THEN
-        json.Is("15:40:01.0000000");
+        json.Is("\"15:40:01.0000000\"");
+
+        Assert.DoesNotThrow(() => JsonDocument.Parse(json));
     }
 
     [Test]

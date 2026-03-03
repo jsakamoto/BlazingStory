@@ -38,16 +38,16 @@ public class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)
         switch (value)
         {
             case DateTime d:
-                writer.WriteRawValue(d.ToUniversalTime().ToString("o"), skipInputValidation: true);
+                writer.WriteStringValue(d.ToUniversalTime().ToString("o"));
                 return;
             case DateTimeOffset d:
-                writer.WriteRawValue(d.UtcDateTime.ToString("o"), skipInputValidation: true);
+                writer.WriteStringValue(d.UtcDateTime.ToString("o"));
                 return;
             case DateOnly d:
-                writer.WriteRawValue(d.ToString("o"), skipInputValidation: true);
+                writer.WriteStringValue(d.ToString("o"));
                 return;
             case TimeOnly t:
-                writer.WriteRawValue(t.ToString("o"), skipInputValidation: true);
+                writer.WriteStringValue(t.ToString("o"));
                 return;
             default: // Handle other primitive types, like strings, numbers, etc.
                 if (typeCode is not TypeCode.Object)
