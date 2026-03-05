@@ -1,6 +1,7 @@
 @using System.Diagnostics.CodeAnalysis
 @using System.Reflection
 @using System.Runtime.InteropServices
+@using BlazingStory.Addons
 @using BlazingStory.Internals.Services.XmlDocComment;
 @using BlazingStory.Internals.Types
 @using Toolbelt.Blazor.Extensions.DependencyInjection
@@ -173,6 +174,12 @@
     [Parameter]
     public bool EnableHotReloading { get; set; }
 
+    /// <summary>
+    /// An optional callback to initialize the Blazing Story. This is invoked during the component's initialization phase, allowing you to configure services, addons, or other settings before the app fully initializes.
+    /// </summary>
+    [Parameter]
+    public Action<IBlazingStoryBuilder>? OnInitialize { get; set; }
+
     private AvailableColorSchemes _PrevAvailableColorSchemes = AvailableColorSchemes.Both;
 
     private StoriesStore _StoriesStore = new();
@@ -214,14 +221,21 @@
         var injectedStoriesStore = this.GlobalServices.GetService<StoriesStore>();
         if (injectedStoriesStore is not null) this._StoriesStore = injectedStoriesStore;
 
-        this.ConfigureAddons();
-        this._ServiceScope = this.ConfigureServices();
+        var builder = new BlazingStoryBuilder(_Options);
+
+        this.ConfigureAddons(builder.Addons);
+        this.ConfigureServices(builder.Services);
+        this.OnInitialize?.Invoke(builder);
+
+        var services = builder.Services.BuildServiceProvider();
+        this._ServiceScope = services.CreateAsyncScope();
     }
 
     private void RegisterAddon<[DynamicallyAccessedMembers(All)] TAddon>() => this._AddonsTypes.Add(typeof(TAddon));
 
-    private void ConfigureAddons()
+    private void ConfigureAddons(IAddonStore addons)
     {
+        //addons.Register<>();
         this.RegisterAddon<BlazingStory.Internals.Addons.Background.BackgroundAddon>();
         this.RegisterAddon<BlazingStory.Internals.Addons.Grid.GridAddon>();
         this.RegisterAddon<BlazingStory.Internals.Addons.ChangeSize.ChangeSizeAddon>();
@@ -229,9 +243,9 @@
         this.RegisterAddon<BlazingStory.Internals.Addons.Outlines.OutlinesAddon>();
     }
 
-    private AsyncServiceScope ConfigureServices()
+    private void ConfigureServices(IServiceCollection services)
     {
-        var services = new ServiceCollection()
+        services
             .AddSingleton<IJSRuntime>(_ => this.JSRuntime)
             .AddSingleton<ILoggerFactory>(_ => LoggerFactory)
             .AddSingleton(typeof(ILogger<>), typeof(Logger<>))
@@ -251,9 +265,6 @@
             services.AddSingleton<IXmlDocComment, XmlDocCommentForWasm>();
         else
             services.AddSingleton<IXmlDocComment, XmlDocCommentForServer>();
-
-        var serviceProvider = services.BuildServiceProvider();
-        return serviceProvider.CreateAsyncScope();
     }
 
     protected override async Task OnParametersSetAsync()
@@ -261,6 +272,7 @@
         await base.OnParametersSetAsync();
 
         this._Options.EnableHotReloading = this.EnableHotReloading;
+        this._Options.NavigationTreeOrder = this.NavigationTreeOrder ?? this._Options.NavigationTreeOrder;
 
         if (this.AvailableColorSchemes != this._PrevAvailableColorSchemes)
         {
