@@ -1,3 +1,4 @@
+@using BlazingStory.Addons.Internals
 @implements IDisposable
 @inject NavigationManager NavigationManager
 
@@ -29,6 +30,11 @@
 					<Separator />
 
 					@* -- Render Add-On's Toolbar Contents -- *@
+					@foreach (var toolbarButton in this.GetToolbarButtons())
+					{
+                        <DynamicComponent @key="toolbarButton.Id" Type="toolbarButton.ComponentType" Parameters="toolbarButton.ComponentParameter" />
+					}
+
 					@foreach (var addon in this.AddonsStore.GetAddons(AddonType.CanvasPage))
 					{
 						<text>@addon.ToolbarContents</text>
@@ -60,7 +66,7 @@
 								  ViewMode="story"
 								  Id="@this.RouteData.Parameter"
 								  Args="this._CurrentStory?.Context.Args"
-								  Globals="this.AddonsStore.GetFrameArguments(AddonType.CanvasPage)"
+								  Globals="this.GetGlobalArguments()"
 								  OnComponentAction="OnComponentAction" />
 				</div>
 			</div>
@@ -102,6 +108,8 @@
 
 	private HelperScript HelperScript = default!;
 
+	private AddonManager AddonManager => this.Services.GetRequiredService<AddonManager>();
+
 	private CommandService _Commands = default!;
 
 	private Command? _ToolbarVisibleCommand;
@@ -139,7 +147,8 @@
 	protected override void OnInitialized()
 	{
 		this.HelperScript = this.Services.GetRequiredService<HelperScript>();
-		this.AddonsStore.OnFrameArgumentsChanged += AddonsStore_OnFrameArgumentsChanged;
+		this.AddonsStore.OnFrameArgumentsChanged += OnGlobalArgumentsChanged;
+		this.AddonManager.GlobalArgumentsChanged += OnGlobalArgumentsChanged;
 
 		this._Commands = this.Services.GetRequiredService<CommandService>();
 		this._ToolbarVisibleCommand = this._Commands[CommandType.ToolBarVisible]!;
@@ -171,6 +180,11 @@
 		this.StateHasChanged();
 	}
 
+	private IEnumerable<ToolbarButtonDescriptor> GetToolbarButtons()
+	{
+		return this.AddonManager.GetToolbarButtons(BlazingStory.Addons.ViewMode.Story);
+	}
+
 	private void UpdatePageTitle()
 	{
 		if (this._LastTitledParameter == this.RouteData.Parameter) return;
@@ -181,7 +195,14 @@
 		this._LastTitledParameter = this.RouteData.Parameter;
 	}
 
-	private void AddonsStore_OnFrameArgumentsChanged(object? sender, EventArgs args)
+	private Dictionary<string, object?> GetGlobalArguments()
+	{
+        return this.GetToolbarButtons()
+			.SelectMany(tb => tb.Globals)
+			.ToDictionary(arg => arg.Key, arg => arg.Value);
+	}
+
+	private void OnGlobalArgumentsChanged(object? sender, EventArgs args)
 	{
 		this.StateHasChanged();
 	}
@@ -292,7 +313,8 @@
 
 	public void Dispose()
 	{
-		this.AddonsStore.OnFrameArgumentsChanged -= AddonsStore_OnFrameArgumentsChanged;
+		this.AddonsStore.OnFrameArgumentsChanged -= OnGlobalArgumentsChanged;
+		this.AddonManager.GlobalArgumentsChanged -= OnGlobalArgumentsChanged;
 		this._Subscriptions.Dispose();
 		if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
 	}

@@ -1,0 +1,49 @@
+@using BlazingStory.Addons.Internals
+
+<IconButton Icon="SvgIconType.Grid"
+            Title="Apply a grid to the preview"
+            Active="this._Enable"
+            OnClick="OnClickButton" />
+
+@code
+{
+    [CascadingParameter]
+    public required IServiceProvider Services { get; init; }
+
+    [Parameter]
+    public required GlobalArguments Globals { get; init; }
+
+    private HelperScript HelperScript = default!;
+
+    private bool _Enable = false;
+
+    private static class StorageKeys
+    {
+        public const string Grid = "Addons.Grid";
+    }
+
+    protected override void OnInitialized()
+    {
+        this.HelperScript = this.Services.GetRequiredService<HelperScript>();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        var enableStr = await this.HelperScript.GetLocalStorageItemAsync(StorageKeys.Grid);
+        this._Enable = bool.TryParse(enableStr, out var enable) ? enable : this._Enable;
+        this.UpdateGlobalArguments();
+    }
+
+    private async Task OnClickButton()
+    {
+        this._Enable = !this._Enable;
+        this.UpdateGlobalArguments();
+        await this.HelperScript.SetLocalStorageItemAsync(StorageKeys.Grid, this._Enable);
+    }
+
+    private void UpdateGlobalArguments()
+    {
+        this.Globals["backgrounds.grid"] = this._Enable ? "true" : null;
+    }
+}

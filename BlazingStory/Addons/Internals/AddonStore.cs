@@ -1,4 +1,4 @@
-namespace BlazingStory.Addons;
+namespace BlazingStory.Addons.Internals;
 
 internal class AddonStore : IAddonStore
 {
@@ -9,4 +9,6 @@ internal class AddonStore : IAddonStore
         this._addon.Add(new TAddon());
         return this;
     }
+
+    internal IEnumerable<IAddon> GetAddons() => this._addon;
 }
