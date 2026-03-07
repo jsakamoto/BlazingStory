@@ -17,7 +17,7 @@
       <ScopedCssAssetsLines Include="%20%20%20%20internal const string SplitContainer = &quot;%(SplitContainerScopedCss.BasePath)/%(SplitContainerScopedCss.RelativePath)&quot;%3b"/>
       <ScopedCssAssetsLines Include="}"/>
     </ItemGroup>
-    <WriteLinesToFile File="ScopedCssAssets.cs" Overwrite="true" Lines="@(ScopedCssAssetsLines)"></WriteLinesToFile>
+    <WriteLinesToFile File="ScopedCssAssets.cs" Overwrite="true" Lines="@(ScopedCssAssetsLines)" WriteOnlyWhenDifferent="true"></WriteLinesToFile>
 
   </Target>
 
