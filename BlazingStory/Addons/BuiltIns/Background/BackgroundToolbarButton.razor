@@ -1,7 +1,9 @@
 @using BlazingStory.Addons.Internals
 <PopupMenu MarginTop="6">
     <Trigger>
-        <IconButton Icon="SvgIconType.Background" Title="Change the background of the preview" Active="@(this._BackgroundMode != BackgroundMode.None)" />
+        <IconButton Icon="SvgIconType.Background"
+                    Title="Change the background of the preview"
+                    Active="@(this._BackgroundMode != BackgroundMode.None)" />
     </Trigger>
     <MenuItems>
         @if (this._BackgroundMode != BackgroundMode.None)
@@ -51,6 +53,7 @@
 
         var backgroudnModeStr = await this.HelperScript.GetLocalStorageItemAsync(StorageKeys.BackgroundMode);
         this._BackgroundMode = Enum.TryParse<BackgroundMode>(backgroudnModeStr, out var backgroundMode) ? backgroundMode : BackgroundMode.None;
+        this.StateHasChanged();
         this.UpdateGlobalArguments();
     }
 

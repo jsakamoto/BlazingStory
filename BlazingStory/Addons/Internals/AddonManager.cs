@@ -4,6 +4,8 @@ internal class AddonManager : IAddonBuilder, IDisposable
 {
     private readonly List<ToolbarButtonDescriptor> _toolbarButtons = [];
 
+    private readonly List<PreviewDecoratorDescriptor> _previewDecorators = [];
+
     internal event EventHandler? GlobalArgumentsChanged;
 
     internal void Initialize(AddonStore addonStore)
@@ -21,9 +23,20 @@ internal class AddonManager : IAddonBuilder, IDisposable
         this._toolbarButtons.Add(toolbarButtonDescriptor);
     }
 
+    void IAddonBuilder.AddPreviewDecorator<TPreviewDecoratorComponent>()
+    {
+        var previewDecoratorDescriptor = new PreviewDecoratorDescriptor(typeof(TPreviewDecoratorComponent));
+        this._previewDecorators.Add(previewDecoratorDescriptor);
+    }
+
     internal IEnumerable<ToolbarButtonDescriptor> GetToolbarButtons(ViewMode viewMode)
     {
         return this._toolbarButtons.Where(x => x.Match(viewMode)).OrderBy(x => x.Order);
+    }
+
+    internal IEnumerable<PreviewDecoratorDescriptor> GetPreviewDecorators()
+    {
+        return this._previewDecorators;
     }
 
     private void OnGlobalArgumentsChanged(object? sender, EventArgs args)

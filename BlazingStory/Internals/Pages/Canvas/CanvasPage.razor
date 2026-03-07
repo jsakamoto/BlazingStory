@@ -180,11 +180,6 @@
 		this.StateHasChanged();
 	}
 
-	private IEnumerable<ToolbarButtonDescriptor> GetToolbarButtons()
-	{
-		return this.AddonManager.GetToolbarButtons(BlazingStory.Addons.ViewMode.Story);
-	}
-
 	private void UpdatePageTitle()
 	{
 		if (this._LastTitledParameter == this.RouteData.Parameter) return;
@@ -193,18 +188,6 @@
 			this._PageTitle = string.Join(" / ", story.Title.Split('/')) + " - " + story.Name + " - " + this.BlazingStoryApp.Title;
 		}
 		this._LastTitledParameter = this.RouteData.Parameter;
-	}
-
-	private Dictionary<string, object?> GetGlobalArguments()
-	{
-        return this.GetToolbarButtons()
-			.SelectMany(tb => tb.Globals)
-			.ToDictionary(arg => arg.Key, arg => arg.Value);
-	}
-
-	private void OnGlobalArgumentsChanged(object? sender, EventArgs args)
-	{
-		this.StateHasChanged();
 	}
 
 	private void UpdateCurrentStory()
@@ -220,6 +203,23 @@
 		else this._CurrentStory = null;
 
 		if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged += Context_ArgumentChanged;
+	}
+
+	private IEnumerable<ToolbarButtonDescriptor> GetToolbarButtons()
+	{
+		return this.AddonManager.GetToolbarButtons(BlazingStory.Addons.ViewMode.Story);
+	}
+
+	private Dictionary<string, object?> GetGlobalArguments()
+	{
+        return this.GetToolbarButtons()
+			.SelectMany(tb => tb.Globals)
+			.ToDictionary(arg => arg.Key, arg => arg.Value);
+	}
+
+	private void OnGlobalArgumentsChanged(object? sender, EventArgs args)
+	{
+		this.StateHasChanged();
 	}
 
 	private ValueTask Context_ArgumentChanged()

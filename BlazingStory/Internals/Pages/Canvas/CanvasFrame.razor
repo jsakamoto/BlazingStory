@@ -5,6 +5,7 @@
 @using System.Text.Json
 @using System.Text.Json.Serialization
 @using System.Text.Encodings.Web
+@using BlazingStory.Addons.Internals
 @using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
 
 @implements IAsyncDisposable
@@ -15,7 +16,6 @@
 @{
 #pragma warning disable IL2111
 #pragma warning disable IL2110
-
 }
 @if (this._Story == null)
 {
@@ -32,6 +32,13 @@ else
             </LayoutView>
         </LayoutView>
     </LayoutView>
+
+    @foreach (var previewDecorator in this.AddonManager.GetPreviewDecorators())
+    {
+        <DynamicComponent @key="previewDecorator.Id"
+                          Type="previewDecorator.ComponentType"
+                          Parameters="_DecoratorParameters" />
+    }
 }
 @{
 #pragma warning restore IL2111
@@ -46,6 +53,9 @@ else
 @code
 {
     [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
+    [CascadingParameter]
     protected StoriesStore StoriesStore { get; init; } = default!;
 
     [CascadingParameter]
@@ -54,6 +64,8 @@ else
     [CascadingParameter]
     protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
 
+    private AddonManager AddonManager => this.Services.GetRequiredService<AddonManager>();
+
     private readonly JSModule _JSModule;
 
     private Story? _Story;
@@ -61,6 +73,8 @@ else
     private bool _EnableMeasure = false;
 
     private bool _Rendered = false;
+
+    private Dictionary<string, object?> _DecoratorParameters = new();
 
     /// <summary>
     /// Constructor
@@ -72,6 +86,7 @@ else
 
     protected override void OnInitialized()
     {
+        Console.WriteLine("AddonManager in CanvasFrame: " + this.AddonManager.GetHashCode());
         this.NavigationManager.LocationChanged += NavigationManager_LocationChanged;
     }
 
@@ -155,17 +170,19 @@ else
         if (this._GlobalEffectsString == globalEffectsString) return;
         this._GlobalEffectsString = globalEffectsString;
 
-        var globalEffects = UriParameterKit.DecodeKeyValues(globalEffectsString);
-        var background = globalEffects.TryGetValue("backgrounds.value", out var backgroundStr) ? backgroundStr : "transparent";
-        var enableGrid = globalEffects.TryGetValue("backgrounds.grid", out var gridStr) ? bool.TryParse(gridStr, out var grid) ? grid : false : false;
-        var enableOutline = globalEffects.TryGetValue("outline", out var outlineStr) ? bool.TryParse(outlineStr, out var outline) ? outline : false : false;
-        this._EnableMeasure = globalEffects.TryGetValue("measureEnabled", out var measureStr) ? bool.TryParse(measureStr, out var measure) ? measure : false : false;
+        var globals = UriParameterKit.DecodeKeyValues(globalEffectsString);
+        this._DecoratorParameters["Globals"] = globals;
+
+        //var background = globals.TryGetValue("backgrounds.value", out var backgroundStr) ? backgroundStr : "transparent";
+        var enableGrid = globals.TryGetValue("backgrounds.grid", out var gridStr) ? bool.TryParse(gridStr, out var grid) ? grid : false : false;
+        var enableOutline = globals.TryGetValue("outline", out var outlineStr) ? bool.TryParse(outlineStr, out var outline) ? outline : false : false;
+        this._EnableMeasure = globals.TryGetValue("measureEnabled", out var measureStr) ? bool.TryParse(measureStr, out var measure) ? measure : false : false;
 
         var basePath = "./_content/BlazingStory/css/preview/";
         var styleDescripters = new StyleDescriptor[] {
             new() { Id = "addon-background-grid", Enable = enableGrid, Href = basePath + "background-grid.min.css" },
             new() { Id = "addon-outline", Enable = enableOutline, Href = basePath + "outline.min.css" }};
-        await this._JSModule.InvokeVoidAsync("ensurePreviewStyle", new object[] { background, styleDescripters });
+        await this._JSModule.InvokeVoidAsync("ensurePreviewStyle", new object[] { "transparent", styleDescripters });
 
         this.StateHasChanged();
     }

@@ -1,0 +1,24 @@
+@inject IJSRuntime JSRuntime
+@code
+{
+    [Parameter]
+    public IReadOnlyDictionary<string, string>? Globals { get; set; }
+
+    private JSModule _JSModule;
+
+    private string _currentBackgroundColor = "transparent";
+
+    public BackgroundPreviewDecorator()
+    {
+        this._JSModule = new JSModule(() => this.JSRuntime, "./Addons/BuiltIns/Background/BackgroundPreviewDecorator.razor.js");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (this.Globals?.TryGetValue("backgrounds.value", out var backgroundColor) == true && _currentBackgroundColor != backgroundColor)
+        {
+            this._currentBackgroundColor = backgroundColor;
+            await _JSModule.InvokeVoidAsync("setBackgroundColor", backgroundColor);
+        }
+    }
+}
