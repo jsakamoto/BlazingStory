@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace BlazingStory.Addons.Internals;
+namespace BlazingStory.Addons;
 
 public class GlobalArguments : IEnumerable<KeyValuePair<string, object?>>
 {

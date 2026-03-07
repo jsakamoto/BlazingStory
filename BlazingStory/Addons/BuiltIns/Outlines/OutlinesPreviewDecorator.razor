@@ -4,7 +4,7 @@
                  Enable="_enable" />
 @code
 {
-    [Parameter]
+    [CascadingParameter(Name = "Globals")]
     public IReadOnlyDictionary<string, string>? Globals { get; set; }
 
     private bool _enable = false;

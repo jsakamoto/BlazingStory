@@ -1,7 +1,7 @@
 @inject IJSRuntime JSRuntime
 @code
 {
-    [Parameter]
+    [CascadingParameter(Name = "Globals")]
     public IReadOnlyDictionary<string, string>? Globals { get; set; }
 
     private JSModule _JSModule;

@@ -2,39 +2,55 @@
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 
-<div style="position:fixed; top:0; left:0; bottom:0; right:0; pointer-events:none; overflow:hidden !important; @(ResetCss)">
+@if (_Enable)
+{
+    <div style="position:fixed; top:0; left:0; bottom:0; right:0; pointer-events:none; overflow:hidden !important; @(ResetCss)">
 
-    @if (this._Measurement != null)
-    {
-        <div style="@this._ContentAreaStyle" />
+        @if (this._Measurement != null)
+        {
+            <div style="@this._ContentAreaStyle" />
 
-        <div style="@this._PaddingStyle.Top" />
-        <div style="@this._PaddingStyle.Left" />
-        <div style="@this._PaddingStyle.Bottom" />
-        <div style="@this._PaddingStyle.Right" />
+            <div style="@this._PaddingStyle.Top" />
+            <div style="@this._PaddingStyle.Left" />
+            <div style="@this._PaddingStyle.Bottom" />
+            <div style="@this._PaddingStyle.Right" />
 
-        <div style="@this._MarginStyle.Top" />
-        <div style="@this._MarginStyle.Left" />
-        <div style="@this._MarginStyle.Bottom" />
-        <div style="@this._MarginStyle.Right" />
+            <div style="@this._MarginStyle.Top" />
+            <div style="@this._MarginStyle.Left" />
+            <div style="@this._MarginStyle.Bottom" />
+            <div style="@this._MarginStyle.Right" />
 
-        <div style="@this._PaddingNumStyle.Top">@Round(this._Measurement.Padding.Top)</div>
-        <div style="@this._PaddingNumStyle.Left">@Round(this._Measurement.Padding.Left)</div>
-        <div style="@this._PaddingNumStyle.Bottom">@Round(this._Measurement.Padding.Bottom)</div>
-        <div style="@this._PaddingNumStyle.Right">@Round(this._Measurement.Padding.Right)</div>
+            <div style="@this._PaddingNumStyle.Top">@Round(this._Measurement.Padding.Top)</div>
+            <div style="@this._PaddingNumStyle.Left">@Round(this._Measurement.Padding.Left)</div>
+            <div style="@this._PaddingNumStyle.Bottom">@Round(this._Measurement.Padding.Bottom)</div>
+            <div style="@this._PaddingNumStyle.Right">@Round(this._Measurement.Padding.Right)</div>
 
-        <div style="@this._MarginNumStyle.Top">@Round(this._Measurement.Margin.Top)</div>
-        <div style="@this._MarginNumStyle.Left">@Round(this._Measurement.Margin.Left)</div>
-        <div style="@this._MarginNumStyle.Bottom">@Round(this._Measurement.Margin.Bottom)</div>
-        <div style="@this._MarginNumStyle.Right">@Round(this._Measurement.Margin.Right)</div>
+            <div style="@this._MarginNumStyle.Top">@Round(this._Measurement.Margin.Top)</div>
+            <div style="@this._MarginNumStyle.Left">@Round(this._Measurement.Margin.Left)</div>
+            <div style="@this._MarginNumStyle.Bottom">@Round(this._Measurement.Margin.Bottom)</div>
+            <div style="@this._MarginNumStyle.Right">@Round(this._Measurement.Margin.Right)</div>
 
-        <div style="@this._ContentSizeStyle">@this._ContentSizeText</div>
-    }
+            <div style="@this._ContentSizeStyle">@this._ContentSizeText</div>
+        }
 
-</div>
+    </div>
+}
 
 @code
 {
+    [CascadingParameter(Name = "Globals")]
+    public IReadOnlyDictionary<string, string>? Globals { get; set; }
+
+    private JSModule _JSModule;
+
+    private DotNetObjectReference<MeasurePreviewDecorator> _This;
+
+    private IJSObjectReference? _EventMonitorSubscriber;
+
+    private bool _Enable = false;
+
+    private bool _PrevEnabled = false;
+
     private static class BackColors
     {
         public const string Content = "#6fa8dca8";
@@ -68,10 +84,6 @@
         "display:inline-block !important;" +
         "opacity:1 !important;" +
         "transition:none !important;";
-
-    private DotNetObjectReference<MeasureLayer>? _This;
-
-    private IJSObjectReference? _EventMonitorSubscriber;
 
     public struct DOMRect
     {
@@ -129,13 +141,32 @@
 
     private string _ContentSizeText = "";
 
+    public MeasurePreviewDecorator()
+    {
+        this._This = DotNetObjectReference.Create(this);
+        this._JSModule = new(() => this.JSRuntime, "Addons/BuiltIns/Measure/MeasurePreviewDecorator.razor.js");
+    }
+
+    protected override void OnParametersSet()
+    {
+        this._Enable = this.Globals is not null && this.Globals.TryGetValue("measureEnabled", out var strValue) ? bool.TryParse(strValue, out var boolValue) ? boolValue : false : false;
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender) return;
+        if (this._Enable == this._PrevEnabled) return;
+        this._PrevEnabled = this._Enable;
 
-        await using var module = await this.JSRuntime.ImportAsync("Internals/Pages/Canvas/MeasureLayer.razor.js");
-        this._This = DotNetObjectReference.Create(this);
-        this._EventMonitorSubscriber = await module.InvokeAsync<IJSObjectReference>("subscribeTargetElementChanged", this._This);
+        var enable = this._Enable;
+        if (this._EventMonitorSubscriber is not null)
+        {
+            var subscriber = this._EventMonitorSubscriber;
+            this._EventMonitorSubscriber = null;
+            await subscriber.DisposeIfConnectedAsync("dispose");
+        }
+
+        if (!enable) return;
+        this._EventMonitorSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeTargetElementChanged", this._This);
     }
 
     [JSInvokable(nameof(TargetElementChanged))]
@@ -153,12 +184,12 @@
         var margin = measurement.Margin;
 
         var contentRect = new DOMRect
-            {
-                X = boundary.X + padding.Left,
-                Y = boundary.Y + padding.Top,
-                Width = boundary.Width - padding.Left - padding.Right,
-                Height = boundary.Height - padding.Top - padding.Bottom
-            };
+        {
+            X = boundary.X + padding.Left,
+            Y = boundary.Y + padding.Top,
+            Width = boundary.Width - padding.Left - padding.Right,
+            Height = boundary.Height - padding.Top - padding.Bottom
+        };
         this._ContentAreaStyle = GetSpacingStyle(contentRect, BackColors.Content);
 
         this._ContentSizeText = $"{Round(contentRect.Width, 2)} x {Round(contentRect.Height, 2)}";
@@ -215,12 +246,12 @@
         right.Width = spacing.Right;
 
         return new StyleSet
-            {
-                Top = GetSpacingStyle(top, background),
-                Left = GetSpacingStyle(left, background),
-                Bottom = GetSpacingStyle(bottom, background),
-                Right = GetSpacingStyle(right, background),
-            };
+        {
+            Top = GetSpacingStyle(top, background),
+            Left = GetSpacingStyle(left, background),
+            Bottom = GetSpacingStyle(bottom, background),
+            Right = GetSpacingStyle(right, background),
+        };
     }
 
     private static string GetSpacingStyle(in DOMRect rect, string background)
@@ -232,12 +263,12 @@
     private static StyleSet GetNumberStyleSet(DOMRectSet rectSet, string background)
     {
         return new StyleSet
-            {
-                Top = GetNumberStyle(rectSet.Top, background),
-                Left = GetNumberStyle(rectSet.Left, background),
-                Bottom = GetNumberStyle(rectSet.Bottom, background),
-                Right = GetNumberStyle(rectSet.Right, background),
-            };
+        {
+            Top = GetNumberStyle(rectSet.Top, background),
+            Left = GetNumberStyle(rectSet.Left, background),
+            Bottom = GetNumberStyle(rectSet.Bottom, background),
+            Right = GetNumberStyle(rectSet.Right, background),
+        };
     }
 
     private static string GetNumberStyle(in DOMRect rect, string background)
@@ -252,12 +283,12 @@
     private static DOMRectSet ComputeNumTextRectSet(SpacingSize spacing, double centerX, double centerY, in DOMRect boundary, DOMRectSet? coRectSet)
     {
         var rectSet = new DOMRectSet
-            {
-                Top = ComputeNumTextRect(spacing.Top, centerX, centerY: boundary.Y - spacing.Top / 2.0),
-                Left = ComputeNumTextRect(spacing.Left, centerX: boundary.X - spacing.Left / 2.0, centerY),
-                Bottom = ComputeNumTextRect(spacing.Bottom, centerX, centerY: boundary.Y + boundary.Height + spacing.Bottom / 2.0),
-                Right = ComputeNumTextRect(spacing.Right, centerX: boundary.X + boundary.Width + spacing.Right / 2.0, centerY)
-            };
+        {
+            Top = ComputeNumTextRect(spacing.Top, centerX, centerY: boundary.Y - spacing.Top / 2.0),
+            Left = ComputeNumTextRect(spacing.Left, centerX: boundary.X - spacing.Left / 2.0, centerY),
+            Bottom = ComputeNumTextRect(spacing.Bottom, centerX, centerY: boundary.Y + boundary.Height + spacing.Bottom / 2.0),
+            Right = ComputeNumTextRect(spacing.Right, centerX: boundary.X + boundary.Width + spacing.Right / 2.0, centerY)
+        };
         if (coRectSet == null) return rectSet;
 
         RelocateNumTextRect(ref rectSet.Top, coRectSet.Top, vertical: true, delta: -1, limit: coRectSet.Top.Y - rectSet.Top.Height);
@@ -304,15 +335,15 @@
     {
         var textLen = text.Length;
         return new DOMRect
-            {
-                Width = textLen * NumTextMetric.HorizontalSize + NumTextMetric.HorizontalPadding * 2,
-                Height = NumTextMetric.VerticalSize + NumTextMetric.VerticalPadding * 2
-            };
+        {
+            Width = textLen * NumTextMetric.HorizontalSize + NumTextMetric.HorizontalPadding * 2,
+            Height = NumTextMetric.VerticalSize + NumTextMetric.VerticalPadding * 2
+        };
     }
 
     public async ValueTask DisposeAsync()
     {
         await this._EventMonitorSubscriber.DisposeIfConnectedAsync("dispose");
-        this._This?.Dispose();
+        this._This.Dispose();
     }
 }

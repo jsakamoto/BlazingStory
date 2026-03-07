@@ -33,21 +33,17 @@ else
         </LayoutView>
     </LayoutView>
 
-    @foreach (var previewDecorator in this.AddonManager.GetPreviewDecorators())
-    {
-        <DynamicComponent @key="previewDecorator.Id"
-                          Type="previewDecorator.ComponentType"
-                          Parameters="_DecoratorParameters" />
-    }
+    <CascadingValue Name="Globals" Value="this._Globals">
+        @foreach (var previewDecorator in this.AddonManager.GetPreviewDecorators())
+        {
+            <DynamicComponent @key="previewDecorator.Id"
+                              Type="previewDecorator.ComponentType" />
+        }
+    </CascadingValue>
 }
 @{
 #pragma warning restore IL2111
 #pragma warning restore IL2110
-}
-
-@if (this._EnableMeasure)
-{
-    <MeasureLayer />
 }
 
 @code
@@ -70,11 +66,9 @@ else
 
     private Story? _Story;
 
-    private bool _EnableMeasure = false;
-
     private bool _Rendered = false;
 
-    private Dictionary<string, object?> _DecoratorParameters = new();
+    private IReadOnlyDictionary<string, string>? _Globals;
 
     /// <summary>
     /// Constructor
@@ -170,10 +164,7 @@ else
         if (this._GlobalEffectsString == globalEffectsString) return;
         this._GlobalEffectsString = globalEffectsString;
 
-        var globals = UriParameterKit.DecodeKeyValues(globalEffectsString);
-        this._DecoratorParameters["Globals"] = globals;
-
-        this._EnableMeasure = globals.TryGetValue("measureEnabled", out var measureStr) ? bool.TryParse(measureStr, out var measure) ? measure : false : false;
+        this._Globals = UriParameterKit.DecodeKeyValues(globalEffectsString);
 
         this.StateHasChanged();
     }
