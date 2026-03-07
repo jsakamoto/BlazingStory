@@ -5,7 +5,7 @@ namespace BlazingStory.Addons.Internals;
 
 internal class AddonManager : IAddonBuilder, IDisposable
 {
-    private readonly List<ToolbarButtonDescriptor> _toolbarButtons = [];
+    private readonly List<ToolbarContentDescriptor> _toolbarContents = [];
 
     private readonly List<PreviewDecoratorDescriptor> _previewDecorators = [];
 
@@ -19,11 +19,11 @@ internal class AddonManager : IAddonBuilder, IDisposable
         }
     }
 
-    void IAddonBuilder.AddToolbarButton<[DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicFields | PublicProperties | PublicEvents | PublicNestedTypes)] TToolbarButtonComponent>(int order, Func<ViewMode, bool> match)
+    void IAddonBuilder.AddToolbarContent<[DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicFields | PublicProperties | PublicEvents | PublicNestedTypes)] TToolbarContentComponent>(int order, Func<ViewMode, bool> match)
     {
-        var toolbarButtonDescriptor = new ToolbarButtonDescriptor(order, match, typeof(TToolbarButtonComponent));
-        toolbarButtonDescriptor.Globals.ArgumentsChanged += this.OnGlobalArgumentsChanged;
-        this._toolbarButtons.Add(toolbarButtonDescriptor);
+        var toolbarContentDescriptor = new ToolbarContentDescriptor(order, match, typeof(TToolbarContentComponent));
+        toolbarContentDescriptor.Globals.ArgumentsChanged += this.OnGlobalArgumentsChanged;
+        this._toolbarContents.Add(toolbarContentDescriptor);
     }
 
     void IAddonBuilder.AddPreviewDecorator<[DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicFields | PublicProperties | PublicEvents | PublicNestedTypes)] TPreviewDecoratorComponent>()
@@ -32,9 +32,9 @@ internal class AddonManager : IAddonBuilder, IDisposable
         this._previewDecorators.Add(previewDecoratorDescriptor);
     }
 
-    internal IEnumerable<ToolbarButtonDescriptor> GetToolbarButtons(ViewMode viewMode)
+    internal IEnumerable<ToolbarContentDescriptor> GetToolbarContents(ViewMode viewMode)
     {
-        return this._toolbarButtons.Where(x => x.Match(viewMode)).OrderBy(x => x.Order);
+        return this._toolbarContents.Where(x => x.Match(viewMode)).OrderBy(x => x.Order);
     }
 
     internal IEnumerable<PreviewDecoratorDescriptor> GetPreviewDecorators()
@@ -49,6 +49,6 @@ internal class AddonManager : IAddonBuilder, IDisposable
 
     public void Dispose()
     {
-        this._toolbarButtons.ForEach(x => x.Globals.ArgumentsChanged -= this.OnGlobalArgumentsChanged);
+        this._toolbarContents.ForEach(x => x.Globals.ArgumentsChanged -= this.OnGlobalArgumentsChanged);
     }
 }

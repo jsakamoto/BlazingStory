@@ -21,11 +21,11 @@
         @{
 #pragma warning disable IL2111
         }
-        @foreach (var toolbarButton in this.GetToolbarButtons())
+        @foreach (var toolbarContent in this.GetToolbarContents())
         {
-            <DynamicComponent @key="toolbarButton.Id"
-                              Type="toolbarButton.ComponentType"
-                              Parameters="toolbarButton.ComponentParameter" />
+            <DynamicComponent @key="toolbarContent.Id"
+                              Type="toolbarContent.ComponentType"
+                              Parameters="toolbarContent.ComponentParameter" />
         }
         @{
 #pragma warning restore IL2111
@@ -149,14 +149,14 @@
         this._Subscriptions.Add(this._Commands.ToolbarVisible!.Subscribe(this.OnToggleToolbarVisible));
     }
 
-    private IEnumerable<ToolbarButtonDescriptor> GetToolbarButtons()
+    private IEnumerable<ToolbarContentDescriptor> GetToolbarContents()
     {
-        return this.AddonManager.GetToolbarButtons(BlazingStory.Addons.ViewMode.Docs);
+        return this.AddonManager.GetToolbarContents(BlazingStory.Addons.ViewMode.Docs);
     }
 
     private Dictionary<string, object?> GetGlobalArguments()
     {
-        return this.GetToolbarButtons()
+        return this.GetToolbarContents()
             .SelectMany(tb => tb.Globals)
             .ToDictionary(arg => arg.Key, arg => arg.Value);
     }

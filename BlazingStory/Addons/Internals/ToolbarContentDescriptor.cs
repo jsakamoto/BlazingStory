@@ -3,7 +3,7 @@ using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.Addons.Internals;
 
-internal class ToolbarButtonDescriptor
+internal class ToolbarContentDescriptor
 {
     internal readonly Guid Id = Guid.NewGuid();
 
@@ -18,7 +18,7 @@ internal class ToolbarButtonDescriptor
 
     internal readonly Dictionary<string, object?> ComponentParameter = new();
 
-    internal ToolbarButtonDescriptor(int order, Func<ViewMode, bool> match, [DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicFields | PublicProperties | PublicEvents | PublicNestedTypes)] Type toolbarButtonComponentType)
+    internal ToolbarContentDescriptor(int order, Func<ViewMode, bool> match, [DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicFields | PublicProperties | PublicEvents | PublicNestedTypes)] Type toolbarButtonComponentType)
     {
         this.Order = order;
         this.Match = match;
