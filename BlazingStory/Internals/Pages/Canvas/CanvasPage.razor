@@ -43,11 +43,6 @@
 #pragma warning restore IL2111
                     }
 
-                    @foreach (var addon in this.AddonsStore.GetAddons(AddonType.CanvasPage))
-                    {
-                        <text>@addon.ToolbarContents</text>
-                    }
-
                     <Spacer />
 
                     @if (this._AddonPanelVisibleCommand?.Flag != true)
@@ -104,9 +99,6 @@
     protected QueryRouteData RouteData { get; init; } = default!;
 
     [CascadingParameter]
-    protected AddonsStore AddonsStore { get; init; } = default!;
-
-    [CascadingParameter]
     protected IServiceProvider Services { get; init; } = default!;
 
     [CascadingParameter]
@@ -155,7 +147,6 @@
     protected override void OnInitialized()
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
-        this.AddonsStore.OnFrameArgumentsChanged += OnGlobalArgumentsChanged;
         this.AddonManager.GlobalArgumentsChanged += OnGlobalArgumentsChanged;
 
         this._Commands = this.Services.GetRequiredService<CommandService>();
@@ -321,7 +312,6 @@
 
     public void Dispose()
     {
-        this.AddonsStore.OnFrameArgumentsChanged -= OnGlobalArgumentsChanged;
         this.AddonManager.GlobalArgumentsChanged -= OnGlobalArgumentsChanged;
         this._Subscriptions.Dispose();
         if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;

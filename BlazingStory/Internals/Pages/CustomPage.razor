@@ -1,4 +1,5 @@
-﻿@using System.Text.RegularExpressions
+@using System.Text.RegularExpressions
+@using BlazingStory.Addons.Internals
 @implements IDisposable
 
 <PageTitle>@_PageTitle</PageTitle>
@@ -14,9 +15,17 @@
             }
 
             @* -- Render Add-On's Toolbar Contents -- *@
-            @foreach (var addon in this.AddonsStore.GetAddons(AddonType.CustomPage))
+            @{
+#pragma warning disable IL2111
+            }
+            @foreach (var toolbarContent in this.GetToolbarContents())
             {
-                <text>@addon.ToolbarContents</text>
+                <DynamicComponent @key="toolbarContent.Id"
+                                  Type="toolbarContent.ComponentType"
+                                  Parameters="toolbarContent.ComponentParameter" />
+            }
+            @{
+#pragma warning restore IL2111
             }
 
             <Spacer />
@@ -46,9 +55,6 @@
 
 @code {
     [CascadingParameter]
-    protected AddonsStore AddonsStore { get; init; } = default!;
-
-    [CascadingParameter]
     protected CustomPageStore CustomPageStore { get; init; } = default!;
 
     [CascadingParameter]
@@ -59,6 +65,8 @@
 
     [CascadingParameter]
     protected QueryRouteData RouteData { get; init; } = default!;
+
+    private AddonManager AddonManager => this.Services.GetRequiredService<AddonManager>();
 
     private readonly Subscriptions _Subscriptions = new();
 
@@ -84,6 +92,25 @@
             ShowSidebar: commands[CommandType.SideBarVisible],
             Fullscreen: commands[CommandType.GoFullScreen]);
         this._Subscriptions.Add(this._Commands.ToolbarVisible!.Subscribe(this.OnToggleToolbarVisible));
+
+        this.AddonManager.GlobalArgumentsChanged += OnGlobalArgumentsChanged;
+    }
+
+    private IEnumerable<ToolbarContentDescriptor> GetToolbarContents()
+    {
+        return this.AddonManager.GetToolbarContents(BlazingStory.Addons.ViewMode.CustomPage);
+    }
+
+    private Dictionary<string, object?> GetGlobalArguments()
+    {
+        return this.GetToolbarContents()
+            .SelectMany(tb => tb.Globals)
+            .ToDictionary(arg => arg.Key, arg => arg.Value);
+    }
+
+    private void OnGlobalArgumentsChanged(object? sender, EventArgs args)
+    {
+        this.StateHasChanged();
     }
 
     private async ValueTask OnToggleToolbarVisible()
@@ -94,6 +121,7 @@
 
     public void Dispose()
     {
+        this.AddonManager.GlobalArgumentsChanged -= OnGlobalArgumentsChanged;
         this._Subscriptions.Dispose();
     }
 }

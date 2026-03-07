@@ -1,4 +1,4 @@
-﻿namespace BlazingStory.Internals.Addons.ChangeSize;
+namespace BlazingStory.Addons.BuiltIns.ChangeSize;
 
 internal enum SizeType
 {
