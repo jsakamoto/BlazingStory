@@ -173,16 +173,13 @@ else
         var globals = UriParameterKit.DecodeKeyValues(globalEffectsString);
         this._DecoratorParameters["Globals"] = globals;
 
-        //var background = globals.TryGetValue("backgrounds.value", out var backgroundStr) ? backgroundStr : "transparent";
-        var enableGrid = globals.TryGetValue("backgrounds.grid", out var gridStr) ? bool.TryParse(gridStr, out var grid) ? grid : false : false;
         var enableOutline = globals.TryGetValue("outline", out var outlineStr) ? bool.TryParse(outlineStr, out var outline) ? outline : false : false;
         this._EnableMeasure = globals.TryGetValue("measureEnabled", out var measureStr) ? bool.TryParse(measureStr, out var measure) ? measure : false : false;
 
         var basePath = "./_content/BlazingStory/css/preview/";
         var styleDescripters = new StyleDescriptor[] {
-            new() { Id = "addon-background-grid", Enable = enableGrid, Href = basePath + "background-grid.min.css" },
             new() { Id = "addon-outline", Enable = enableOutline, Href = basePath + "outline.min.css" }};
-        await this._JSModule.InvokeVoidAsync("ensurePreviewStyle", new object[] { "transparent", styleDescripters });
+        await this._JSModule.InvokeVoidAsync("ensurePreviewStyle", new object[] { styleDescripters });
 
         this.StateHasChanged();
     }

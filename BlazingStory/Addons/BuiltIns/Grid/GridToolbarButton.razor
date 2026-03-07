@@ -32,6 +32,7 @@
         if (!firstRender) return;
         var enableStr = await this.HelperScript.GetLocalStorageItemAsync(StorageKeys.Grid);
         this._Enable = bool.TryParse(enableStr, out var enable) ? enable : this._Enable;
+        this.StateHasChanged();
         this.UpdateGlobalArguments();
     }
 

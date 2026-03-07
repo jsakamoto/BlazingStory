@@ -1,0 +1,42 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+@code
+{
+    [Parameter]
+    public string? Href { get; set; }
+
+    [Parameter]
+    public bool Enable { get; set; }
+
+    private string? _previousHref;
+
+    private bool? _previousEnable;
+
+    private JSModule _JSModule;
+
+    private IJSObjectReference? _importedStyleSheet = null;
+
+    public ImprtStyleSheet()
+    {
+        this._JSModule = new JSModule(() => this.JSRuntime, "./Toolkit/ImprtStyleSheet.razor.js");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (string.IsNullOrEmpty(this.Href)) return;
+        if (this.Href == _previousHref && this.Enable == _previousEnable) return;
+        if (this._importedStyleSheet is not null)
+        {
+            var importedStyleSheet = _importedStyleSheet;
+            this._importedStyleSheet = null;
+            await importedStyleSheet.DisposeIfConnectedAsync("dispose");
+        }
+        if (!this.Enable) return;
+        this._importedStyleSheet = await this._JSModule.InvokeAsync<IJSObjectReference>("importStyleSheet", this.Href, this.Enable);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (this._importedStyleSheet is not null) await this._importedStyleSheet.DisposeIfConnectedAsync("dispose");
+    }
+}

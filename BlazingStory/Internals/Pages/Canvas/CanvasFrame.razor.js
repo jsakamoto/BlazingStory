@@ -1,9 +1,6 @@
-export const ensurePreviewStyle = (background, styleDescripters) => {
+export const ensurePreviewStyle = (styleDescripters) => {
     const doc = document;
     const head = doc.head;
-    const bodyStyle = doc.body.style;
-    bodyStyle.transition = "background-color 0.3s";
-    setTimeout(() => { bodyStyle.backgroundColor = background; }, 10);
     for (const descripter of styleDescripters) {
         const linkElement = head.querySelector(`link#${descripter.id}`);
         if (linkElement === null && descripter.enable) {

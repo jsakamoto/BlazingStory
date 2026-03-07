@@ -6,14 +6,9 @@ type StyleDescriptor = {
     enable: boolean
 };
 
-export const ensurePreviewStyle = (background: string, styleDescripters: StyleDescriptor[]) => {
+export const ensurePreviewStyle = (styleDescripters: StyleDescriptor[]) => {
     const doc = document;
     const head = doc.head;
-    const bodyStyle = doc.body.style;
-
-    bodyStyle.transition = "background-color 0.3s";
-    setTimeout(() => { bodyStyle.backgroundColor = background; }, 10);
-
 
     for (const descripter of styleDescripters) {
         const linkElement = head.querySelector(`link#${descripter.id}`);

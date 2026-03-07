@@ -1,0 +1,16 @@
+@using BlazingStory.Toolkit
+
+<ImprtStyleSheet Href="./_content/BlazingStory/css/preview/background-grid.min.css"
+                 Enable="_enableGrid" />
+@code
+{
+    [Parameter]
+    public IReadOnlyDictionary<string, string>? Globals { get; set; }
+
+    private bool _enableGrid = false;
+
+    override protected void OnParametersSet()
+    {
+        this._enableGrid = this.Globals is not null && this.Globals.TryGetValue("backgrounds.grid", out var gridStr) ? bool.TryParse(gridStr, out var grid) ? grid : false : false;
+    }
+}
