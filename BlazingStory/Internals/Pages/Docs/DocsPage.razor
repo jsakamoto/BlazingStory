@@ -18,9 +18,17 @@
         }
 
         @* -- Render Add-On's Toolbar Contents -- *@
+        @{
+#pragma warning disable IL2111
+        }
         @foreach (var toolbarButton in this.GetToolbarButtons())
         {
-            <DynamicComponent @key="toolbarButton.Id" Type="toolbarButton.ComponentType" Parameters="toolbarButton.ComponentParameter" />
+            <DynamicComponent @key="toolbarButton.Id"
+                              Type="toolbarButton.ComponentType"
+                              Parameters="toolbarButton.ComponentParameter" />
+        }
+        @{
+#pragma warning restore IL2111
         }
 
         <Spacer />

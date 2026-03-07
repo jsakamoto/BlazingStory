@@ -1,0 +1,16 @@
+@using BlazingStory.Toolkit
+
+<ImprtStyleSheet Href="./_content/BlazingStory/css/preview/outline.min.css"
+                 Enable="_enable" />
+@code
+{
+    [Parameter]
+    public IReadOnlyDictionary<string, string>? Globals { get; set; }
+
+    private bool _enable = false;
+
+    override protected void OnParametersSet()
+    {
+        this._enable = this.Globals is not null && this.Globals.TryGetValue("outline", out var strValue) ? bool.TryParse(strValue, out var boolValue) ? boolValue : false : false;
+    }
+}

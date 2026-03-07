@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
+
 namespace BlazingStory.Addons.Internals;
 
 internal class AddonManager : IAddonBuilder, IDisposable
@@ -16,14 +19,14 @@ internal class AddonManager : IAddonBuilder, IDisposable
         }
     }
 
-    void IAddonBuilder.AddToolbarButton<TToolbarButtonComponent>(int order, Func<ViewMode, bool> match)
+    void IAddonBuilder.AddToolbarButton<[DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicFields | PublicProperties | PublicEvents | PublicNestedTypes)] TToolbarButtonComponent>(int order, Func<ViewMode, bool> match)
     {
         var toolbarButtonDescriptor = new ToolbarButtonDescriptor(order, match, typeof(TToolbarButtonComponent));
         toolbarButtonDescriptor.Globals.ArgumentsChanged += this.OnGlobalArgumentsChanged;
         this._toolbarButtons.Add(toolbarButtonDescriptor);
     }
 
-    void IAddonBuilder.AddPreviewDecorator<TPreviewDecoratorComponent>()
+    void IAddonBuilder.AddPreviewDecorator<[DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicFields | PublicProperties | PublicEvents | PublicNestedTypes)] TPreviewDecoratorComponent>()
     {
         var previewDecoratorDescriptor = new PreviewDecoratorDescriptor(typeof(TPreviewDecoratorComponent));
         this._previewDecorators.Add(previewDecoratorDescriptor);

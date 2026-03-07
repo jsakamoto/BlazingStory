@@ -24,7 +24,11 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (string.IsNullOrEmpty(this.Href)) return;
-        if (this.Href == _previousHref && this.Enable == _previousEnable) return;
+        if (this.Href == this._previousHref && this.Enable == this._previousEnable) return;
+
+        this._previousHref = this.Href;
+        this._previousEnable = this.Enable;
+
         if (this._importedStyleSheet is not null)
         {
             var importedStyleSheet = _importedStyleSheet;

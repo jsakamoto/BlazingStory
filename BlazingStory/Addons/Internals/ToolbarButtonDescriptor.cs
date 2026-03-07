@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
+
 namespace BlazingStory.Addons.Internals;
 
 internal class ToolbarButtonDescriptor
@@ -8,13 +11,14 @@ internal class ToolbarButtonDescriptor
 
     internal readonly Func<ViewMode, bool> Match;
 
+    [DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicFields | PublicProperties | PublicEvents | PublicNestedTypes)]
     internal readonly Type ComponentType;
 
     internal readonly GlobalArguments Globals = new();
 
     internal readonly Dictionary<string, object?> ComponentParameter = new();
 
-    internal ToolbarButtonDescriptor(int order, Func<ViewMode, bool> match, Type toolbarButtonComponentType)
+    internal ToolbarButtonDescriptor(int order, Func<ViewMode, bool> match, [DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicFields | PublicProperties | PublicEvents | PublicNestedTypes)] Type toolbarButtonComponentType)
     {
         this.Order = order;
         this.Match = match;
