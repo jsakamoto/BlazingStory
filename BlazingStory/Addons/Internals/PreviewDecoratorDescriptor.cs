@@ -7,10 +7,10 @@ internal class PreviewDecoratorDescriptor
 {
     internal readonly Guid Id = Guid.NewGuid();
 
-    [DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicFields | PublicProperties | PublicEvents | PublicNestedTypes)]
+    [DynamicallyAccessedMembers(All)]
     internal readonly Type ComponentType;
 
-    internal PreviewDecoratorDescriptor([DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicFields | PublicProperties | PublicEvents | PublicNestedTypes)] Type previewDecoratorComponentType)
+    internal PreviewDecoratorDescriptor([DynamicallyAccessedMembers(All)] Type previewDecoratorComponentType)
     {
         this.ComponentType = previewDecoratorComponentType;
     }

@@ -11,14 +11,14 @@ internal class ToolbarContentDescriptor
 
     internal readonly Func<ViewMode, bool> Match;
 
-    [DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicFields | PublicProperties | PublicEvents | PublicNestedTypes)]
+    [DynamicallyAccessedMembers(All)]
     internal readonly Type ComponentType;
 
     internal readonly GlobalArguments Globals = new();
 
     internal readonly Dictionary<string, object?> ComponentParameter = new();
 
-    internal ToolbarContentDescriptor(int order, Func<ViewMode, bool> match, [DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicFields | PublicProperties | PublicEvents | PublicNestedTypes)] Type toolbarButtonComponentType)
+    internal ToolbarContentDescriptor(int order, Func<ViewMode, bool> match, [DynamicallyAccessedMembers(All)] Type toolbarButtonComponentType)
     {
         this.Order = order;
         this.Match = match;

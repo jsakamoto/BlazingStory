@@ -5,6 +5,6 @@ namespace BlazingStory.Addons;
 
 public interface IAddonBuilder
 {
-    void AddToolbarContent<[DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicFields | PublicProperties | PublicEvents | PublicNestedTypes)] TToolbarContentComponent>(int order, Func<ViewMode, bool> match);
-    void AddPreviewDecorator<[DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicFields | PublicProperties | PublicEvents | PublicNestedTypes)] TPreviewDecoratorComponent>();
+    void AddToolbarContent<[DynamicallyAccessedMembers(All)] TToolbarContentComponent>(int order, Func<ViewMode, bool> match);
+    void AddPreviewDecorator<[DynamicallyAccessedMembers(All)] TPreviewDecoratorComponent>();
 }

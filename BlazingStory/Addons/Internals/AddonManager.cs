@@ -19,14 +19,14 @@ internal class AddonManager : IAddonBuilder, IDisposable
         }
     }
 
-    void IAddonBuilder.AddToolbarContent<[DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicFields | PublicProperties | PublicEvents | PublicNestedTypes)] TToolbarContentComponent>(int order, Func<ViewMode, bool> match)
+    void IAddonBuilder.AddToolbarContent<[DynamicallyAccessedMembers(All)] TToolbarContentComponent>(int order, Func<ViewMode, bool> match)
     {
         var toolbarContentDescriptor = new ToolbarContentDescriptor(order, match, typeof(TToolbarContentComponent));
         toolbarContentDescriptor.Globals.ArgumentsChanged += this.OnGlobalArgumentsChanged;
         this._toolbarContents.Add(toolbarContentDescriptor);
     }
 
-    void IAddonBuilder.AddPreviewDecorator<[DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicFields | PublicProperties | PublicEvents | PublicNestedTypes)] TPreviewDecoratorComponent>()
+    void IAddonBuilder.AddPreviewDecorator<[DynamicallyAccessedMembers(All)] TPreviewDecoratorComponent>()
     {
         var previewDecoratorDescriptor = new PreviewDecoratorDescriptor(typeof(TPreviewDecoratorComponent));
         this._previewDecorators.Add(previewDecoratorDescriptor);
