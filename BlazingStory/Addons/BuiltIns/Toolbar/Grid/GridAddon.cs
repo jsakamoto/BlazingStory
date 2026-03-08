@@ -1,4 +1,4 @@
-namespace BlazingStory.Addons.BuiltIns.Grid;
+namespace BlazingStory.Addons.BuiltIns.Toolbar.Grid;
 
 internal class GridAddon : IAddon
 {

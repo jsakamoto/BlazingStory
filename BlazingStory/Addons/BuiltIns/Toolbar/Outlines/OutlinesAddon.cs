@@ -1,4 +1,4 @@
-namespace BlazingStory.Addons.BuiltIns.Outlines;
+namespace BlazingStory.Addons.BuiltIns.Toolbar.Outlines;
 
 internal class OutlinesAddon : IAddon
 {

@@ -1,4 +1,4 @@
-namespace BlazingStory.Addons.BuiltIns.ChangeSize;
+namespace BlazingStory.Addons.BuiltIns.Toolbar.ChangeSize;
 
 internal class ChangeSizeAddon : IAddon
 {

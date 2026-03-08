@@ -1,4 +1,4 @@
-namespace BlazingStory.Addons.BuiltIns.Background;
+namespace BlazingStory.Addons.BuiltIns.Toolbar.Background;
 
 internal class BackgroundAddon : IAddon
 {

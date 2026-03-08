@@ -222,11 +222,11 @@
 
     private void ConfigureAddons(IAddonStore addons)
     {
-        addons.Register<BlazingStory.Addons.BuiltIns.Grid.GridAddon>();
-        addons.Register<BlazingStory.Addons.BuiltIns.Background.BackgroundAddon>();
-        addons.Register<BlazingStory.Addons.BuiltIns.Measure.MeasureAddon>();
-        addons.Register<BlazingStory.Addons.BuiltIns.Outlines.OutlinesAddon>();
-        addons.Register<BlazingStory.Addons.BuiltIns.ChangeSize.ChangeSizeAddon>();
+        addons.Register<BlazingStory.Addons.BuiltIns.Toolbar.Grid.GridAddon>();
+        addons.Register<BlazingStory.Addons.BuiltIns.Toolbar.Background.BackgroundAddon>();
+        addons.Register<BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasureAddon>();
+        addons.Register<BlazingStory.Addons.BuiltIns.Toolbar.Outlines.OutlinesAddon>();
+        addons.Register<BlazingStory.Addons.BuiltIns.Toolbar.ChangeSize.ChangeSizeAddon>();
     }
 
     private void ConfigureServices(IServiceCollection services)

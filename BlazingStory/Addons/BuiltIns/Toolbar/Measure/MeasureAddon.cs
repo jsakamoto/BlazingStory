@@ -1,4 +1,4 @@
-namespace BlazingStory.Addons.BuiltIns.Measure;
+namespace BlazingStory.Addons.BuiltIns.Toolbar.Measure;
 
 internal class MeasureAddon : IAddon
 {
