@@ -12,13 +12,18 @@
     [CascadingParameter(Name = "Story")]
     public Story? Story { get; set; }
 
+    private Story? _PrevStory;
+
     public ActionPanelPreviewDecorator()
     {
         this._JSModule = new(() => this.JSRuntime, "./Addons/BuiltIns/Panel/Action/ActionPanelPreviewDecorator.razor.js");
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnParametersSetAsync()
     {
+        await base.OnParametersSetAsync();
+        if (Object.ReferenceEquals(this.Story, this._PrevStory)) return;
+        this._PrevStory = this.Story;
         await this.WireUpEventMonitorsAsync();
     }
 
@@ -30,7 +35,6 @@
         {
             if (parameter.Type.IsAssignableTo(typeof(EventCallback)))
             {
-                Console.WriteLine($"[M-3-1] Subscribe Event: {parameter.Name}");
                 var eventCallback = EventCallback.Factory.Create(this, () => this.EventVoidMonitorHandler(parameter.Name));
                 await this.Story.Context.AddOrUpdateArgumentAsync(parameter.Name, eventCallback);
             }
@@ -38,7 +42,6 @@
             else if (parameter.Type.IsGenericType && parameter.Type.GetGenericTypeDefinition() == typeof(EventCallback<>))
             {
                 var typeOfArgs = parameter.Type.GenericTypeArguments.First();
-                Console.WriteLine($"[M-3-2] Subscribe Event: {parameter.Name} ({typeOfArgs.Name})");
 
                 var eventArgsParam = Expression.Parameter(typeOfArgs, "eventArgs");
 #pragma warning disable IL2060
@@ -58,7 +61,6 @@
                 await this.Story.Context.AddOrUpdateArgumentAsync(parameter.Name, eventCallback);
             }
         }
-
     }
 
     private async Task EventVoidMonitorHandler(string name)
@@ -68,9 +70,7 @@
 
     internal async Task EventTArgMonitorHandler<[DynamicallyAccessedMembers(PublicProperties)] TArgs>(string name, TArgs eventArgs)
     {
-        Console.WriteLine($"[M-3] Event '{name}'"); // invoked with args: {JsonFallbackSerializer.Serialize(eventArgs)}");
         var json = JsonFallbackSerializer.Serialize(eventArgs);
-        Console.WriteLine($"[M-4] Serialized args: {json}");
         await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, json);
     }
 
@@ -88,7 +88,6 @@
 
     public async ValueTask DisposeAsync()
     {
-        Console.WriteLine($"[M-5] DisposeAsync");
         await this._JSModule.DisposeAsync();
     }
 }

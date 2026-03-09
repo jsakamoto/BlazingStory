@@ -74,9 +74,14 @@ else
         if (!this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story)) return;
         if (Object.ReferenceEquals(this._Story, story)) return;
 
-        if (this._Story != null) this._Story.Context.ShouldRender -= StoryContext_ShouldRender;
+        if (this._Story is not null)
+        {
+            this._Story.Context.ShouldRender -= StoryContext_ShouldRender;
+            this._Story.Context.ArgumentChanged -= StoryContext_ArgumentChanged;
+        }
         this._Story = story;
         this._Story.Context.ShouldRender += StoryContext_ShouldRender;
+        this._Story.Context.ArgumentChanged += StoryContext_ArgumentChanged;
 
         await this.UpdateComponentStatesAsync();
         this.StateHasChanged();
@@ -98,9 +103,16 @@ else
         this.StateHasChanged();
     }
 
+    private ValueTask StoryContext_ArgumentChanged()
+    {
+        Console.WriteLine($"[CanvasFrame] StoryContext ArgumentChanged");
+        this.StateHasChanged();
+        return ValueTask.CompletedTask;
+    }
+
     private string _ComponentArgsString = "";
 
-    private string _GlobalEffectsString = "";
+    private string _GlobasString = "";
 
     private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs args)
     {
@@ -112,7 +124,6 @@ else
         var queryStrings = HttpUtility.ParseQueryString(new Uri(this.NavigationManager.Uri).Query);
         await this.UpdateComponentArgsFromUrlAsync(queryStrings);
         await this.UpdateGlobalEffectsFromUrlAsync(queryStrings);
-        // await this.WireUpEventMonitorsAsync();
     }
 
     private async ValueTask UpdateComponentArgsFromUrlAsync(NameValueCollection queryStrings)
@@ -138,25 +149,27 @@ else
         this.StateHasChanged();
     }
 
-    private class StyleDescriptor { public string? Id { get; init; } public bool Enable { get; init; } public string? Href { get; init; } };
-
     private async ValueTask UpdateGlobalEffectsFromUrlAsync(NameValueCollection queryStrings)
     {
         // If it is during the server-side pre-rendering, nothing to do.
         if (!this._Rendered) return;
 
-        var globalEffectsString = queryStrings["globals"] ?? "";
-        if (this._GlobalEffectsString == globalEffectsString) return;
-        this._GlobalEffectsString = globalEffectsString;
+        var globalsString = queryStrings["globals"] ?? "";
+        if (this._GlobasString == globalsString) return;
+        this._GlobasString = globalsString;
 
-        this._Globals = UriParameterKit.DecodeKeyValues(globalEffectsString);
-
+        this._Globals = UriParameterKit.DecodeKeyValues(globalsString);
         this.StateHasChanged();
     }
 
     public async ValueTask DisposeAsync()
     {
-        if (this._Story != null) this._Story.Context.ShouldRender -= StoryContext_ShouldRender;
+        if (this._Story is not null)
+        {
+            this._Story.Context.ShouldRender -= StoryContext_ShouldRender;
+            this._Story.Context.ArgumentChanged -= StoryContext_ArgumentChanged;
+            this._Story = null;
+        }
         this.NavigationManager.LocationChanged -= NavigationManager_LocationChanged;
     }
 }
