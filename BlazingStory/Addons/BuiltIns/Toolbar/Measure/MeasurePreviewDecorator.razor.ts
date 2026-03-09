@@ -1,5 +1,5 @@
-import type { IDisposable } from "../../../wwwroot/js/types/disposable";
-import type { DotNetObjectReference } from "../../../wwwroot/js/types/blazor";
+import type { IDisposable } from "../../../../wwwroot/js/types/disposable";
+import type { DotNetObjectReference } from "../../../../wwwroot/js/types/blazor";
 
 type SpacingSize = {
     top: number;
