@@ -7,6 +7,8 @@ internal class AddonManager : IAddonBuilder, IDisposable
 {
     private readonly List<ToolbarContentDescriptor> _toolbarContents = [];
 
+    private readonly List<PanelDescriptor> _panels = [];
+
     private readonly List<PreviewDecoratorDescriptor> _previewDecorators = [];
 
     internal event EventHandler? GlobalArgumentsChanged;
@@ -26,6 +28,13 @@ internal class AddonManager : IAddonBuilder, IDisposable
         this._toolbarContents.Add(toolbarContentDescriptor);
     }
 
+    void IAddonBuilder.AddPanel<[DynamicallyAccessedMembers(All)] TPanelComponent>(int order, Func<ViewMode, bool> match)
+    {
+        var panelDescriptor = new PanelDescriptor(order, match, typeof(TPanelComponent));
+        //panelDescriptor.Globals.ArgumentsChanged += this.OnGlobalArgumentsChanged;
+        this._panels.Add(panelDescriptor);
+    }
+
     void IAddonBuilder.AddPreviewDecorator<[DynamicallyAccessedMembers(All)] TPreviewDecoratorComponent>()
     {
         var previewDecoratorDescriptor = new PreviewDecoratorDescriptor(typeof(TPreviewDecoratorComponent));
@@ -35,6 +44,11 @@ internal class AddonManager : IAddonBuilder, IDisposable
     internal IEnumerable<ToolbarContentDescriptor> GetToolbarContents(ViewMode viewMode)
     {
         return this._toolbarContents.Where(x => x.Match(viewMode)).OrderBy(x => x.Order);
+    }
+
+    internal IEnumerable<PanelDescriptor> GetPanels(ViewMode viewMode)
+    {
+        return this._panels.Where(x => x.Match(viewMode)).OrderBy(x => x.Order);
     }
 
     internal IEnumerable<PreviewDecoratorDescriptor> GetPreviewDecorators()
