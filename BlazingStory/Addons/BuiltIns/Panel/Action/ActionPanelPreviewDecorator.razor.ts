@@ -1,4 +1,4 @@
-import type { } from "../../../wwwroot/js/types/browser-dom";
+import type { } from "../../../../wwwroot/js/types/browser-dom";
 
 export const dispatchComponentActionEvent = (name: string, argsJson: string) => {
     const event = new CustomEvent('componentaction', {

@@ -1,0 +1,94 @@
+@using System.Linq.Expressions
+@using System.Reflection
+@using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+
+@code
+{
+    private readonly JSModule _JSModule;
+
+    [CascadingParameter(Name = "Story")]
+    public Story? Story { get; set; }
+
+    public ActionPanelPreviewDecorator()
+    {
+        this._JSModule = new(() => this.JSRuntime, "./Addons/BuiltIns/Panel/Action/ActionPanelPreviewDecorator.razor.js");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await this.WireUpEventMonitorsAsync();
+    }
+
+    private async ValueTask WireUpEventMonitorsAsync()
+    {
+        if (this.Story == null) return;
+
+        foreach (var parameter in this.Story.Context.Parameters)
+        {
+            if (parameter.Type.IsAssignableTo(typeof(EventCallback)))
+            {
+                Console.WriteLine($"[M-3-1] Subscribe Event: {parameter.Name}");
+                var eventCallback = EventCallback.Factory.Create(this, () => this.EventVoidMonitorHandler(parameter.Name));
+                await this.Story.Context.AddOrUpdateArgumentAsync(parameter.Name, eventCallback);
+            }
+
+            else if (parameter.Type.IsGenericType && parameter.Type.GetGenericTypeDefinition() == typeof(EventCallback<>))
+            {
+                var typeOfArgs = parameter.Type.GenericTypeArguments.First();
+                Console.WriteLine($"[M-3-2] Subscribe Event: {parameter.Name} ({typeOfArgs.Name})");
+
+                var eventArgsParam = Expression.Parameter(typeOfArgs, "eventArgs");
+#pragma warning disable IL2060
+                var monitorHandler = _EventTArgMonitorHandlerMethod.Value.MakeGenericMethod(typeOfArgs);
+#pragma warning restore IL2060
+                var callBody = Expression.Call(Expression.Constant(this), monitorHandler, Expression.Constant(parameter.Name), eventArgsParam);
+
+                var monitorHandlerLambdaType = typeof(Func<,>).MakeGenericType(typeOfArgs, typeof(Task));
+                var monitorHandlerLambda = Expression.Lambda(monitorHandlerLambdaType, callBody, eventArgsParam);
+                var monitorHandlerDelegate = monitorHandlerLambda.Compile();
+
+#pragma warning disable IL2060
+                var eventCallbackCreate = _EventCallbackCreateMethod.Value.MakeGenericMethod(typeOfArgs) ?? throw new InvalidOperationException();
+#pragma warning restore IL2060
+
+                var eventCallback = eventCallbackCreate.Invoke(EventCallback.Factory, new object[] { this, monitorHandlerDelegate });
+                await this.Story.Context.AddOrUpdateArgumentAsync(parameter.Name, eventCallback);
+            }
+        }
+
+    }
+
+    private async Task EventVoidMonitorHandler(string name)
+    {
+        await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, "void");
+    }
+
+    internal async Task EventTArgMonitorHandler<[DynamicallyAccessedMembers(PublicProperties)] TArgs>(string name, TArgs eventArgs)
+    {
+        Console.WriteLine($"[M-3] Event '{name}'"); // invoked with args: {JsonFallbackSerializer.Serialize(eventArgs)}");
+        var json = JsonFallbackSerializer.Serialize(eventArgs);
+        Console.WriteLine($"[M-4] Serialized args: {json}");
+        await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, json);
+    }
+
+    private static readonly Lazy<MethodInfo> _EventTArgMonitorHandlerMethod = new(() => typeof(ActionPanelPreviewDecorator).GetMethod(nameof(EventTArgMonitorHandler), BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new InvalidOperationException());
+
+    private static readonly Lazy<MethodInfo> _EventCallbackCreateMethod = new(() =>
+        typeof(EventCallbackFactory).GetMethods(BindingFlags.Public | BindingFlags.Instance)
+            .Where(m => m.Name == "Create" && m.IsGenericMethod)
+            .Select(m => (MethodInfo: m, ParameterTypes: m.GetParameters().Select(p => p.ParameterType).ToArray()))
+            .Where(m => m.ParameterTypes.Length == 2)
+            .Where(m => m.ParameterTypes[0] == typeof(object))
+            .Where(m => m.ParameterTypes[1].IsGenericType && m.ParameterTypes[1].GetGenericTypeDefinition() == typeof(Func<,>))
+            .Select(m => m.MethodInfo)
+            .First());
+
+    public async ValueTask DisposeAsync()
+    {
+        Console.WriteLine($"[M-5] DisposeAsync");
+        await this._JSModule.DisposeAsync();
+    }
+}
