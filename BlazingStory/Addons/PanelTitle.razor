@@ -1,0 +1,16 @@
+@using BlazingStory.Addons.Internals
+@using Microsoft.AspNetCore.Components.Sections
+
+<SectionContent SectionName="@($"panel-title-{this.PanelDescriptor.Id:N}")">
+    @ChildContent
+</SectionContent>
+
+@code
+{
+    [CascadingParameter]
+    internal PanelDescriptor PanelDescriptor { get; init; } = default!;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+}

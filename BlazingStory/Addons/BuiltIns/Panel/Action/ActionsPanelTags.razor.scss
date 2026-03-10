@@ -1,0 +1,29 @@
+.separator[bs-actions-panel-tags] {
+    display: inline-block;
+    margin-left: 1px;
+    width: 14px;
+}
+
+.action-value[bs-actions-panel-tags] {
+    &.value-kind-object {
+        font-style: italic;
+
+        & > .property-name {
+            color: var(--bs-actions-log-name-color);
+        }
+    }
+
+    &.value-kind-string {
+        color: var(--bs-actions-log-value-string-color);
+    }
+
+    &.value-kind-null {
+        color: var(--bs-actions-log-value-null-color);
+    }
+
+    &.value-kind-true,
+    &.value-kind-false,
+    &.value-kind-number {
+        color: var(--bs-actions-log-value-noobj-color);
+    }
+}

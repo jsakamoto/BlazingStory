@@ -1343,6 +1343,14 @@ a.menu-item.command-menu-item {
   position: relative;
 }
 
+.add-on-panel-pane {
+  display: none;
+}
+
+.add-on-panel-pane.active {
+  display: block;
+}
+
 .controls-panel table {
   border-collapse: collapse;
   border-spacing: 0;

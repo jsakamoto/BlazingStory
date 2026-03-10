@@ -1,16 +1,26 @@
+@using BlazingStory.Addons.Internals
 @using BlazingStory.Internals.Pages.Canvas.Actions
 @using BlazingStory.Internals.Pages.Canvas.Controls
+@using Microsoft.AspNetCore.Components.Sections
 @implements IDisposable
 
 <div class="add-on-panel fill stack vertical">
 
     <ToolBar>
         <TabButtonGroup>
+            @*
             @foreach (var descriptor in this._AddonPanelDescriptors)
             {
                 <TabButton Active="descriptor == this._ActiveAddonPanelDescriptor" OnClick="() => this.OnSelectAddonPanel(descriptor)">
                     @descriptor.Name
                     <Badge Text="@descriptor.Badge" />
+                </TabButton>
+            }
+            *@
+            @foreach (var panel in this.GetPanels())
+            {
+                <TabButton @key="panel.Id" Active="this._ActivePanel == panel" OnClick="() => this._ActivePanel = panel">
+                    <SectionOutlet SectionName="@($"panel-title-{panel.Id:N}")" />
                 </TabButton>
             }
         </TabButtonGroup>
@@ -23,14 +33,24 @@
 
     <div class="fill add-on-panel-content">
         @{
-        #pragma warning disable IL2111
+#pragma warning disable IL2111
         }
+        @*
         @if (_ActiveAddonPanelDescriptor != null)
         {
             <DynamicComponent Type="_ActiveAddonPanelDescriptor.PanelComponentType" Parameters="_AddonPanelParameters" />
         }
+        *@
+        @foreach (var panel in this.GetPanels())
+        {
+            <CascadingValue @key="panel.Id" Value="panel">
+                <div class="@CssClass("add-on-panel-pane", new { Active = _ActivePanel == panel })">
+                    <DynamicComponent Type="panel.ComponentType" />
+                </div>
+            </CascadingValue>
+        }
         @{
-        #pragma warning restore IL2111
+#pragma warning restore IL2111
         }
     </div>
 
@@ -53,6 +73,11 @@
     private CommandService _Commands = default!;
 
     private readonly Dictionary<string, object?> _AddonPanelParameters = new();
+
+    private AddonManager AddonManager => this.Services.GetRequiredService<AddonManager>();
+
+    private PanelDescriptor? _ActivePanel;
+
 
     private readonly IEnumerable<AddonPanelDescriptor> _AddonPanelDescriptors = new AddonPanelDescriptor[]
     {
@@ -81,6 +106,11 @@
         this._Commands = this.Services.GetRequiredService<CommandService>();
         this._ActiveAddonPanelDescriptor = this._AddonPanelDescriptors.First();
         this._AddonPanelDescriptors.ForEach(descriptor => descriptor.Updated += Descriptor_Updated);
+    }
+
+    private IEnumerable<PanelDescriptor> GetPanels()
+    {
+        return this.AddonManager.GetPanels(BlazingStory.Addons.ViewMode.Story);
     }
 
     private void Descriptor_Updated(object? sender, EventArgs args)

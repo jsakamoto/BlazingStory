@@ -11,6 +11,8 @@ internal class PanelDescriptor
 
     internal readonly Func<ViewMode, bool> Match;
 
+    internal string Name => this.ComponentType?.Name ?? "(null)";
+
     [DynamicallyAccessedMembers(All)]
     internal readonly Type ComponentType;
 

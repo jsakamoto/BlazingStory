@@ -1,0 +1,64 @@
+.action-log-line {
+    display: flex;
+    align-items: start;
+    margin-left: 5px;
+    color: var(--bs-actions-log-text-color);
+
+    & > .action-repeat {
+        font-family: var(--bs-font-family);
+        font-size: var(--bs-control-caption-size);
+        color: var(--bs-actions-log-repeat-text-color);
+        background-color: var(--bs-actions-log-repeat-back-color);
+        font-weight: 700;
+        line-height: 1;
+        border-radius: 20px;
+        padding: 1px 5px;
+        margin: 1px 0px;
+    }
+
+    & > .action-log-content {
+        flex: 1;
+        overflow: hidden;
+
+        & > .action-log-parent {
+            height: 19px;
+            display: flex;
+            align-items: center;
+
+            & > .action-args-node {
+                color: var(--bs-actions-log-expander-color);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 8px;
+                width: 18px;
+                height: 18px;
+                user-select: none;
+                transform: rotateZ(0deg);
+
+                &.no-children {
+                    visibility: hidden;
+                }
+
+                &.expanded {
+                    transform: rotateZ(90deg);
+                }
+            }
+
+            & > .action-name {
+                color: var(--bs-actions-log-name-color);
+            }
+
+            & > .action-value {
+                flex: 1;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+
+        & > .action-log-children {
+            padding-left: 8px;
+        }
+    }
+}

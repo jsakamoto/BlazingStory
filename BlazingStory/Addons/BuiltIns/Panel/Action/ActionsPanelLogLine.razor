@@ -1,0 +1,71 @@
+﻿@using System.Text.Json
+
+<div class="action-log-line">
+
+    @if (this.Repeat > 1)
+    {
+        <span class="action-repeat">@this.Repeat</span>
+    }
+
+    <div class="action-log-content">
+
+        <div class="action-log-parent">
+
+            <span class="@CssClass("action-args-node", new{ 
+                Expanded = this._IsExpanded,
+                NoChildren = this.Value.ValueKind is not JsonValueKind.Object and not JsonValueKind.Array
+            })" @onclick="OnClickNodeIcon">
+                ▶
+            </span>
+
+            <span class="action-name">@this.Name</span>
+            @if (this.Value.ValueKind != JsonValueKind.Undefined)
+            {
+                @ActionsPanelTags.Separator(":")
+                <span class="action-value">
+                    @ActionsPanelTags.RenderLogValue(this.Value)
+                </span>
+            }
+        </div>
+
+        @if (this._IsExpanded)
+        {
+            <div class="action-log-children">
+                @if (this.Value.ValueKind is JsonValueKind.Object)
+                {
+                    @foreach (var property in this.Value.EnumerateObject())
+                    {
+                        <ActionsPanelLogLine @key="property.Name" Name="@property.Name" Value="@property.Value" />
+                    }
+                }
+                else if (this.Value.ValueKind is JsonValueKind.Array)
+                {
+                    @foreach (var element in this.Value.EnumerateArray().Select((e, index) => (Value: e, Index: index)))
+                    {
+                        <ActionsPanelLogLine @key="element.Index" Name="@element.Index.ToString()" Value="@element.Value" />
+                    }
+                }
+            </div>
+        }
+
+    </div>
+</div>
+
+@code
+{
+    [Parameter]
+    public int Repeat { get; set; }
+
+    [Parameter, EditorRequired]
+    public string? Name { get; set; }
+
+    [Parameter, EditorRequired]
+    public JsonElement Value { get; set; }
+
+    private bool _IsExpanded = false;
+
+    private void OnClickNodeIcon()
+    {
+        this._IsExpanded = !this._IsExpanded;
+    }
+}
