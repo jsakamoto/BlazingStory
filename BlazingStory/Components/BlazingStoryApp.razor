@@ -246,8 +246,7 @@
             .AddScoped<NavigationService>()
             .AddScoped<BlazingStoryOptions>(_ => this._Options)
             .AddScoped<WebAssets>()
-            .AddScoped<AddonManager>()
-            .AddTransient<ComponentActionLogs>();
+            .AddScoped<AddonManager>();
 
         if (OperatingSystem.IsBrowser())
             services.AddSingleton<IXmlDocComment, XmlDocCommentForWasm>();

@@ -5,16 +5,16 @@
 
 <PanelTitle>
     Action
-    @if (this._ActionLogs.Count > 0)
+    @if ((this.ActionLogs?.Count ?? 0) > 0)
     {
-        <Badge Text="@this._ActionLogs.Count.ToString()" />
+        <Badge Text="@this.ActionLogs?.Count.ToString()" />
     }
 </PanelTitle>
 
 <div class="actions-panel">
 
     <div class="actions-panel-scroll-window">
-        @foreach (var log in this._ActionLogs)
+        @foreach (var log in this.ActionLogs ?? [])
         {
             <ActionsPanelLogLine @key="log.Id" Repeat="@log.Repeat" Name="@log.Name" Value="@log.ArgsJsonElement" />
         }
@@ -32,7 +32,11 @@
 
     private Story? _PrevStory;
 
-    private readonly List<ComponentActionLog> _ActionLogs = [];
+    [Parameter]
+    public List<ComponentActionLog>? ActionLogs { get; set; } = [];
+
+    [Parameter]
+    public EventCallback<List<ComponentActionLog>?> ActionLogsChanged { get; set; }
 
     private JSModule _JSModule;
 
@@ -45,10 +49,14 @@
         this._JSModule = new(() => this.JSRuntime, "./Addons/BuiltIns/Panel/Actions/ActionsPanel.razor.js");
     }
 
-    override protected void OnParametersSet()
+    override protected async Task OnParametersSetAsync()
     {
-        base.OnParametersSet();
-        if (!Object.ReferenceEquals(this.Story, this._PrevStory)) _ActionLogs.Clear();
+        await base.OnParametersSetAsync();
+        if (!Object.ReferenceEquals(this.Story, this._PrevStory))
+        {
+            this.ActionLogs?.Clear();
+            await this.ActionLogsChanged.InvokeAsync(ActionLogs);
+        }
         this._PrevStory = this.Story;
     }
 
@@ -60,15 +68,17 @@
     }
 
     [JSInvokable, EditorBrowsable(EditorBrowsableState.Never)]
-    public void OnComponentAction(ComponentActionEventArgs args)
+    public async Task OnComponentAction(ComponentActionEventArgs args)
     {
-        this._ActionLogs.Insert(0, new(args.Name ?? "(null)", args.ArgsJson ?? "null"));
+        this.ActionLogs?.Insert(0, new(args.Name ?? "(null)", args.ArgsJson ?? "null"));
+        await this.ActionLogsChanged.InvokeAsync(ActionLogs);
         this.StateHasChanged();
     }
 
-    private void OnClickClear()
+    private async Task OnClickClear()
     {
-        this._ActionLogs.Clear();
+        this.ActionLogs?.Clear();
+        await this.ActionLogsChanged.InvokeAsync(ActionLogs);
     }
 
     public async ValueTask DisposeAsync()

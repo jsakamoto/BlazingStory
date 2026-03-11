@@ -1,9 +1,6 @@
 Blazor?.registerCustomEventType('frameheightchange', {
     createEventArgs: (e) => e.detail
 });
-Blazor?.registerCustomEventType('componentaction', {
-    createEventArgs: (e) => e.detail
-});
 const waitFor = async (arg) => {
     let retryCount = 0;
     while (true) {

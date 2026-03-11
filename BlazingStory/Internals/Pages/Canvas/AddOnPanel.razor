@@ -1,5 +1,4 @@
 @using BlazingStory.Addons.Internals
-@using BlazingStory.Internals.Pages.Canvas.Actions
 @using BlazingStory.Internals.Pages.Canvas.Controls
 @using Microsoft.AspNetCore.Components.Sections
 @implements IDisposable
@@ -84,7 +83,6 @@
     private readonly IEnumerable<AddonPanelDescriptor> _AddonPanelDescriptors = new AddonPanelDescriptor[]
     {
         new ControlsPanelDescriptor(),
-        new ActionsPanelDescriptor(),
         // TODO: Not implemented yet.
         //new InteractionsPanelDescriptor()
     };

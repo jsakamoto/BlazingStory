@@ -1,6 +1,6 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 
-namespace BlazingStory.Internals.Models;
+namespace BlazingStory.Addons.BuiltIns.Panel.Actions;
 
 public class ComponentActionLog
 {

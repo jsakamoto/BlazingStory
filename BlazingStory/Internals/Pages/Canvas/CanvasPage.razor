@@ -69,8 +69,7 @@
                                   ViewMode="story"
                                   Id="@this.RouteData.Parameter"
                                   Args="this._CurrentStory?.Context.Args"
-                                  Globals="this.GetGlobalArguments()"
-                                  OnComponentAction="OnComponentAction" />
+                                  Globals="this.GetGlobalArguments()" />
                 </div>
             </div>
         </FirstPane>
@@ -140,8 +139,6 @@
         _ => SvgIconType.RightSidePane
     };
 
-    private ComponentActionLogs? _ComponentActionLogs;
-
     private readonly CanvasPageContext _CanvasPageContext = new();
 
     protected override void OnInitialized()
@@ -159,9 +156,6 @@
             this._ToolbarVisibleCommand.Subscribe(this.OnToggleToolbarVisible),
             this._AddonPanelVisibleCommand.Subscribe(this.OnToggleAddonPanelVisible)
         );
-
-        this._ComponentActionLogs = this.Services.GetRequiredService<ComponentActionLogs>();
-        this._CanvasPageContext.SetItem(this._ComponentActionLogs);
     }
 
     protected override void OnParametersSet()
@@ -191,17 +185,12 @@
 
     private void UpdateCurrentStory()
     {
-        if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
+        if (this._CurrentStory is not null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
 
         var path = this.RouteData.Parameter;
-        if (this.StoriesStore.TryGetStoryByPath(path, out var story))
-        {
-            if (!object.ReferenceEquals(this._CurrentStory, story)) _ComponentActionLogs?.Clear();
-            this._CurrentStory = story;
-        }
-        else this._CurrentStory = null;
+        this._CurrentStory = this.StoriesStore.TryGetStoryByPath(path, out var story) ? story : null;
 
-        if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged += Context_ArgumentChanged;
+        if (this._CurrentStory is not null) this._CurrentStory.Context.ArgumentChanged += Context_ArgumentChanged;
     }
 
     private IEnumerable<ToolbarContentDescriptor> GetToolbarContents()
@@ -303,11 +292,6 @@
     private async ValueTask SaveAddonPanelLayoutAsync()
     {
         await this.HelperScript.SaveObjectToLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
-    }
-
-    private void OnComponentAction(ComponentActionEventArgs e)
-    {
-        _ComponentActionLogs?.Add(e.Name ?? "", e.ArgsJson ?? "");
     }
 
     public void Dispose()

@@ -3,7 +3,6 @@
 
 <IntersectionView @ref="_IntersectionView"
                     class="preview-frame"
-                    @oncomponentaction="ComponentActionEventCallback"
                     @onframeheightchange="FrameHeightChangeEventCallback">
     <PooledIFrame Src="@_PreviewFrameUrl" Attached="OnPreviewIFrameAttached" />
 </IntersectionView>
@@ -24,9 +23,6 @@
 
     [Parameter]
     public IReadOnlyDictionary<string, object?>? Globals { get; set; }
-
-    [Parameter]
-    public EventCallback<ComponentActionEventArgs> OnComponentAction { get; set; }
 
     [Parameter]
     public EventCallback<int> OnFrameHeightChanged { get; set; }
@@ -131,14 +127,6 @@
     private async ValueTask EnsureDotnetWatchScriptInjected()
     {
         await this._JSModule.InvokeVoidAsync("ensureDotnetWatchScriptInjected", this._IframeContainer);
-    }
-
-    /// <summary>
-    /// Invoked when a component action event occurs in the preview frame.
-    /// </summary>
-    private async Task ComponentActionEventCallback(ComponentActionEventArgs args)
-    {
-        await this.OnComponentAction.InvokeAsync(args);
     }
 
     /// <summary>
