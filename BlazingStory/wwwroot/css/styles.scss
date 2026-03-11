@@ -58,9 +58,6 @@
 @import "../../Internals/Pages/Canvas/Controls/ControlsPanel.razor.scss";
 @import "../../Internals/Pages/Canvas/Controls/ParameterControllers/Controllers/BoolParameterController.razor.scss";
 @import "../../Internals/Pages/Canvas/Controls/ParameterControllers/Controllers/NumberParameterController.razor.scss";
-@import "../../Internals/Pages/Canvas/Actions/ActionsPanel.razor.scss";
-@import "../../Internals/Pages/Canvas/Actions/ActionsPanelLogLine.razor.scss";
-@import "../../Internals/Pages/Canvas/Actions/ActionsPanelTags.razor.scss";
 @import "../../Internals/Pages/Docs/CodeView.razor.scss";
 @import "../../Internals/Pages/Docs/DocsPage.razor.scss";
 @import "../../Internals/Pages/CustomPage.razor.scss";
@@ -68,3 +65,7 @@
 @import "../../Internals/Pages/Settings/SettingsPage.razor.scss";
 @import "../../Internals/Pages/Settings/Panels/AboutPanel.razor.scss";
 @import "../../Internals/Pages/Settings/Panels/KeyboardShortcutsPanel.razor.scss";
+
+@import "../../Addons/BuiltIns/Panel/Actions/ActionsPanel.razor.scss";
+@import "../../Addons/BuiltIns/Panel/Actions/ActionsPanelLogLine.razor.scss";
+@import "../../Addons/BuiltIns/Panel/Actions/ActionsPanelTags.razor.scss";

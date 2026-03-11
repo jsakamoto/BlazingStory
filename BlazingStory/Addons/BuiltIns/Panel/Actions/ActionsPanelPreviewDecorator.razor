@@ -14,7 +14,7 @@
 
     private Story? _PrevStory;
 
-    public ActionPanelPreviewDecorator()
+    public ActionsPanelPreviewDecorator()
     {
         this._JSModule = new(() => this.JSRuntime, "./Addons/BuiltIns/Panel/Action/ActionPanelPreviewDecorator.razor.js");
     }
@@ -74,7 +74,7 @@
         await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, json);
     }
 
-    private static readonly Lazy<MethodInfo> _EventTArgMonitorHandlerMethod = new(() => typeof(ActionPanelPreviewDecorator).GetMethod(nameof(EventTArgMonitorHandler), BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new InvalidOperationException());
+    private static readonly Lazy<MethodInfo> _EventTArgMonitorHandlerMethod = new(() => typeof(ActionsPanelPreviewDecorator).GetMethod(nameof(EventTArgMonitorHandler), BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new InvalidOperationException());
 
     private static readonly Lazy<MethodInfo> _EventCallbackCreateMethod = new(() =>
         typeof(EventCallbackFactory).GetMethods(BindingFlags.Public | BindingFlags.Instance)
