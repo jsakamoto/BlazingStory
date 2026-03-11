@@ -1,16 +1,20 @@
 @using System.Text.Json
 
-@implements IDisposable
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
 
 <PanelTitle>
     Action
-    @* <Badge Text="@(_n.ToString())" /> *@
+    @if (this._ActionLogs.Count > 0)
+    {
+        <Badge Text="@this._ActionLogs.Count.ToString()" />
+    }
 </PanelTitle>
 
 <div class="actions-panel">
 
     <div class="actions-panel-scroll-window">
-        @foreach (var log in this._ActionLogs ?? Enumerable.Empty<ComponentActionLog>())
+        @foreach (var log in this._ActionLogs)
         {
             <ActionsPanelLogLine @key="log.Id" Repeat="@log.Repeat" Name="@log.Name" Value="@log.ArgsJsonElement" />
         }
@@ -23,29 +27,54 @@
 
 @code
 {
-    [CascadingParameter]
-    public required CanvasPageContext CanvasPageContext { get; init; }
+    [CascadingParameter(Name = "Story")]
+    public Story? Story { get; set; }
 
-    private ComponentActionLogs? _ActionLogs;
+    private Story? _PrevStory;
 
-    protected override void OnInitialized()
+    private readonly List<ComponentActionLog> _ActionLogs = [];
+
+    private JSModule _JSModule;
+
+    private DotNetObjectReference<ActionsPanel>? _ThisRef;
+
+    private IJSObjectReference? _ComponentActionSubscriber = null;
+
+    public ActionsPanel()
     {
-        this._ActionLogs = this.CanvasPageContext.GetRequiredItem<ComponentActionLogs>();
-        this._ActionLogs.Updated += ActionLogs_Updated;
+        this._JSModule = new(() => this.JSRuntime, "./Addons/BuiltIns/Panel/Actions/ActionsPanel.razor.js");
     }
 
-    private void ActionLogs_Updated(object? sender, EventArgs e)
+    override protected void OnParametersSet()
     {
+        base.OnParametersSet();
+        if (!Object.ReferenceEquals(this.Story, this._PrevStory)) _ActionLogs.Clear();
+        this._PrevStory = this.Story;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        this._ThisRef = DotNetObjectReference.Create(this);
+        this._ComponentActionSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentAction", this._ThisRef, nameof(OnComponentAction));
+    }
+
+    [JSInvokable, EditorBrowsable(EditorBrowsableState.Never)]
+    public void OnComponentAction(ComponentActionEventArgs args)
+    {
+        this._ActionLogs.Insert(0, new(args.Name ?? "(null)", args.ArgsJson ?? "null"));
         this.StateHasChanged();
     }
 
     private void OnClickClear()
     {
-        this._ActionLogs?.Clear();
+        this._ActionLogs.Clear();
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        if (this._ActionLogs != null) this._ActionLogs.Updated -= ActionLogs_Updated;
+        await this._ComponentActionSubscriber.DisposeIfConnectedAsync("dispose");
+        await this._JSModule.DisposeAsync();
+        this._ThisRef?.Dispose();
     }
 }

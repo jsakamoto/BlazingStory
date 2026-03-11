@@ -43,10 +43,12 @@
         *@
         @foreach (var panel in this.GetPanels())
         {
-            <CascadingValue @key="panel.Id" Value="panel">
-                <div class="@CssClass("add-on-panel-pane", new { Active = _ActivePanel == panel })">
-                    <DynamicComponent Type="panel.ComponentType" />
-                </div>
+            <CascadingValue Name="Story" Value="this.Story">
+                <CascadingValue @key="panel.Id" Value="panel">
+                    <div class="@CssClass("add-on-panel-pane", new { Active = _ActivePanel == panel })">
+                        <DynamicComponent Type="panel.ComponentType" />
+                    </div>
+                </CascadingValue>
             </CascadingValue>
         }
         @{
@@ -104,6 +106,8 @@
     protected override void OnInitialized()
     {
         this._Commands = this.Services.GetRequiredService<CommandService>();
+        this._ActivePanel = this.GetPanels().FirstOrDefault();
+
         this._ActiveAddonPanelDescriptor = this._AddonPanelDescriptors.First();
         this._AddonPanelDescriptors.ForEach(descriptor => descriptor.Updated += Descriptor_Updated);
     }
