@@ -112,7 +112,7 @@ else
 
     private string _ComponentArgsString = "";
 
-    private string _GlobasString = "";
+    private string _GlobalsString = "";
 
     private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs args)
     {
@@ -123,7 +123,7 @@ else
     {
         var queryStrings = HttpUtility.ParseQueryString(new Uri(this.NavigationManager.Uri).Query);
         await this.UpdateComponentArgsFromUrlAsync(queryStrings);
-        await this.UpdateGlobalEffectsFromUrlAsync(queryStrings);
+        await this.UpdateGlobalsFromUrlAsync(queryStrings);
     }
 
     private async ValueTask UpdateComponentArgsFromUrlAsync(NameValueCollection queryStrings)
@@ -149,14 +149,14 @@ else
         this.StateHasChanged();
     }
 
-    private async ValueTask UpdateGlobalEffectsFromUrlAsync(NameValueCollection queryStrings)
+    private async ValueTask UpdateGlobalsFromUrlAsync(NameValueCollection queryStrings)
     {
         // If it is during the server-side pre-rendering, nothing to do.
         if (!this._Rendered) return;
 
         var globalsString = queryStrings["globals"] ?? "";
-        if (this._GlobasString == globalsString) return;
-        this._GlobasString = globalsString;
+        if (this._GlobalsString == globalsString) return;
+        this._GlobalsString = globalsString;
 
         this._Globals = UriParameterKit.DecodeKeyValues(globalsString);
         this.StateHasChanged();
