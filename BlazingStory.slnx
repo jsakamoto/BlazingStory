@@ -24,6 +24,7 @@
     <Project Path="Tests/Fixtures/BlazorToDoApp/BlazorToDoApp.Stories/BlazorToDoApp.Stories.csproj" />
     <Project Path="Tests/Fixtures/BlazorToDoApp/BlazorToDoApp/BlazorToDoApp.csproj" />
   </Folder>
+  <Project Path="BlazingStory.Addons/BlazingStory.Addons.csproj" />
   <Project Path="BlazingStory.McpServer/BlazingStory.McpServer.csproj" />
   <Project Path="BlazingStory.Stories/BlazingStory.Stories.csproj" />
   <Project Path="BlazingStory/BlazingStory.csproj" />

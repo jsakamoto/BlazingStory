@@ -78,6 +78,10 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BlazingStory.Addons\BlazingStory.Addons.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TypeScriptTarget>ESNext</TypeScriptTarget>
     <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
