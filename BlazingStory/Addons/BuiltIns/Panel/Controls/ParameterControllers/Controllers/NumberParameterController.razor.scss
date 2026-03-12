@@ -1,0 +1,15 @@
+.number-parameter-controller {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+
+    label {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+    }
+
+    .input-value {
+        flex: 1;
+    }
+}

@@ -11,7 +11,7 @@ internal class UriParameterKitTest
     [Test]
     public void EncodeKeyValues_with_Null_Test()
     {
-        UriParameterKit.EncodeKeyValues(null).Is("");
+        UriParameterKit.EncodeKeyValues<object?>(null).Is("");
     }
 
     [Test]

@@ -1,4 +1,4 @@
-﻿@using System.Diagnostics.CodeAnalysis;
+@using System.Diagnostics.CodeAnalysis;
 @using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 @typeparam TComponent where TComponent: notnull
 @attribute [CascadingTypeParameter(nameof(TComponent))]
@@ -66,15 +66,5 @@
         }
 
         this.StoryContainer.RegisterStory(this.Name, this._StoryContext, this.StoryContainer.Layout, this.Layout, this.Template, this.Description);
-    }
-
-    /// <summary>
-    /// When this story should be rendered, notify it to the canvas frame (preview frame inside the ifrmae) through the <see cref="StoryContext"/>.
-    /// </summary>
-    protected override bool ShouldRender()
-    {
-        var shouldRender = base.ShouldRender();
-        if (shouldRender) this._StoryContext?.InvokeShouldRender();
-        return shouldRender;
     }
 }

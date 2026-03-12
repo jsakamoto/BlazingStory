@@ -1,21 +1,11 @@
+@using BlazingStory.Addons
 @using BlazingStory.Addons.Internals
-@using BlazingStory.Internals.Pages.Canvas.Controls
 @using Microsoft.AspNetCore.Components.Sections
-@implements IDisposable
 
 <div class="add-on-panel fill stack vertical">
 
     <ToolBar>
         <TabButtonGroup>
-            @*
-            @foreach (var descriptor in this._AddonPanelDescriptors)
-            {
-                <TabButton Active="descriptor == this._ActiveAddonPanelDescriptor" OnClick="() => this.OnSelectAddonPanel(descriptor)">
-                    @descriptor.Name
-                    <Badge Text="@descriptor.Badge" />
-                </TabButton>
-            }
-            *@
             @foreach (var panel in this.GetPanels())
             {
                 <TabButton @key="panel.Id" Active="this._ActivePanel == panel" OnClick="() => this._ActivePanel = panel">
@@ -34,19 +24,15 @@
         @{
 #pragma warning disable IL2111
         }
-        @*
-        @if (_ActiveAddonPanelDescriptor != null)
-        {
-            <DynamicComponent Type="_ActiveAddonPanelDescriptor.PanelComponentType" Parameters="_AddonPanelParameters" />
-        }
-        *@
         @foreach (var panel in this.GetPanels())
         {
-            <CascadingValue Name="Story" Value="this.Story">
-                <CascadingValue @key="panel.Id" Value="panel">
-                    <div class="@CssClass("add-on-panel-pane", new { Active = _ActivePanel == panel })">
-                        <DynamicComponent Type="panel.ComponentType" />
-                    </div>
+            <CascadingValue Value="ViewMode.Story" IsFixed>
+                <CascadingValue Name="Story" Value="this.Story">
+                    <CascadingValue @key="panel.Id" Value="panel">
+                        <div class="@CssClass("add-on-panel-pane", new { Active = _ActivePanel == panel })">
+                            <DynamicComponent Type="panel.ComponentType" />
+                        </div>
+                    </CascadingValue>
                 </CascadingValue>
             </CascadingValue>
         }
@@ -73,21 +59,9 @@
 
     private CommandService _Commands = default!;
 
-    private readonly Dictionary<string, object?> _AddonPanelParameters = new();
-
     private AddonManager AddonManager => this.Services.GetRequiredService<AddonManager>();
 
     private PanelDescriptor? _ActivePanel;
-
-
-    private readonly IEnumerable<AddonPanelDescriptor> _AddonPanelDescriptors = new AddonPanelDescriptor[]
-    {
-        new ControlsPanelDescriptor(),
-        // TODO: Not implemented yet.
-        //new InteractionsPanelDescriptor()
-    };
-
-    private AddonPanelDescriptor? _ActiveAddonPanelDescriptor;
 
     private SvgIconType ToggleOrientationButtonIcon => this.SplitterOrientation switch
     {
@@ -95,42 +69,14 @@
         _ => SvgIconType.BottomSidePane
     };
 
-    protected override void OnParametersSet()
-    {
-        this._AddonPanelParameters["Story"] = this.Story;
-        this._AddonPanelDescriptors.ForEach(descriptor => descriptor.SetParameters(this.Story, this.Services, this.CanvasPageContext));
-    }
-
     protected override void OnInitialized()
     {
         this._Commands = this.Services.GetRequiredService<CommandService>();
         this._ActivePanel = this.GetPanels().FirstOrDefault();
-
-        this._ActiveAddonPanelDescriptor = this._AddonPanelDescriptors.First();
-        this._AddonPanelDescriptors.ForEach(descriptor => descriptor.Updated += Descriptor_Updated);
     }
 
     private IEnumerable<PanelDescriptor> GetPanels()
     {
         return this.AddonManager.GetPanels(BlazingStory.Addons.ViewMode.Story);
-    }
-
-    private void Descriptor_Updated(object? sender, EventArgs args)
-    {
-        this.StateHasChanged();
-    }
-
-    private void OnSelectAddonPanel(AddonPanelDescriptor descriptor)
-    {
-        this._ActiveAddonPanelDescriptor = descriptor;
-    }
-
-    public void Dispose()
-    {
-        this._AddonPanelDescriptors.ForEach(descriptor =>
-        {
-            descriptor.Updated -= Descriptor_Updated;
-            descriptor.Dispose();
-        });
     }
 }

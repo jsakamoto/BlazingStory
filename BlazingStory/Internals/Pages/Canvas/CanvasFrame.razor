@@ -1,10 +1,8 @@
 @using System.Collections.Specialized;
 @using System.Web
 @using BlazingStory.Addons.Internals
-@using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
 
-@implements IAsyncDisposable
-@inject ILogger<CanvasFrame> Logger
+@implements IDisposable
 @inject NavigationManager NavigationManager
 
 @{
@@ -28,12 +26,14 @@ else
     </LayoutView>
 
     <CascadingValue Name="Globals" Value="this._Globals">
-        <CascadingValue Name="Story" Value="this._Story">
-            @foreach (var previewDecorator in this.AddonManager.GetPreviewDecorators())
-            {
-                <DynamicComponent @key="previewDecorator.Id"
-                                  Type="previewDecorator.ComponentType" />
-            }
+        <CascadingValue Name="Args" Value="this._Args">
+            <CascadingValue Name="Story" Value="this._Story">
+                @foreach (var previewDecorator in this.AddonManager.GetPreviewDecorators())
+                {
+                    <DynamicComponent @key="previewDecorator.Id"
+                                      Type="previewDecorator.ComponentType" />
+                }
+            </CascadingValue>
         </CascadingValue>
     </CascadingValue>
 }
@@ -60,116 +60,58 @@ else
 
     private Story? _Story;
 
-    private bool _Rendered = false;
+    private string _ArgsString = "";
 
-    private IReadOnlyDictionary<string, string>? _Globals;
+    private string _GlobalsString = "";
+
+    private IReadOnlyDictionary<string, string> _Args = new Dictionary<string, string>();
+
+    private IReadOnlyDictionary<string, string> _Globals = new Dictionary<string, string>();
 
     protected override void OnInitialized()
     {
         this.NavigationManager.LocationChanged += NavigationManager_LocationChanged;
     }
 
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
         if (!this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story)) return;
-        if (Object.ReferenceEquals(this._Story, story)) return;
-
-        if (this._Story is not null)
-        {
-            this._Story.Context.ShouldRender -= StoryContext_ShouldRender;
-            this._Story.Context.ArgumentChanged -= StoryContext_ArgumentChanged;
-        }
         this._Story = story;
-        this._Story.Context.ShouldRender += StoryContext_ShouldRender;
-        this._Story.Context.ArgumentChanged += StoryContext_ArgumentChanged;
-
-        await this.UpdateComponentStatesAsync();
-        this.StateHasChanged();
+        this.UpdateComponentStates();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
         if (!firstRender) return;
-        this._Rendered = true;
-        await UpdateComponentStatesAsync();
-        this.StateHasChanged();
+        this.UpdateComponentStates();
     }
-
-    /// <summary>
-    /// When the state of the story has been changed, this canvas frame should be re-rendered.
-    /// </summary>
-    private void StoryContext_ShouldRender(object? sender, EventArgs e)
-    {
-        this.StateHasChanged();
-    }
-
-    private ValueTask StoryContext_ArgumentChanged()
-    {
-        Console.WriteLine($"[CanvasFrame] StoryContext ArgumentChanged");
-        this.StateHasChanged();
-        return ValueTask.CompletedTask;
-    }
-
-    private string _ComponentArgsString = "";
-
-    private string _GlobalsString = "";
 
     private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs args)
     {
-        this.UpdateComponentStatesAsync().AndLogException(this.Logger);
+        this.UpdateComponentStates();
     }
 
-    private async ValueTask UpdateComponentStatesAsync()
+    private void UpdateComponentStates()
     {
         var queryStrings = HttpUtility.ParseQueryString(new Uri(this.NavigationManager.Uri).Query);
-        await this.UpdateComponentArgsFromUrlAsync(queryStrings);
-        await this.UpdateGlobalsFromUrlAsync(queryStrings);
+        var isUpdatedArgs = this.DecodeQueryParams(queryStrings, "args", ref this._ArgsString, ref this._Args);
+        var isUpdatedGlobals = this.DecodeQueryParams(queryStrings, "globals", ref this._GlobalsString, ref this._Globals);
+        
+        if (isUpdatedArgs || isUpdatedGlobals) this.StateHasChanged();
     }
 
-    private async ValueTask UpdateComponentArgsFromUrlAsync(NameValueCollection queryStrings)
+    private bool DecodeQueryParams(NameValueCollection queryStrings, string key, ref string prevValue, ref IReadOnlyDictionary<string, string> keyValues)
     {
-        if (this._Story == null) return;
+        var valueString = queryStrings[key] ?? "";
+        if (prevValue == valueString) return false;
 
-        var componentArgsString = queryStrings["args"] ?? "";
-        if (this._ComponentArgsString == componentArgsString) return;
-        this._ComponentArgsString = componentArgsString;
-
-        await this._Story.Context.ResetArgumentsAsync();
-
-        var componentArgs = UriParameterKit.DecodeKeyValues(this._ComponentArgsString);
-        var parameters = this._Story.Context.Parameters;
-        foreach (var arg in componentArgs)
-        {
-            var parameter = parameters.FirstOrDefault(p => p.Name == arg.Key);
-            if (parameter == null) continue;
-            if (!TypeUtility.TryConvertType(parameter.TypeStructure, arg.Value, out var value)) continue;
-
-            await this._Story.Context.AddOrUpdateArgumentAsync(arg.Key, value);
-        }
-        this.StateHasChanged();
+        prevValue = valueString;
+        keyValues = UriParameterKit.DecodeKeyValues(valueString);
+        return true;
     }
 
-    private async ValueTask UpdateGlobalsFromUrlAsync(NameValueCollection queryStrings)
+    public void Dispose()
     {
-        // If it is during the server-side pre-rendering, nothing to do.
-        if (!this._Rendered) return;
-
-        var globalsString = queryStrings["globals"] ?? "";
-        if (this._GlobalsString == globalsString) return;
-        this._GlobalsString = globalsString;
-
-        this._Globals = UriParameterKit.DecodeKeyValues(globalsString);
-        this.StateHasChanged();
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (this._Story is not null)
-        {
-            this._Story.Context.ShouldRender -= StoryContext_ShouldRender;
-            this._Story.Context.ArgumentChanged -= StoryContext_ArgumentChanged;
-            this._Story = null;
-        }
         this.NavigationManager.LocationChanged -= NavigationManager_LocationChanged;
     }
 }

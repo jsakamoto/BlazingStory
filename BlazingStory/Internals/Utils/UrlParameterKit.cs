@@ -8,7 +8,7 @@ namespace BlazingStory.Internals.Utils;
 /// </summary>
 internal static class UriParameterKit
 {
-    internal static string EncodeKeyValues(IReadOnlyDictionary<string, object?>? keyValues)
+    internal static string EncodeKeyValues<TValue>(IReadOnlyDictionary<string, TValue>? keyValues)
     {
         if (keyValues == null) return "";
         return string.Join(';', keyValues.Select(kv => Uri.EscapeDataString(kv.Key) + ":" + Uri.EscapeDataString(kv.Value?.ToString() ?? "")));
