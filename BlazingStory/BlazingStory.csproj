@@ -79,6 +79,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BlazingStory.Addons.BuiltIns\BlazingStory.Addons.BuiltIns.csproj" />
     <ProjectReference Include="..\BlazingStory.Addons\BlazingStory.Addons.csproj" />
   </ItemGroup>
 
