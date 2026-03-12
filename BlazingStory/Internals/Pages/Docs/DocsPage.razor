@@ -1,7 +1,7 @@
 @implements IDisposable
 @using System.Text.RegularExpressions;
+@using BlazingStory.Addons
 @using BlazingStory.Addons.Internals
-@using BlazingStory.Internals.Pages.Canvas.Controls
 
 @{
     var globals = this.GetGlobalArguments();
@@ -62,7 +62,23 @@
                     <div @key="@(firstStory.NavigationPath + ":first-story")" class="first-story">
                         <StoryPreview Story="firstStory" EnableZoom="true" Globals="globals" />
 
-                        <ControlsPanel Story="firstStory" ShowDetails="true" />
+
+                        @{
+#pragma warning disable IL2111
+                        }
+                        @foreach (var panel in this.GetPanels())
+                        {
+                            <CascadingValue Value="ViewMode.Docs" IsFixed>
+                                <CascadingValue Name="Story" Value="firstStory">
+                                    <CascadingValue @key="panel.Id" Value="panel">
+                                        <DynamicComponent Type="panel.ComponentType" />
+                                    </CascadingValue>
+                                </CascadingValue>
+                            </CascadingValue>
+                        }
+                        @{
+#pragma warning restore IL2111
+                        }
                     </div>
                 }
 
@@ -151,7 +167,12 @@
 
     private IEnumerable<ToolbarContentDescriptor> GetToolbarContents()
     {
-        return this.AddonManager.GetToolbarContents(BlazingStory.Addons.ViewMode.Docs);
+        return this.AddonManager.GetToolbarContents(ViewMode.Docs);
+    }
+
+    private IEnumerable<PanelDescriptor> GetPanels()
+    {
+        return this.AddonManager.GetPanels(ViewMode.Docs);
     }
 
     private Dictionary<string, object?> GetGlobalArguments()

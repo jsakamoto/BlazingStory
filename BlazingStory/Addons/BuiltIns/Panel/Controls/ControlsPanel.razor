@@ -79,8 +79,7 @@
     [CascadingParameter]
     public ViewMode ViewMode { get; set; }
 
-    [Parameter]
-    public bool ShowDetails { get; set; }
+    private bool ShowDetails => this.ViewMode == ViewMode.Docs;
 
     private Story? _LastShownStory;
 
