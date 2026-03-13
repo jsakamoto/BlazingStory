@@ -1,7 +1,5 @@
 const doc = document;
 const lstorage = localStorage;
-export const setLocalStorageItem = (key, value) => { lstorage.setItem(key, value); };
-export const getLocalStorageItem = (key) => (lstorage.getItem(key) || null);
 export const copyTextToClipboard = (text) => navigator.clipboard.writeText(text);
 export const releaseFocus = () => { doc.activeElement?.blur(); };
 const keydown = "keydown";

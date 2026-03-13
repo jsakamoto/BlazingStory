@@ -46,7 +46,7 @@
 
     public ActionsPanel()
     {
-        this._JSModule = new(() => this.JSRuntime, "./Addons/BuiltIns/Panel/Actions/ActionsPanel.razor.js");
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "./Addons/BuiltIns/Panel/Actions/ActionsPanel.razor.js");
     }
 
     override protected async Task OnParametersSetAsync()

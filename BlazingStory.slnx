@@ -28,5 +28,6 @@
   <Project Path="BlazingStory.Addons/BlazingStory.Addons.csproj" />
   <Project Path="BlazingStory.McpServer/BlazingStory.McpServer.csproj" />
   <Project Path="BlazingStory.Stories/BlazingStory.Stories.csproj" />
+  <Project Path="BlazingStory.ToolKit/BlazingStory.ToolKit.csproj" />
   <Project Path="BlazingStory/BlazingStory.csproj" />
 </Solution>

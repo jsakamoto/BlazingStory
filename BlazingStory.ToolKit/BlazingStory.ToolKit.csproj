@@ -1,5 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
-
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
     <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <Nullable>enable</Nullable>
@@ -9,9 +8,11 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
     <IsTrimmable>true</IsTrimmable>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
   </PropertyGroup>
 
   <Import Project="../VersionInfo.props" />
+  <Import Project="VersionInfo.targets" />
 
   <PropertyGroup>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
@@ -28,12 +29,11 @@
   <ItemGroup>
     <None Include="..\assets\icon-128x128.png" Pack="true" Visible="false" PackagePath="" />
     <None Include="..\README.md" Visible="false" Pack="true" PackagePath="\" />
+    <Content Update="**\*.json" Pack="false" CopyToOutputDirectory="Never" />
   </ItemGroup>
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
-    <InternalsVisibleTo Include="BlazingStory" />
-    <InternalsVisibleTo Include="BlazingStory.Stories" />
   </ItemGroup>
 
   <ItemGroup Condition=" $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '8.0')) ">
@@ -49,8 +49,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BlazingStory.Addons\BlazingStory.Addons.csproj" />
-    <ProjectReference Include="..\BlazingStory.ToolKit\BlazingStory.ToolKit.csproj" />
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.9.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

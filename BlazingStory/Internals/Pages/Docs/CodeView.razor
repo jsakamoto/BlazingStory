@@ -43,7 +43,7 @@
 
     public CodeView()
     {
-        this._JSModule = new(() => this.JSRuntime, "js/prism.js");
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "js/prism.js");
     }
 
     protected override async Task OnParametersSetAsync()

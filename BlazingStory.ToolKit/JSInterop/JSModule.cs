@@ -1,11 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
-using BlazingStory.Internals.Extensions;
 using Microsoft.JSInterop;
 using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
-namespace BlazingStory.Internals.Services;
+namespace BlazingStory.ToolKit.JSInterop;
 
-internal class JSModule : IAsyncDisposable
+public class JSModule : IAsyncDisposable
 {
     private IJSObjectReference? _Module;
 
@@ -13,10 +12,13 @@ internal class JSModule : IAsyncDisposable
 
     private readonly string _ModulePath;
 
-    internal JSModule(Func<IJSRuntime> jSRuntime, string modulePath)
+    private readonly string _UpdateToken;
+
+    public JSModule(Func<IJSRuntime> jSRuntime, string modulePath, string updateToken)
     {
         this._GetJSRuntime = jSRuntime;
         this._ModulePath = modulePath;
+        this._UpdateToken = updateToken;
     }
 
     private async ValueTask<IJSObjectReference> GetModuleAsync()
@@ -24,7 +26,7 @@ internal class JSModule : IAsyncDisposable
         if (this._Module == null)
         {
             var jsRuntime = this._GetJSRuntime();
-            this._Module = await jsRuntime.ImportAsync(this._ModulePath);
+            this._Module = await jsRuntime.ImportAsync(this._ModulePath, this._UpdateToken);
         }
         return this._Module;
     }

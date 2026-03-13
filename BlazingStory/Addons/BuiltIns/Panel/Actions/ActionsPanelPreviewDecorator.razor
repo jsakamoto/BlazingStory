@@ -16,7 +16,7 @@
 
     public ActionsPanelPreviewDecorator()
     {
-        this._JSModule = new(() => this.JSRuntime, "./Addons/BuiltIns/Panel/Actions/ActionsPanelPreviewDecorator.razor.js");
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "./Addons/BuiltIns/Panel/Actions/ActionsPanelPreviewDecorator.razor.js");
     }
 
     protected override async Task OnParametersSetAsync()

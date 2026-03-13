@@ -135,7 +135,7 @@
 
 	private async Task OnSideBarSizeChanged()
 	{
-		await this.HelperScript.SetLocalStorageItemAsync(this.SideBarSizeKeyName, _SideBarSize);
+		await this.JSRuntime.SetLocalStorageItemAsync(this.SideBarSizeKeyName, _SideBarSize);
 	}
 
 	private ValueTask OnToggleSideBarVisible() => this.ToggleSideBarVisibliy(this._SideBarVisibleCommand);

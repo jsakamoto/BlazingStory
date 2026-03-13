@@ -48,7 +48,7 @@
     /// </summary>
     public PreviewFrame()
     {
-        this._JSModule = new(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
     }
 
     protected override void OnInitialized()

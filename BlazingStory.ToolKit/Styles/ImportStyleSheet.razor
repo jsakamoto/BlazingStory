@@ -16,9 +16,9 @@
 
     private IJSObjectReference? _importedStyleSheet = null;
 
-    public ImprtStyleSheet()
+    public ImportStyleSheet()
     {
-        this._JSModule = new JSModule(() => this.JSRuntime, "./Toolkit/ImprtStyleSheet.razor.js");
+        this._JSModule = new JSModule(() => this.JSRuntime, "./_content/BlazingStory.ToolKit/Styles/ImportStyleSheet.razor.js", VersionInfo.GetEscapedVersionText());
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -41,6 +41,6 @@
 
     public async ValueTask DisposeAsync()
     {
-        if (this._importedStyleSheet is not null) await this._importedStyleSheet.DisposeIfConnectedAsync("dispose");
+        await this._importedStyleSheet.DisposeIfConnectedAsync("dispose");
     }
 }

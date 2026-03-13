@@ -3,10 +3,6 @@ import type { MessageArgument } from "../../wwwroot/js/types/custom-messages";
 const doc = document;
 const lstorage = localStorage;
 
-export const setLocalStorageItem = (key: string, value: string): void => { lstorage.setItem(key, value); };
-
-export const getLocalStorageItem = (key: string): string | null => (lstorage.getItem(key) || null);
-
 export const copyTextToClipboard = (text: string): Promise<void> => navigator.clipboard.writeText(text);
 
 export const releaseFocus = (): void => { (doc.activeElement as HTMLElement)?.blur(); };

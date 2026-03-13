@@ -1,6 +1,6 @@
 @if (string.IsNullOrEmpty(this.Href))
 {
-    <button class="icon-button @GetCssClass()" title="@this.GetTitleText()" @onclick="this.ClickHandler">
+    <button class="icon-button @GetCssClass()" title="@this.Title" @onclick="this.ClickHandler">
         <SvgIcon Type="Icon" />
         @if (!string.IsNullOrEmpty(this.Text))
         {
@@ -10,7 +10,7 @@
 }
 else
 {
-    <a class="icon-button @GetCssClass()" title="@this.GetTitleText()" @onclick="this.ClickHandler" href="@this.Href" target="@this.Target">
+    <a class="icon-button @GetCssClass()" title="@this.Title" @onclick="this.ClickHandler" href="@this.Href" target="@this.Target">
         <SvgIcon Type="Icon" />
         @if (!string.IsNullOrEmpty (this.Text))
         {
@@ -36,9 +36,6 @@ else
     public string? Class { get; set; }
 
     [Parameter]
-    public Command? Command { get; set; }
-
-    [Parameter]
     public string? Href { get; set; }
 
     [Parameter]
@@ -52,20 +49,11 @@ else
 
     private string GetCssClass()
     {
-        var active = this.Active || (this.Command?.Flag ?? false == true);
-        return $"{this.Class} {(active && this.FlagStyle ? "active" : "")}";
-    }
-
-    private string? GetTitleText()
-    {
-        if (string.IsNullOrEmpty(this.Title)) return this.Command?.GetTitleText();
-        return string.Format(this.Title, this.Command?.GetHotKeyName());
+        return $"{this.Class} {(this.Active && this.FlagStyle ? "active" : "")}";
     }
 
     private async Task ClickHandler(MouseEventArgs args)
     {
-        var t1 = this.OnClick.InvokeAsync(args);
-        if (this.Command != null) await this.Command.InvokeAsync();
-        await t1;
+        await this.OnClick.InvokeAsync(args);
     }
 }

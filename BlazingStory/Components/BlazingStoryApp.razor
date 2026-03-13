@@ -190,7 +190,7 @@
 
     public BlazingStoryApp()
     {
-        this._JSModule = new(() => this.JSRuntime, "Components/BlazingStoryApp.razor.js");
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Components/BlazingStoryApp.razor.js");
 #pragma warning disable IL2111
         this._RefThis = DotNetObjectReference.Create(this);
 #pragma warning restore IL2111
