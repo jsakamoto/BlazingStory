@@ -1,20 +1,20 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using BlazingStory.Internals.Extensions;
+using BlazingStory.Abstractions;
+using BlazingStory.ToolKit.Extensions;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
 using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
-namespace BlazingStory.Internals.Utils;
+namespace BlazingStory.ToolKit.Utils;
 
-internal static class TypeUtility
+public static class TypeUtility
 {
     /// <summary>
     /// Returns the name of the given type as a C# language keyword.
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    internal static IEnumerable<string> GetTypeDisplayText([DynamicallyAccessedMembers(PublicConstructors | PublicMethods | Interfaces)] Type type)
+    public static IEnumerable<string> GetTypeDisplayText([DynamicallyAccessedMembers(PublicConstructors | PublicMethods | Interfaces)] Type type)
     {
         var (isNullable, isGeneric, primaryType, secondaryTypes) = TypeUtility.ExtractTypeStructure(type);
         if (primaryType.IsEnum)
@@ -41,7 +41,7 @@ internal static class TypeUtility
     /// <summary>
     /// Extracts type structure of the given type.
     /// </summary>
-    internal static TypeStructure ExtractTypeStructure([DynamicallyAccessedMembers(PublicConstructors | PublicMethods | Interfaces)] Type type)
+    public static TypeStructure ExtractTypeStructure([DynamicallyAccessedMembers(PublicConstructors | PublicMethods | Interfaces)] Type type)
     {
         if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
         {
@@ -53,13 +53,13 @@ internal static class TypeUtility
         {
             return new(isNullable: false, isGeneric: true, primaryType: type, secondaryTypes: type.GetGenericArguments());
         }
-        else return new(isNullable: false, isGeneric: false, primaryType: type, secondaryTypes: Array.Empty<Type>());
+        else return new(isNullable: false, isGeneric: false, primaryType: type, secondaryTypes: []);
     }
 
     /// <summary>
     /// Get name of the type as a C# language keyword.
     /// </summary>
-    private static string GetTypeNameAsLangKeyword(Type type)
+    public static string GetTypeNameAsLangKeyword(Type type)
     {
         return Type.GetTypeCode(type) switch
         {
@@ -89,7 +89,7 @@ internal static class TypeUtility
     /// <param name="sourceString">The string to convert from.</param>
     /// <param name="convertedValue">The converted value if the conversion is successful.</param>
     /// <returns>True if the conversion is successful, otherwise false.</returns>
-    internal static bool TryConvertType(TypeStructure targetTypeStructure, string sourceString, out object? convertedValue)
+    public static bool TryConvertType(TypeStructure targetTypeStructure, string sourceString, out object? convertedValue)
     {
         var primaryType = targetTypeStructure.PrimaryType;
         var isNullable = targetTypeStructure.IsNullable;
@@ -126,7 +126,7 @@ internal static class TypeUtility
 
         else if (primaryType == typeof(RenderFragment))
         {
-            RenderFragment renderFragment = (RenderTreeBuilder builder) => builder.AddContent(0, sourceString);
+            RenderFragment renderFragment = builder => builder.AddContent(0, sourceString);
             convertedValue = renderFragment;
             return true;
         }
@@ -156,7 +156,7 @@ internal static class TypeUtility
     /// <summary>
     /// Returns whether the given type implements <see cref="IParsable{TSelf}"/>.
     /// </summary>
-    internal static bool IsParsableType([DynamicallyAccessedMembers(Interfaces)] Type type)
+    public static bool IsParsableType([DynamicallyAccessedMembers(Interfaces)] Type type)
     {
         return type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IParsable<>));
     }
@@ -164,7 +164,7 @@ internal static class TypeUtility
     /// <summary>
     /// Returns whether the given type is a numeric type.
     /// </summary>
-    internal static bool IsNumericType(Type type) => Type.GetTypeCode(type) switch
+    public static bool IsNumericType(Type type) => Type.GetTypeCode(type) switch
     {
         TypeCode.Byte => true,
         TypeCode.SByte => true,
@@ -183,7 +183,7 @@ internal static class TypeUtility
     /// <summary>
     /// Returns whether the given type is a decimal point type.
     /// </summary>
-    internal static bool IsDecimalPointType(Type type) => Type.GetTypeCode(type) switch
+    public static bool IsDecimalPointType(Type type) => Type.GetTypeCode(type) switch
     {
         TypeCode.Single => true,
         TypeCode.Double => true,
@@ -195,12 +195,12 @@ internal static class TypeUtility
     /// Get open type of the given type.<br/>
     /// When you pass the `List&lt;T&gt;` type, this method returns `List&lt;&gt;`.
     /// </summary>
-    internal static Type GetOpenType(Type type) => type.IsGenericType ? type.GetGenericTypeDefinition() : type;
+    public static Type GetOpenType(Type type) => type.IsGenericType ? type.GetGenericTypeDefinition() : type;
 
     /// <summary>
     /// Returns whether the given object is a plain object type that should be serialized as a JSON object, like '{"foo":123,"bar:456}}'.
     /// </summary>
-    internal static bool IsPlainObjectType(Type type)
+    public static bool IsPlainObjectType(Type type)
     {
         // Exclude value types (structs)
         if (type.IsValueType) return false;

@@ -56,4 +56,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BlazingStory.Abstractions\BlazingStory.Abstractions.csproj" />
+  </ItemGroup>
+
 </Project>

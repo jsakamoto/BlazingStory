@@ -41,7 +41,7 @@
     internal IServiceProvider Services { get; init; } = default!;
 
     [Parameter, EditorRequired]
-    public required Story Story { get; set; }
+    public required IStory Story { get; set; }
 
     [Parameter]
     public bool EnableZoom { get; set; }

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Specialized;
-using BlazingStory.Internals.Extensions;
 using BlazingStory.Internals.Utils;
+using BlazingStory.ToolKit.Extensions;
 using BlazingStory.ToolKit.JSInterop;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;

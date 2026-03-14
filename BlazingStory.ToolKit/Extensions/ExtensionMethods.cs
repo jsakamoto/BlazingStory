@@ -1,6 +1,6 @@
-﻿namespace BlazingStory.Internals.Extensions;
+namespace BlazingStory.ToolKit.Extensions;
 
-internal static class ExtensionMethods
+public static class ExtensionMethods
 {
     public static void ForEach<T>(this IEnumerable<T> values, Action<T> action)
     {

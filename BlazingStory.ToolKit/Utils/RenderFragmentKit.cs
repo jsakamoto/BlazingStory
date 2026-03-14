@@ -1,19 +1,19 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
-using BlazingStory.Internals.Extensions;
+using BlazingStory.ToolKit.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.RenderTree;
 using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
-namespace BlazingStory.Internals.Utils;
+namespace BlazingStory.ToolKit.Utils;
 
 /// <summary>
 /// The utility class for operations involved with <see cref="RenderFragment"/>.
 /// </summary>
-internal static class RenderFragmentKit
+public static class RenderFragmentKit
 {
     /// <summary>
     /// When the given object is <see cref="RenderFragment"/> or <see cref="RenderFragment&lt;TValue&gt;"/>, returns true and the string content what is the given <see cref="RenderFragment"/> renders.
@@ -23,7 +23,7 @@ internal static class RenderFragmentKit
     /// <returns>True if the given object is <see cref="RenderFragment"/> or <see cref="RenderFragment&lt;TValue&gt;"/>. Otherwise, false.</returns>
     [UnconditionalSuppressMessage("Trimming", "IL2060")]
     [DynamicDependency(NonPublicMethods, "BlazingStory.Internals.Utils.RenderFragmentKit", "BlazingStory")]
-    internal static bool TryToString(object? obj, [NotNullWhen(true)] out string? result)
+    public static bool TryToString(object? obj, [NotNullWhen(true)] out string? result)
     {
         if (obj is RenderFragment renderFragment)
         {
@@ -46,7 +46,7 @@ internal static class RenderFragmentKit
     }
 
     private static readonly Lazy<MethodInfo> ToStringMethodT = new(() => typeof(RenderFragmentKit)
-           .GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+           .GetMethods(BindingFlags.Public | BindingFlags.Static)
            .Where(m => m.Name == nameof(ToString))
            .Where(m => m.IsGenericMethod)
            .First());
@@ -56,7 +56,7 @@ internal static class RenderFragmentKit
     /// </summary>
     /// <param name="renderFragment">The <see cref="RenderFragment&lt;TValue&gt;"/> to get the string content.</param>
     /// <returns>The string content what is the given <see cref="RenderFragment&lt;TValue&gt;"/> renders.</returns>
-    internal static string ToString<TContext>(RenderFragment<TContext>? renderFragment)
+    public static string ToString<TContext>(RenderFragment<TContext>? renderFragment)
     {
         if (renderFragment == null) return string.Empty;
         var innerRenderFragment = renderFragment.Invoke(default!);
@@ -106,7 +106,7 @@ internal static class RenderFragmentKit
     /// </summary>
     /// <param name="text">The string content what is the <see cref="RenderFragment&lt;TValue&gt;"/> will render.</param>
     /// <returns>The <see cref="RenderFragment"/> that will render the given string content.</returns>
-    internal static RenderFragment FromString(string text)
+    public static RenderFragment FromString(string text)
     {
         return (builder) => builder.AddContent(0, text);
     }
@@ -117,7 +117,7 @@ internal static class RenderFragmentKit
     /// <typeparam name="T">The type argument of <see cref="RenderFragment&lt;TValue&gt;"/>.</typeparam>
     /// <param name="text">The string content what is the <see cref="RenderFragment&lt;TValue&gt;"/> will render.</param>
     /// <returns>The <see cref="RenderFragment&lt;TValue&gt;"/> that will render the given string content.</returns>
-    internal static object FromString<T>(string text)
+    public static object FromString<T>(string text)
     {
         return FromString(typeof(T), text);
     }
@@ -128,7 +128,7 @@ internal static class RenderFragmentKit
     /// <param name="argumentType">The type argument of <see cref="RenderFragment&lt;TValue&gt;"/>.</param>
     /// <param name="text">The string content what is the <see cref="RenderFragment&lt;TValue&gt;"/> will render.</param>
     /// <returns>The <see cref="RenderFragment&lt;TValue&gt;"/> that will render the given string content.</returns>
-    internal static object FromString(Type argumentType, string text)
+    public static object FromString(Type argumentType, string text)
     {
         var addContentCall = Expression.Call(BuilderParam.Value, AddContentMethod.Value, Expression.Constant(0), Expression.Constant(text));
         var renderFragment = Expression.Lambda(typeof(RenderFragment), addContentCall, BuilderParam.Value);
@@ -140,7 +140,7 @@ internal static class RenderFragmentKit
         return renderFragmentT.Compile();
     }
 
-    internal static bool IsRenderFragment(object? value)
+    public static bool IsRenderFragment(object? value)
     {
         var type = value is Type t ? t : value?.GetType();
         return type == typeof(RenderFragment) || type?.IsGenericTypeOf(typeof(RenderFragment<>)) == true;

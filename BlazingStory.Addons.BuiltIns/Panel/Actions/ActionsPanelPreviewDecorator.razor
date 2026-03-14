@@ -10,13 +10,13 @@
     private readonly JSModule _JSModule;
 
     [CascadingParameter(Name = "Story")]
-    public Story? Story { get; set; }
+    public IStory? Story { get; set; }
 
-    private Story? _PrevStory;
+    private IStory? _PrevStory;
 
     public ActionsPanelPreviewDecorator()
     {
-        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "./Addons/BuiltIns/Panel/Actions/ActionsPanelPreviewDecorator.razor.js");
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Panel/Actions/ActionsPanelPreviewDecorator.razor.js");
     }
 
     protected override async Task OnParametersSetAsync()

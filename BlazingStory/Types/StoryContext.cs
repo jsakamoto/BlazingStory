@@ -1,10 +1,11 @@
+using BlazingStory.Abstractions;
 using BlazingStory.Internals.Models;
-using BlazingStory.Internals.Utils;
+using BlazingStory.ToolKit.Utils;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Types;
 
-public class StoryContext
+internal class StoryContext : IStoryContext
 {
     private readonly Dictionary<string, object?> _DefaultArgs = new();
 
@@ -12,9 +13,9 @@ public class StoryContext
 
     public IReadOnlyDictionary<string, object?> Args => this._Args;
 
-    internal readonly IEnumerable<ComponentParameter> Parameters;
+    public IEnumerable<IComponentParameter> Parameters { get; }
 
-    internal event AsyncEventHandler? ArgumentChanged;
+    public event AsyncEventHandler? ArgumentChanged;
 
     internal StoryContext(IEnumerable<ComponentParameter> parameters)
     {
@@ -24,7 +25,7 @@ public class StoryContext
     /// <summary>
     /// Get the number of parameters that are not event parameters.
     /// </summary>
-    internal int GetNoEventParameterCount()
+    public int GetNoEventParameterCount()
     {
         return this.Parameters
             .Select(p => p.GetParameterTypeStrings().FirstOrDefault())
@@ -32,13 +33,13 @@ public class StoryContext
             .Count();
     }
 
-    internal void InitArgument(string name, object? value)
+    public void InitArgument(string name, object? value)
     {
         this._DefaultArgs[name] = value;
         this._Args[name] = value;
     }
 
-    internal async ValueTask ResetArgumentsAsync()
+    public async ValueTask ResetArgumentsAsync()
     {
         this._Args.Clear();
         foreach (var param in this.Parameters.Where(p => p.DefaultValue is not null))
@@ -52,7 +53,7 @@ public class StoryContext
         await this.ArgumentChanged.InvokeAsync();
     }
 
-    internal async ValueTask AddOrUpdateArgumentAsync(string name, object? newValue)
+    public async ValueTask AddOrUpdateArgumentAsync(string name, object? newValue)
     {
         if (this._Args.TryGetValue(name, out var value))
         {
@@ -75,7 +76,7 @@ public class StoryContext
     /// <param name="name">The name of the parameter.</param>
     /// <param name="value">The value of the parameter.</param>
     /// <returns>The string representation of the parameter value.</returns>
-    internal string ConvertParameterValueToString(string name, object? value)
+    public string ConvertParameterValueToString(string name, object? value)
     {
         if (RenderFragmentKit.TryToString(value, out var str)) return str;
 

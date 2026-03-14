@@ -98,9 +98,9 @@
 
 @code
 {
-    private readonly ComponentParameter String = SampleComponent.CreateParameter(nameof(SampleComponent.String));
+    private readonly IComponentParameter String = SampleComponent.CreateParameter(nameof(SampleComponent.String));
 
-    private readonly ComponentParameter Color = SampleComponent.CreateParameter(nameof(SampleComponent.Color), ControlType.Color);
+    private readonly IComponentParameter Color = SampleComponent.CreateParameter(nameof(SampleComponent.Color), ControlType.Color);
 
     private object? _Text1 = Unknown.Value;
 

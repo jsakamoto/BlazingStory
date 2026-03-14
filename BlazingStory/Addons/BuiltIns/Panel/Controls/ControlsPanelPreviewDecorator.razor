@@ -1,7 +1,7 @@
 @code
 {
     [CascadingParameter(Name = "Story")]
-    public Story? Story { get; set; }
+    public IStory? Story { get; set; }
 
     [CascadingParameter(Name = "Args")]
     public IReadOnlyDictionary<string, string>? Args { get; set; }

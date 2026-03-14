@@ -20,7 +20,7 @@
     internal IServiceProvider Services { get; init; } = default!;
 
     [Parameter]
-    public Story? Story { get; set; }
+    public IStory? Story { get; set; }
 
     [Parameter]
     public bool Visible { get; set; }

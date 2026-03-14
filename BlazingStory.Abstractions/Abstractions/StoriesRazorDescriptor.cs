@@ -1,15 +1,15 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using BlazingStory.Types;
 using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
-namespace BlazingStory.Internals.Models;
+namespace BlazingStory.Abstractions;
 
-internal class StoriesRazorDescriptor
+public class StoriesRazorDescriptor
 {
     [DynamicallyAccessedMembers(All)]
-    internal readonly Type TypeOfStoriesRazor;
+    public readonly Type TypeOfStoriesRazor;
 
-    internal readonly StoriesAttribute StoriesAttribute;
+    public readonly StoriesAttribute StoriesAttribute;
 
     public StoriesRazorDescriptor([DynamicallyAccessedMembers(All)] Type typeOfStoriesRazor, StoriesAttribute storiesAttribute)
     {

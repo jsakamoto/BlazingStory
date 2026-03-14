@@ -93,9 +93,9 @@
 
 @code
 {
-    private readonly ComponentParameter Enum = SampleComponent.CreateParameter(nameof(SampleComponent.Enum), ControlType.Select);
+    private readonly IComponentParameter Enum = SampleComponent.CreateParameter(nameof(SampleComponent.Enum), ControlType.Select);
 
-    private readonly ComponentParameter NullableEnum = SampleComponent.CreateParameter(nameof(SampleComponent.NullableEnum), ControlType.Select);
+    private readonly IComponentParameter NullableEnum = SampleComponent.CreateParameter(nameof(SampleComponent.NullableEnum), ControlType.Select);
 
     private object? _Enum1 = Unknown.Value;
 

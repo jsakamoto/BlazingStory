@@ -1,9 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
-namespace BlazingStory.Internals.Utils;
+namespace BlazingStory.Addons.BuiltIns.Panel.Actions;
 
 /// <summary>
 /// Provides methods for serializing objects to JSON without any exceptions even when the object contains unsupported types or cyclic references.

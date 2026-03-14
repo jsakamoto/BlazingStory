@@ -1,18 +1,18 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
-namespace BlazingStory.Internals.Utils;
+namespace BlazingStory.Abstractions;
 
-internal class TypeStructure
+public class TypeStructure
 {
-    internal readonly bool IsNullable;
+    public readonly bool IsNullable;
 
-    internal readonly bool IsGeneric;
+    public readonly bool IsGeneric;
 
-    [DynamicallyAccessedMembers(PublicConstructors | PublicMethods| Interfaces)]
-    internal readonly Type PrimaryType;
+    [DynamicallyAccessedMembers(PublicConstructors | PublicMethods | Interfaces)]
+    public readonly Type PrimaryType;
 
-    internal readonly Type[] SecondaryTypes;
+    public readonly Type[] SecondaryTypes;
 
     public TypeStructure(bool isNullable, bool isGeneric, [DynamicallyAccessedMembers(PublicConstructors | PublicMethods | Interfaces)] Type primaryType, Type[] secondaryTypes)
     {

@@ -1,6 +1,6 @@
-﻿using BlazingStory.Internals.Utils;
-using Microsoft.AspNetCore.Components;
 using System.Net;
+using BlazingStory.ToolKit.Utils;
+using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Test.Internals.Utils;
 

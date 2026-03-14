@@ -1,4 +1,4 @@
-using BlazingStory.Internals.Models;
+using BlazingStory.Abstractions;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers;
@@ -9,7 +9,7 @@ public class ParameterControllerBase : ComponentBase
     public required string Key { get; set; }
 
     [Parameter, EditorRequired]
-    public required ComponentParameter Parameter { get; set; }
+    public required IComponentParameter Parameter { get; set; }
 
     [Parameter, EditorRequired]
     public object? Value { get; set; }

@@ -1,4 +1,4 @@
-﻿namespace BlazingStory.Types;
+namespace BlazingStory.Types;
 
 public enum ControlType
 {

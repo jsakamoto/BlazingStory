@@ -1,5 +1,3 @@
-@using System.Text.Json
-
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 
@@ -10,6 +8,8 @@
         <Badge Text="@this.ActionLogs?.Count.ToString()" />
     }
 </PanelTitle>
+
+<ImportStyleSheet Href="./_content/BlazingStory.Addons.BuiltIns/css/actions-panel.css" />
 
 <div class="actions-panel">
 
@@ -28,9 +28,9 @@
 @code
 {
     [CascadingParameter(Name = "Story")]
-    public Story? Story { get; set; }
+    public IStory? Story { get; set; }
 
-    private Story? _PrevStory;
+    private IStory? _PrevStory;
 
     [Parameter]
     public List<ComponentActionLog>? ActionLogs { get; set; } = [];
@@ -46,7 +46,7 @@
 
     public ActionsPanel()
     {
-        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "./Addons/BuiltIns/Panel/Actions/ActionsPanel.razor.js");
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Panel/Actions/ActionsPanel.razor.js");
     }
 
     override protected async Task OnParametersSetAsync()

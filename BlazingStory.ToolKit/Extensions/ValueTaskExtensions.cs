@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 
-namespace BlazingStory.Internals.Extensions;
+namespace BlazingStory.ToolKit.Extensions;
 
-internal static class ValueTaskExtensions
+public static class ValueTaskExtensions
 {
     public static void AndLogException(this ValueTask task, ILogger logger)
     {

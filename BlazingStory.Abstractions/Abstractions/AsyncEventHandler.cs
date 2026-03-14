@@ -1,8 +1,8 @@
-﻿namespace BlazingStory.Internals.Models;
+namespace BlazingStory.Abstractions;
 
-internal delegate ValueTask AsyncEventHandler();
+public delegate ValueTask AsyncEventHandler();
 
-internal static class AsyncEventHandlerExtensions
+public static class AsyncEventHandlerExtensions
 {
     public static async ValueTask InvokeAsync(this AsyncEventHandler? handler)
     {

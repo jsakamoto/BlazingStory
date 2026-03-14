@@ -74,14 +74,14 @@
 @code
 {
     [CascadingParameter(Name = "Story")]
-    public Story? Story { get; set; }
+    public IStory? Story { get; set; }
 
     [CascadingParameter]
     public ViewMode ViewMode { get; set; }
 
     private bool ShowDetails => this.ViewMode == ViewMode.Docs;
 
-    private Story? _LastShownStory;
+    private IStory? _LastShownStory;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -99,12 +99,12 @@
     /// <summary>
     /// Get parameters of the component from the current story.
     /// </summary>
-    private IEnumerable<ComponentParameter> GetParameters()
+    private IEnumerable<IComponentParameter> GetParameters()
     {
-        return this.Story?.Context.Parameters ?? Enumerable.Empty<ComponentParameter>();
+        return this.Story?.Context.Parameters ?? Enumerable.Empty<IComponentParameter>();
     }
 
-    private string GetKey(ComponentParameter parameter)
+    private string GetKey(IComponentParameter parameter)
     {
         return (this.Story?.NavigationPath ?? "") + ":" + parameter.Name;
     }
@@ -120,7 +120,7 @@
         await this.Story.Context.ResetArgumentsAsync();
     }
 
-    private async Task OnInputAsync(object? value, ComponentParameter parameter)
+    private async Task OnInputAsync(object? value, IComponentParameter parameter)
     {
         if (this.Story == null) return;
         await this.Story.Context.AddOrUpdateArgumentAsync(parameter.Name, value);

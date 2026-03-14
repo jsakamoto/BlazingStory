@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
+using BlazingStory.Abstractions;
 using BlazingStory.Internals.Services.XmlDocComment;
 using BlazingStory.Types;
 using Microsoft.AspNetCore.Components;
@@ -54,7 +55,7 @@ internal class StoryContainer
         this._XmlDocComment = services.GetRequiredService<IXmlDocComment>();
     }
 
-    internal void RegisterStory(string name, StoryContext storyContext, [DynamicallyAccessedMembers(All)] Type? storiesLayout, [DynamicallyAccessedMembers(All)] Type? storyLayout, RenderFragment<StoryContext> renderFragment, RenderFragment? description)
+    internal void RegisterStory(string name, IStoryContext storyContext, [DynamicallyAccessedMembers(All)] Type? storiesLayout, [DynamicallyAccessedMembers(All)] Type? storyLayout, RenderFragment<IStoryContext> renderFragment, RenderFragment? description)
     {
         var newStory = new Story(this._StoriesRazorDescriptor, this.TargetComponentType, name, storyContext, storiesLayout, storyLayout, renderFragment, description);
         var index = this.Stories.FindIndex(story => story.Name == name);
