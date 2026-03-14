@@ -72,7 +72,7 @@ public static class IJSExtensions
     /// <param name="jSRuntime">The <see cref="IJSRuntime"/> instance to retrieve browser's on-line status</param>
     /// <param name="updateToken">The update token to be included in the query string. This is usually a version number or a timestamp that changes whenever the static assets are updated.</param>
     [UnconditionalSuppressMessage("Trimming", "IL2026")]
-    private static string GetUpdateToken(this IJSRuntime jSRuntime, string updateToken)
+    public static string GetUpdateToken(this IJSRuntime jSRuntime, string updateToken)
     {
         if (jSRuntime is IJSInProcessRuntime jsInProcRuntime)
         {

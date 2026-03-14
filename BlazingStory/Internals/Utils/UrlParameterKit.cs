@@ -1,6 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.JSInterop;
-
 namespace BlazingStory.Internals.Utils;
 
 /// <summary>
@@ -33,26 +30,5 @@ internal static class UriParameterKit
         if (string.IsNullOrEmpty(searchText)) return uri;
 
         return uri + "?" + searchText;
-    }
-
-    /// <summary>
-    /// Get the query string that ensures the loading of the latest static assets.<br/>
-    /// This method will return a string like "?v=1.0.0-preview.2.3" if the browser is online. Otherwise, "".<br/>
-    /// (This method depends on the "Toolbelt.Blazor.getProperty" JavaScript function, which is provided by Toolbelt.Blazor.GetProperty.Script NuGet package)
-    /// </summary>
-    /// <param name="jSRuntime">The <see cref="IJSRuntime"/> instance to retrieve browser's on-line status</param>
-    [UnconditionalSuppressMessage("Trimming", "IL2026")]
-    internal static string GetUpdateToken(IJSRuntime jSRuntime)
-    {
-        var jsInProcRuntime = jSRuntime as IJSInProcessRuntime;
-        if (jsInProcRuntime == null) return "";
-#if NET10_0_OR_GREATER
-        var isOnLine = jsInProcRuntime.GetValue<bool>("navigator.onLine");
-#else
-        var isOnLine = jsInProcRuntime.Invoke<bool>("Toolbelt.Blazor.getProperty", "navigator.onLine");
-#endif
-        if (!isOnLine) return "";
-
-        return "?v=" + VersionInfo.GetEscapedVersionText();
     }
 }
