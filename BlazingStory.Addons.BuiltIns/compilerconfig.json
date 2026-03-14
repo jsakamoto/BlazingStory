@@ -4,6 +4,10 @@
     "outputFile": "wwwroot/css/actions-panel.css"
   },
   {
+    "inputFile": "wwwroot/css/controls-panel.scss",
+    "outputFile": "wwwroot/css/controls-panel.css"
+  },
+  {
     "inputFile": "wwwroot/css/background-grid.scss",
     "outputFile": "wwwroot/css/background-grid.css"
   },

@@ -1,7 +1,7 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace BlazingStory.Internals.Services;
+namespace BlazingStory.ToolKit.Internals.Utils;
 
 internal class WebColor
 {

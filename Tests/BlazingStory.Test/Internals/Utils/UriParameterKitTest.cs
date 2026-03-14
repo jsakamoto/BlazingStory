@@ -1,5 +1,5 @@
 using System.Web;
-using BlazingStory.Internals.Utils;
+using BlazingStory.ToolKit.Utils;
 
 namespace BlazingStory.Test.Internals.Utils;
 

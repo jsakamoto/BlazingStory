@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
+    <InternalsVisibleTo Include="BlazingStory.Test" />
   </ItemGroup>
 
   <ItemGroup Condition=" $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '8.0')) ">
@@ -49,6 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Toolbelt.Web.CssClassInlineBuilder" Version="3.1.0.1" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="6.1.0" />
     <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.9.3">
       <PrivateAssets>all</PrivateAssets>

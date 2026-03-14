@@ -1,7 +1,18 @@
 @import "../../Buttons/IconButton.razor.scss";
 @import "../../Buttons/CornerButton.razor.scss";
+@import "../../Buttons/SquareButton.razor.scss";
+@import "../../Buttons/ToggleButton.razor.scss";
+
 @import "../../Icons/Badge.razor.scss";
 @import "../../Icons/SvgIcon.razor.scss";
+
+@import "../../Inputs/ColorInput.razor.scss";
+@import "../../Inputs/NullInputRadio.razor.scss";
+@import "../../Inputs/NumberInput.razor.scss";
+@import "../../Inputs/Select.razor.scss";
+@import "../../Inputs/TextArea.razor.scss";
+
+
 @import "../../Menus/PopupMenu.razor.scss";
 @import "../../Menus/MenuItem.razor.scss";
 @import "../../Menus/MenuItemDivider.razor.scss";

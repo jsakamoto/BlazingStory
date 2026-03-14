@@ -1,6 +1,6 @@
-﻿namespace BlazingStory.Internals.Models;
+namespace BlazingStory.ToolKit.Utils;
 
-internal class Unknown
+public class Unknown
 {
     public static readonly Unknown Value = new();
 
