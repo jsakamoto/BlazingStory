@@ -19,7 +19,7 @@
                 <ToolBar Visible="this._ToolbarVisibleCommand?.Flag == true">
                     @if (this._Commands[CommandType.SideBarVisible]?.Flag == false)
                     {
-                        <IconButton Icon="SvgIconType.Sidebar" Command="this._Commands[CommandType.SideBarVisible]" />
+                        <IconCommandButton Icon="SvgIconType.Sidebar" Command="this._Commands[CommandType.SideBarVisible]" />
                         <Separator />
                     }
 
@@ -47,15 +47,15 @@
 
                     @if (this._AddonPanelVisibleCommand?.Flag != true)
                     {
-                        <IconButton Icon="this.ToggleOrientationButtonIcon" Command="this._AddonPanelVisibleCommand" />
+                        <IconCommandButton Icon="this.ToggleOrientationButtonIcon" Command="this._AddonPanelVisibleCommand" />
                     }
                     @if ((this._GoFullscreenCommand?.Flag ?? true) == true)
                     {
-                        <IconButton Icon="SvgIconType.CircleClose" Command="this._GoFullscreenCommand" Title="Exit full screen [{0}]" />
+                        <IconCommandButton Icon="SvgIconType.CircleClose" Command="this._GoFullscreenCommand" Title="Exit full screen [{0}]" />
                     }
                     else
                     {
-                        <IconButton Icon="SvgIconType.FullScreen" Command="this._GoFullscreenCommand" />
+                        <IconCommandButton Icon="SvgIconType.FullScreen" Command="this._GoFullscreenCommand" />
                     }
 
                     <IconButton Icon="SvgIconType.OpenNewTab" Href="@this._PreviewFrame?.CurrentPreviewFrameUrl" Target="_blank" Title="Open canvas in new tab" />

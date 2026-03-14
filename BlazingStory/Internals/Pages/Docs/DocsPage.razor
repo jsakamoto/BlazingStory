@@ -13,7 +13,7 @@
     <ToolBar Visible="this._Commands.ToolbarVisible?.Flag == true">
         @if (this._Commands.ShowSidebar?.Flag == false)
         {
-            <IconButton Icon="SvgIconType.Sidebar" Command="this._Commands.ShowSidebar" />
+            <IconCommandButton Icon="SvgIconType.Sidebar" Command="this._Commands.ShowSidebar" />
             <Separator />
         }
 
@@ -35,11 +35,11 @@
 
         @if ((this._Commands.Fullscreen?.Flag ?? true) == true)
         {
-            <IconButton Icon="SvgIconType.CircleClose" Command="this._Commands.Fullscreen" Title="Exit full screen [{0}]" />
+            <IconCommandButton Icon="SvgIconType.CircleClose" Command="this._Commands.Fullscreen" Title="Exit full screen [{0}]" />
         }
         else
         {
-            <IconButton Icon="SvgIconType.FullScreen" Command="this._Commands.Fullscreen" />
+            <IconCommandButton Icon="SvgIconType.FullScreen" Command="this._Commands.Fullscreen" />
         }
 
     </ToolBar>
