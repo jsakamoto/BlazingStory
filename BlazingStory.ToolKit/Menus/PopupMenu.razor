@@ -1,3 +1,4 @@
+@using Microsoft.Extensions.DependencyInjection
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 
@@ -56,7 +57,7 @@
     public PopupMenu()
     {
         this._This = DotNetObjectReference.Create(this);
-        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Internals/Components/Menus/PopupMenu.razor.js");
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Menus/PopupMenu.razor.js");
     }
 
     private async Task OpenPopup()
