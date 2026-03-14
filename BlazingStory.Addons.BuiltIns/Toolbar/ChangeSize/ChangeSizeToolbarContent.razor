@@ -1,3 +1,5 @@
+@inject IJSRuntime JSRuntime
+
 @{
     var orientationInitial = this._CurrentState.Orientation.ToString().Substring(0, 1);
     var sizes = this.GetSizes();
@@ -51,13 +53,8 @@
 
 @code
 {
-    [CascadingParameter]
-    internal IServiceProvider Services { get; init; } = default!;
-
     [Parameter]
     public required GlobalArguments Globals { get; init; }
-
-    private HelperScript HelperScript => this.Services.GetRequiredService<HelperScript>();
 
     private readonly IReadOnlyDictionary<SizeType, (string DisplayName, int ShrotSide, int LongSide)> SizeTypeToDetail = new Dictionary<SizeType, (string, int, int)>
     {
@@ -95,7 +92,7 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
-        this._CurrentState = await this.HelperScript.LoadObjectFromLocalStorageAsync(StorageKey, this._CurrentState);
+        this._CurrentState = await this.JSRuntime.LoadObjectFromLocalStorageAsync(StorageKey, this._CurrentState);
         this.StateHasChanged();
     }
 
@@ -114,6 +111,6 @@
 
     private async ValueTask SaveCurrentState()
     {
-        await this.HelperScript.SaveObjectToLocalStorageAsync(StorageKey, this._CurrentState);
+        await this.JSRuntime.SaveObjectToLocalStorageAsync(StorageKey, this._CurrentState);
     }
 }

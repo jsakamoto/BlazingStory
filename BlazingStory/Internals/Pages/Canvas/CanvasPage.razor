@@ -1,5 +1,6 @@
 @using BlazingStory.Addons.Internals
 @implements IDisposable
+@inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 
 <PageTitle>@_PageTitle</PageTitle>
@@ -168,7 +169,7 @@
     {
         if (!firstRender) return;
 
-        this._AddonPanelLayout = await this.HelperScript.LoadObjectFromLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
+        this._AddonPanelLayout = await this.JSRuntime.LoadObjectFromLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
         this.UpdateAddonPanelSize(this._AddonPanelLayout.SplitterOrientation);
         this.StateHasChanged();
     }
@@ -291,7 +292,7 @@
 
     private async ValueTask SaveAddonPanelLayoutAsync()
     {
-        await this.HelperScript.SaveObjectToLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
+        await this.JSRuntime.SaveObjectToLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
     }
 
     public void Dispose()

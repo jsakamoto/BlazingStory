@@ -90,7 +90,7 @@
 			this.StateHasChanged();
 
 			await this.HelperScript.SetupKeyDownReceiverAsync();
-			this._SideBarSize = await this.HelperScript.GetLocalStorageItemAsync(this.SideBarSizeKeyName, this._SideBarSize);
+			this._SideBarSize = await this.JSRuntime.GetLocalStorageItemAsync(this.SideBarSizeKeyName, this._SideBarSize);
 			this.StateHasChanged();
 		}
 

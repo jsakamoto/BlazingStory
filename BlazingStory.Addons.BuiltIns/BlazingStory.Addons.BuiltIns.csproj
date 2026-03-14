@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <Import Project="../VersionInfo.props" />
+  <Import Project="VersionInfo.targets" />
 
   <PropertyGroup>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>

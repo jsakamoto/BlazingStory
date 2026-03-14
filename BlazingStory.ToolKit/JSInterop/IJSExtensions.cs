@@ -1,10 +1,14 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using Microsoft.JSInterop;
+using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.ToolKit.JSInterop;
 
 public static class IJSExtensions
 {
+    private static readonly JsonSerializerOptions _JsonSerializerOptions = new() { IncludeFields = true };
+
     /// <summary>
     /// Import a JavScript module from the specified path.
     /// </summary>
@@ -44,6 +48,27 @@ public static class IJSExtensions
     public static async ValueTask SetLocalStorageItemAsync<T>(this IJSRuntime jsRuntime, string key, T? value)
     {
         await jsRuntime.InvokeVoidAsync("localStorage.setItem", key, value?.ToString() ?? "");
+    }
+
+    [UnconditionalSuppressMessage("Trimming", "IL2026")]
+    public static async ValueTask SaveObjectToLocalStorageAsync<[DynamicallyAccessedMembers(PublicConstructors | PublicFields | PublicProperties)] T>(this IJSRuntime jsRuntime, string key, T obj)
+    {
+        var json = JsonSerializer.Serialize(obj, _JsonSerializerOptions);
+        await jsRuntime.SetLocalStorageItemAsync(key, json);
+    }
+
+    [UnconditionalSuppressMessage("Trimming", "IL2026")]
+    public static async ValueTask<T> LoadObjectFromLocalStorageAsync<[DynamicallyAccessedMembers(PublicConstructors | PublicFields | PublicProperties)] T>(this IJSRuntime jsRuntime, string key, T defaultObject)
+    {
+        var json = await jsRuntime.GetLocalStorageItemAsync(key);
+        if (string.IsNullOrEmpty(json)) return defaultObject;
+        return JsonSerializer.Deserialize<T?>(json, _JsonSerializerOptions) ?? defaultObject;
+    }
+
+    public static async ValueTask<T> GetLocalStorageItemAsync<T>(this IJSRuntime jsRuntime, string key, T defaultValue) where T : IParsable<T>
+    {
+        var stringValue = await jsRuntime.GetLocalStorageItemAsync(key);
+        return T.TryParse(stringValue, null, out var value) ? value : defaultValue;
     }
 
     /// <summary>

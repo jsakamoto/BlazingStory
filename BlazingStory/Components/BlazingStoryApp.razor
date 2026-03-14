@@ -305,8 +305,7 @@
 
         if (this.AvailableColorSchemes == AvailableColorSchemes.Both)
         {
-            var helperScript = this._ServiceScope.Value.ServiceProvider.GetRequiredService<HelperScript>();
-            var colorScheme = await helperScript.GetLocalStorageItemAsync("ColorScheme", defaultValue: "system");
+            var colorScheme = await JSRuntime.GetLocalStorageItemAsync("ColorScheme", defaultValue: "system");
             if (colorScheme != "dark" && colorScheme != "light")
             {
                 colorScheme = await this._JSModule.InvokeAsync<string>("getPrefersColorScheme");

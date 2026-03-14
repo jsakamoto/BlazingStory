@@ -33,27 +33,6 @@ internal class HelperScript : IAsyncDisposable
 
     internal ValueTask CopyTextToClipboardAsync(string text) => this.InvokeVoidAsync("copyTextToClipboard", text);
 
-    [UnconditionalSuppressMessage("Trimming", "IL2026")]
-    internal async ValueTask SaveObjectToLocalStorageAsync<[DynamicallyAccessedMembers(PublicConstructors | PublicFields | PublicProperties)] T>(string key, T obj)
-    {
-        var json = JsonSerializer.Serialize(obj, this.JsonSerializerOptions);
-        await this._JSRuntime.SetLocalStorageItemAsync(key, json);
-    }
-
-    [UnconditionalSuppressMessage("Trimming", "IL2026")]
-    internal async ValueTask<T> LoadObjectFromLocalStorageAsync<[DynamicallyAccessedMembers(PublicConstructors | PublicFields | PublicProperties)] T>(string key, T defaultObject)
-    {
-        var json = await this._JSRuntime.GetLocalStorageItemAsync(key);
-        if (string.IsNullOrEmpty(json)) return defaultObject;
-        return JsonSerializer.Deserialize<T?>(json, this.JsonSerializerOptions) ?? defaultObject;
-    }
-
-    public async ValueTask<T> GetLocalStorageItemAsync<T>(string key, T defaultValue) where T : IParsable<T>
-    {
-        var stringValue = await this._JSRuntime.GetLocalStorageItemAsync(key);
-        return T.TryParse(stringValue, null, out var value) ? value : defaultValue;
-    }
-
     internal ValueTask SetupKeyDownReceiverAsync() => this.InvokeVoidAsync("setupMessageReceiverFromIFrame");
 
     public async ValueTask DisposeAsync()

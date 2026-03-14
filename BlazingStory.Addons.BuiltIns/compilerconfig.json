@@ -2,5 +2,9 @@
   {
     "inputFile": "wwwroot/css/background-grid.scss",
     "outputFile": "wwwroot/css/background-grid.css"
+  },
+  {
+    "inputFile": "wwwroot/css/outline.scss",
+    "outputFile": "wwwroot/css/outline.css"
   }
 ]

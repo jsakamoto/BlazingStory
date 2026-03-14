@@ -10,7 +10,7 @@
 
     public BackgroundPreviewDecorator()
     {
-        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "./Addons/BuiltIns/Toolbar/Background/BackgroundPreviewDecorator.razor.js");
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Toolbar/Background/BackgroundPreviewDecorator.razor.js");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

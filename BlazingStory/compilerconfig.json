@@ -2,9 +2,5 @@
   {
     "outputFile": "wwwroot/css/styles.css",
     "inputFile": "wwwroot/css/styles.scss"
-  },
-  {
-    "outputFile": "wwwroot/css/preview/outline.css",
-    "inputFile": "wwwroot/css/preview/outline.scss"
   }
 ]

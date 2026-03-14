@@ -1,8 +1,10 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Specialized;
 using BlazingStory.Internals.Extensions;
 using BlazingStory.Internals.Utils;
+using BlazingStory.ToolKit.JSInterop;
 using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
 using Toolbelt.Blazor.HotKeys2;
 
 namespace BlazingStory.Internals.Services.Command;
@@ -14,7 +16,7 @@ internal class CommandSet<TKey> : IAsyncDisposable, IEnumerable<(TKey Type, Comm
 
     private readonly HotKeys _HotKeys;
 
-    private readonly HelperScript _HelperScript;
+    private readonly IJSRuntime _JSRuntime;
 
     private readonly ILogger _Logger;
 
@@ -24,13 +26,13 @@ internal class CommandSet<TKey> : IAsyncDisposable, IEnumerable<(TKey Type, Comm
 
     private HotKeysContext? _HotKeysContext;
 
-    public Command? this[TKey type] => this._Commands[(object)type] as Command;
+    public Command? this[TKey type] => this._Commands[type] as Command;
 
-    internal CommandSet(string storageKey, HotKeys hotKeys, HelperScript helperScript, ILogger logger)
+    internal CommandSet(string storageKey, HotKeys hotKeys, IJSRuntime jsRuntime, ILogger logger)
     {
         this._StorageKey = storageKey;
         this._HotKeys = hotKeys;
-        this._HelperScript = helperScript;
+        this._JSRuntime = jsRuntime;
         this._Logger = logger;
     }
 
@@ -39,7 +41,7 @@ internal class CommandSet<TKey> : IAsyncDisposable, IEnumerable<(TKey Type, Comm
         if (this._Initialized) return;
         this._Initialized = true;
 
-        var commandStates = await this._HelperScript.LoadObjectFromLocalStorageAsync(this._StorageKey, new Dictionary<TKey, CommandState>());
+        var commandStates = await this._JSRuntime.LoadObjectFromLocalStorageAsync(this._StorageKey, new Dictionary<TKey, CommandState>());
         foreach (var (type, command) in getCommandEntries())
         {
             if (commandStates.TryGetValue(type, out var state)) state.Apply(command);
@@ -67,7 +69,7 @@ internal class CommandSet<TKey> : IAsyncDisposable, IEnumerable<(TKey Type, Comm
         var commandStates = this._Commands.Keys
             .Cast<TKey>()
             .ToDictionary(key => key, key => new CommandState(this[key]!));
-        this._HelperScript
+        this._JSRuntime
             .SaveObjectToLocalStorageAsync(this._StorageKey, commandStates)
             .AndLogException(this._Logger);
         this.ConfigureHotKeys()

@@ -1,4 +1,6 @@
-﻿using BlazingStory.Internals.Models;
+using BlazingStory.Internals.Models;
+using BlazingStory.ToolKit.JSInterop;
+using Microsoft.JSInterop;
 
 namespace BlazingStory.Internals.Services.Navigation;
 
@@ -6,7 +8,7 @@ public class NavigationHistory
 {
     private const int MAX_HISTORY_ITEMS = 8;
 
-    private readonly HelperScript _HelperScript;
+    private readonly IJSRuntime _JSRuntime;
 
     private LinkedList<NavigationListItem> _HistoryItems = new();
 
@@ -14,9 +16,9 @@ public class NavigationHistory
 
     private bool _Initialized = false;
 
-    internal NavigationHistory(HelperScript helperScript)
+    internal NavigationHistory(IJSRuntime jsRuntime)
     {
-        this._HelperScript = helperScript;
+        this._JSRuntime = jsRuntime;
     }
 
     private async ValueTask EnsureInitializeAsync()
@@ -24,7 +26,7 @@ public class NavigationHistory
         if (!this._Initialized)
         {
             this._Initialized = true;
-            this._HistoryItems = await this._HelperScript.LoadObjectFromLocalStorageAsync(StorageKey, new LinkedList<NavigationListItem>());
+            this._HistoryItems = await this._JSRuntime.LoadObjectFromLocalStorageAsync(StorageKey, new LinkedList<NavigationListItem>());
         }
     }
 
@@ -78,13 +80,13 @@ public class NavigationHistory
         while (this._HistoryItems.Count >= MAX_HISTORY_ITEMS) this._HistoryItems.RemoveLast();
         this._HistoryItems.AddFirst(historyItem);
 
-        await this._HelperScript.SaveObjectToLocalStorageAsync(StorageKey, this._HistoryItems);
+        await this._JSRuntime.SaveObjectToLocalStorageAsync(StorageKey, this._HistoryItems);
     }
 
     internal async ValueTask ClearAsync()
     {
         await this.EnsureInitializeAsync();
         this._HistoryItems.Clear();
-        await this._HelperScript.SaveObjectToLocalStorageAsync(StorageKey, this._HistoryItems);
+        await this._JSRuntime.SaveObjectToLocalStorageAsync(StorageKey, this._HistoryItems);
     }
 }
