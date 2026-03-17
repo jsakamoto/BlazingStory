@@ -9,6 +9,11 @@ public interface IStoryContext
     event AsyncEventHandler? ArgumentChanged;
 
     /// <summary>
+    /// This event is used to notify the story that it should re-render.
+    /// </summary>
+    event EventHandler? ShouldRender;
+
+    /// <summary>
     /// Get the number of parameters that are not event parameters.
     /// </summary>
     int GetNoEventParameterCount();
@@ -20,4 +25,9 @@ public interface IStoryContext
     ValueTask AddOrUpdateArgumentAsync(string name, object? newValue);
 
     string ConvertParameterValueToString(string name, object? value);
+
+    /// <summary>
+    /// This method is used to notify the story that it should re-render.
+    /// </summary>
+    void InvokeShouldRender();
 }

@@ -76,7 +76,9 @@ else
     protected override void OnParametersSet()
     {
         if (!this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story)) return;
+        if (this._Story != null) this._Story.Context.ShouldRender -= StoryContext_ShouldRender;
         this._Story = story;
+        this._Story.Context.ShouldRender += StoryContext_ShouldRender;
         this.UpdateComponentStates();
     }
 
@@ -110,8 +112,17 @@ else
         return true;
     }
 
+    /// <summary>
+    /// When the state of the story has been changed, this canvas frame should be re-rendered.
+    /// </summary>
+    private void StoryContext_ShouldRender(object? sender, EventArgs e)
+    {
+        this.StateHasChanged();
+    }
+
     public void Dispose()
     {
+        if (this._Story != null) this._Story.Context.ShouldRender -= StoryContext_ShouldRender;
         this.NavigationManager.LocationChanged -= NavigationManager_LocationChanged;
     }
 }

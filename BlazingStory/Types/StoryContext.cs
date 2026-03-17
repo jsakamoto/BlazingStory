@@ -17,6 +17,11 @@ internal class StoryContext : IStoryContext
 
     public event AsyncEventHandler? ArgumentChanged;
 
+    /// <summary>
+    /// This event is used to notify the story that it should re-render.
+    /// </summary>
+    public event EventHandler? ShouldRender;
+
     internal StoryContext(IEnumerable<ComponentParameter> parameters)
     {
         this.Parameters = parameters;
@@ -66,6 +71,14 @@ internal class StoryContext : IStoryContext
         }
 
         await this.ArgumentChanged.InvokeAsync();
+    }
+
+    /// <summary>
+    /// This method is used to notify the story that it should re-render.
+    /// </summary>
+    public void InvokeShouldRender()
+    {
+        this.ShouldRender?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
