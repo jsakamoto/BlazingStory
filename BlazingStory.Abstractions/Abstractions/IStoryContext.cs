@@ -1,11 +1,23 @@
 namespace BlazingStory.Abstractions;
 
+/// <summary>
+/// Provides access to a story's arguments, parameters, and state management.
+/// </summary>
 public interface IStoryContext
 {
+    /// <summary>
+    /// Gets the current argument values keyed by parameter name.
+    /// </summary>
     IReadOnlyDictionary<string, object?> Args { get; }
 
+    /// <summary>
+    /// Gets the component parameters associated with this story.
+    /// </summary>
     IEnumerable<IComponentParameter> Parameters { get; }
 
+    /// <summary>
+    /// Occurs when an argument value is changed.
+    /// </summary>
     event AsyncEventHandler? ArgumentChanged;
 
     /// <summary>
@@ -18,12 +30,30 @@ public interface IStoryContext
     /// </summary>
     int GetNoEventParameterCount();
 
+    /// <summary>
+    /// Initializes an argument with the specified name and value.
+    /// </summary>
+    /// <param name="name">The parameter name.</param>
+    /// <param name="value">The initial value.</param>
     void InitArgument(string name, object? value);
 
+    /// <summary>
+    /// Resets all arguments to their default values.
+    /// </summary>
     ValueTask ResetArgumentsAsync();
 
+    /// <summary>
+    /// Adds a new argument or updates an existing one with the specified value.
+    /// </summary>
+    /// <param name="name">The parameter name.</param>
+    /// <param name="newValue">The new value to set.</param>
     ValueTask AddOrUpdateArgumentAsync(string name, object? newValue);
 
+    /// <summary>
+    /// Converts a parameter value to its string representation.
+    /// </summary>
+    /// <param name="name">The parameter name.</param>
+    /// <param name="value">The value to convert.</param>
     string ConvertParameterValueToString(string name, object? value);
 
     /// <summary>
