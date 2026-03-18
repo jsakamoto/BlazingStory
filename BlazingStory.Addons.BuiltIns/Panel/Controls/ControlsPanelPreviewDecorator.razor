@@ -1,8 +1,10 @@
 @code
 {
+    /// <summary>Gets or sets the current story whose context will be updated from URL args.</summary>
     [CascadingParameter(Name = "Story")]
     public IStory? Story { get; set; }
 
+    /// <summary>Gets or sets the URL-encoded argument key-value pairs to apply to the story context.</summary>
     [CascadingParameter(Name = "Args")]
     public IReadOnlyDictionary<string, string>? Args { get; set; }
 

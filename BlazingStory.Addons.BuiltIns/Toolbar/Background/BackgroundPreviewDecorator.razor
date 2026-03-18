@@ -1,6 +1,7 @@
 @inject IJSRuntime JSRuntime
 @code
 {
+    /// <summary>Gets or sets the global arguments dictionary, used to read the selected background color.</summary>
     [CascadingParameter(Name = "Globals")]
     public IReadOnlyDictionary<string, string>? Globals { get; set; }
 

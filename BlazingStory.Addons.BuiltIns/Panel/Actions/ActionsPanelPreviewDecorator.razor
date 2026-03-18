@@ -9,6 +9,7 @@
 {
     private readonly JSModule _JSModule;
 
+    /// <summary>Gets or sets the current story whose event callbacks will be intercepted for action logging.</summary>
     [CascadingParameter(Name = "Story")]
     public IStory? Story { get; set; }
 
@@ -68,6 +69,11 @@
         await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, "void");
     }
 
+    /// <summary>
+    /// Handles a generic event callback invocation by serializing the arguments and dispatching the action event to the Actions panel.
+    /// </summary>
+    /// <param name="name">The name of the event callback parameter.</param>
+    /// <param name="eventArgs">The event arguments to serialize and dispatch.</param>
     internal async Task EventTArgMonitorHandler<[DynamicallyAccessedMembers(PublicProperties)] TArgs>(string name, TArgs eventArgs)
     {
         var json = JsonFallbackSerializer.Serialize(eventArgs);

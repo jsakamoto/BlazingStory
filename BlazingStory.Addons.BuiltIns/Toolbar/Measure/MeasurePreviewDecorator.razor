@@ -38,6 +38,7 @@
 
 @code
 {
+    /// <summary>Gets or sets the global arguments dictionary, used to read whether element measurement is enabled.</summary>
     [CascadingParameter(Name = "Globals")]
     public IReadOnlyDictionary<string, string>? Globals { get; set; }
 
@@ -85,27 +86,42 @@
         "opacity:1 !important;" +
         "transition:none !important;";
 
+    /// <summary>Represents the position and size of a DOM element's bounding rectangle.</summary>
     public struct DOMRect
     {
+        /// <summary>Gets or sets the x-coordinate of the rectangle's left edge.</summary>
         public double X { get; set; }
+        /// <summary>Gets or sets the y-coordinate of the rectangle's top edge.</summary>
         public double Y { get; set; }
+        /// <summary>Gets or sets the width of the rectangle.</summary>
         public double Width { get; set; }
+        /// <summary>Gets or sets the height of the rectangle.</summary>
         public double Height { get; set; }
+        /// <summary>An empty <see cref="DOMRect"/> with all fields set to zero.</summary>
         public readonly static DOMRect Empty = new();
     }
 
+    /// <summary>Represents the four-sided spacing (top, right, bottom, left) of a CSS box-model property.</summary>
     public struct SpacingSize
     {
+        /// <summary>Gets or sets the top spacing value.</summary>
         public double Top { get; set; }
+        /// <summary>Gets or sets the left spacing value.</summary>
         public double Left { get; set; }
+        /// <summary>Gets or sets the bottom spacing value.</summary>
         public double Bottom { get; set; }
+        /// <summary>Gets or sets the right spacing value.</summary>
         public double Right { get; set; }
     }
 
+    /// <summary>Contains the boundary rectangle, padding, and margin measurements for a hovered DOM element.</summary>
     public class Measurement
     {
+        /// <summary>Gets or sets the element's bounding rectangle including padding.</summary>
         public DOMRect Boundary { get; set; }
+        /// <summary>Gets or sets the computed padding sizes of the element.</summary>
         public SpacingSize Padding { get; set; }
+        /// <summary>Gets or sets the computed margin sizes of the element.</summary>
         public SpacingSize Margin { get; set; }
     }
 
@@ -169,6 +185,10 @@
         this._EventMonitorSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeTargetElementChanged", this._This);
     }
 
+    /// <summary>
+    /// Called from JavaScript when the hovered target element changes; updates the measurement overlay styles.
+    /// </summary>
+    /// <param name="measurement">The new measurement data for the hovered element, or <c>null</c> if no element is targeted.</param>
     [JSInvokable(nameof(TargetElementChanged))]
     public void TargetElementChanged(Measurement? measurement)
     {

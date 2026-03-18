@@ -75,9 +75,11 @@
 
 @code
 {
+    /// <summary>Gets or sets the currently displayed story whose parameters are rendered as controls.</summary>
     [CascadingParameter(Name = "Story")]
     public IStory? Story { get; set; }
 
+    /// <summary>Gets or sets the current view mode, used to determine whether to show extended parameter details.</summary>
     [CascadingParameter]
     public ViewMode ViewMode { get; set; }
 
@@ -106,22 +108,38 @@
         return this.Story?.Context.Parameters ?? Enumerable.Empty<IComponentParameter>();
     }
 
+    /// <summary>
+    /// Returns a stable key string for the given parameter, combining the story navigation path and parameter name.
+    /// </summary>
+    /// <param name="parameter">The component parameter to compute a key for.</param>
     private string GetKey(IComponentParameter parameter)
     {
         return (this.Story?.NavigationPath ?? "") + ":" + parameter.Name;
     }
 
+    /// <summary>
+    /// Retrieves the current argument value for the specified parameter name from the story context.
+    /// </summary>
+    /// <param name="parameterName">The name of the parameter whose current argument value is requested.</param>
     private object? GetArgumentValue(string parameterName)
     {
         return this.Story?.Context.Args.TryGetValue(parameterName, out var value) == true ? value : Unknown.Value;
     }
 
+    /// <summary>
+    /// Resets all story arguments back to their default values.
+    /// </summary>
     private async Task ResetControls()
     {
         if (this.Story == null) return;
         await this.Story.Context.ResetArgumentsAsync();
     }
 
+    /// <summary>
+    /// Updates the story argument for the given parameter with the supplied value.
+    /// </summary>
+    /// <param name="value">The new value to apply.</param>
+    /// <param name="parameter">The component parameter being updated.</param>
     private async Task OnInputAsync(object? value, IComponentParameter parameter)
     {
         if (this.Story == null) return;

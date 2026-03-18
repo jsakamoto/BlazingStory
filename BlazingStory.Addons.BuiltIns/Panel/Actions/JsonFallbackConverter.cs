@@ -10,12 +10,22 @@ using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.Addons.BuiltIns.Panel.Actions;
 
+/// <summary>
+/// A <see cref="JsonConverter{T}"/> that gracefully handles unsupported types and cyclic references by writing a descriptive string instead of throwing.
+/// </summary>
 internal class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicProperties)] T> : JsonConverter<T>
 {
+    /// <summary>
+    /// Read is not supported; always throws <see cref="NotSupportedException"/>.
+    /// </summary>
     public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => throw new NotSupportedException();
 
     private readonly Stack<object> _visited;
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="JsonFallbackConverter{T}"/> with an optional shared visited-object stack for cyclic-reference tracking.
+    /// </summary>
+    /// <param name="visited">An existing stack of visited objects to detect cycles, or <c>null</c> to create a new one.</param>
     public JsonFallbackConverter(Stack<object>? visited = null)
     {
         this._visited = visited ?? new();
@@ -24,6 +34,12 @@ internal class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicPropertie
     private const string _fallbackMessageFormat = "Serialization of {0} is not supported.";
 
 #pragma warning disable IL2026, IL2027, IL2072
+    /// <summary>
+    /// Serializes <paramref name="value"/> to JSON, substituting unsupported or cyclic values with a descriptive fallback string.
+    /// </summary>
+    /// <param name="writer">The writer to serialize into.</param>
+    /// <param name="value">The value to serialize.</param>
+    /// <param name="options">The serializer options in effect.</param>
     public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
     {
         var typeCode = value is null ? TypeCode.Empty : Type.GetTypeCode(typeof(T));
@@ -128,6 +144,11 @@ internal class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicPropertie
     }
 #pragma warning restore IL2026, IL2027, IL2072
 
+    /// <summary>
+    /// Returns a <see cref="JsonSerializerOptions"/> instance augmented with a <see cref="JsonFallbackConverter{T}"/> for the given value type if it is a plain object type.
+    /// </summary>
+    /// <param name="options">The base serializer options to extend.</param>
+    /// <param name="valueType">The runtime type of the value being serialized.</param>
     private JsonSerializerOptions PrepareJsonSerializerOptions(JsonSerializerOptions options, Type valueType)
     {
         if (TypeUtility.IsPlainObjectType(valueType))
@@ -145,6 +166,10 @@ internal class JsonFallbackConverter<[DynamicallyAccessedMembers(PublicPropertie
         return options;
     }
 
+    /// <summary>
+    /// Determines whether the specified type cannot be meaningfully serialized (e.g., delegates, expressions, or event callbacks).
+    /// </summary>
+    /// <param name="type">The type to test.</param>
     private static bool IsUnsupportedType(Type type)
     {
         return type == typeof(EventCallback) ||
