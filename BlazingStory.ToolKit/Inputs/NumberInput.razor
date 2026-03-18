@@ -10,24 +10,45 @@
 
 @code
 {
+    /// <summary>
+    /// The current numeric value as a string.
+    /// </summary>
     [Parameter]
     public string? Value { get; set; }
 
+    /// <summary>
+    /// The placeholder text displayed when no value is entered.
+    /// </summary>
     [Parameter]
     public string? PlaceHolder { get; set; }
 
+    /// <summary>
+    /// Whether the input is marked as required.
+    /// </summary>
     [Parameter]
     public bool Required { get; set; }
 
+    /// <summary>
+    /// Whether decimal point entry is allowed; the step value adjusts dynamically to match the input.
+    /// </summary>
     [Parameter]
     public bool AllowDecimalPoint { get; set; }
 
+    /// <summary>
+    /// Whether the input should receive focus automatically when the parameter value changes.
+    /// </summary>
     [Parameter]
     public bool InitialForcus { get; set; }
 
+    /// <summary>
+    /// Callback invoked when the input value changes.
+    /// </summary>
     [Parameter]
     public EventCallback<ChangeEventArgs> OnInput { get; set; }
 
+    /// <summary>
+    /// Callback invoked when the input receives focus.
+    /// </summary>
     [Parameter]
     public EventCallback<FocusEventArgs> OnFocus { get; set; }
 

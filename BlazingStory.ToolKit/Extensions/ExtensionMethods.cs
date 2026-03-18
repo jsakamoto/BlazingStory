@@ -1,12 +1,25 @@
 namespace BlazingStory.ToolKit.Extensions;
 
+/// <summary>
+/// General-purpose extension methods for common collection and type operations.
+/// </summary>
 public static class ExtensionMethods
 {
+    /// <summary>
+    /// Executes an action for each element in the sequence.
+    /// </summary>
+    /// <param name="values">The sequence to iterate.</param>
+    /// <param name="action">The action to invoke on each element.</param>
     public static void ForEach<T>(this IEnumerable<T> values, Action<T> action)
     {
         foreach (var item in values) action(item);
     }
 
+    /// <summary>
+    /// Projects each element of a non-generic <see cref="Array"/> into a new form.
+    /// </summary>
+    /// <param name="array">The array to project.</param>
+    /// <param name="projection">A transform function applied to each element.</param>
     public static IEnumerable<T> Select<T>(this Array array, Func<object?, T> projection)
     {
         foreach (var item in array) yield return projection(item);

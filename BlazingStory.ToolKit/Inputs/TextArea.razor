@@ -5,12 +5,21 @@
 
 @code
 {
+    /// <summary>
+    /// The current text value of the textarea.
+    /// </summary>
     [Parameter]
     public string? Value { get; set; }
 
+    /// <summary>
+    /// The placeholder text displayed when the textarea is empty.
+    /// </summary>
     [Parameter]
     public string? PlaceHolder { get; set; }
 
+    /// <summary>
+    /// Callback invoked when the textarea content changes.
+    /// </summary>
     [Parameter]
     public EventCallback<ChangeEventArgs> OnInput { get; set; }
 

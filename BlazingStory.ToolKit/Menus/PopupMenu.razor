@@ -25,18 +25,33 @@
 
 @code
 {
+    /// <summary>
+    /// Additional CSS class names to apply to the popup menu root element.
+    /// </summary>
     [Parameter]
     public string? Class { get; set; }
 
+    /// <summary>
+    /// The top margin in pixels applied to the popup panel.
+    /// </summary>
     [Parameter]
     public int MarginTop { get; set; } = 0;
 
+    /// <summary>
+    /// The content rendered as the trigger that opens the popup menu.
+    /// </summary>
     [Parameter]
     public RenderFragment? Trigger { get; set; }
 
+    /// <summary>
+    /// The menu item content rendered inside the popup panel.
+    /// </summary>
     [Parameter]
     public RenderFragment? MenuItems { get; set; }
 
+    /// <summary>
+    /// The cascading service provider used to resolve dependencies such as <see cref="HotKeys"/>.
+    /// </summary>
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
 
@@ -54,6 +69,9 @@
 
     private IJSObjectReference? _EventSubscriber;
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="PopupMenu"/>.
+    /// </summary>
     public PopupMenu()
     {
         this._This = DotNetObjectReference.Create(this);
@@ -73,6 +91,9 @@
         this._PopupShown = true;
     }
 
+    /// <summary>
+    /// Closes the popup menu and unsubscribes from document events.
+    /// </summary>
     [JSInvokable(nameof(ClosePopup))]
     public async ValueTask ClosePopup()
     {

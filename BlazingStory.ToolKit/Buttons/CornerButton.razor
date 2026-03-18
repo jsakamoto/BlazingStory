@@ -4,12 +4,21 @@
 
 @code
 {
+    /// <summary>
+    /// Additional CSS class names to apply to the button element.
+    /// </summary>
     [Parameter]
     public string? Class { get; set; }
 
+    /// <summary>
+    /// Callback invoked when the button is clicked.
+    /// </summary>
     [Parameter]
     public EventCallback OnClick { get; set; }
 
+    /// <summary>
+    /// The content rendered inside the button.
+    /// </summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 }

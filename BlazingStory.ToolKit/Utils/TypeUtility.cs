@@ -7,13 +7,15 @@ using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.ToolKit.Utils;
 
+/// <summary>
+/// Utility class for type inspection and conversion operations.
+/// </summary>
 public static class TypeUtility
 {
     /// <summary>
-    /// Returns the name of the given type as a C# language keyword.
+    /// Returns the display text of the given type as a C# language keyword, including enum values if applicable.
     /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
+    /// <param name="type">The type to get the display text for.</param>
     public static IEnumerable<string> GetTypeDisplayText([DynamicallyAccessedMembers(PublicConstructors | PublicMethods | Interfaces)] Type type)
     {
         var (isNullable, isGeneric, primaryType, secondaryTypes) = TypeUtility.ExtractTypeStructure(type);

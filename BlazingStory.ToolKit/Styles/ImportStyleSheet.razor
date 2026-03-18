@@ -2,9 +2,15 @@
 @inject IJSRuntime JSRuntime
 @code
 {
+    /// <summary>
+    /// The URL of the stylesheet to import.
+    /// </summary>
     [Parameter]
     public string? Href { get; set; }
 
+    /// <summary>
+    /// Whether the stylesheet import is enabled.
+    /// </summary>
     [Parameter]
     public bool Enable { get; set; }
 
@@ -16,6 +22,9 @@
 
     private IJSObjectReference? _importedStyleSheet = null;
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="ImportStyleSheet"/>.
+    /// </summary>
     public ImportStyleSheet()
     {
         this._JSModule = new JSModule(() => this.JSRuntime, "./_content/BlazingStory.ToolKit/Styles/ImportStyleSheet.razor.js", VersionInfo.GetEscapedVersionText());

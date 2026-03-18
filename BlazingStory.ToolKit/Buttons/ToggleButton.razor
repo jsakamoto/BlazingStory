@@ -6,9 +6,15 @@
 
 @code
 {
+    /// <summary>
+    /// The current boolean state of the toggle.
+    /// </summary>
     [Parameter]
     public bool Value { get; set; }
 
+    /// <summary>
+    /// Callback invoked when the toggle state changes.
+    /// </summary>
     [Parameter]
     public EventCallback<ChangeEventArgs> OnChange { get; set; }
 }

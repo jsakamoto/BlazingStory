@@ -5,12 +5,20 @@ namespace BlazingStory.ToolKit.Utils;
 /// </summary>
 public static class UriParameterKit
 {
+    /// <summary>
+    /// Encodes a dictionary of key-value pairs into a semicolon-delimited, URL-escaped string.
+    /// </summary>
+    /// <param name="keyValues">The key-value pairs to encode.</param>
     public static string EncodeKeyValues<TValue>(IReadOnlyDictionary<string, TValue>? keyValues)
     {
         if (keyValues == null) return "";
         return string.Join(';', keyValues.Select(kv => Uri.EscapeDataString(kv.Key) + ":" + Uri.EscapeDataString(kv.Value?.ToString() ?? "")));
     }
 
+    /// <summary>
+    /// Decodes a semicolon-delimited, URL-escaped string into a dictionary of key-value pairs.
+    /// </summary>
+    /// <param name="text">The encoded string to decode.</param>
     public static IReadOnlyDictionary<string, string> DecodeKeyValues(string? text)
     {
         return (text ?? "").Split(';')
@@ -21,6 +29,11 @@ public static class UriParameterKit
                 chunk => Uri.UnescapeDataString(chunk[1]));
     }
 
+    /// <summary>
+    /// Appends the given parameters as a query string to the given URI.
+    /// </summary>
+    /// <param name="uri">The base URI.</param>
+    /// <param name="parameters">The query parameters to append.</param>
     public static string GetUri(string uri, IReadOnlyDictionary<string, object?>? parameters)
     {
         if (parameters == null) return uri;

@@ -140,6 +140,10 @@ public static class RenderFragmentKit
         return renderFragmentT.Compile();
     }
 
+    /// <summary>
+    /// Returns whether the given value is a <see cref="RenderFragment"/> or <see cref="RenderFragment{TValue}"/>.
+    /// </summary>
+    /// <param name="value">The value or type to check.</param>
     public static bool IsRenderFragment(object? value)
     {
         var type = value is Type t ? t : value?.GetType();

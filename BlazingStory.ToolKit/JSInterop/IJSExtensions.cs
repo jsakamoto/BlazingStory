@@ -5,17 +5,19 @@ using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.ToolKit.JSInterop;
 
+/// <summary>
+/// Extension methods for <see cref="IJSRuntime"/> and <see cref="IJSObjectReference"/>.
+/// </summary>
 public static class IJSExtensions
 {
     private static readonly JsonSerializerOptions _JsonSerializerOptions = new() { IncludeFields = true };
 
     /// <summary>
-    /// Import a JavScript module from the specified path.
+    /// Import a JavaScript module from the specified path.
     /// </summary>
     /// <param name="jsRuntime">The <see cref="IJSRuntime"/> instance.</param>
     /// <param name="modulePath">The path to the JavaScript module to import, like "./Component.razor.js".</param>
-    /// <param name="updateToken"></param>
-    /// <returns></returns>
+    /// <param name="updateToken">A cache-busting token appended as a query string parameter.</param>
     public static async ValueTask<IJSObjectReference> ImportAsync(this IJSRuntime jsRuntime, string modulePath, string updateToken)
     {
         updateToken = jsRuntime.GetUpdateToken(updateToken);
@@ -35,21 +37,44 @@ public static class IJSExtensions
         catch (JSDisconnectedException) { }
     }
 
+    /// <summary>
+    /// Gets a string value from local storage by key, or null if not found.
+    /// </summary>
+    /// <param name="jsRuntime">The <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="key">The local storage key.</param>
     public static async ValueTask<string?> GetLocalStorageItemAsync(this IJSRuntime jsRuntime, string key)
     {
         return await jsRuntime.InvokeAsync<string?>("localStorage.getItem", key);
     }
 
+    /// <summary>
+    /// Gets a string value from local storage by key, returning <paramref name="defaultValue"/> if not found.
+    /// </summary>
+    /// <param name="jsRuntime">The <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="key">The local storage key.</param>
+    /// <param name="defaultValue">The value to return when the key is absent.</param>
     public static async ValueTask<string> GetLocalStorageItemAsync(this IJSRuntime jsRuntime, string key, string defaultValue)
     {
         return await jsRuntime.GetLocalStorageItemAsync(key) ?? defaultValue;
     }
 
+    /// <summary>
+    /// Stores a value in local storage under the given key.
+    /// </summary>
+    /// <param name="jsRuntime">The <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="key">The local storage key.</param>
+    /// <param name="value">The value to store.</param>
     public static async ValueTask SetLocalStorageItemAsync<T>(this IJSRuntime jsRuntime, string key, T? value)
     {
         await jsRuntime.InvokeVoidAsync("localStorage.setItem", key, value?.ToString() ?? "");
     }
 
+    /// <summary>
+    /// Serializes an object to JSON and saves it in local storage under the given key.
+    /// </summary>
+    /// <param name="jsRuntime">The <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="key">The local storage key.</param>
+    /// <param name="obj">The object to serialize and store.</param>
     [UnconditionalSuppressMessage("Trimming", "IL2026")]
     public static async ValueTask SaveObjectToLocalStorageAsync<[DynamicallyAccessedMembers(PublicConstructors | PublicFields | PublicProperties)] T>(this IJSRuntime jsRuntime, string key, T obj)
     {
@@ -57,6 +82,12 @@ public static class IJSExtensions
         await jsRuntime.SetLocalStorageItemAsync(key, json);
     }
 
+    /// <summary>
+    /// Loads and deserializes a JSON object from local storage, returning <paramref name="defaultObject"/> if absent or unparseable.
+    /// </summary>
+    /// <param name="jsRuntime">The <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="key">The local storage key.</param>
+    /// <param name="defaultObject">The fallback value when the key is absent or deserialization fails.</param>
     [UnconditionalSuppressMessage("Trimming", "IL2026")]
     public static async ValueTask<T> LoadObjectFromLocalStorageAsync<[DynamicallyAccessedMembers(PublicConstructors | PublicFields | PublicProperties)] T>(this IJSRuntime jsRuntime, string key, T defaultObject)
     {
@@ -65,6 +96,12 @@ public static class IJSExtensions
         return JsonSerializer.Deserialize<T?>(json, _JsonSerializerOptions) ?? defaultObject;
     }
 
+    /// <summary>
+    /// Gets a local storage value parsed as <typeparamref name="T"/>, returning <paramref name="defaultValue"/> if absent or unparseable.
+    /// </summary>
+    /// <param name="jsRuntime">The <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="key">The local storage key.</param>
+    /// <param name="defaultValue">The fallback value when the key is absent or parsing fails.</param>
     public static async ValueTask<T> GetLocalStorageItemAsync<T>(this IJSRuntime jsRuntime, string key, T defaultValue) where T : IParsable<T>
     {
         var stringValue = await jsRuntime.GetLocalStorageItemAsync(key);

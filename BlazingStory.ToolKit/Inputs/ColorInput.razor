@@ -15,12 +15,21 @@
 
 @code
 {
+    /// <summary>
+    /// The current color value as a CSS color string.
+    /// </summary>
     [Parameter]
     public string? Value { get; set; }
 
+    /// <summary>
+    /// The placeholder text displayed in the text input when no value is set.
+    /// </summary>
     [Parameter]
     public string? PlaceHolder { get; set; }
 
+    /// <summary>
+    /// Callback invoked when the color value changes.
+    /// </summary>
     [Parameter]
     public EventCallback<ChangeEventArgs> OnInput { get; set; }
 
@@ -32,6 +41,9 @@
 
     private readonly JSModule _JSModule;
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="ColorInput"/>.
+    /// </summary>
     public ColorInput()
     {
         this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Inputs/ColorInput.razor.js");

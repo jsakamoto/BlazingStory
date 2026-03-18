@@ -20,30 +20,57 @@ else
 }
 
 @code {
+    /// <summary>
+    /// The SVG icon to display inside the button.
+    /// </summary>
     [Parameter]
     public SvgIconType Icon { get; set; }
 
+    /// <summary>
+    /// Optional label text rendered next to the icon.
+    /// </summary>
     [Parameter]
     public string? Text { get; set; }
 
+    /// <summary>
+    /// Callback invoked when the button is clicked.
+    /// </summary>
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+    /// <summary>
+    /// The tooltip text shown on hover.
+    /// </summary>
     [Parameter]
     public string? Title { get; set; }
 
+    /// <summary>
+    /// Additional CSS class names to apply to the button or anchor element.
+    /// </summary>
     [Parameter]
     public string? Class { get; set; }
 
+    /// <summary>
+    /// When set, renders the component as an anchor element navigating to this URL.
+    /// </summary>
     [Parameter]
     public string? Href { get; set; }
 
+    /// <summary>
+    /// The anchor target attribute used when <see cref="Href"/> is set.
+    /// </summary>
     [Parameter]
     public string? Target { get; set; }
 
+    /// <summary>
+    /// Whether the "active" CSS class is applied when <see cref="Active"/> is true.
+    /// </summary>
     [Parameter]
     public bool FlagStyle { get; set; } = true;
 
+    /// <summary>
+    /// Whether the button is in an active (pressed) state.
+    /// </summary>
     [Parameter]
     public bool Active { get; set; }
 
