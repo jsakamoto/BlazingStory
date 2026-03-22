@@ -1,0 +1,15 @@
+<ImportStyleSheet Href="./_content/BlazingStory.Addons.BuiltIns/css/background-grid.min.css"
+                 Enable="_enableGrid" />
+@code
+{
+    /// <summary>Gets or sets the global arguments dictionary, used to read whether the background grid is enabled.</summary>
+    [CascadingParameter(Name = "Globals")]
+    public IReadOnlyDictionary<string, string>? Globals { get; set; }
+
+    private bool _enableGrid = false;
+
+    override protected void OnParametersSet()
+    {
+        this._enableGrid = this.Globals is not null && this.Globals.TryGetValue("backgrounds.grid", out var gridStr) ? bool.TryParse(gridStr, out var grid) ? grid : false : false;
+    }
+}

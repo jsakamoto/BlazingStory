@@ -1,12 +1,13 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
-using BlazingStory.Internals.Extensions;
+using BlazingStory.Abstractions;
 using BlazingStory.Internals.Models;
 using BlazingStory.Internals.Types;
-using BlazingStory.Internals.Utils;
+using BlazingStory.ToolKit.Extensions;
+using BlazingStory.ToolKit.Utils;
 
 namespace BlazingStory.Internals.Services.Docs;
 
@@ -20,7 +21,7 @@ internal static class StoriesRazorSource
     /// <summary>
     /// Gets the source code of the given story.
     /// </summary>
-    internal static ValueTask<string> GetSourceCodeAsync(Story story)
+    internal static ValueTask<string> GetSourceCodeAsync(IStory story)
     {
         var assemblyOfStoriesRazor = story.StoriesRazorDescriptor.TypeOfStoriesRazor.Assembly;
         var projectMetadata = assemblyOfStoriesRazor.GetCustomAttribute<ProjectMetaDataAttribute>();
@@ -100,9 +101,9 @@ internal static class StoriesRazorSource
 
     internal class UpdateSourceContext
     {
-        public readonly IEnumerable<ComponentParameter> Parameters;
+        public readonly IEnumerable<IComponentParameter> Parameters;
         public readonly string ComponentTagPattern;
-        public UpdateSourceContext(IEnumerable<ComponentParameter> parameters, string componentTagPattern)
+        public UpdateSourceContext(IEnumerable<IComponentParameter> parameters, string componentTagPattern)
         {
             this.Parameters = parameters;
             this.ComponentTagPattern = componentTagPattern;
@@ -120,14 +121,14 @@ internal static class StoriesRazorSource
     /// <param name="story">The story to update the source code.</param>
     /// <param name="codeText">The source code of the story to update.</param>
     /// <returns></returns>
-    internal static string UpdateSourceTextWithArgument(Story story, string codeText)
+    internal static string UpdateSourceTextWithArgument(IStory story, string codeText)
     {
         var componentTagPattern = CreateComponentTagPattern(story);
         var context = new UpdateSourceContext(story.Context.Parameters, componentTagPattern);
         return UpdateSourceTextWithArgument(context, codeText, story.Context.Args, hasAtAttributeOnce: false);
     }
 
-    private static string CreateComponentTagPattern(Story story)
+    private static string CreateComponentTagPattern(IStory story)
     {
         var fullName = story.ComponentType.FullName ?? "";
         var typeParamsIndex = fullName.IndexOf('`');

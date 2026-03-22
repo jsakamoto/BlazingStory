@@ -1,4 +1,3 @@
-@using BlazingStory.Internals.Pages.Canvas.Controls.ParameterControllers.Controllers
 @attribute [Stories("Internals/Pages/Canvas/Controls/ParameterControllers/Controllers/NumberParameterController")]
 
 <Stories TComponent="NumberParameterController" Layout="typeof(MarginedFrame)">
@@ -191,13 +190,13 @@
 {
     private RenderFragment<object?> ValueDisplay = (value) => @<p>@value?.ToString() (@(value?.GetType().Name ?? "null"))</p>;
 
-    private readonly ComponentParameter Int32 = SampleComponent.CreateParameter(nameof(SampleComponent.Int32));
+    private readonly IComponentParameter Int32 = SampleComponent.CreateParameter(nameof(SampleComponent.Int32));
 
-    private readonly ComponentParameter NullableInt32 = SampleComponent.CreateParameter(nameof(SampleComponent.NullableInt32));
+    private readonly IComponentParameter NullableInt32 = SampleComponent.CreateParameter(nameof(SampleComponent.NullableInt32));
 
-    private readonly ComponentParameter Decimal = SampleComponent.CreateParameter(nameof(SampleComponent.Decimal));
+    private readonly IComponentParameter Decimal = SampleComponent.CreateParameter(nameof(SampleComponent.Decimal));
 
-    private readonly ComponentParameter NullableDecimal = SampleComponent.CreateParameter(nameof(SampleComponent.NullableDecimal));
+    private readonly IComponentParameter NullableDecimal = SampleComponent.CreateParameter(nameof(SampleComponent.NullableDecimal));
 
     private object? _V1Unknown = Unknown.Value;
 

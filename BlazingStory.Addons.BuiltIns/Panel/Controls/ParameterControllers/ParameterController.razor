@@ -1,0 +1,47 @@
+@using BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers
+@{
+    var primaryType = this.Parameter.TypeStructure.PrimaryType;
+}
+@if (primaryType == typeof(string))
+{
+    <TextParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
+}
+else if (primaryType == typeof(bool))
+{
+    <BoolParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
+}
+else if (primaryType.IsEnum == true)
+{
+    <EnumParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
+}
+else if (TypeUtility.IsNumericType(primaryType))
+{
+    <NumberParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
+}
+else if (RenderFragmentKit.IsRenderFragment(Parameter.Type))
+{
+    <RenderFragmentParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
+}
+else
+{
+    <span>@(Value?.ToString() ?? "-")</span>
+}
+
+@code
+{
+    /// <summary>Gets or sets the unique key identifying this controller instance.</summary>
+    [Parameter, EditorRequired]
+    public required string Key { get; set; }
+
+    /// <summary>Gets or sets the component parameter metadata used to select and configure the appropriate controller.</summary>
+    [Parameter, EditorRequired]
+    public required IComponentParameter Parameter { get; set; }
+
+    /// <summary>Gets or sets the current value of the parameter.</summary>
+    [Parameter, EditorRequired]
+    public object? Value { get; set; }
+
+    /// <summary>Gets or sets the callback invoked when the user changes the parameter value.</summary>
+    [Parameter]
+    public EventCallback<ParameterInputEventArgs> OnInput { get; set; }
+}

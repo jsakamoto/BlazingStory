@@ -1,0 +1,52 @@
+<span class="select bs-basic-inputs-holder">
+    <SvgIcon Type="SvgIconType.Chevron" />
+
+    @*
+    The `@key` directive is used to force the re-rendering of the select element when the `_NoSelected` field changes.
+    This is necessary because once any available options are selected, adding the `selected` attribute to the disabled 
+    option element for the purpose of restoring the initial state never affects the select element.
+    *@
+    <select @key="_NoSelected" class="bs-basic-inputs" @onchange="this.OnChange">
+        <option disabled selected="@this._NoSelected">Choose option...</option>
+        @foreach (var option in this._Options)
+        {
+            <option selected="@option.Selected">@option.Text</option>
+        }
+    </select>
+</span>
+
+@code
+{
+    /// <summary>
+    /// The currently selected value.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public object? Value { get; set; }
+
+    /// <summary>
+    /// The collection of items to populate as select options.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public Array? Items { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the selected option changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<ChangeEventArgs> OnChange { get; set; }
+
+    private IEnumerable<(bool Selected, string? Text)> _Options = Enumerable.Empty<(bool, string?)>();
+
+    private bool _NoSelected = false;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        this._Options = (this.Items ?? Array.Empty<object?>())
+            .Select(item => (Selected: this.Value?.Equals(item) == true, Text: item?.ToString()))
+            .ToArray();
+
+        this._NoSelected = !this._Options.Any(item => item.Selected);
+    }
+}

@@ -1,14 +1,15 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using BlazingStory.Abstractions;
 using BlazingStory.Internals.Services.XmlDocComment;
-using BlazingStory.Internals.Utils;
+using BlazingStory.ToolKit.Utils;
 using BlazingStory.Types;
 using Microsoft.AspNetCore.Components;
 using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
 namespace BlazingStory.Internals.Models;
 
-public class ComponentParameter
+internal class ComponentParameter : IComponentParameter
 {
     private readonly Type _ComponentType;
 
@@ -16,20 +17,20 @@ public class ComponentParameter
 
     private readonly IXmlDocComment _XmlDocComment;
 
-    internal readonly string Name;
+    public string Name { get; }
 
     [DynamicallyAccessedMembers(PublicConstructors | PublicMethods | Interfaces | PublicProperties)]
-    internal readonly Type Type;
+    public Type Type { get; }
 
-    internal readonly TypeStructure TypeStructure;
+    public TypeStructure TypeStructure { get; }
 
-    internal MarkupString Summary { get; private set; } = default;
+    public MarkupString Summary { get; private set; } = default;
 
-    internal readonly bool Required;
+    public bool Required { get; }
 
-    internal ControlType Control = ControlType.Default;
+    public ControlType Control { get; set; } = ControlType.Default;
 
-    internal object? DefaultValue = null;
+    public object? DefaultValue { get; set; }
 
     internal ComponentParameter(Type componentType, PropertyInfo propertyInfo, IXmlDocComment xmlDocComment)
     {
@@ -47,17 +48,17 @@ public class ComponentParameter
     /// <summary>
     /// Update summary property text of this parameter by reading a XML document comment file.
     /// </summary>
-    internal async ValueTask UpdateSummaryFromXmlDocCommentAsync()
+    public async ValueTask UpdateSummaryFromXmlDocCommentAsync()
     {
         this.Summary = await this._XmlDocComment.GetSummaryOfPropertyAsync(this._PropertyInfo.DeclaringType ?? this._ComponentType, this.Name);
     }
 
-    internal IEnumerable<string> GetParameterTypeStrings() => TypeUtility.GetTypeDisplayText(this.Type);
+    public IEnumerable<string> GetParameterTypeStrings() => TypeUtility.GetTypeDisplayText(this.Type);
 }
 
 internal static class ComponentParameterExtensions
 {
-    public static bool TryGetByName(this IEnumerable<ComponentParameter> componentParameters, string name, [NotNullWhen(true)] out ComponentParameter? parameter)
+    public static bool TryGetByName(this IEnumerable<IComponentParameter> componentParameters, string name, [NotNullWhen(true)] out IComponentParameter? parameter)
     {
         parameter = componentParameters.FirstOrDefault(p => p.Name == name);
         return parameter != null;

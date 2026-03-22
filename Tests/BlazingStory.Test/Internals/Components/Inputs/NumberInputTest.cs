@@ -1,6 +1,4 @@
-﻿using BlazingStory.Internals.Services;
 using Bunit;
-using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Test.Internals.Components.Inputs;
 
@@ -13,7 +11,7 @@ public class NumberInputTest
         using var ctx = new Bunit.BunitContext();
 
         // When
-        var cut = ctx.Render<BlazingStory.Internals.Components.Inputs.NumberInput>(builder => builder
+        var cut = ctx.Render<BlazingStory.ToolKit.Inputs.NumberInput>(builder => builder
             .Add(_ => _.AllowDecimalPoint, true)
             .Add(_ => _.Value, ""));
 
@@ -28,7 +26,7 @@ public class NumberInputTest
         using var ctx = new Bunit.BunitContext();
 
         // When
-        var cut = ctx.Render<BlazingStory.Internals.Components.Inputs.NumberInput>(builder => builder
+        var cut = ctx.Render<BlazingStory.ToolKit.Inputs.NumberInput>(builder => builder
             .Add(_ => _.AllowDecimalPoint, true)
             .Add(_ => _.Value, "321"));
 
@@ -43,7 +41,7 @@ public class NumberInputTest
         using var ctx = new Bunit.BunitContext();
 
         // When
-        var cut = ctx.Render<BlazingStory.Internals.Components.Inputs.NumberInput>(builder => builder
+        var cut = ctx.Render<BlazingStory.ToolKit.Inputs.NumberInput>(builder => builder
             .Add(_ => _.AllowDecimalPoint, true)
             .Add(_ => _.Value, "1.234"));
 
@@ -58,7 +56,7 @@ public class NumberInputTest
         using var ctx = new Bunit.BunitContext();
 
         // When: null value -> Then: the step is 1.
-        var cut = ctx.Render<BlazingStory.Internals.Components.Inputs.NumberInput>(builder => builder
+        var cut = ctx.Render<BlazingStory.ToolKit.Inputs.NumberInput>(builder => builder
             .Add(_ => _.AllowDecimalPoint, true)
             .Add(_ => _.Value, null));
         cut.Find("input").GetAttribute("step").Is("1");
@@ -93,7 +91,7 @@ public class NumberInputTest
         using var ctx = new Bunit.BunitContext();
 
         // When: input "1.21" -> Then: the step is 0.01.
-        var cut = ctx.Render<BlazingStory.Internals.Components.Inputs.NumberInput>(builder => builder
+        var cut = ctx.Render<BlazingStory.ToolKit.Inputs.NumberInput>(builder => builder
             .Add(_ => _.AllowDecimalPoint, true)
             .Add(_ => _.Value, "1.21"));
         cut.Find("input").GetAttribute("step").Is("0.01");

@@ -1,0 +1,74 @@
+@inject IJSRuntime JSRuntime
+<PopupMenu MarginTop="6">
+    <Trigger>
+        <IconButton Icon="SvgIconType.Background"
+                    Title="Change the background of the preview"
+                    Active="@(this._BackgroundMode != BackgroundMode.None)" />
+    </Trigger>
+    <MenuItems>
+        @if (this._BackgroundMode != BackgroundMode.None)
+        {
+            <MenuItem OnClick="() => OnClickBackground(BackgroundMode.None)">
+                Clear background
+            </MenuItem>
+        }
+        <MenuItem Active="@(this._BackgroundMode == BackgroundMode.Light)" OnClick="() => OnClickBackground(BackgroundMode.Light)">
+            <span>light</span>
+            <span style="background:#f8f8f8; border-radius:1rem; display:block; height:1rem; width:1rem; box-shadow:hsl(203deg 50% 30% / 20%) 0 0 0 1px inset;"></span>
+        </MenuItem>
+        <MenuItem Active="@(this._BackgroundMode == BackgroundMode.Dark)" OnClick="() => OnClickBackground(BackgroundMode.Dark)">
+            <span>dark</span>
+            <span style="background:#333333; border-radius:1rem; display:block; height:1rem; width:1rem; box-shadow:hsl(203deg 50% 30% / 20%) 0 0 0 1px inset;"></span>
+        </MenuItem>
+    </MenuItems>
+</PopupMenu>
+
+@code
+{
+    /// <summary>Gets the global arguments used to store and propagate the selected background color.</summary>
+    [Parameter]
+    public required GlobalArguments Globals { get; init; }
+
+    private static class StorageKeys
+    {
+        public const string BackgroundMode = "Addons.Background.Mode";
+    }
+
+    private enum BackgroundMode
+    {
+        None,
+        Light,
+        Dark
+    }
+
+    private BackgroundMode _BackgroundMode = BackgroundMode.None;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        var backgroudnModeStr = await this.JSRuntime.GetLocalStorageItemAsync(StorageKeys.BackgroundMode);
+        this._BackgroundMode = Enum.TryParse<BackgroundMode>(backgroudnModeStr, out var backgroundMode) ? backgroundMode : BackgroundMode.None;
+        this.StateHasChanged();
+        this.UpdateGlobalArguments();
+    }
+
+    private async Task OnClickBackground(BackgroundMode backgroundMode)
+    {
+        if (backgroundMode == BackgroundMode.None) await Task.Delay(10);
+        this._BackgroundMode = backgroundMode;
+        await this.JSRuntime.SetLocalStorageItemAsync(StorageKeys.BackgroundMode, this._BackgroundMode.ToString());
+
+        this.UpdateGlobalArguments();
+    }
+
+    private void UpdateGlobalArguments()
+    {
+        this.Globals["backgrounds.value"] = this._BackgroundMode switch
+        {
+            BackgroundMode.Light => "#F8F8F8",
+            BackgroundMode.Dark => "#333333",
+            _ => "transparent"
+        };
+    }
+}

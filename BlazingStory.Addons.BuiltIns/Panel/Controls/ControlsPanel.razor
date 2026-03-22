@@ -1,0 +1,148 @@
+@using BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers
+
+<PanelTitle>
+    Controls
+</PanelTitle>
+
+<ImportStyleSheet Href="./_content/BlazingStory.Addons.BuiltIns/css/controls-panel.min.css" Enable />
+
+<div class="controls-panel">
+    <table>
+        <thead>
+            <tr>
+                <th class="name">Name</th>
+                @if (this.ShowDetails)
+                {
+                    <th class="description">Description</th>
+                    <th class="default">Default</th>
+                }
+                <th class="control">
+                    <span>Control</span>
+                    <ResetButton Class="reset-button" OnClick="ResetControls" />
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var parameter in this.GetParameters())
+            {
+                var argumentValue = GetArgumentValue(parameter.Name);
+                var key = this.GetKey(parameter);
+                <tr @key="key">
+
+                    <td class="name">
+                        <span>@parameter.Name</span>
+                        @if (parameter.Required)
+                        {
+                            <span class="required" title="Required">*</span>
+                        }
+                    </td>
+
+                    @if (this.ShowDetails)
+                    {
+                        <td class="description">
+
+                            <div class="parameter-summary">
+                                @parameter.Summary
+                            </div>
+
+                            <div class="parameter-type-holder">
+                                @foreach (var typeString in parameter.GetParameterTypeStrings())
+                                {
+                                    <span class="parameter-type">
+                                        @typeString
+                                    </span>
+                                }
+                            </div>
+                        </td>
+                        <td class="default">
+                            <!-- TODO: Default -->
+                        </td>
+                    }
+
+                    <td class="control">
+                        <ParameterController Key="@key"
+                                             Parameter="parameter"
+                                             Value="argumentValue"
+                                             OnInput="(args) => OnInputAsync(args.Value, args.Parameter)" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@code
+{
+    /// <summary>Gets or sets the currently displayed story whose parameters are rendered as controls.</summary>
+    [CascadingParameter(Name = "Story")]
+    public IStory? Story { get; set; }
+
+    /// <summary>Gets or sets the current view mode, used to determine whether to show extended parameter details.</summary>
+    [CascadingParameter]
+    public ViewMode ViewMode { get; set; }
+
+    private bool ShowDetails => this.ViewMode == ViewMode.Docs;
+
+    private IStory? _LastShownStory;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        if (this._LastShownStory != this.Story)
+        {
+            foreach (var param in this.GetParameters())
+            {
+                await param.UpdateSummaryFromXmlDocCommentAsync();
+            }
+            this._LastShownStory = this.Story;
+        }
+    }
+
+    /// <summary>
+    /// Get parameters of the component from the current story.
+    /// </summary>
+    private IEnumerable<IComponentParameter> GetParameters()
+    {
+        return this.Story?.Context.Parameters ?? Enumerable.Empty<IComponentParameter>();
+    }
+
+    /// <summary>
+    /// Returns a stable key string for the given parameter, combining the story navigation path and parameter name.
+    /// </summary>
+    /// <param name="parameter">The component parameter to compute a key for.</param>
+    private string GetKey(IComponentParameter parameter)
+    {
+        return (this.Story?.NavigationPath ?? "") + ":" + parameter.Name;
+    }
+
+    /// <summary>
+    /// Retrieves the current argument value for the specified parameter name from the story context.
+    /// </summary>
+    /// <param name="parameterName">The name of the parameter whose current argument value is requested.</param>
+    private object? GetArgumentValue(string parameterName)
+    {
+        return this.Story?.Context.Args.TryGetValue(parameterName, out var value) == true ? value : Unknown.Value;
+    }
+
+    /// <summary>
+    /// Resets all story arguments back to their default values.
+    /// </summary>
+    private async Task ResetControls()
+    {
+        if (this.Story == null) return;
+        await this.Story.Context.ResetArgumentsAsync();
+    }
+
+    /// <summary>
+    /// Updates the story argument for the given parameter with the supplied value.
+    /// </summary>
+    /// <param name="value">The new value to apply.</param>
+    /// <param name="parameter">The component parameter being updated.</param>
+    private async Task OnInputAsync(object? value, IComponentParameter parameter)
+    {
+        if (this.Story == null) return;
+        await this.Story.Context.AddOrUpdateArgumentAsync(parameter.Name, value);
+    }
+}

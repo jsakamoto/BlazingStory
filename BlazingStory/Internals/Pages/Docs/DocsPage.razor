@@ -1,9 +1,10 @@
 @implements IDisposable
 @using System.Text.RegularExpressions;
-@using BlazingStory.Internals.Pages.Canvas.Controls
+@using BlazingStory.Addons
+@using BlazingStory.Addons.Internals
 
 @{
-    var frameArguments = this.AddonsStore.GetFrameArguments(AddonType.DocsPage);
+    var globals = this.GetGlobalArguments();
 }
 <PageTitle>@this._PageTitle</PageTitle>
 
@@ -12,25 +13,33 @@
     <ToolBar Visible="this._Commands.ToolbarVisible?.Flag == true">
         @if (this._Commands.ShowSidebar?.Flag == false)
         {
-            <IconButton Icon="SvgIconType.Sidebar" Command="this._Commands.ShowSidebar" />
+            <IconCommandButton Icon="SvgIconType.Sidebar" Command="this._Commands.ShowSidebar" />
             <Separator />
         }
 
         @* -- Render Add-On's Toolbar Contents -- *@
-        @foreach (var addon in this.AddonsStore.GetAddons(AddonType.DocsPage))
+        @{
+#pragma warning disable IL2111
+        }
+        @foreach (var toolbarContent in this.GetToolbarContents())
         {
-            <text>@addon.ToolbarContents</text>
+            <DynamicComponent @key="toolbarContent.Id"
+                              Type="toolbarContent.ComponentType"
+                              Parameters="toolbarContent.ComponentParameter" />
+        }
+        @{
+#pragma warning restore IL2111
         }
 
         <Spacer />
 
         @if ((this._Commands.Fullscreen?.Flag ?? true) == true)
         {
-            <IconButton Icon="SvgIconType.CircleClose" Command="this._Commands.Fullscreen" Title="Exit full screen [{0}]" />
+            <IconCommandButton Icon="SvgIconType.CircleClose" Command="this._Commands.Fullscreen" Title="Exit full screen [{0}]" />
         }
         else
         {
-            <IconButton Icon="SvgIconType.FullScreen" Command="this._Commands.Fullscreen" />
+            <IconCommandButton Icon="SvgIconType.FullScreen" Command="this._Commands.Fullscreen" />
         }
 
     </ToolBar>
@@ -51,9 +60,25 @@
                 @if (firstStory != null)
                 {
                     <div @key="@(firstStory.NavigationPath + ":first-story")" class="first-story">
-                        <StoryPreview Story="firstStory" EnableZoom="true" Globals="frameArguments" />
+                        <StoryPreview Story="firstStory" EnableZoom="true" Globals="globals" />
 
-                        <ControlsPanel Story="firstStory" ShowDetails="true" />
+
+                        @{
+#pragma warning disable IL2111
+                        }
+                        @foreach (var panel in this.GetPanels())
+                        {
+                            <CascadingValue Value="ViewMode.Docs" IsFixed>
+                                <CascadingValue Name="Story" Value="firstStory">
+                                    <CascadingValue @key="panel.Id" Value="panel">
+                                        <DynamicComponent Type="panel.ComponentType" />
+                                    </CascadingValue>
+                                </CascadingValue>
+                            </CascadingValue>
+                        }
+                        @{
+#pragma warning restore IL2111
+                        }
                     </div>
                 }
 
@@ -69,7 +94,7 @@
                             @story.Description
                         </div>
 
-                        <StoryPreview Story="story" EnableZoom="false" Globals="frameArguments" />
+                        <StoryPreview Story="story" EnableZoom="false" Globals="globals" />
                     </div>
                 }
             </div>
@@ -79,9 +104,6 @@
 
 @code
 {
-    [CascadingParameter]
-    protected AddonsStore AddonsStore { get; init; } = default!;
-
     [CascadingParameter]
     protected StoriesStore StoriesStore { get; init; } = default!;
 
@@ -103,6 +125,8 @@
     private (Command? ToolbarVisible, Command? ShowSidebar, Command? Fullscreen) _Commands = default;
 
     private readonly Subscriptions _Subscriptions = new();
+
+    private AddonManager AddonManager => this.Services.GetRequiredService<AddonManager>();
 
     protected override async Task OnParametersSetAsync()
     {
@@ -131,7 +155,7 @@
 
     protected override void OnInitialized()
     {
-        this.AddonsStore.OnFrameArgumentsChanged += AddonsStore_OnFrameArgumentsChanged;
+        this.AddonManager.GlobalArgumentsChanged += OnGlobalArgumentsChanged;
 
         var commands = this.Services.GetRequiredService<CommandService>();
         this._Commands = (
@@ -141,13 +165,30 @@
         this._Subscriptions.Add(this._Commands.ToolbarVisible!.Subscribe(this.OnToggleToolbarVisible));
     }
 
+    private IEnumerable<ToolbarContentDescriptor> GetToolbarContents()
+    {
+        return this.AddonManager.GetToolbarContents(ViewMode.Docs);
+    }
+
+    private IEnumerable<PanelDescriptor> GetPanels()
+    {
+        return this.AddonManager.GetPanels(ViewMode.Docs);
+    }
+
+    private Dictionary<string, object?> GetGlobalArguments()
+    {
+        return this.GetToolbarContents()
+            .SelectMany(tb => tb.Globals)
+            .ToDictionary(arg => arg.Key, arg => arg.Value);
+    }
+
     private ValueTask Context_ArgumentChanged()
     {
         this.StateHasChanged();
         return ValueTask.CompletedTask;
     }
 
-    private void AddonsStore_OnFrameArgumentsChanged(object? sender, EventArgs args)
+    private void OnGlobalArgumentsChanged(object? sender, EventArgs args)
     {
         this.StateHasChanged();
     }
@@ -160,7 +201,7 @@
 
     public void Dispose()
     {
-        this.AddonsStore.OnFrameArgumentsChanged -= AddonsStore_OnFrameArgumentsChanged;
+        this.AddonManager.GlobalArgumentsChanged -= OnGlobalArgumentsChanged;
         this._Subscriptions.Dispose();
         if (this._StoryComponent != null)
         {

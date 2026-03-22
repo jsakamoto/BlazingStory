@@ -1,0 +1,15 @@
+<ImportStyleSheet Href="./_content/BlazingStory.Addons.BuiltIns/css/outline.min.css"
+                 Enable="_enable" />
+@code
+{
+    /// <summary>Gets or sets the global arguments dictionary, used to read whether the outlines overlay is enabled.</summary>
+    [CascadingParameter(Name = "Globals")]
+    public IReadOnlyDictionary<string, string>? Globals { get; set; }
+
+    private bool _enable = false;
+
+    override protected void OnParametersSet()
+    {
+        this._enable = this.Globals is not null && this.Globals.TryGetValue("outline", out var strValue) ? bool.TryParse(strValue, out var boolValue) ? boolValue : false : false;
+    }
+}

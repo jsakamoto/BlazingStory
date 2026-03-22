@@ -1,4 +1,4 @@
-﻿using BlazingStory.Internals.Utils;
+using BlazingStory.ToolKit.Utils;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Test.Internals.Utils;
