@@ -1,4 +1,4 @@
-export const importStyleSheet = (href: string, enable: boolean) => {
+export const importStyleSheet = (href: string) => {
     const linkElement = document.createElement("link");
     linkElement.href = href;
     linkElement.rel = "stylesheet";

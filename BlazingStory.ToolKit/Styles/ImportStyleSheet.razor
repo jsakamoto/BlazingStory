@@ -9,14 +9,14 @@
     public string? Href { get; set; }
 
     /// <summary>
-    /// Whether the stylesheet import is enabled.
+    /// Whether the stylesheet import is disabled.
     /// </summary>
     [Parameter]
-    public bool Enable { get; set; }
+    public bool Disabled { get; set; }
 
     private string? _previousHref;
 
-    private bool? _previousEnable;
+    private bool? _previousDisabled;
 
     private JSModule _JSModule;
 
@@ -33,10 +33,10 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (string.IsNullOrEmpty(this.Href)) return;
-        if (this.Href == this._previousHref && this.Enable == this._previousEnable) return;
+        if (this.Href == this._previousHref && this.Disabled == this._previousDisabled) return;
 
         this._previousHref = this.Href;
-        this._previousEnable = this.Enable;
+        this._previousDisabled = this.Disabled;
 
         if (this._importedStyleSheet is not null)
         {
@@ -44,8 +44,8 @@
             this._importedStyleSheet = null;
             await importedStyleSheet.DisposeIfConnectedAsync("dispose");
         }
-        if (!this.Enable) return;
-        this._importedStyleSheet = await this._JSModule.InvokeAsync<IJSObjectReference>("importStyleSheet", this.Href, this.Enable);
+        if (this.Disabled) return;
+        this._importedStyleSheet = await this._JSModule.InvokeAsync<IJSObjectReference>("importStyleSheet", this.Href);
     }
 
     public async ValueTask DisposeAsync()
