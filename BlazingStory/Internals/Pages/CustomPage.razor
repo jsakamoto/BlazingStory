@@ -20,9 +20,10 @@
             }
             @foreach (var toolbarContent in this.GetToolbarContents())
             {
-                <DynamicComponent @key="toolbarContent.Id"
-                                  Type="toolbarContent.ComponentType"
-                                  Parameters="toolbarContent.ComponentParameter" />
+                <CascadingValue Value="toolbarContent.Globals">
+                    <DynamicComponent @key="toolbarContent.Id"
+                                      Type="toolbarContent.ComponentType" />
+                </CascadingValue>
             }
             @{
 #pragma warning restore IL2111

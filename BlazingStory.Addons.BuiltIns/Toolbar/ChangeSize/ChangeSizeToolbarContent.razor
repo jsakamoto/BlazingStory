@@ -54,8 +54,8 @@
 @code
 {
     /// <summary>Gets the global arguments used to store and propagate the selected viewport size state.</summary>
-    [Parameter]
-    public required GlobalArguments Globals { get; init; }
+    [CascadingParameter]
+    public GlobalArguments Globals { get; set; } = default!;
 
     private readonly IReadOnlyDictionary<SizeType, (string DisplayName, int ShrotSide, int LongSide)> SizeTypeToDetail = new Dictionary<SizeType, (string, int, int)>
     {

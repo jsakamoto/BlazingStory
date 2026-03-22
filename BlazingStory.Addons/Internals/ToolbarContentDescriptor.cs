@@ -19,8 +19,6 @@ internal class ToolbarContentDescriptor
 
     internal readonly GlobalArguments Globals = new();
 
-    internal readonly Dictionary<string, object?> ComponentParameter = new();
-
     /// <summary>
     /// Initializes a new instance of <see cref="ToolbarContentDescriptor"/>.
     /// </summary>
@@ -32,6 +30,5 @@ internal class ToolbarContentDescriptor
         this.Order = order;
         this.Match = match;
         this.ComponentType = toolbarButtonComponentType;
-        this.ComponentParameter["Globals"] = this.Globals;
     }
 }

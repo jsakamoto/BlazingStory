@@ -8,8 +8,8 @@
 @code
 {
     /// <summary>Gets the global arguments used to store and propagate the grid-enabled state.</summary>
-    [Parameter]
-    public required GlobalArguments Globals { get; init; }
+    [CascadingParameter]
+    public GlobalArguments Globals { get; set; } = default!;
 
     private bool _Enable = false;
 
