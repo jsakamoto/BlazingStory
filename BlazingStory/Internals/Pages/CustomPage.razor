@@ -20,9 +20,8 @@
             }
             @foreach (var toolbarContent in this.GetToolbarContents())
             {
-                <CascadingValue Value="toolbarContent.Globals">
-                    <DynamicComponent @key="toolbarContent.Id"
-                                      Type="toolbarContent.ComponentType" />
+                <CascadingValue @key="toolbarContent.Id" Value="toolbarContent.Globals">
+                    <DynamicComponent Type="toolbarContent.ComponentType" />
                 </CascadingValue>
             }
             @{
