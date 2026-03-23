@@ -26,8 +26,8 @@
 @code
 {
     /// <summary>Gets the global arguments used to store and propagate the selected background color.</summary>
-    [Parameter]
-    public required GlobalArguments Globals { get; init; }
+    [CascadingParameter]
+    public GlobalArguments Globals { get; set; } = default!;
 
     private static class StorageKeys
     {
