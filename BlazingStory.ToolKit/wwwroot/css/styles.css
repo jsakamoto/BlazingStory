@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
 }
-.icon-button > svg {
+.icon-button > svg.svg-icon {
   width: 16px;
   height: 16px;
   margin: 0;

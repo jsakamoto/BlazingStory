@@ -1,4 +1,4 @@
-﻿.icon-button {
+.icon-button {
     min-width: 28px;
     height: 28px;
     border-radius: 4px;
@@ -8,7 +8,7 @@
     display: flex;
     align-items: center;
 
-    & > svg {
+    & > svg.svg-icon {
         width: 16px;
         height: 16px;
         margin: 0;
