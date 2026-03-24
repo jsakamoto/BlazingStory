@@ -1,3 +1,6 @@
+v.1.0.0-preview.69
+- Fix: Fixed hot reload build errors (CS8785/CS0234) caused by the MD2RazorGenerator package by updating it to v.1.2.4 in the project templates.
+
 v.1.0.0-preview.68
 - Feature: Introduced the Addon mechanism, enabling developers to extend the UI with custom toolbar items, panels, and preview decorators.
 
