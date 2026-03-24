@@ -15,6 +15,7 @@
   <Import Project="../VersionInfo.props" />
   <Import Project="VersionInfo.targets" />
   <Import Project="ScopedCssAssets.targets" />
+  <Import Project="../build/ReleaseNotes.targets" />
 
   <PropertyGroup>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
@@ -78,6 +79,13 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BlazingStory.Abstractions\BlazingStory.Abstractions.csproj" />
+    <ProjectReference Include="..\BlazingStory.Addons\BlazingStory.Addons.csproj" />
+    <ProjectReference Include="..\BlazingStory.Addons.BuiltIns\BlazingStory.Addons.BuiltIns.csproj" />
+    <ProjectReference Include="..\BlazingStory.ToolKit\BlazingStory.ToolKit.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TypeScriptTarget>ESNext</TypeScriptTarget>
     <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
@@ -93,17 +101,6 @@
     <TypeScriptMapRoot />
     <TypeScriptSourceRoot />
   </PropertyGroup>
-
-  <Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec">
-    <ReadLinesFromFile File="../RELEASE-NOTES.txt">
-      <Output TaskParameter="Lines" ItemName="ReleaseNoteLines" />
-    </ReadLinesFromFile>
-    <PropertyGroup>
-      <PackageReleaseNotes>@(ReleaseNoteLines, '%0a');v.0.0</PackageReleaseNotes>
-      <PackageReleaseNotes>$([System.Text.RegularExpressions.Regex]::Match($(PackageReleaseNotes), "^(v\.[\d\.]+.+?)v\.[\d\.]+", System.Text.RegularExpressions.RegexOptions.Singleline).Groups[1].Value)</PackageReleaseNotes>
-      <PackageReleaseNotes>$(PackageReleaseNotes)%0a%0aTo see all the change logs, please visit the following URL.%0a- $(RepositoryUrl)blob/main/RELEASE-NOTES.txt</PackageReleaseNotes>
-    </PropertyGroup>
-  </Target>
 
   <!--
   This target is used to fix the "ContentRoot" meta data of "StaticWebAsset" items that are stored in the solution folder.

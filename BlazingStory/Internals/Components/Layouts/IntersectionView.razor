@@ -30,7 +30,7 @@
     {
         if (firstRender)
         {
-            await using var module = await JSRuntime.ImportAsync("Internals/Components/Layouts/IntersectionView.razor.js");
+            await using var module = JSModuleFactory.Create(() => this.JSRuntime, "Internals/Components/Layouts/IntersectionView.razor.js");
             if (_isDisposing) return;
             _observer = await module.InvokeAsync<IJSObjectReference>("observe", _containerElement);
         }

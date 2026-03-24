@@ -1,4 +1,5 @@
-﻿using BlazingStory.Internals.Models;
+using BlazingStory.Abstractions;
+using BlazingStory.Internals.Models;
 using BlazingStory.Internals.Services;
 using BlazingStoryApp1.Stories;
 using Microsoft.AspNetCore.Components;
@@ -10,7 +11,7 @@ namespace BlazingStory.Test._Fixtures;
 
 internal static class TestHelper
 {
-    internal static readonly RenderFragment<BlazingStory.Types.StoryContext> EmptyFragment = ctx => ((RenderTreeBuilder _) => { });
+    internal static readonly RenderFragment<IStoryContext> EmptyFragment = ctx => ((RenderTreeBuilder _) => { });
 
     internal static StoriesRazorDescriptor Descriptor(string title)
     {

@@ -24,7 +24,11 @@
     <Project Path="Tests/Fixtures/BlazorToDoApp/BlazorToDoApp.Stories/BlazorToDoApp.Stories.csproj" />
     <Project Path="Tests/Fixtures/BlazorToDoApp/BlazorToDoApp/BlazorToDoApp.csproj" />
   </Folder>
+  <Project Path="BlazingStory.Abstractions/BlazingStory.Abstractions.csproj" Id="bf01594c-3fe0-41db-a7c2-0366fb918fb8" />
+  <Project Path="BlazingStory.Addons.BuiltIns/BlazingStory.Addons.BuiltIns.csproj" />
+  <Project Path="BlazingStory.Addons/BlazingStory.Addons.csproj" />
   <Project Path="BlazingStory.McpServer/BlazingStory.McpServer.csproj" />
   <Project Path="BlazingStory.Stories/BlazingStory.Stories.csproj" />
+  <Project Path="BlazingStory.ToolKit/BlazingStory.ToolKit.csproj" />
   <Project Path="BlazingStory/BlazingStory.csproj" />
 </Solution>

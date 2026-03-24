@@ -1,0 +1,25 @@
+@inject IJSRuntime JSRuntime
+@code
+{
+    /// <summary>Gets or sets the global arguments dictionary, used to read the selected background color.</summary>
+    [CascadingParameter(Name = "Globals")]
+    public IReadOnlyDictionary<string, string>? Globals { get; set; }
+
+    private JSModule _JSModule;
+
+    private string _currentBackgroundColor = "transparent";
+
+    public BackgroundPreviewDecorator()
+    {
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Toolbar/Background/BackgroundPreviewDecorator.razor.js");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (this.Globals?.TryGetValue("backgrounds.value", out var backgroundColor) == true && _currentBackgroundColor != backgroundColor)
+        {
+            this._currentBackgroundColor = backgroundColor;
+            await _JSModule.InvokeVoidAsync("setBackgroundColor", backgroundColor);
+        }
+    }
+}

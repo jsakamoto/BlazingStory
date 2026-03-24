@@ -1,0 +1,24 @@
+<div class="menu-item @(this.Active ? "active": "")" @onclick="() => this.OnClick.InvokeAsync()">
+    @ChildContent
+</div>
+
+@code
+{
+    /// <summary>
+    /// Callback invoked when the menu item is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    /// <summary>
+    /// Whether the menu item is in an active (selected) state.
+    /// </summary>
+    [Parameter]
+    public bool Active { get; set; }
+
+    /// <summary>
+    /// The content rendered inside the menu item.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

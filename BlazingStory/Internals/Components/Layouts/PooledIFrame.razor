@@ -23,7 +23,7 @@
 
     public PooledIFrame()
     {
-        this._JSModule = new(() => this.JSRuntime, "Internals/Components/Layouts/PooledIFrame.razor.js");
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Internals/Components/Layouts/PooledIFrame.razor.js");
     }
 
     override protected async Task OnParametersSetAsync()

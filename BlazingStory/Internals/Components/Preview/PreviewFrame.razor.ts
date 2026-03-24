@@ -1,13 +1,10 @@
 import type { } from "../../../wwwroot/js/types/browser-dom";
 import type { MessageArgument } from "../../../wwwroot/js/types/custom-messages";
-import type { FrameHeightChangeEvent, ComponentActionEvent } from "../../../wwwroot/js/types/custom-events";
+import type { FrameHeightChangeEvent } from "../../../wwwroot/js/types/custom-events";
 
 // Register custom event types
 Blazor?.registerCustomEventType('frameheightchange', {
     createEventArgs: (e: FrameHeightChangeEvent) => e.detail
-});
-Blazor?.registerCustomEventType('componentaction', {
-    createEventArgs: (e: ComponentActionEvent) => e.detail
 });
 
 const waitFor = async <T>(arg: { predecate: () => false | T, maxRetryCount?: number, retryInterval?: number }): Promise<T | null> => {

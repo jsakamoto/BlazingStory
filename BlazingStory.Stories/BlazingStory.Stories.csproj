@@ -22,6 +22,10 @@
   <ItemGroup>
     <ProjectReference Include="..\BlazingStory\BlazingStory.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Stories\Internal\Pages\Canvas\Actions\" />
+  </ItemGroup>
   <Import Project="..\BlazingStory\Build\BlazingStory.targets" />
 
 </Project>

@@ -1,4 +1,4 @@
-[*.csproj]
+[*.{csproj,sln,props,targets}]
 indent_style = space
 indent_size = 2
 [*.css]

@@ -1,0 +1,38 @@
+@code
+{
+    /// <summary>Gets or sets the current story whose context will be updated from URL args.</summary>
+    [CascadingParameter(Name = "Story")]
+    public IStory? Story { get; set; }
+
+    /// <summary>Gets or sets the URL-encoded argument key-value pairs to apply to the story context.</summary>
+    [CascadingParameter(Name = "Args")]
+    public IReadOnlyDictionary<string, string>? Args { get; set; }
+
+    private string _PrevArgsString = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        // Detect changes to Args by encoding them into a string and comparing with the previous value.
+        var argsString = UriParameterKit.EncodeKeyValues(this.Args);
+        if (argsString == this._PrevArgsString) return;
+        this._PrevArgsString = argsString;
+
+        if (this.Story is null) return;
+
+        await this.Story.Context.ResetArgumentsAsync();
+
+        if (this.Args is null) return;
+
+        var parameters = this.Story.Context.Parameters;
+        foreach (var arg in this.Args)
+        {
+            var parameter = parameters.FirstOrDefault(p => p.Name == arg.Key);
+            if (parameter == null) continue;
+            if (!TypeUtility.TryConvertType(parameter.TypeStructure, arg.Value, out var value)) continue;
+
+            await this.Story.Context.AddOrUpdateArgumentAsync(arg.Key, value);
+        }
+    }
+}

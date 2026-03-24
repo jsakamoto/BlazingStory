@@ -1,0 +1,22 @@
+<button class="@CssClass("square-button", new { ButtonStyle })" @onclick="@(() => this.OnClick.InvokeAsync())">@Text</button>
+
+@code
+{
+    /// <summary>
+    /// The label text displayed inside the button.
+    /// </summary>
+    [Parameter]
+    public string? Text { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the button is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    /// <summary>
+    /// The visual style variant applied to the button.
+    /// </summary>
+    [Parameter]
+    public ButtonStyle ButtonStyle { get; set; } = ButtonStyle.Default;
+}
