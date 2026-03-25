@@ -150,18 +150,12 @@ public static class RenderFragmentExtensions
     [SuppressMessage("Usage", "BL0006:Do not use RenderTree types", Justification = "<Pending>")]
     public static string ToMarkupString(this object fragment)
     {
-        var renderer = new RenderedTreeFrames();
-        var component = new ContainerComponent<object> { Content = (RenderFragment)fragment };
-        var renderTree = new RenderTreeBuilder();
-        component.BuildTree(renderTree);
-
-        var frameRange = renderTree.GetFrames();
-        var framesArray = new RenderTreeFrame[frameRange.Count];
-        Array.Copy(frameRange.Array, framesArray, frameRange.Count);
-
-        var result = renderer.RenderFrames(framesArray);
-
-        return result;
+        return fragment switch
+        {
+            RenderFragment renderFragment => renderFragment.ToMarkupString(),
+            string str => str,
+            _ => string.Empty
+        };
     }
 
     /// <summary>
