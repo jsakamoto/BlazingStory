@@ -1,0 +1,30 @@
+﻿@attribute [Stories("Internals/Components/Inputs/HotKeyEditorInput")]
+
+@using Toolbelt.Blazor.HotKeys2
+@using static Toolbelt.Blazor.HotKeys2.ModCode
+
+<Stories TComponent="HotKeyEditorInput" Layout="typeof(MarginedFrame)">
+
+    <Story Name="Default">
+        <Arguments>
+            <Arg For="_ => _.HotKey" Value="@(new HotKeyCombo(Alt | Ctrl | Shift, Code.A))" />
+        </Arguments>
+
+        <Template>
+            <HotKeyEditorInput @bind-HotKey="_hotKey" Validate="OnValidateHotkey" @attributes="context.Args">
+            </HotKeyEditorInput>
+        </Template>
+
+    </Story>
+
+</Stories>
+
+
+@code {
+    private HotKeyCombo _hotKey = new HotKeyCombo(Alt | Ctrl | Shift, Code.A);
+
+    private bool OnValidateHotkey(HotKeyCombo hotKey)
+    {
+        return hotKey.Code != Code.Escape && hotKey.Code != Code.Enter && hotKey.Code != Code.Tab;
+    }
+}

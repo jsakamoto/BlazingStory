@@ -1,11 +1,15 @@
+@using BlazingStory.Addons.Internals
 @implements IDisposable
+@inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 
 <PageTitle>@_PageTitle</PageTitle>
 
 <div class="fill stack vertical addon-pane-@(this.AddonPanelVisible ? "visible" : "hidden")">
 
-    <SplitContainer Class="canvas-page-container fill" Orientation="this._AddonPanelLayout.SplitterOrientation" SecondPaneMinSize="80"
+    <SplitContainer Class="canvas-page-container fill"
+                    Orientation="this._AddonPanelLayout.SplitterOrientation"
+                    UnitOfPaneSize="UnitOfPaneSize.Percent"
                     @bind-SecondPaneSize="_AddonPanelSize"
                     @bind-SecondPaneSize:after="OnAddonPanelSizeChanged">
 
@@ -16,7 +20,7 @@
                 <ToolBar Visible="this._ToolbarVisibleCommand?.Flag == true">
                     @if (this._Commands[CommandType.SideBarVisible]?.Flag == false)
                     {
-                        <IconButton Icon="SvgIconType.Sidebar" Command="this._Commands[CommandType.SideBarVisible]" />
+                        <IconCommandButton Icon="SvgIconType.Sidebar" Command="this._Commands[CommandType.SideBarVisible]" />
                         <Separator />
                     }
 
@@ -27,24 +31,32 @@
                     <Separator />
 
                     @* -- Render Add-On's Toolbar Contents -- *@
-                    @foreach (var addon in this.AddonsStore.GetAddons(AddonType.CanvasPage))
+                    @{
+#pragma warning disable IL2111
+                    }
+                    @foreach (var toolbarContent in this.GetToolbarContents())
                     {
-                        <text>@addon.ToolbarContents</text>
+                        <CascadingValue @key="toolbarContent.Id" Value="toolbarContent.Globals">
+                            <DynamicComponent Type="toolbarContent.ComponentType" />
+                        </CascadingValue>
+                    }
+                    @{
+#pragma warning restore IL2111
                     }
 
                     <Spacer />
 
                     @if (this._AddonPanelVisibleCommand?.Flag != true)
                     {
-                        <IconButton Icon="this.ToggleOrientationButtonIcon" Command="this._AddonPanelVisibleCommand" />
+                        <IconCommandButton Icon="this.ToggleOrientationButtonIcon" Command="this._AddonPanelVisibleCommand" />
                     }
                     @if ((this._GoFullscreenCommand?.Flag ?? true) == true)
                     {
-                        <IconButton Icon="SvgIconType.CircleClose" Command="this._GoFullscreenCommand" Title="Exit full screen [{0}]" />
+                        <IconCommandButton Icon="SvgIconType.CircleClose" Command="this._GoFullscreenCommand" Title="Exit full screen [{0}]" />
                     }
                     else
                     {
-                        <IconButton Icon="SvgIconType.FullScreen" Command="this._GoFullscreenCommand" />
+                        <IconCommandButton Icon="SvgIconType.FullScreen" Command="this._GoFullscreenCommand" />
                     }
 
                     <IconButton Icon="SvgIconType.OpenNewTab" Href="@this._PreviewFrame?.CurrentPreviewFrameUrl" Target="_blank" Title="Open canvas in new tab" />
@@ -58,8 +70,7 @@
                                   ViewMode="story"
                                   Id="@this.RouteData.Parameter"
                                   Args="this._CurrentStory?.Context.Args"
-                                  Globals="this.AddonsStore.GetFrameArguments(AddonType.CanvasPage)"
-                                  OnComponentAction="OnComponentAction" />
+                                  Globals="this.GetGlobalArguments()" />
                 </div>
             </div>
         </FirstPane>
@@ -88,9 +99,6 @@
     protected QueryRouteData RouteData { get; init; } = default!;
 
     [CascadingParameter]
-    protected AddonsStore AddonsStore { get; init; } = default!;
-
-    [CascadingParameter]
     protected IServiceProvider Services { get; init; } = default!;
 
     [CascadingParameter]
@@ -99,6 +107,8 @@
     private PreviewFrame? _PreviewFrame;
 
     private HelperScript HelperScript = default!;
+
+    private AddonManager AddonManager => this.Services.GetRequiredService<AddonManager>();
 
     private CommandService _Commands = default!;
 
@@ -112,7 +122,7 @@
 
     private bool AddonPanelVisible => (this._AddonPanelVisibleCommand?.Flag ?? true) && !(this._GoFullscreenCommand?.Flag ?? false);
 
-    private int _AddonPanelSize = 210;
+    private double _AddonPanelSize = 50;
 
     private AddonPanelLayout _AddonPanelLayout = new();
 
@@ -130,14 +140,12 @@
         _ => SvgIconType.RightSidePane
     };
 
-    private ComponentActionLogs? _ComponentActionLogs;
-
     private readonly CanvasPageContext _CanvasPageContext = new();
 
     protected override void OnInitialized()
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
-        this.AddonsStore.OnFrameArgumentsChanged += AddonsStore_OnFrameArgumentsChanged;
+        this.AddonManager.GlobalArgumentsChanged += OnGlobalArgumentsChanged;
 
         this._Commands = this.Services.GetRequiredService<CommandService>();
         this._ToolbarVisibleCommand = this._Commands[CommandType.ToolBarVisible]!;
@@ -149,9 +157,6 @@
             this._ToolbarVisibleCommand.Subscribe(this.OnToggleToolbarVisible),
             this._AddonPanelVisibleCommand.Subscribe(this.OnToggleAddonPanelVisible)
         );
-
-        this._ComponentActionLogs = this.Services.GetRequiredService<ComponentActionLogs>();
-        this._CanvasPageContext.SetItem(this._ComponentActionLogs);
     }
 
     protected override void OnParametersSet()
@@ -164,7 +169,7 @@
     {
         if (!firstRender) return;
 
-        this._AddonPanelLayout = await this.HelperScript.LoadObjectFromLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
+        this._AddonPanelLayout = await this.JSRuntime.LoadObjectFromLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
         this.UpdateAddonPanelSize(this._AddonPanelLayout.SplitterOrientation);
         this.StateHasChanged();
     }
@@ -179,24 +184,31 @@
         this._LastTitledParameter = this.RouteData.Parameter;
     }
 
-    private void AddonsStore_OnFrameArgumentsChanged(object? sender, EventArgs args)
-    {
-        this.StateHasChanged();
-    }
-
     private void UpdateCurrentStory()
     {
-        if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
+        if (this._CurrentStory is not null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
 
         var path = this.RouteData.Parameter;
-        if (this.StoriesStore.TryGetStoryByPath(path, out var story))
-        {
-            if (!object.ReferenceEquals(this._CurrentStory, story)) _ComponentActionLogs?.Clear();
-            this._CurrentStory = story;
-        }
-        else this._CurrentStory = null;
+        this._CurrentStory = this.StoriesStore.TryGetStoryByPath(path, out var story) ? story : null;
 
-        if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged += Context_ArgumentChanged;
+        if (this._CurrentStory is not null) this._CurrentStory.Context.ArgumentChanged += Context_ArgumentChanged;
+    }
+
+    private IEnumerable<ToolbarContentDescriptor> GetToolbarContents()
+    {
+        return this.AddonManager.GetToolbarContents(BlazingStory.Addons.ViewMode.Story);
+    }
+
+    private Dictionary<string, object?> GetGlobalArguments()
+    {
+        return this.GetToolbarContents()
+            .SelectMany(tb => tb.Globals)
+            .ToDictionary(arg => arg.Key, arg => arg.Value);
+    }
+
+    private void OnGlobalArgumentsChanged(object? sender, EventArgs args)
+    {
+        this.StateHasChanged();
     }
 
     private ValueTask Context_ArgumentChanged()
@@ -209,11 +221,11 @@
     {
         if (_AddonPanelLayout.SplitterOrientation == SplitterOrientation.Horizontal)
         {
-            this._AddonPanelLayout.VerticalSize = this._AddonPanelSize;
+            this._AddonPanelLayout.VerticalProportion = this._AddonPanelSize;
         }
         else
         {
-            this._AddonPanelLayout.HorizontalSize = this._AddonPanelSize;
+            this._AddonPanelLayout.HorizontalProportion = this._AddonPanelSize;
         }
         await this.SaveAddonPanelLayoutAsync();
     }
@@ -222,8 +234,8 @@
     {
         this._AddonPanelSize = splitterOrientation switch
         {
-            SplitterOrientation.Vertical => this._AddonPanelLayout.HorizontalSize,
-            _ => this._AddonPanelLayout.VerticalSize
+            SplitterOrientation.Vertical => this._AddonPanelLayout.HorizontalProportion,
+            _ => this._AddonPanelLayout.VerticalProportion
         };
     }
 
@@ -280,17 +292,12 @@
 
     private async ValueTask SaveAddonPanelLayoutAsync()
     {
-        await this.HelperScript.SaveObjectToLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
-    }
-
-    private void OnComponentAction(ComponentActionEventArgs e)
-    {
-        _ComponentActionLogs?.Add(e.Name, e.ArgsJson);
+        await this.JSRuntime.SaveObjectToLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
     }
 
     public void Dispose()
     {
-        this.AddonsStore.OnFrameArgumentsChanged -= AddonsStore_OnFrameArgumentsChanged;
+        this.AddonManager.GlobalArgumentsChanged -= OnGlobalArgumentsChanged;
         this._Subscriptions.Dispose();
         if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
     }

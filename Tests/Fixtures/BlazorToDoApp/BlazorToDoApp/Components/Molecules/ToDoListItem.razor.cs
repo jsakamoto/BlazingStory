@@ -1,7 +1,7 @@
 ﻿namespace BlazorToDoApp.Components.Molecules;
 
 /// <summary>
-/// ToDo アイテムを表示するコンポーネント
+/// Component to display a ToDo item
 /// </summary>
 public partial class ToDoListItem
 {

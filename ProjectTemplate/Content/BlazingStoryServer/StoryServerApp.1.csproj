@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <MD2RazorDefaultBaseClass>global::BlazingStory.Internals.Pages.MarkdownPageBase</MD2RazorDefaultBaseClass>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BlazingStory" Version="1.0.0-preview.68" />
+    <!--#if McpServer -->
+    <PackageReference Include="BlazingStory.McpServer" Version="1.0.0-preview.68" />
+    <!--#endif -->
+    <PackageReference Include="MD2RazorGenerator" Version="1.2.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

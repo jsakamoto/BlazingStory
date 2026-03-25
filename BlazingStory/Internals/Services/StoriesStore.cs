@@ -35,7 +35,7 @@ public class StoriesStore
     }
 
     /// <summary>
-    /// Try to find a story by navigationn path, such as "examples-ui-button--default".
+    /// Try to find a story by navigation path, such as "examples-ui-button--default".
     /// </summary>
     internal bool TryGetStoryByPath(string navigationPath, [NotNullWhen(true)] out Story? story)
     {

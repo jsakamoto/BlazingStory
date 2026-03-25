@@ -28,6 +28,20 @@
       },
       "isVisible": true,
       "persistenceScope": "templateGroup"
+    },
+    {
+      "id": "McpServer",
+      "name": {
+        "text": "Enables the _MCP server feature"
+      },
+      "isVisible": true,
+      "persistenceScope": "templateGroup"
+    },
+    {
+      "id": "LocalhostTld",
+      "isVisible": true,
+      "persistenceScope": "shared",
+      "persistenceScopeName": "Microsoft"
     }
   ]
 }

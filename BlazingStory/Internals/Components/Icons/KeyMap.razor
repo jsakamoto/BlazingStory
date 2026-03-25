@@ -1,5 +1,5 @@
 <div class="@CssClass("key-map", this.Class ?? "", new {this.FreeSize})">
-    @foreach (var keyText in this.EnumKeyText())
+    @foreach (var keyText in this.Key?.EnumKeyTexts() ?? Enumerable.Empty<string>())
     {
         <code>@keyText</code>
     }
@@ -14,13 +14,4 @@
 
     [Parameter]
     public string? Class { get; set; }
-
-    private IEnumerable<string> EnumKeyText()
-    {
-        if (this.Key == null) yield break;
-        if (this.Key.Modifiers.HasFlag(ModCode.Alt)) yield return "alt";
-        if (this.Key.Modifiers.HasFlag(ModCode.Ctrl)) yield return "⌃";
-        if (this.Key.Modifiers.HasFlag(ModCode.Shift)) yield return "⇧​";
-        yield return KeyCodeMapper.GetKeyTextFromCode(this.Key.Code);
-    }
 }

@@ -1,9 +1,9 @@
 .menu-item.command-menu-item {
-    padding: 0 10px 0 8px;
+    padding: 0 10px 0 9px;
     overflow-y: hidden;
 
-    .check-mark-area {
-        color: var(--bs-focused-color);
+    .icon-area {
+        color: var(--bs-dimmed-hover-text-color);
         width: 25px;
 
         svg.svg-icon {
@@ -11,12 +11,25 @@
         }
     }
 
+    &[aria-checked] {
+        .icon-area {
+            color: var(--bs-focused-color);
+        }
+    }
+
     .command-title {
         flex: 1;
+        letter-spacing: 0.02px;
     }
 
     .hotkey-area {
         padding-left: 10px;
         margin-bottom: 2px;
+        font-weight: normal;
     }
+}
+
+a.menu-item.command-menu-item {
+    color: var(--bs-popup-text-color);
+    text-decoration: none;
 }

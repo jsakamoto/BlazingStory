@@ -5,13 +5,17 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+
+    <!-- Ignore the warrning CS1591 "Missing XML comment" because we don't care about the documentation since this is a sample project. -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+
   </PropertyGroup>
 
   <Import Project="..\..\..\BlazingStory\Build\BlazingStory.targets" />
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.5" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.16" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

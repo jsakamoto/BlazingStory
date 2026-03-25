@@ -10,19 +10,19 @@
 @code
 {
     /// <summary>
-    /// 表示する ToDo アイテムを取得または設定します。
+    /// Gets or sets the ToDo item to display.
     /// </summary>
     [Parameter, EditorRequired]
     public ToDoItem? Item { get; set; }
 
     /// <summary>
-    /// ToDo の完了状態が変更されたときに、その ToDo アイテムの Id を引数に呼び出されるコールバックを取得または設定します。
+    /// Gets or sets the callback that is invoked when the completion status of the ToDo item changes, with the Id of the ToDo item as an argument.
     /// </summary>
     [Parameter]
     public EventCallback<int> OnClickDone { get; set; }
 
     /// <summary>
-    /// ToDo の削除ボタンがクリックされたときに、その ToDo アイテムの Id を引数に呼び出されるコールバックを取得または設定します。
+    /// Gets or sets the callback that is invoked when the delete button of the ToDo item is clicked, with the Id of the ToDo item as an argument.
     /// </summary>
     [Parameter]
     public EventCallback<int> OnClickRemove { get; set; }

@@ -15,5 +15,6 @@ public enum CommandType
     NextComponent,
     PreviousStory,
     NextStory,
-    CollapseAll
+    CollapseAll,
+    Documentation
 }

@@ -1,4 +1,5 @@
-﻿using BlazingStory.Internals.Utils;
+using BlazingStory.Internals.Utils;
+using BlazingStory.ToolKit.Icons;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Internals.Services.Command;
@@ -11,11 +12,15 @@ public class Command
 
     internal readonly string? Title;
 
+    internal readonly SvgIconType? Icon;
+
+    internal readonly string? LinkUrl;
+
     private HotKeyCombo? _HotKey;
 
-    private bool? _Flag;
+    private readonly HotKeyCombo? _DefaultHotKey;
 
-    internal string? GetTitleText() => string.IsNullOrEmpty(this._HotKey?.Code.ToString()) ? this.Title : $"{this.Title} [{this.GetHotKeyName()}]";
+    private bool? _Flag;
 
     private readonly Dictionary<Guid, ValueTaskCallback<Command>> _Subscribers = new();
 
@@ -23,18 +28,21 @@ public class Command
 
     internal Command(string? title = null, bool? flag = null) : this(default, title, flag) { }
 
-    public Command(HotKeyCombo? hotKey, string? title = null, bool? flag = null)
+    public Command(HotKeyCombo? hotKey, string? title = null, bool? flag = null, string? linkUrl = null, SvgIconType? icon = null)
     {
         this._HotKey = hotKey;
+        this._DefaultHotKey = hotKey;
         this.Title = title;
+        this.LinkUrl = linkUrl;
         this._Flag = flag;
+        this.Icon = icon;
     }
 
-    internal string GetHotKeyName()
-    {
-        var hotKeyName = (string?)this.HotKey?.Code;
-        return hotKeyName?.StartsWith("Key") == true ? hotKeyName[3..] : hotKeyName ?? "";
-    }
+    /// <summary>Returns the key name of the hot key, like "⌃ ⇧ F1".</summary>
+    internal string GetHotKeyName() => this._HotKey?.ToString() ?? string.Empty;
+
+    /// <summary>Returns the title text of the command, like "Command [⌃ ⇧ F1]".</summary>
+    internal string? GetTitleText() => string.IsNullOrEmpty(this.GetHotKeyName()) ? this.Title : $"{this.Title} [{this.GetHotKeyName()}]";
 
     internal IDisposable Subscribe(ValueTaskCallback callBack)
     {
@@ -73,4 +81,6 @@ public class Command
     {
         if (callBack.Target is IHandleEvent handleEvent) { await handleEvent.HandleEventAsync(EventCallbackWorkItem.Empty, null); }
     }
+
+    internal void ResetHotKey() => this.HotKey = this._DefaultHotKey;
 }

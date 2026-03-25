@@ -1,0 +1,33 @@
+﻿@attribute [Stories("Internals/Components/Buttons/SquareButton")]
+
+<Stories TComponent="SquareButton" Layout="typeof(MarginedFrame)">
+
+    <Story Name="Default">
+
+        <Arguments>
+            <Arg For="_ => _.Text" Value='"Hello World"' />
+            <Arg For="_ => _.ButtonStyle" Value="ButtonStyle.Default" />
+        </Arguments>
+
+        <Template>
+            <SquareButton @attributes="context.Args">
+            </SquareButton>
+        </Template>
+
+    </Story>
+
+    <Story Name="Slim Style">
+
+        <Arguments>
+            <Arg For="_ => _.Text" Value='"Hello World"' />
+            <Arg For="_ => _.ButtonStyle" Value="ButtonStyle.Slim" />
+        </Arguments>
+
+        <Template>
+            <SquareButton @attributes="context.Args">
+            </SquareButton>
+        </Template>
+
+    </Story>
+
+</Stories>

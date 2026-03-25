@@ -1,14 +1,14 @@
-@using System.Web
 @using System.Collections.Specialized;
-@using System.Reflection
-@using System.Linq.Expressions
-@using System.Text.Json
+@using System.Web
+@using BlazingStory.Addons.Internals
 
-@implements IAsyncDisposable
-@inject IJSRuntime JSRuntime
-@inject ILogger<CanvasFrame> Logger
+@implements IDisposable
 @inject NavigationManager NavigationManager
 
+@{
+#pragma warning disable IL2111
+#pragma warning disable IL2110
+}
 @if (this._Story == null)
 {
     <CanvasFrameNothingToAddress />
@@ -24,15 +24,29 @@ else
             </LayoutView>
         </LayoutView>
     </LayoutView>
-}
 
-@if (this._EnableMeasure)
-{
-    <MeasureLayer />
+    <CascadingValue Name="Globals" Value="this._Globals">
+        <CascadingValue Name="Args" Value="this._Args">
+            <CascadingValue Name="Story" Value="this._Story">
+                @foreach (var previewDecorator in this.AddonManager.GetPreviewDecorators())
+                {
+                    <DynamicComponent @key="previewDecorator.Id"
+                                      Type="previewDecorator.ComponentType" />
+                }
+            </CascadingValue>
+        </CascadingValue>
+    </CascadingValue>
+}
+@{
+#pragma warning restore IL2111
+#pragma warning restore IL2110
 }
 
 @code
 {
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
     [CascadingParameter]
     protected StoriesStore StoriesStore { get; init; } = default!;
 
@@ -42,46 +56,60 @@ else
     [CascadingParameter]
     protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
 
-    private readonly JSModule _JSModule;
+    private AddonManager AddonManager => this.Services.GetRequiredService<AddonManager>();
 
     private Story? _Story;
 
-    private bool _EnableMeasure = false;
+    private string _ArgsString = "";
 
-    private bool _Rendered = false;
+    private string _GlobalsString = "";
 
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public CanvasFrame()
-    {
-        this._JSModule = new(() => this.JSRuntime, "Internals/Pages/Canvas/CanvasFrame.razor.js");
-    }
+    private IReadOnlyDictionary<string, string> _Args = new Dictionary<string, string>();
+
+    private IReadOnlyDictionary<string, string> _Globals = new Dictionary<string, string>();
 
     protected override void OnInitialized()
     {
         this.NavigationManager.LocationChanged += NavigationManager_LocationChanged;
     }
 
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
         if (!this.StoriesStore.TryGetStoryByPath(this.RouteData.Parameter, out var story)) return;
-        if (Object.ReferenceEquals(this._Story, story)) return;
-
         if (this._Story != null) this._Story.Context.ShouldRender -= StoryContext_ShouldRender;
         this._Story = story;
         this._Story.Context.ShouldRender += StoryContext_ShouldRender;
-
-        await this.UpdateComponentStatesAsync();
-        this.StateHasChanged();
+        this.UpdateComponentStates();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
         if (!firstRender) return;
-        this._Rendered = true;
-        await UpdateComponentStatesAsync();
-        this.StateHasChanged();
+        this.UpdateComponentStates();
+    }
+
+    private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs args)
+    {
+        this.UpdateComponentStates();
+    }
+
+    private void UpdateComponentStates()
+    {
+        var queryStrings = HttpUtility.ParseQueryString(new Uri(this.NavigationManager.Uri).Query);
+        var isUpdatedArgs = this.DecodeQueryParams(queryStrings, "args", ref this._ArgsString, ref this._Args);
+        var isUpdatedGlobals = this.DecodeQueryParams(queryStrings, "globals", ref this._GlobalsString, ref this._Globals);
+        
+        if (isUpdatedArgs || isUpdatedGlobals) this.StateHasChanged();
+    }
+
+    private bool DecodeQueryParams(NameValueCollection queryStrings, string key, ref string prevValue, ref IReadOnlyDictionary<string, string> keyValues)
+    {
+        var valueString = queryStrings[key] ?? "";
+        if (prevValue == valueString) return false;
+
+        prevValue = valueString;
+        keyValues = UriParameterKit.DecodeKeyValues(valueString);
+        return true;
     }
 
     /// <summary>
@@ -92,131 +120,9 @@ else
         this.StateHasChanged();
     }
 
-    private string _ComponentArgsString = "";
-
-    private string _GlobalEffectsString = "";
-
-    private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs args)
-    {
-        this.UpdateComponentStatesAsync().AndLogException(this.Logger);
-    }
-
-    private async ValueTask UpdateComponentStatesAsync()
-    {
-        var queryStrings = HttpUtility.ParseQueryString(new Uri(this.NavigationManager.Uri).Query);
-        await this.UpdateComponentArgsFromUrlAsync(queryStrings);
-        await this.UpdateGlobalEffectsFromUrlAsync(queryStrings);
-        await this.WireUpEventMonitorsAsync();
-    }
-
-    private async ValueTask UpdateComponentArgsFromUrlAsync(NameValueCollection queryStrings)
-    {
-        if (this._Story == null) return;
-
-        var componentArgsString = queryStrings["args"] ?? "";
-        if (this._ComponentArgsString == componentArgsString) return;
-        this._ComponentArgsString = componentArgsString;
-
-        await this._Story.Context.ResetArgumentsAsync();
-
-        var componentArgs = UriParameterKit.DecodeKeyValues(this._ComponentArgsString);
-        var parameters = this._Story.Context.Parameters;
-        foreach (var arg in componentArgs)
-        {
-            var parameter = parameters.FirstOrDefault(p => p.Name == arg.Key);
-            if (parameter == null) continue;
-            if (!TypeUtility.TryConvertType(parameter.TypeStructure, arg.Value, out var value)) continue;
-
-            await this._Story.Context.AddOrUpdateArgumentAsync(arg.Key, value);
-        }
-        this.StateHasChanged();
-    }
-
-    private class StyleDescriptor { public string? Id { get; init; } public bool Enable { get; init; } public string? Href { get; init; } };
-
-    private async ValueTask UpdateGlobalEffectsFromUrlAsync(NameValueCollection queryStrings)
-    {
-        // If it is during the server-side pre-rendering, nothing to do.
-        if (!this._Rendered) return;
-
-        var globalEffectsString = queryStrings["globals"] ?? "";
-        if (this._GlobalEffectsString == globalEffectsString) return;
-        this._GlobalEffectsString = globalEffectsString;
-
-        var globalEffects = UriParameterKit.DecodeKeyValues(globalEffectsString);
-        var background = globalEffects.TryGetValue("backgrounds.value", out var backgroundStr) ? backgroundStr : "transparent";
-        var enableGrid = globalEffects.TryGetValue("backgrounds.grid", out var gridStr) ? bool.TryParse(gridStr, out var grid) ? grid : false : false;
-        var enableOutline = globalEffects.TryGetValue("outline", out var outlineStr) ? bool.TryParse(outlineStr, out var outline) ? outline : false : false;
-        this._EnableMeasure = globalEffects.TryGetValue("measureEnabled", out var measureStr) ? bool.TryParse(measureStr, out var measure) ? measure : false : false;
-
-        var basePath = "./_content/BlazingStory/css/preview/";
-        var styleDescripters = new StyleDescriptor[] {
-            new() { Id = "addon-background-grid", Enable = enableGrid, Href = basePath + "background-grid.min.css" },
-            new() { Id = "addon-outline", Enable = enableOutline, Href = basePath + "outline.min.css" }};
-        await this._JSModule.InvokeVoidAsync("ensurePreviewStyle", new object[] { background, styleDescripters });
-
-        this.StateHasChanged();
-    }
-
-    private static readonly Lazy<MethodInfo> _EventTArgMonitorHandlerMethod = new(() => typeof(CanvasFrame).GetMethod(nameof(EventTArgMonitorHandler), BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new InvalidOperationException());
-
-    private static readonly Lazy<MethodInfo> _EventCallbackCreateMethod = new(() =>
-        typeof(EventCallbackFactory).GetMethods(BindingFlags.Public | BindingFlags.Instance)
-            .Where(m => m.Name == "Create" && m.IsGenericMethod)
-            .Select(m => (MethodInfo: m, ParameterTypes: m.GetParameters().Select(p => p.ParameterType).ToArray()))
-            .Where(m => m.ParameterTypes.Length == 2)
-            .Where(m => m.ParameterTypes[0] == typeof(object))
-            .Where(m => m.ParameterTypes[1].IsGenericType && m.ParameterTypes[1].GetGenericTypeDefinition() == typeof(Func<,>))
-            .Select(m => m.MethodInfo)
-            .First());
-
-    private async ValueTask WireUpEventMonitorsAsync()
-    {
-        if (this._Story == null) return;
-
-        foreach (var parameter in this._Story.Context.Parameters)
-        {
-            if (parameter.Type.IsAssignableTo(typeof(EventCallback)))
-            {
-                var eventCallback = EventCallback.Factory.Create(this, () => this.EventVoidMonitorHandler(parameter.Name));
-                await this._Story.Context.AddOrUpdateArgumentAsync(parameter.Name, eventCallback);
-            }
-
-            else if (parameter.Type.IsGenericType && parameter.Type.GetGenericTypeDefinition() == typeof(EventCallback<>))
-            {
-                var typeOfArgs = parameter.Type.GenericTypeArguments.First();
-
-                var eventArgsParam = Expression.Parameter(typeOfArgs, "eventArgs");
-                var monitorHandler = _EventTArgMonitorHandlerMethod.Value.MakeGenericMethod(typeOfArgs);
-                var callBody = Expression.Call(Expression.Constant(this), monitorHandler, Expression.Constant(parameter.Name), eventArgsParam);
-
-                var monitorHandlerLambdaType = typeof(Func<,>).MakeGenericType(typeOfArgs, typeof(Task));
-                var monitorHandlerLambda = Expression.Lambda(monitorHandlerLambdaType, callBody, eventArgsParam);
-                var monitorHandlerDelegate = monitorHandlerLambda.Compile();
-
-                var eventCallbackCreate = _EventCallbackCreateMethod.Value.MakeGenericMethod(typeOfArgs) ?? throw new InvalidOperationException();
-
-                var eventCallback = eventCallbackCreate.Invoke(EventCallback.Factory, new object[] { this, monitorHandlerDelegate });
-                await this._Story.Context.AddOrUpdateArgumentAsync(parameter.Name, eventCallback);
-            }
-        }
-    }
-
-    private async Task EventVoidMonitorHandler(string name)
-    {
-        await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, "void");
-    }
-
-    private async Task EventTArgMonitorHandler<TArgs>(string name, TArgs eventArgs)
-    {
-        var json = JsonSerializer.Serialize(eventArgs, new JsonSerializerOptions { WriteIndented = true });
-        await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, json);
-    }
-
-    public async ValueTask DisposeAsync()
+    public void Dispose()
     {
         if (this._Story != null) this._Story.Context.ShouldRender -= StoryContext_ShouldRender;
         this.NavigationManager.LocationChanged -= NavigationManager_LocationChanged;
-        await this._JSModule.DisposeAsync();
     }
 }

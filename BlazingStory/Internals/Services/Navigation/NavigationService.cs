@@ -1,6 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using BlazingStory.Internals.Models;
+using BlazingStory.Types;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace BlazingStory.Internals.Services.Navigation;
 
@@ -18,15 +20,15 @@ internal class NavigationService
 
     private int _SearchResultSequence = 0;
 
-    public NavigationService(NavigationManager navigationManager, HelperScript helperScript)
+    public NavigationService(NavigationManager navigationManager, IJSRuntime jsRuntime)
     {
         this._NavigationManager = navigationManager;
-        this._NavigationHistory = new(helperScript);
+        this._NavigationHistory = new(jsRuntime);
     }
 
-    internal NavigationTreeItem BuildNavigationTree(IEnumerable<StoryContainer> storyContainers, string? expandedNavigationPath)
+    internal NavigationTreeItem BuildNavigationTree(IEnumerable<StoryContainer> storyContainers, IEnumerable<CustomPageContainer> customPageContainers, IList<NavigationTreeOrderEntry>? customOrderings, string? expandedNavigationPath)
     {
-        this._Root = new NavigationTreeBuilder().Build(storyContainers, expandedNavigationPath);
+        this._Root = new NavigationTreeBuilder().Build(storyContainers, customPageContainers, customOrderings, expandedNavigationPath);
         return this._Root;
     }
 
@@ -52,7 +54,7 @@ internal class NavigationService
     {
         activeItem = null;
         navigatableItems = this._Root.EnumAll()
-            .Where(item => item.Type is NavigationItemType.Story or NavigationItemType.Docs)
+            .Where(item => item.Type is NavigationItemType.Story or NavigationItemType.Docs or NavigationItemType.CustomPage)
             .ToArray();
 
         var navigationPath = routeData?.Path;
@@ -72,7 +74,7 @@ internal class NavigationService
         var nextComponentIndex = ativeComponentIndex + (navigateToNext ? +1 : -1);
         if (nextComponentIndex < 0 || allComponents.Count <= nextComponentIndex) return;
         var nextComponent = allComponents[nextComponentIndex];
-        var nextItem = nextComponent.EnumAll().Where(item => item.Type is NavigationItemType.Story or NavigationItemType.Docs).FirstOrDefault();
+        var nextItem = nextComponent.EnumAll().Where(item => item.Type is NavigationItemType.Story or NavigationItemType.Docs or NavigationItemType.CustomPage).FirstOrDefault();
         if (nextItem == null) return;
         this.NavigateTo(nextItem);
     }
@@ -80,7 +82,7 @@ internal class NavigationService
     internal void NavigateToNextDocsOrStory(QueryRouteData? routeData, bool navigateToNext)
     {
         if (!this.TryGetActiveNavigationItem(routeData, out var activeItem, out var _)) return;
-        var allItems = this._Root.EnumAll().Where(item => item.Type is NavigationItemType.Docs or NavigationItemType.Story).ToList();
+        var allItems = this._Root.EnumAll().Where(item => item.Type is NavigationItemType.Docs or NavigationItemType.Story or NavigationItemType.CustomPage).ToList();
         var ativeIndex = allItems.FindIndex(item => item == activeItem);
         var nextIndex = ativeIndex + (navigateToNext ? +1 : -1);
         if (nextIndex < 0 || allItems.Count <= nextIndex) return;
@@ -134,7 +136,7 @@ internal class NavigationService
 
     private void SearchCore(NavigationTreeItem item, IEnumerable<string> keywords, List<NavigationListItem> results)
     {
-        if (item.Type is NavigationItemType.Component or NavigationItemType.Docs or NavigationItemType.Story)
+        if (item.Type is NavigationItemType.Component or NavigationItemType.Docs or NavigationItemType.Story or NavigationItemType.CustomPage)
         {
             if (keywords.Any(word => item.Caption.Contains(word, StringComparison.InvariantCultureIgnoreCase)))
             {

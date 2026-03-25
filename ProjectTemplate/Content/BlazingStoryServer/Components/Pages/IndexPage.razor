@@ -5,18 +5,28 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>StoryServerApp</title>
+    <title>StoryServerApp.1</title>
     <base href="@(new Uri(NavigationManager.BaseUri).AbsolutePath)" />
+@*#if (Framework != "net8.0" && Framework != "net9.0")*@
+    <ResourcePreloader />
+@*#endif*@
+@*#if (Framework != "net8.0")*@
+    <ImportMap />
+@*#endif*@
     <!--
     DON'T PUT ANY ADDITIONAL CSS OR JAVASCRIPT LINKS IN THIS FILE.
     Please do that in the "IFramePage.razor" instead.
     -->
+@*#if (Framework == "net8.0")*@
     <link rel="stylesheet" href="css/blazor-ui.css" />
+@*#else*@
+    <link rel="stylesheet" href="@Assets["css/blazor-ui.css"]" />
+@*#endif*@
     <HeadOutlet @rendermode="@InteractiveServer" />
 </head>
 
 <body>
-    <StoryServerApp.Components.App @rendermode="@InteractiveServer" />
+    <StoryServerApp._1.Components.App @rendermode="@InteractiveServer" />
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.
@@ -28,7 +38,11 @@
     DON'T PUT ANY ADDITIONAL JAVASCRIPT LINKS IN THIS FILE.
     Please do that in the "IFramePage.razor" instead.
     -->
+@*#if (Framework == "net8.0")*@
     <script src="_framework/blazor.web.js"></script>
+@*#else*@
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
+@*#endif*@
 </body>
 
 </html>

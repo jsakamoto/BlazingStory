@@ -1,4 +1,7 @@
-﻿namespace BlazingStory.Internals.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
+
+namespace BlazingStory.Internals.Models;
 
 public class QueryRoute
 {
@@ -6,9 +9,10 @@ public class QueryRoute
 
     internal readonly string Parameter;
 
+    [DynamicallyAccessedMembers(All)]
     internal readonly Type ViewComponent;
 
-    internal QueryRoute(string viewName, string parameter, Type viewComponent)
+    internal QueryRoute(string viewName, string parameter, [DynamicallyAccessedMembers(All)] Type viewComponent)
     {
         this.ViewName = viewName;
         this.Parameter = parameter;

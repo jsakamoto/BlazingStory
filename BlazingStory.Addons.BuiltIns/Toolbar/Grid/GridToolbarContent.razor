@@ -1,0 +1,41 @@
+@inject IJSRuntime JSRuntime
+
+<IconButton Icon="SvgIconType.Grid"
+            Title="Apply a grid to the preview"
+            Active="this._Enable"
+            OnClick="OnClickButton" />
+
+@code
+{
+    /// <summary>Gets the global arguments used to store and propagate the grid-enabled state.</summary>
+    [CascadingParameter]
+    public GlobalArguments Globals { get; set; } = default!;
+
+    private bool _Enable = false;
+
+    private static class StorageKeys
+    {
+        public const string Grid = "Addons.Grid";
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        var enableStr = await this.JSRuntime.GetLocalStorageItemAsync(StorageKeys.Grid);
+        this._Enable = bool.TryParse(enableStr, out var enable) ? enable : this._Enable;
+        this.StateHasChanged();
+        this.UpdateGlobalArguments();
+    }
+
+    private async Task OnClickButton()
+    {
+        this._Enable = !this._Enable;
+        this.UpdateGlobalArguments();
+        await this.JSRuntime.SetLocalStorageItemAsync(StorageKeys.Grid, this._Enable);
+    }
+
+    private void UpdateGlobalArguments()
+    {
+        this.Globals["backgrounds.grid"] = this._Enable ? "true" : null;
+    }
+}

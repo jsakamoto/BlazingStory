@@ -1,12 +1,13 @@
-﻿@attribute [Stories("Components/Button")]
+﻿@attribute [Stories("Example/Button")]
 
-<Stories TComponent="Button">
+<Stories TComponent="Button" Layout="typeof(Centered)">
     <ArgType For="_=>_.BackgroundColor" Control="ControlType.Color" />
-    <ArgType For="_=>_.Size" Control="ControlType.Select" />
+    <ArgType For="_=>_.Size" Control="ControlType.Radio" />
 
     <Story Name="Primary">
         <Arguments>
             <Arg For="_ => _.ChildContent" Value="_ButtonContent" />
+            <Arg For="_ => _.Primary" Value="true" />
         </Arguments>
         <Template>
             <Button Primary="true" @attributes="context.Args" />

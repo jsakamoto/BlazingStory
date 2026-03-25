@@ -1,4 +1,5 @@
 ﻿using BlazingStory.Internals.Models;
+using BlazingStory.Types;
 
 namespace BlazingStory.Internals.Services.Navigation;
 
@@ -10,12 +11,35 @@ internal class NavigationTreeBuilder
     /// <summary>
     /// Build a tree of <see cref="NavigationTreeItem"/> from a collection of <see cref="StoryContainer"/>.
     /// </summary>
-    /// <param name="components">A collection of <see cref="StoryContainer"/> that is the source of the navigation item tree</param>
+    /// <param name="components">A collection of <see cref="StoryContainer"/> that is the source of the navigation item tree.</param>
+    /// <param name="customPages">A collection of <see cref="CustomPageContainer"/> that is the source of the navigation item tree.</param>
+    /// <param name="customOrderings">A collection of <see cref="NavigationTreeOrderEntry"/> that reprents specifications of ordering navigation tree items.</param>
     /// <param name="expandedNavigationPath">A navigation path string to specify the tree item node that should be expanded (ex."/story/examples-button--primary")</param>
     /// <returns></returns>
-    internal NavigationTreeItem Build(IEnumerable<StoryContainer> components, string? expandedNavigationPath)
+    internal NavigationTreeItem Build(IEnumerable<StoryContainer> components, IEnumerable<CustomPageContainer> customPages, IList<NavigationTreeOrderEntry>? customOrderings, string? expandedNavigationPath)
     {
         var root = new NavigationTreeItem { Type = NavigationItemType.Container };
+
+        this.BuildStories(components, root);
+        this.BuildCustomPages(customPages, root);
+        root.SortSubItemsRecurse(customOrderings ?? []);
+
+        if (!string.IsNullOrEmpty(expandedNavigationPath))
+        {
+            var expansionPath = new Stack<NavigationTreeItem>();
+            if (FindExpansionPathTo(expansionPath, root, expandedNavigationPath))
+            {
+                foreach (var expansion in expansionPath) { expansion.Expanded = true; }
+            }
+        }
+
+        root.SubItems.ForEach(story => story.Expanded = true);
+
+        return root;
+    }
+
+    private void BuildStories(IEnumerable<StoryContainer> components, NavigationTreeItem root)
+    {
         foreach (var component in components)
         {
             var segments = component.Title.Split('/');
@@ -45,21 +69,18 @@ internal class NavigationTreeBuilder
                 });
             componentNode.SubItems.AddRange(storyNodes);
         }
+    }
 
-        root.SortSubItemsRecurse();
-
-        if (!string.IsNullOrEmpty(expandedNavigationPath))
+    private void BuildCustomPages(IEnumerable<CustomPageContainer> customPages, NavigationTreeItem root)
+    {
+        foreach (var page in customPages)
         {
-            var expansionPath = new Stack<NavigationTreeItem>();
-            if (FindExpansionPathTo(expansionPath, root, expandedNavigationPath))
-            {
-                foreach (var expansion in expansionPath) { expansion.Expanded = true; }
-            }
+            var segments = page.Title.Split('/');
+            var customPageNode = this.CreateOrGetNavigationTreeItem(root, pathSegments: Enumerable.Empty<string>(), segments);
+            customPageNode.Type = NavigationItemType.CustomPage;
+            customPageNode.Caption = segments.LastOrDefault("Custom");
+            customPageNode.NavigationPath = "/custom/" + page.NavigationPath;
         }
-
-        root.SubItems.ForEach(story => story.Expanded = true);
-
-        return root;
     }
 
     private NavigationTreeItem CreateOrGetNavigationTreeItem(NavigationTreeItem item, IEnumerable<string> pathSegments, IEnumerable<string> segments)
@@ -95,4 +116,5 @@ internal class NavigationTreeBuilder
         expansionPath.Pop();
         return false;
     }
+
 }

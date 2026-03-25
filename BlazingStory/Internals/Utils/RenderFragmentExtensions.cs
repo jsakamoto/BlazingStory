@@ -15,7 +15,7 @@ namespace BlazingStory.Internals.Utils;
 internal static class RenderFragmentExtensions
 {
     private static readonly Lazy<MethodInfo> ToStringMethodT = new(() => typeof(RenderFragmentExtensions)
-            .GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+            .GetMethods(BindingFlags.Public | BindingFlags.Static)
             .Where(m => m.Name == nameof(ToString))
             .First(m => m.IsGenericMethod));
 

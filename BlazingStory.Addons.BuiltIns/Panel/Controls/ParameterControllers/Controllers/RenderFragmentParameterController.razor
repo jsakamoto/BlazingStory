@@ -1,0 +1,25 @@
+@using System.Net
+@using BlazingStory.Internals.Utils
+
+@inherits ParameterControllerBase
+
+<TextArea PlaceHolder="Edit string..."
+          Value="@StringValue"
+          OnInput="@(async (args) => await UpdateRenderFragmentAsync(args.Value?.ToString()))" />
+
+@code
+{
+    private string? StringValue;
+
+    protected override void OnParametersSet()
+    {
+        var markupString = this.Value?.ToMarkupString();
+        this.StringValue = WebUtility.HtmlDecode(markupString);
+    }
+
+    private async Task UpdateRenderFragmentAsync(string? internalValue)
+    {
+        this.StringValue = internalValue;
+        await this.OnInputAsync(this.StringValue);
+    }
+}

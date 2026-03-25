@@ -1,0 +1,100 @@
+<Project>
+
+    <UsingTask TaskName="_BS_FilterAndRebaseItems" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+        <ParameterGroup>
+            <!-- Input parameters -->
+            <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+            <ReferencedAppProjects ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+            <FrameworkStaticWebAssets ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="false" />
+            <PruneByPath ParameterType="System.Boolean" />
+            <!-- Outout parameters -->
+            <PrunedItems ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
+        </ParameterGroup>
+        <Task>
+            <Using Namespace="System.Linq" />
+            <Code Type="Fragment" Language="cs"><![CDATA[
+
+static string GetPath(ITaskItem item) => item.GetMetadata("RootDir") + item.GetMetadata("Directory");
+
+if (this.FrameworkStaticWebAssets == null) this.FrameworkStaticWebAssets = new TaskItem[0];
+var frameworkStaticWebAssetsHash = new HashSet<string>(this.FrameworkStaticWebAssets.Select(item => item.ItemSpec));
+
+var prunedItems = new List<ITaskItem>();
+
+// Prune the assets of the referenced app projects for each app project.
+foreach (var appProj in this.ReferencedAppProjects) 
+{
+    var appName = appProj.GetMetadata("Filename");
+    var appBasePath = "_content/" + appName;
+
+    var assets = this.Items
+    
+        // Filter the assets of the current app project in a loop.
+        .Where(item => item.GetMetadata("SourceId") == appName)
+        .Where(item => item.GetMetadata("AssetKind") == "All")
+
+        // Exclude the framework files that are under the "_framework" folder, such as "_framework/blazor.webassembly.js", "_framework/blazor.boot.json", etc.
+        // But keep those that are explicitly listed in the FrameworkStaticWebAssets input parameter.
+        .Where(item => item.GetMetadata("RelativePath")?.StartsWith("_framework/") != true || frameworkStaticWebAssetsHash.Contains(item.ItemSpec))
+
+        // Exclude the app-bundled scoped css files, such as "*.styles.css", not "*.bundle.scp.css".
+        .Where(item => item.GetMetadata("AssetTraitName") == "ScopedCss" ? item.GetMetadata("AssetTraitValue") == "ProjectBundle" : true)
+        
+        // Exclude the compressed version of app-bundled scoped css files, such as "*.styles.css".
+        .Where(item => !(item.GetMetadata("AssetTraitName") == "Content-Encoding" && item.GetMetadata("AssetTraitValue") == "gzip" && item.GetMetadata("RelatedAsset")?.EndsWith(".styles.css") == true))
+        .Where(item => !(item.GetMetadata("AssetTraitName") == "Content-Encoding" && item.GetMetadata("AssetTraitValue") == "br" && item.GetMetadata("RelatedAsset")?.EndsWith(".styles.css") == true))
+
+        // Exclude application settings json files, such as "appsettings.json" and "appsettings.{Environment}.json".
+		.Where(item => !(item.GetMetadata("AssetTraitName") == "WasmResource" && item.GetMetadata("AssetTraitValue") == "settings"))
+
+        .ToArray();
+
+    // Relocate the assets of the refereincing app project under the "_content/{appName}/" folder.
+    // (As an exception, the assets of the .js files are relocated under the root folder.)
+    foreach (var asset in assets)
+    {
+        var isJs = asset.GetMetadata("OriginalItemSpec").EndsWith(".js");
+        asset.SetMetadata("BasePath",  isJs ? "/" : appBasePath);
+    }
+
+    prunedItems.AddRange(assets);
+}
+    
+// Gather the other static web asset endpoints that belong with non-application project, such as Razor Class Libraries.    
+var appNames = this.ReferencedAppProjects.Select(item => item.GetMetadata("Filename")).ToArray();
+var appDirs = this.ReferencedAppProjects.Select(item => GetPath(item)).ToArray();
+var otherAssets = this.PruneByPath 
+    ? this.Items.Where(item => !appDirs.Any(dir => GetPath(item).StartsWith(dir))).ToArray()
+    : this.Items.Where(item => !appNames.Any(name => item.GetMetadata("SourceId") == name)).ToArray();
+
+prunedItems.AddRange(otherAssets);
+
+// Eliminate compressed items without corresponding items referenced by the "Related Asset" metadata value.
+var itemsToBeEliminated = prunedItems
+    .Where(item => 
+    {
+        var relatedAsset = item.GetMetadata("RelatedAsset");
+        var assetTraitName = item.GetMetadata("AssetTraitName");
+        var assetTraitValue = item.GetMetadata("AssetTraitValue");
+
+        // When the item is a compressed static web asset...
+        if (assetTraitName == "Content-Encoding" && (assetTraitValue == "gzip" || assetTraitValue == "br") && !string.IsNullOrEmpty(relatedAsset))
+        {
+            // But if the related asset of that compressed asset doesn't exist, it should be eliminated.
+            return !prunedItems.Any(prunedItem => prunedItem.ItemSpec == relatedAsset);
+        }
+
+        return false;
+    })
+    .ToArray();
+
+foreach (var itemToBeEliminated in itemsToBeEliminated) prunedItems.Remove(itemToBeEliminated);
+
+// Retun the results.
+this.PrunedItems = prunedItems.ToArray();
+
+        ]]></Code>
+        </Task>
+    </UsingTask>
+
+</Project>

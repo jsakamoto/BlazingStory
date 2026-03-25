@@ -9,7 +9,10 @@
             var href = this._NavigationService?.GetNavigationUrl(item);
             var style = $"padding-left: calc({this.IndentLevel} * var(--bs-sidebar-nav-indent-size));";
             var tabIndex = this.SubHeading ? "unset" : "-1";
-            var active = (item.Type is NavigationItemType.Docs or NavigationItemType.Story) && (this.RouteData?.RouteToStoryOrDocs == true) && (this.RouteData?.Path == item.NavigationPath);
+            var isDocsOrStoryOrCustom = item.Type is NavigationItemType.Docs or NavigationItemType.Story or NavigationItemType.CustomPage;
+            var isRouteToStoryDocsOrCustom = this.RouteData?.RouteToStoryDocsOrCustom == true;
+            var isPathMatch = this.RouteData?.Path == item.NavigationPath;
+            var active = isDocsOrStoryOrCustom && isRouteToStoryDocsOrCustom && isPathMatch;
 
             <div @key="key" class="navigation-tree-item @CssClass(new {item.Expanded, Type = item.Type.ToString(), active })">
 
@@ -30,7 +33,7 @@
                         </a>
                     }
 
-                    @if (this.SubHeading)
+                    @if (this.SubHeading && item.Type == NavigationItemType.Container)
                     {
                         @* .sub-heading-action *@
                         var subHeadingActionIcon = item.IsExpandedAll ? SvgIconType.CollapseAll : SvgIconType.ExpandAll;
@@ -51,11 +54,15 @@
 @code {
     private RenderFragment<NavigationTreeItem> NavigationTreeItemContent => (NavigationTreeItem item) =>
     @<text>
-        <span class="chevron"></span>
+        <span class="chevron">
+            <SvgIcon Type="SvgIconType.Chevron" />
+        </span>
         <span class="icon">
             <SvgIcon Type="GetIconType(item)" />
         </span>
-        @item.Caption
+        <span class="text">
+            @item.Caption
+        </span>
     </text>
     ;
 
@@ -103,6 +110,7 @@
             NavigationItemType.Component => SvgIconType.Component,
             NavigationItemType.Docs => SvgIconType.Document,
             NavigationItemType.Story => SvgIconType.BookmarkHollow,
+            NavigationItemType.CustomPage => SvgIconType.Document,
             _ => SvgIconType.Folder
         };
     }

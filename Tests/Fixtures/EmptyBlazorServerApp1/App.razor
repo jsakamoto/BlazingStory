@@ -1,0 +1,38 @@
+﻿<!--
+    If you want to enable Blazor routing, you should remove all of this contents,
+    and uncomment the below line. (See also: https://docs.microsoft.com/aspnet/core/blazor/routing )
+
+<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p role="alert">Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
+-->
+
+<div style="text-align:center">
+    <h1>
+        Welcome to @Title!
+    </h1>
+    <img width="300"
+         src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%2C0%2C192%2C192%22%3E%3Cpath%20style%3D%22fill%3A%235e2f92%3B%20stroke%3Anone%3B%22%20d%3D%22M175%2015C162.516%2033.2456%20151.906%2045.6588%20130%2052L139%2024C134.557%2024.5078%20131.483%2029.0063%20128%2031.6667C122.872%2035.5838%20116.104%2038.632%20110%2040.6667C95.8508%2045.3831%2080.556%2041.5848%2066%2043C12.0529%2048.2449%20-13.534%20119.466%2025%20158C46.5277%20179.528%2078.4728%20179.98%20106%20172.333C119.567%20168.565%20137.677%20159.649%20145%20147C128.165%20153.645%20113.807%20163.172%2095%20165C82.4328%20166.222%2070.2627%20166.073%2058%20162.667C50.5054%20160.585%2044.0291%20156.106%2038%20151.333C32.6095%20147.066%2028.1815%20141.027%2024.8333%20135C-3.47761%2084.0403%2067.8251%2027.4109%20110%2069C115.991%2074.9081%20121.496%2081.1269%20124.667%2089C128.815%2099.3003%20132.386%20114.922%20125.667%20125C117.821%20136.768%20101.66%20138.868%2093%20127C87.724%20129.638%2083.9757%20134.256%2078%20135.667C61.5552%20139.549%2044.6667%20126.271%2044.6667%20109.333C44.6667%2090.4447%2061.4788%2082%2078%2082C83.4691%2082%2089.5992%2081.0456%2094%2085C103.839%2093.8408%2095.6297%20107.334%2099.3333%20118C101.277%20123.597%20109.154%20125.756%20114%20122.5C118.738%20119.317%20118%20112.936%20118%20108C118%2092.6543%20108.709%2078.0212%2095%2071.1667C46.6621%2046.9977%203.55051%20116.345%2050%20146.667C67.1367%20157.853%2092.134%20155.574%20111%20150.333C171.258%20133.595%20197.586%2070.8756%20177%2015L175%2015M88%2093C81.6596%2093%2073.073%2091.4777%2067%2093.3333C63.7925%2094.3134%2060.6288%2096.2922%2058.6667%2099C42.6882%20121.05%2083.5358%20137.785%2087.8333%20112C88.8401%20105.96%2088%2099.1311%2088%2093z%22%2F%3E%3C%2Fsvg%3E">
+</div>
+<h2>Here are some links to help you start: </h2>
+<ul>
+    <li>
+        <h2><a target="_blank" href="https://blazor.net">Blazor docs website</a></h2>
+    </li>
+    <li>
+        <h2><a target="_blank" href="https://github.com/AdrienTorris/awesome-blazor#awesome-blazor-">Awesome Blazor</a></h2>
+    </li>
+</ul>
+
+@code {
+    string Title = "Blazor";
+}

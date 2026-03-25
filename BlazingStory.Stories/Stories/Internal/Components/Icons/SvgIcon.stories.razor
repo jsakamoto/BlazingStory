@@ -1,0 +1,20 @@
+﻿@attribute [Stories("Internals/Components/Icons/SvgIcon")]
+
+<Stories TComponent="SvgIcon" Layout="typeof(MarginedFrame)">
+
+    <ArgType For="_=>_.Type" Control="ControlType.Select" DefaultValue="SvgIconType.Document" />
+
+    <Story Name="Default">
+        
+        <Arguments>
+            <Arg For="_ => _.Type" Value="SvgIconType.Document" />
+        </Arguments>
+
+        <Template>
+            <SvgIcon @attributes="context.Args">
+            </SvgIcon>
+        </Template>
+
+    </Story>
+
+</Stories>

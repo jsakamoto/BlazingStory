@@ -2,7 +2,7 @@
 
 namespace BlazingStory.Internals.Services;
 
-internal class KeyCodeMapper
+internal static class KeyCodeMapper
 {
     private static Dictionary<string, string>? _CodeToKey;
 

@@ -1,4 +1,5 @@
 <Project>
+  <Import Project="$(MSBuildThisFileDirectory)CustomTasks\_BS_ResolveAdditionalReferenceDocsTask.targets" />
 
   <!--
   This target is used to generate the BlazingStoryAssemblyInfo.cs file wihch contains project meta data such as project directory, root namespace.
@@ -34,15 +35,44 @@
   </Target>
 
   <!--
+  This property group is used to copy XML documentation comment files from all referenced assemblies to the output folder.
+  This is required to support the "Details" descriptions on the "Docs" pages for Blazor Server,
+  especially when inheriting from a component provided by another NuGet package.
+  See also: Issue #61.
+  -->
+  <PropertyGroup>
+    <CopyDocumentationFilesFromPackages Condition=" '$(CopyDocumentationFilesFromPackages)' == '' ">true</CopyDocumentationFilesFromPackages>
+  </PropertyGroup>
+
+  <!--
+  This target is used to copy the XML Doc Comment files comming from frameworks to the Blazor Server base directory.
+  This is required to support the "Details" descriptions in the "Docs" pages.
+  -->
+  <Target Name="_BS_ResolveAdditionalReferenceDocs" BeforeTargets="_CopyFilesMarkedCopyLocal" AfterTargets="ResolveAssemblyReferences">
+    <PropertyGroup>
+      <_BS_AdditionalReferenceDocsPatterns Condition=" '$(_BS_AdditionalReferenceDocsPatterns)' == '' " >Microsoft.AspNetCore.Components*.dll;</_BS_AdditionalReferenceDocsPatterns>
+    </PropertyGroup>
+    <_BS_ResolveAdditionalReferenceDocsTask
+      ReferencePaths="@(ReferencePath)"
+      ReferenceCopyLocalPaths="@(ReferenceCopyLocalPaths)"
+      TargetAssemblyPattern="$(_BS_AdditionalReferenceDocsPatterns)">
+      <Output TaskParameter="AdditionalReferenceCopyLocalPaths" ItemName="ReferenceCopyLocalPaths" />
+    </_BS_ResolveAdditionalReferenceDocsTask>
+  </Target>
+
+  <!--
   This target is used to add the XML Doc Comment files to the Blazor WebAssembly Static Web Assets.
   This is required to support the "Details" descriptions in the "Docs" pages.
   -->
-  <Target Name="_AddXmlDocCommentToBlazorWasmStaticWebAssets" BeforeTargets="_AddBlazorWasmStaticWebAssets" AfterTargets="_ResolveBlazorWasmOutputs">
+  <Target Name="_AddXmlDocCommentToBlazorWasmStaticWebAssets" 
+          BeforeTargets="_AddBlazorWasmStaticWebAssets" 
+          AfterTargets="_ResolveBlazorWasmOutputs"
+          DependsOnTargets="CoreCompile">
 
     <ItemGroup>
 
-      <!-- Include the XML Doc Comment files of the Referenced NuGet packages (exclude which starts with "Microsoft.~" or "System.~") -->
-      <_XmlDocComment Include="@(_ReferenceDocumentationFiles)" Condition=" !$([System.String]::Copy('%(Filename)').StartsWith('Microsoft.')) AND !$([System.String]::Copy('%(Filename)').StartsWith('System.')) ">
+      <!-- Include the XML Doc Comment files of the Referenced NuGet packages -->
+      <_XmlDocComment Include="@(_ReferenceDocumentationFiles)">
         <AssetTraitValue>symbol</AssetTraitValue>
         <AssetTraitName>BlazorWebAssemblyResource</AssetTraitName>
         <RelativePath>_framework/%(Filename).xml</RelativePath>
@@ -64,36 +94,30 @@
 
     </ItemGroup>
 
-    <!-- 
-    [.NET 8.0 SDK Support]
-    Before .NET 8.0 SDK, the Blazor WebAssembly Static Web Assets are defined by the "BlazorWebAssemblyResource" trait and by the "_BlazorStaticWebAsset" item name.
-    But .NET 8.0 or later, those are defined by the "WasmResource" trait and by the "WasmStaticWebAsset" item name.
-    -->
-    <PropertyGroup>
-      <_XmlDocCommentAssetTraitName>BlazorWebAssemblyResource</_XmlDocCommentAssetTraitName>
-      <_XmlDocCommentAssetItemName>_BlazorStaticWebAsset</_XmlDocCommentAssetItemName>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" $(NETCoreSdkVersion.StartsWith('8.0')) " >
-      <_XmlDocCommentAssetTraitName>WasmResource</_XmlDocCommentAssetTraitName>
-      <_XmlDocCommentAssetItemName>WasmStaticWebAsset</_XmlDocCommentAssetItemName>
-    </PropertyGroup>
-
     <DefineStaticWebAssets
       CandidateAssets="@(_XmlDocComment)"
       SourceId="$(PackageId)"
       SourceType="Computed"
       AssetKind="Build"
       AssetRole="Primary"
-      AssetTraitName="$(_XmlDocCommentAssetTraitName)"
+      AssetTraitName="WasmResource"
       CopyToOutputDirectory="PreserveNewest"
       CopyToPublishDirectory="Never"
       ContentRoot="$(OutputPath)wwwroot"
       BasePath="$(StaticWebAssetBasePath)"
     >
-      <Output TaskParameter="Assets" ItemName="$(_XmlDocCommentAssetItemName)" />
+      <Output TaskParameter="Assets" ItemName="_BS_XmlDocCommentAsset" />
     </DefineStaticWebAssets>
-  
+
+    <!--<Copy
+      SourceFiles="@(_BS_XmlDocCommentAsset->'%(OriginalItemSpec)')"
+      DestinationFiles="@(_BS_XmlDocCommentAsset->'%(ContentRoot)%(RelativePath)')"
+      />-->
+
+    <ItemGroup>
+      <WasmStaticWebAsset Include="@(_BS_XmlDocCommentAsset)"/>
+      <_BS_XmlDocCommentAsset Remove="@(_BS_XmlDocCommentAsset)" />
+    </ItemGroup>
   </Target>
 
   <Target Name="_AddXmlDocCommentToPublishContents"

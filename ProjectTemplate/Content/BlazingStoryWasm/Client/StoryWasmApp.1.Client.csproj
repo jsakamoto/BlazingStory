@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!--#if (!Hosted) -->
+    <OverrideHtmlAssetPlaceholders Condition=" '$(Framework)' != 'net8.0' AND '$(Framework)' != 'net9.0' ">true</OverrideHtmlAssetPlaceholders>
+    <!--#endif -->
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <!--#if Hosted -->
+    <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
+    <AssemblyName Condition="'$(name)' != '$(name{-VALUE-FORMS-}safe_namespace)'">$(AssemblyName.Replace(' ', '_'))</AssemblyName>
+    <!--#endif -->
+    <MD2RazorDefaultBaseClass>global::BlazingStory.Internals.Pages.MarkdownPageBase</MD2RazorDefaultBaseClass>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(Framework)' == 'net8.0' ">
+    <PackageReference Include="BlazingStory" Version="1.0.0-preview.68" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.25" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.25" PrivateAssets="all" />
+    <PackageReference Include="MD2RazorGenerator" Version="1.2.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Framework)' == 'net9.0' ">
+    <PackageReference Include="BlazingStory" Version="1.0.0-preview.68" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.14" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.14" PrivateAssets="all" />
+    <PackageReference Include="MD2RazorGenerator" Version="1.2.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Framework)' == 'net10.0' ">
+    <PackageReference Include="BlazingStory" Version="1.0.0-preview.68" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.5" PrivateAssets="all" />
+    <PackageReference Include="MD2RazorGenerator" Version="1.2.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

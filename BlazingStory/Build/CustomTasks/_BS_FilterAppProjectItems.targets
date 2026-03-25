@@ -1,0 +1,43 @@
+<Project>
+
+  <UsingTask TaskName="_BS_FilterAppProjectItems" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+	<ParameterGroup>
+	  <!-- Input parameters -->
+	  <ReferencedProjects ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+	  <!-- Outout parameters -->
+	  <ReferencedAppProjects ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
+	</ParameterGroup>
+	<Task>
+	  <Using Namespace="System.Linq" />
+	  <Using Namespace="System.Xml.Linq" />
+	  <Code Type="Fragment" Language="cs">
+		<![CDATA[
+var outputFiles = new List<ITaskItem>();
+
+foreach (var item in this.ReferencedProjects)
+{
+    // The "AdditionalPropertiesFromProject" metadata contains XML text, like:
+    // <AdditionalProjectProperties>
+    //   <TargetFramework Name="net8.0">
+    //     ...
+    //     <_IsExecutable>true</_IsExecutable>
+    //     ...
+    //   </TargetFramework>
+    // </AdditionalProjectProperties>
+    // When the "_IsExecutable" node value is "true", it indicates that the item comes from an application project, not a class library project.
+
+    var additionalPropertiesText = item.GetMetadata("AdditionalPropertiesFromProject");
+    var additionalPropertiesXml = XDocument.Parse(additionalPropertiesText);
+    var isExecutableNode = additionalPropertiesXml.Descendants("_IsExecutable").FirstOrDefault();
+    var isEexcutable = isExecutableNode != null && isExecutableNode.Value == "true";
+    if (isEexcutable) outputFiles.Add(item);
+}
+
+this.ReferencedAppProjects = outputFiles.ToArray();
+
+        ]]>
+	  </Code>
+	</Task>
+  </UsingTask>
+
+</Project>

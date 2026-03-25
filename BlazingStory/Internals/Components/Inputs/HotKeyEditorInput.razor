@@ -1,0 +1,100 @@
+<div class="hotkey-editor-input">
+    <input type="text"
+           value="@_keyText"
+           placeholder="Type keys"
+           readonly
+           class="@CssClass(new { invalid = !_isValid, invalidAnimation = _invalidAnimation })"
+           @onfocus="OnFocus"
+           @onblur="OnBlur"
+           @onkeydown="OnKeyDown"
+           @onkeydown:preventDefault />
+
+    <div class="@CssClass("valid-check", new { validAnimation = _validAnimation })">
+        <SvgIcon Type="SvgIconType.Check" />
+    </div>
+</div>
+
+@code
+{
+    [Parameter, EditorRequired]
+    public required HotKeyCombo HotKey { get; set; }
+
+    [Parameter]
+    public EventCallback<HotKeyCombo> HotKeyChanged { get; set; }
+
+    [Parameter]
+    public Func<HotKeyCombo, bool>? Validate { get; set; }
+
+    private HotKeyCombo? _lastValidHotKey;
+
+    private HotKeyCombo? _currentHotKey;
+
+    private string? _keyText;
+
+    private bool _isValid = true;
+
+    private bool _invalidAnimation = false;
+
+    private bool _validAnimation = false;
+
+    override protected void OnInitialized()
+    {
+        _keyText = this.HotKey.ToString();
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (_lastValidHotKey?.ToString() != this.HotKey.ToString())
+        {
+            _lastValidHotKey = this.HotKey;
+            _keyText = this.HotKey.ToString();
+            _isValid = true;
+        }
+    }
+
+    private void OnFocus()
+    {
+        _currentHotKey = null;
+        _keyText = "";
+    }
+
+    private void OnBlur()
+    {
+        _keyText = this.HotKey.ToString();
+        _isValid = true;
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs args)
+    {
+        const string modCodes = "AltLeft|AltRight|ControlLeft|ControlRight|ShiftLeft|ShiftRight|MetaLeft|MetaRight";
+        if (modCodes.Contains(args.Code)) return;
+
+        var modCodeFlags =
+            (args.AltKey ? ModCode.Alt : ModCode.None) |
+            (args.CtrlKey ? ModCode.Ctrl : ModCode.None) |
+            (args.ShiftKey ? ModCode.Shift : ModCode.None) |
+            (args.MetaKey ? ModCode.Meta : ModCode.None);
+
+        _currentHotKey = new HotKeyCombo(modCodeFlags, new Code(args.Code));
+        _keyText = _currentHotKey.ToString();
+
+        _isValid = this.Validate?.Invoke(_currentHotKey) ?? true;
+
+        if (_isValid)
+        {
+            _validAnimation = false;
+            _lastValidHotKey = _currentHotKey;
+            await this.HotKeyChanged.InvokeAsync(_currentHotKey);
+            await Task.Delay(100);
+            _validAnimation = true;
+        }
+        else
+        {
+            _invalidAnimation = false;
+            await Task.Delay(100);
+            _invalidAnimation = true;
+        }
+    }
+}

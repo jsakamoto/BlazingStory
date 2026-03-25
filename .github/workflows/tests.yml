@@ -10,15 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checkout the code
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # Install .NET SDK
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
-           dotnet-version: |
-             8.0.x
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
 
       # Invoke tests
       - name: Invoke tests
-        run: dotnet test -p:TypeScriptCompileBlocked=true
+        run: dotnet test --project ./Tests/BlazingStory.Test/BlazingStory.Test.csproj --output detailed

@@ -66,16 +66,19 @@
     private async Task ExitSearchMode()
     {
         this.SearchMode = false;
-        if (this._HotKeysContext is not null) await this._HotKeysContext.DisposeAsync();
-        this._HotKeysContext = null;
         await this.SearchModeChanged.InvokeAsync(this.SearchMode);
 
         var helperScript = this.Services.GetRequiredService<HelperScript>();
         await helperScript.InvokeVoidAsync("releaseFocus");
+
+        await this.DisposeHotKeysContext();
     }
 
-    public async ValueTask DisposeAsync()
+    private async ValueTask DisposeHotKeysContext()
     {
-        if (this._HotKeysContext is not null) await this._HotKeysContext.DisposeAsync();
+        var hotKeysContext = Interlocked.Exchange<HotKeysContext?>(ref this._HotKeysContext, null);
+        if (hotKeysContext is not null) await hotKeysContext.DisposeAsync();
     }
+
+    public ValueTask DisposeAsync() => this.DisposeHotKeysContext();
 }

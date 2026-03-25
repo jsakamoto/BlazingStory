@@ -1,8 +1,15 @@
+@using System.Diagnostics.CodeAnalysis
 @using System.Reflection
 @using System.Runtime.InteropServices
+@using BlazingStory.Addons
+@using BlazingStory.Addons.Internals
 @using BlazingStory.Internals.Services.XmlDocComment;
+@using BlazingStory.Internals.Types
 @using Toolbelt.Blazor.Extensions.DependencyInjection
+@using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+
 @implements IAsyncDisposable
+
 @inject IServiceProvider GlobalServices
 @inject IJSRuntime JSRuntime
 @inject ILoggerFactory LoggerFactory
@@ -44,36 +51,40 @@
 
     <StoriesRazorDetector Assemblies="this.Assemblies" StoriesStore="this._StoriesStore" />
 
-    <CascadingValue Value="this._AddonsStore">
-
-        <div style="display:none;">
-            @foreach (var addonType in this._AddonsTypes)
-            {
-                <DynamicComponent @key="addonType" Type="addonType" />
-            }
-        </div>
-
-        <div class="color-scheme-container preferes-color-scheme-@this._PreferesColorScheme" style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >=2 ? 1 : 0); visibility: @(this._InitLevel >= 1 ? "visible" : "hidden");">
-            <CascadingValue Value="this._StoriesStore">
+    <div class="color-scheme-container preferes-color-scheme-@this._PreferesColorScheme" style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >= 2 ? 1 : 0); visibility: @(this._InitLevel >= 1 ? "visible" : "hidden");">
+        <CascadingValue Value="this._StoriesStore">
+            <CascadingValue Value="this._CustomPageStore">
                 <CascadingValue Value="this">
 
+                    @{
+#pragma warning disable IL2111
+                    }
                     <Router AppAssembly="@typeof(BlazingStoryApp).Assembly">
                         <Found Context="routeData">
                             <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
                         </Found>
                         <NotFound>
                             <PageTitle>Not found</PageTitle>
+                            @{
+#pragma warning disable IL2110
+                            }
                             <LayoutView Layout="@typeof(MainLayout)">
                                 <p role="alert" style="padding:12px 32px;">Sorry, there's nothing at this address.</p>
                             </LayoutView>
+                            @{
+#pragma warning restore IL2110
+                            }
                         </NotFound>
                     </Router>
+                    @{
+#pragma warning restore IL2111
+                    }
 
                 </CascadingValue>
             </CascadingValue>
-        </div>
+        </CascadingValue>
+    </div>
 
-    </CascadingValue>
 </CascadingValue>
 
 @code
@@ -94,6 +105,7 @@
     /// <summary>
     /// A type of the default layout component to use when displaying a story.
     /// </summary>
+    [DynamicallyAccessedMembers(All)]
     [Parameter]
     public Type? DefaultLayout { get; set; }
 
@@ -117,16 +129,48 @@
     public AvailableColorSchemes AvailableColorSchemes { get; set; } = AvailableColorSchemes.Both;
 
     /// <summary>
+    /// Specifies a custom order for items in the sidebar navigation tree.
+    /// </summary>
+    /// <remarks>
+    /// Provide an ordered sequence of <see cref="NavigationTreeOrderEntry"/> values (typically built with <c>NavigationTreeOrderBuilder.N[ ... ]</c>) to declare the preferred order at each hierarchy level.<br/>
+    /// Rules:<br/>
+    /// - Docs and Story items under a component keep their original order and are always listed first.<br/>
+    /// - Items explicitly listed are placed in the given order. If an item is immediately followed by a <see cref="NavigationTreeOrderEntry.NodeType.SubItems"/> group, that group is applied recursively to that item's children.<br/>
+    /// - Remaining items not covered by the custom order are appended in the default order (alphabetical; components before custom pages).<br/>
+    /// <br/>
+    /// <b>Example:</b><br/><code>
+    /// @using static BlazingStory.Types.NavigationTreeOrderBuilder
+    ///
+    /// &lt;BlazingStoryApp
+    ///     NavigationTreeOrder="@N["Welcome", "Components", N["Layouts", N["Header", "Footer"], "Button"], "Templates"]" /&gt;
+    /// </code>
+    /// </remarks>
+    /// <example>
+    /// @using static BlazingStory.Types.NavigationTreeOrderBuilder
+    ///
+    /// &lt;BlazingStoryApp
+    ///     NavigationTreeOrder="@N["Welcome", "Components", N["Layouts", N["Header", "Footer"], "Button"], "Templates"]" /&gt;
+    /// </example>
+    [Parameter]
+    public IList<NavigationTreeOrderEntry>? NavigationTreeOrder { get; set; }
+
+    /// <summary>
     /// [Preview feature] Gets or sets whether to enable hot reloading. (default: false)
     /// </summary>
     [Parameter]
     public bool EnableHotReloading { get; set; }
 
+    /// <summary>
+    /// An optional callback to initialize the Blazing Story. This is invoked during the component's initialization phase, allowing you to configure services, addons, or other settings before the app fully initializes.
+    /// </summary>
+    [Parameter]
+    public Action<IBlazingStoryBuilder>? OnInitialize { get; set; }
+
     private AvailableColorSchemes _PrevAvailableColorSchemes = AvailableColorSchemes.Both;
 
-    private readonly StoriesStore _StoriesStore = new();
+    private StoriesStore _StoriesStore = new();
 
-    private readonly AddonsStore _AddonsStore = new();
+    private CustomPageStore _CustomPageStore = new();
 
     private bool _firstRendered = false;
 
@@ -146,27 +190,51 @@
 
     public BlazingStoryApp()
     {
-        this._JSModule = new(() => this.JSRuntime, "Components/BlazingStoryApp.razor.js");
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Components/BlazingStoryApp.razor.js");
+#pragma warning disable IL2111
         this._RefThis = DotNetObjectReference.Create(this);
+#pragma warning restore IL2111
     }
-
-    private readonly IEnumerable<Type> _AddonsTypes = new Type[]
-    {
-        typeof(BlazingStory.Internals.Addons.Background.BackgroundAddon),
-        typeof(BlazingStory.Internals.Addons.Grid.GridAddon),
-        typeof(BlazingStory.Internals.Addons.ChangeSize.ChangeSizeAddon),
-        typeof(BlazingStory.Internals.Addons.Measure.MeasureAddon),
-        typeof(BlazingStory.Internals.Addons.Outlines.OutlinesAddon),
-    };
 
     protected override void OnInitialized()
     {
-        this._ServiceScope = this.ConfigureServices();
+        CustomPageRazorDetector.DetectAndRegisterToStore(Assemblies, _CustomPageStore);
+
+        var injectedStoriesStore = this.GlobalServices.GetService<StoriesStore>();
+        if (injectedStoriesStore is not null) this._StoriesStore = injectedStoriesStore;
+
+        var addonStore = new BlazingStory.Addons.Internals.AddonStore();
+        this.ConfigureAddons(addonStore);
+
+        var serviceCollection = new ServiceCollection();
+        this.ConfigureServices(serviceCollection);
+
+        var builder = new BlazingStoryBuilder(serviceCollection, addonStore, _Options);
+        this.OnInitialize?.Invoke(builder);
+
+        var services = serviceCollection.BuildServiceProvider();
+        var serviceScope = services.CreateAsyncScope();
+        var addonManager = serviceScope.ServiceProvider.GetRequiredService<AddonManager>();
+        addonManager.Initialize(addonStore);
+
+        this._ServiceScope = serviceScope;
     }
 
-    private AsyncServiceScope ConfigureServices()
+    private void ConfigureAddons(IAddonStore addons)
     {
-        var services = new ServiceCollection()
+        addons.Register<BlazingStory.Addons.BuiltIns.Toolbar.Grid.GridAddon>();
+        addons.Register<BlazingStory.Addons.BuiltIns.Toolbar.Background.BackgroundAddon>();
+        addons.Register<BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasureAddon>();
+        addons.Register<BlazingStory.Addons.BuiltIns.Toolbar.Outlines.OutlinesAddon>();
+        addons.Register<BlazingStory.Addons.BuiltIns.Toolbar.ChangeSize.ChangeSizeAddon>();
+
+        addons.Register<BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanelAddon>();
+        addons.Register<BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanelAddon>();
+    }
+
+    private void ConfigureServices(IServiceCollection services)
+    {
+        services
             .AddSingleton<IJSRuntime>(_ => this.JSRuntime)
             .AddSingleton<ILoggerFactory>(_ => LoggerFactory)
             .AddSingleton(typeof(ILogger<>), typeof(Logger<>))
@@ -177,18 +245,14 @@
             .AddScoped<HelperScript>()
             .AddScoped<CommandService>()
             .AddScoped<NavigationService>()
-            .AddScoped<AddonsStore>(_ => this._AddonsStore)
             .AddScoped<BlazingStoryOptions>(_ => this._Options)
             .AddScoped<WebAssets>()
-            .AddTransient<ComponentActionLogs>();
+            .AddScoped<AddonManager>();
 
         if (OperatingSystem.IsBrowser())
             services.AddSingleton<IXmlDocComment, XmlDocCommentForWasm>();
         else
             services.AddSingleton<IXmlDocComment, XmlDocCommentForServer>();
-
-        var serviceProvider = services.BuildServiceProvider();
-        return serviceProvider.CreateAsyncScope();
     }
 
     protected override async Task OnParametersSetAsync()
@@ -196,6 +260,7 @@
         await base.OnParametersSetAsync();
 
         this._Options.EnableHotReloading = this.EnableHotReloading;
+        this._Options.NavigationTreeOrder = this.NavigationTreeOrder ?? this._Options.NavigationTreeOrder;
 
         if (this.AvailableColorSchemes != this._PrevAvailableColorSchemes)
         {
@@ -240,12 +305,11 @@
 
         if (this.AvailableColorSchemes == AvailableColorSchemes.Both)
         {
-            var helperScript = this._ServiceScope.Value.ServiceProvider.GetRequiredService<HelperScript>();
-            var colorScheme = await helperScript.GetLocalStorageItemAsync("ColorScheme", defaultValue: "system");
+            var colorScheme = await JSRuntime.GetLocalStorageItemAsync("ColorScheme", defaultValue: "system");
             if (colorScheme != "dark" && colorScheme != "light")
             {
                 colorScheme = await this._JSModule.InvokeAsync<string>("getPrefersColorScheme");
-            };
+            }
             this._PreferesColorScheme = colorScheme;
         }
         else

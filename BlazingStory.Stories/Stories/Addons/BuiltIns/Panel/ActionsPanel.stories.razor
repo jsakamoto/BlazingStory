@@ -1,0 +1,35 @@
+@using BlazingStory.Addons.Internals
+@attribute [Stories("Addons/BuiltIns/Panel/ActionsPanel")]
+
+<Stories TComponent="ActionsPanel">
+
+    <Story Name="Default">
+        <Template>
+            <CascadingValue Value="this._PanelDescriptor">
+                <div style="position:absolute; inset:0;">
+                    <ActionsPanel ActionLogs="_ActionLogs" @attributes="context.Args">
+                    </ActionsPanel>
+                </div>
+            </CascadingValue>
+        </Template>
+    </Story>
+
+</Stories>
+
+@code
+{
+    private readonly PanelDescriptor _PanelDescriptor = new(0, _ => true, typeof(ActionsPanel));
+
+    private readonly List<ComponentActionLog> _ActionLogs = [];
+
+    protected override void OnInitialized()
+    {
+        _ActionLogs.Add(new("OnInput", "\"H\""));
+        _ActionLogs.Add(new("OnInput", "\"He\""));
+        _ActionLogs.Add(new("OnClick", "{\"ItemId\":\"379\",\"Detail\":{\"ClientPos\":{\"X\":796,\"Y\":312},\"CtrlKey\":false}}"));
+        _ActionLogs.Add(new("OnClick", "{\"ItemId\":\"379\",\"Detail\":{\"ClientPos\":{\"X\":796,\"Y\":312},\"CtrlKey\":false}}"));
+        _ActionLogs.Add(new("OnBlur", "null"));
+        _ActionLogs.Add(new("OnItemUpdated", "void"));
+        _ActionLogs.Add(new("OnBatchRemoved", "{\"Target\":[15,73,214]}"));
+    }
+}

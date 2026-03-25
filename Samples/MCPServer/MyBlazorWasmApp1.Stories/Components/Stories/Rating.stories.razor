@@ -1,0 +1,22 @@
+﻿@attribute [Stories("Components/Rating")]
+
+<Stories TComponent="Rating">
+    <ArgType For="_=>_!.Color" Control="ControlType.Color" />
+
+    <Story Name="Default">
+        <Template>
+            <Rating Value="3" @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="10 Starts">
+        <Arguments>
+            <Arg For="_ => _!.Max" Value="10" />
+        </Arguments>
+        <Template>
+            <Rating Value="3" @attributes="context.Args" />
+        </Template>
+    </Story>
+
+</Stories>
+

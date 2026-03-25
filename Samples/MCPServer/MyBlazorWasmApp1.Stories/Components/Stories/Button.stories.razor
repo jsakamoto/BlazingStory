@@ -1,0 +1,69 @@
+﻿@attribute [Stories("Components/Button")]
+
+<Stories TComponent="Button">
+    <ArgType For="_=>_.BackgroundColor" Control="ControlType.Color" />
+    <ArgType For="_=>_.Size" Control="ControlType.Select" />
+
+    <Story Name="Primary">
+        <Description>
+            This story showcases the default or primary action button. 
+            It represents the most important action on a page and is designed to stand out, guiding the user towards the main objective. 
+            Typically used for "Submit," "Save," or "Confirm" actions.
+        </Description>
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_ButtonContent" />
+        </Arguments>
+        <Template>
+            <Button Primary="true" @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Secondary">
+        <Description>
+            This story displays a secondary action button. 
+            It's used for actions that are less prominent than the primary action but still important, such as "Cancel," "Learn More," or "Go Back." 
+            It offers a subtle alternative without distracting from the main call to action.
+        </Description>
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_ButtonContent" />
+            <Arg For="_ => _.Primary" Value="false" />
+        </Arguments>
+        <Template>
+            <Button @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Large">
+        <Description>
+            This story presents a large version of the button, ideal for situations where increased visibility or a larger touch target is required.
+            It can be used for critical calls to action in spacious layouts or on touch-enabled devices where a larger interaction area is beneficial.
+        </Description>
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_ButtonContent" />
+            <Arg For="_ => _.Size" Value="ButtonSize.Large" />
+        </Arguments>
+        <Template>
+            <Button @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Small">
+        <Description>
+            This story demonstrates a compact version of the button. 
+            It's suitable for scenarios with limited space, such as within tables, alongside other inline elements, or for less critical actions where a full-sized button would be too intrusive.
+        </Description>
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_ButtonContent" />
+            <Arg For="_ => _.Size" Value="ButtonSize.Small" />
+        </Arguments>
+        <Template>
+            <Button @attributes="context.Args" />
+        </Template>
+    </Story>
+
+</Stories>
+
+@code 
+{
+    private RenderFragment _ButtonContent = @<text>Button</text>;
+}

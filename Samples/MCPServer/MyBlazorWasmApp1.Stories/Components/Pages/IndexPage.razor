@@ -1,0 +1,35 @@
+﻿@inject NavigationManager NavigationManager
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyBlazorWasmApp1.Stories</title>
+    <base href="@(new Uri(NavigationManager.BaseUri).AbsolutePath)" />
+    <ImportMap />
+    <!--
+    DON'T PUT ANY ADDITIONAL CSS OR JAVASCRIPT LINKS IN THIS FILE.
+    Please do that in the "IFramePage.razor" instead.
+    -->
+    <link rel="stylesheet" href="css/blazor-ui.css" />
+    <HeadOutlet @rendermode="@InteractiveServer" />
+</head>
+
+<body>
+    <MyBlazorWasmApp1.Stories.Components.App @rendermode="@InteractiveServer" />
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <!--
+    DON'T PUT ANY ADDITIONAL JAVASCRIPT LINKS IN THIS FILE.
+    Please do that in the "IFramePage.razor" instead.
+    -->
+    <script src="_framework/blazor.web.js"></script>
+</body>
+
+</html>

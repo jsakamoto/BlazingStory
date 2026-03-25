@@ -1,0 +1,55 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+@code
+{
+    /// <summary>
+    /// The URL of the stylesheet to import.
+    /// </summary>
+    [Parameter]
+    public string? Href { get; set; }
+
+    /// <summary>
+    /// Whether the stylesheet import is disabled.
+    /// </summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    private string? _previousHref;
+
+    private bool? _previousDisabled;
+
+    private JSModule _JSModule;
+
+    private IJSObjectReference? _importedStyleSheet = null;
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="ImportStyleSheet"/>.
+    /// </summary>
+    public ImportStyleSheet()
+    {
+        this._JSModule = new JSModule(() => this.JSRuntime, "./_content/BlazingStory.ToolKit/Styles/ImportStyleSheet.razor.js", VersionInfo.GetEscapedVersionText());
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (string.IsNullOrEmpty(this.Href)) return;
+        if (this.Href == this._previousHref && this.Disabled == this._previousDisabled) return;
+
+        this._previousHref = this.Href;
+        this._previousDisabled = this.Disabled;
+
+        if (this._importedStyleSheet is not null)
+        {
+            var importedStyleSheet = _importedStyleSheet;
+            this._importedStyleSheet = null;
+            await importedStyleSheet.DisposeIfConnectedAsync("dispose");
+        }
+        if (this.Disabled) return;
+        this._importedStyleSheet = await this._JSModule.InvokeAsync<IJSObjectReference>("importStyleSheet", this.Href);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await this._importedStyleSheet.DisposeIfConnectedAsync("dispose");
+    }
+}

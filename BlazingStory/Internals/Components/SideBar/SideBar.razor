@@ -1,4 +1,4 @@
-﻿@using BlazingStory.Internals.Components.SideBar.NavigationTree
+@using BlazingStory.Internals.Components.SideBar.NavigationTree
 @using BlazingStory.Internals.Components.SideBar.SearchAndHistory
 
 <nav class="sidebar stack vertical">
@@ -35,6 +35,9 @@
     protected StoriesStore StoriesStore { get; init; } = default!;
 
     [CascadingParameter]
+    protected CustomPageStore CustomPageStore {get; init; } = default!;
+
+    [CascadingParameter]
     protected QueryRouteData RouteData { get; init; } = default!;
 
     [CascadingParameter]
@@ -49,8 +52,14 @@
 
     protected override void OnInitialized()
     {
-        var expandedNavigationPath = this.RouteData.RouteToStoryOrDocs ? this.RouteData.Parameter : null;
+        var expandedNavigationPath = this.RouteData.RouteToStoryDocsOrCustom ? this.RouteData.Parameter : null;
         var navigationService = this.Services.GetRequiredService<NavigationService>();
-        this._NavigationRoot = navigationService.BuildNavigationTree(this.StoriesStore.StoryContainers, expandedNavigationPath);
+        var options = this.Services.GetRequiredService<BlazingStoryOptions>();
+
+        this._NavigationRoot = navigationService.BuildNavigationTree(
+            this.StoriesStore.StoryContainers, 
+            this.CustomPageStore.CustomPageContainers, 
+            options.NavigationTreeOrder,
+            expandedNavigationPath);
     }
 }

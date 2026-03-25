@@ -1,6 +1,6 @@
 ﻿.toolbar-viewport {
     --bs-toolbar-height: 40px;
-    --bs-toolbar-content-gap: 4px;
+    --bs-toolbar-content-gap: 6px;
     box-shadow: var(--bs-border-shadow);
     height: 0;
     overflow-y: hidden;
@@ -13,8 +13,7 @@
         display: inline-flex;
         align-items: center;
         gap: var(--bs-toolbar-content-gap);
-        margin-left: 7px;
-        margin-right: 7px;
+        margin: 0 10px;
         height: var(--bs-toolbar-height);
         transition: margin-top linear 0.2s;
         margin-top: calc(-1.5 * var(--bs-toolbar-height));
