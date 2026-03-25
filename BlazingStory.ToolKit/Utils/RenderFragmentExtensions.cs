@@ -1,18 +1,18 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using BlazingStory.Internals.Extensions;
+using BlazingStory.ToolKit.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.RenderTree;
 
 using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
-namespace BlazingStory.Internals.Utils;
+namespace BlazingStory.ToolKit.Utils;
 
 /// <summary>
 /// This class contains extension methods for the RenderFragment class.
 /// </summary>
-internal static class RenderFragmentExtensions
+public static class RenderFragmentExtensions
 {
     private static readonly Lazy<MethodInfo> ToStringMethodT = new(() => typeof(RenderFragmentExtensions)
             .GetMethods(BindingFlags.Public | BindingFlags.Static)
@@ -38,7 +38,7 @@ internal static class RenderFragmentExtensions
     /// </returns>
     [UnconditionalSuppressMessage("Trimming", "IL2060")]
     [DynamicDependency(NonPublicMethods, "BlazingStory.Internals.Utils.RenderFragmentKit", "BlazingStory")]
-    internal static bool TryToString(this object? obj, [NotNullWhen(true)] out string? result)
+    public static bool TryToString(this object? obj, [NotNullWhen(true)] out string? result)
     {
         if (obj?.GetType().IsGenericTypeOf(typeof(RenderFragment<>)) == true)
         {
@@ -71,7 +71,7 @@ internal static class RenderFragmentExtensions
     /// </param>
     /// <returns>
     /// </returns>
-    internal static bool IsRenderFragment(this object? value)
+    public static bool IsRenderFragment(this object? value)
     {
         var type = value is Type t ? t : value?.GetType();
 
@@ -80,7 +80,7 @@ internal static class RenderFragmentExtensions
         return result;
     }
 
-    internal static bool IsGenericRenderFragment(this object? value)
+    public static bool IsGenericRenderFragment(this object? value)
     {
         var type = value is Type t ? t : value?.GetType();
 
@@ -98,7 +98,7 @@ internal static class RenderFragmentExtensions
     /// <returns>
     /// The string content what is the given <see cref="RenderFragment&lt;TValue&gt;" /> renders.
     /// </returns>
-    internal static string ToString<TContext>(RenderFragment<TContext>? renderFragment)
+    public static string ToString<TContext>(RenderFragment<TContext>? renderFragment)
     {
         if (renderFragment == null)
         {
@@ -121,8 +121,8 @@ internal static class RenderFragmentExtensions
     /// <returns>
     /// The string content what is the given <see cref="RenderFragment" /> renders.
     /// </returns>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "BL0006:Do not use RenderTree types", Justification = "<Pending>")]
-    internal static string ToMarkupString(this RenderFragment fragment)
+    [SuppressMessage("Usage", "BL0006:Do not use RenderTree types", Justification = "<Pending>")]
+    public static string ToMarkupString(this RenderFragment fragment)
     {
         var renderer = new RenderedTreeFrames();
         var component = new ContainerComponent<object> { Content = fragment };
@@ -147,8 +147,8 @@ internal static class RenderFragmentExtensions
     /// <returns>
     /// The string content what is the given <see cref="RenderFragment&lt;TValue&gt;" /> renders.
     /// </returns>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "BL0006:Do not use RenderTree types", Justification = "<Pending>")]
-    internal static string ToMarkupString(this object fragment)
+    [SuppressMessage("Usage", "BL0006:Do not use RenderTree types", Justification = "<Pending>")]
+    public static string ToMarkupString(this object fragment)
     {
         var renderer = new RenderedTreeFrames();
         var component = new ContainerComponent<object> { Content = (RenderFragment)fragment };
@@ -173,7 +173,7 @@ internal static class RenderFragmentExtensions
     /// <returns>
     /// The string content what is the given <see cref="RenderFragment&lt;TValue&gt;" /> renders.
     /// </returns>
-    internal static string? ToMarkupString<TContext>(this RenderFragment<TContext>? renderFragment)
+    public static string? ToMarkupString<TContext>(this RenderFragment<TContext>? renderFragment)
     {
         if (renderFragment == null)
         {

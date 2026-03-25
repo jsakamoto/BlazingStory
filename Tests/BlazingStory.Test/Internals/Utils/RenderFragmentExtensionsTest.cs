@@ -1,4 +1,4 @@
-﻿using BlazingStory.Internals.Utils;
+using BlazingStory.ToolKit.Utils;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Test.Internals.Utils;
@@ -134,7 +134,7 @@ public class RenderFragmentExtensionsTest
     public void ToString_For_RenderFragment_With_Dynamic_Attributes_Test()
     {
         // Given
-        var attributes = new Dictionary<string, object?>
+        var attributes = new Dictionary<string, object>
         {
             { "class", "dynamic-class" },
             { "style", "color: red;" }

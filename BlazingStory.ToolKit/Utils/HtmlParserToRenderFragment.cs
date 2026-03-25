@@ -1,13 +1,13 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
 
-namespace BlazingStory.Internals.Utils;
+namespace BlazingStory.ToolKit.Utils;
 
-internal static class HtmlParserToRenderFragment
+public static class HtmlParserToRenderFragment
 {
     private static readonly Lazy<MethodInfo> AddContentMethod = new(() => typeof(RenderTreeBuilder).GetMethod(nameof(RenderTreeBuilder.AddContent), [typeof(int), typeof(string)]) ?? throw new InvalidOperationException());
 
@@ -22,7 +22,7 @@ internal static class HtmlParserToRenderFragment
     /// <returns>
     /// The <see cref="RenderFragment" /> that will render the given string content.
     /// </returns>
-    internal static RenderFragment ToRenderFragment(this string? internalValue)
+    public static RenderFragment ToRenderFragment(this string? internalValue)
     {
         RenderFragment fragment;
 
@@ -59,7 +59,7 @@ internal static class HtmlParserToRenderFragment
     /// <returns>
     /// The <see cref="RenderFragment&lt;TValue&gt;" /> that will render the given string content.
     /// </returns>
-    internal static object ToRenderFragment(this string text, Type argumentType)
+    public static object ToRenderFragment(this string text, Type argumentType)
     {
         var addContentCall = Expression.Call(BuilderParam.Value, AddContentMethod.Value, Expression.Constant(0), Expression.Constant(text));
         var renderFragment = Expression.Lambda(typeof(RenderFragment), addContentCall, BuilderParam.Value);

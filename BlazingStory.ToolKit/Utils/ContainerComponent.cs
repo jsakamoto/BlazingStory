@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
-namespace BlazingStory.Internals.Utils;
+namespace BlazingStory.ToolKit.Utils;
 
 /// <summary>
 /// This class is a container component that is used to render a RenderFragment.
