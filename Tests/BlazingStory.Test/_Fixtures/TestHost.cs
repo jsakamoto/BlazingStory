@@ -1,4 +1,4 @@
-﻿using BlazingStory.Internals.Services;
+using BlazingStory.Internals.Services;
 using BlazingStory.Internals.Services.Navigation;
 using BlazingStory.Internals.Services.XmlDocComment;
 using Microsoft.AspNetCore.Components;
@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.JSInterop;
-using Moq;
+using NSubstitute;
 
 namespace BlazingStory.Test._Fixtures;
 
@@ -22,14 +22,14 @@ internal class TestHost : IAsyncDisposable
     public TestHost(Action<IServiceCollection>? configureServices = null)
     {
         var services = new ServiceCollection();
-        services.AddScoped(_ => Mock.Of<IJSRuntime>());
+        services.AddScoped(_ => Substitute.For<IJSRuntime>());
         services.AddScoped<TestNavigationManager>();
         services.AddScoped<NavigationManager>(sp => sp.GetRequiredService<TestNavigationManager>());
         services.AddScoped<HelperScript>();
         services.AddScoped<NavigationService>();
         services.AddScoped(typeof(ILogger<>), typeof(NullLogger<>));
         configureServices?.Invoke(services);
-        services.TryAddScoped(_ => Mock.Of<IXmlDocComment>());
+        services.TryAddScoped(_ => Substitute.For<IXmlDocComment>());
 
         this._Scope = services.BuildServiceProvider().CreateScope();
         this.Services = this._Scope.ServiceProvider;

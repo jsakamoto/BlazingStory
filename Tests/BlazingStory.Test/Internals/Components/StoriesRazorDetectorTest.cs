@@ -1,9 +1,9 @@
-﻿using BlazingStory.Internals.Services;
+using BlazingStory.Internals.Services;
 using BlazingStory.Internals.Services.XmlDocComment;
 using BlazingStory.Test._Fixtures;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
+using NSubstitute;
 
 namespace BlazingStory.Test.Internals.Components;
 
@@ -17,7 +17,7 @@ internal class StoriesRazorDetectorTest
         using var ctx = new Bunit.BunitContext();
         ctx.RenderTree.Add<CascadingValue<IServiceProvider>>(p => p.Add(p => p.Value, host.Services));
 
-        ctx.Services.AddSingleton(_ => Mock.Of<IXmlDocComment>());
+        ctx.Services.AddSingleton(_ => Substitute.For<IXmlDocComment>());
         var cut = ctx.Render<BlazingStory.Internals.Components.StoriesRazorDetector>(builder => builder
             .Add(_ => _.Assemblies, [])
             .Add(_ => _.StoriesStore, storiesStore));
