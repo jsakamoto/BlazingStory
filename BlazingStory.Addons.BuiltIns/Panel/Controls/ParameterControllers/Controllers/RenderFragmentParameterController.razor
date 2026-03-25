@@ -11,9 +11,10 @@
 {
     private string? StringValue;
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        var markupString = this.Value?.ToMarkupString();
+        await base.OnParametersSetAsync();
+        var markupString = await RenderFragmentKit.TryToMarkupStringAsync(this.Value);
         this.StringValue = WebUtility.HtmlDecode(markupString);
     }
 

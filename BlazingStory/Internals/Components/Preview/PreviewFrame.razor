@@ -2,8 +2,8 @@
 @inject IJSRuntime JSRuntime
 
 <IntersectionView @ref="_IntersectionView"
-                    class="preview-frame"
-                    @onframeheightchange="FrameHeightChangeEventCallback">
+                  class="preview-frame"
+                  @onframeheightchange="FrameHeightChangeEventCallback">
     <PooledIFrame Src="@_PreviewFrameUrl" Attached="OnPreviewIFrameAttached" />
 </IntersectionView>
 
@@ -51,15 +51,15 @@
         this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        this._PreviewFrameUrl = this.GetPreviewFrameUrl();
+        this._PreviewFrameUrl = await this.GetPreviewFrameUrlAsync();
     }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        base.OnParametersSet();
-        this._PreviewFrameUrl = this.GetPreviewFrameUrl();
+        await base.OnParametersSetAsync();
+        this._PreviewFrameUrl = await this.GetPreviewFrameUrlAsync();
     }
 
     private async Task OnPreviewIFrameAttached()
@@ -85,13 +85,14 @@
     /// <summary>
     /// Gets the URL for the preview frame, from the component parameters(args).
     /// </summary>
-    private string GetPreviewFrameUrl()
+    private async ValueTask<string> GetPreviewFrameUrlAsync()
     {
         // "Stringify" the component args to encode them to the URL query string.
-        var args = this.Args?.ToDictionary(
-            keySelector: x => x.Key,
-            elementSelector: x => (object?)this.Story.Context.ConvertParameterValueToString(x.Key, x.Value)
-        );
+        var args = new Dictionary<string, object?>();
+        foreach (var arg in this.Args?.AsEnumerable() ?? [])
+        {
+            args[arg.Key] = await this.ConvertParameterValueToStringAsync(arg.Key, arg.Value);
+        }
 
         return UriParameterKit.GetUri(
             uri: "./iframe.html",
@@ -102,6 +103,19 @@
                 ["args"] = UriParameterKit.EncodeKeyValues(args),
                 ["globals"] = UriParameterKit.EncodeKeyValues(this.Globals)
             });
+    }
+
+    [UnconditionalSuppressMessage("Trimming", "IL2060")]
+    private async ValueTask<string> ConvertParameterValueToStringAsync(string name, object? value)
+    {
+        return await RenderFragmentKit.TryToMarkupStringAsync(value, fallback: _ =>
+        {
+            if (this.Story.Context.Parameters.TryGetByName(name, out var param))
+            {
+                if (param.TypeStructure.IsNullable && value == null) return "(null)";
+            }
+            return value?.ToString() ?? "";
+        });
     }
 
     internal async ValueTask ReloadAsync()

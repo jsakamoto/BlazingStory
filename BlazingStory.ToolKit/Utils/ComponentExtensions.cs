@@ -39,7 +39,7 @@ public static class ComponentExtensions
     }
 
     [SuppressMessage("Trimming", "IL2057:Unrecognized value passed to the parameter of method. It's not possible to guarantee the availability of the target type.", Justification = "<Pending>")]
-    internal static Type? FindComponentType(this string componentName)
+    internal static Type? FindComponentType(string componentName)
     {
         var allNamespaces = PredefinedNamespaces.Concat(DynamicNamespaces);
 

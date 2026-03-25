@@ -1,5 +1,3 @@
-using System.Text.RegularExpressions;
-
 namespace BlazingStory.ToolKit.Utils;
 
 /// <summary>
@@ -60,15 +58,5 @@ internal static class HtmlHelper
         var isHtmlTag = HtmlTags.Contains(tagName.ToLower());
 
         return isHtmlTag;
-    }
-
-    internal static string GetTagName(this string markupContent)
-    {
-        // Extract the tag name from the markup content
-        var match = Regex.Match(markupContent, @"<\s*(\w+)[^>]*>");
-
-        var tagName = match.Success ? match.Groups[1].Value : string.Empty;
-
-        return tagName;
     }
 }

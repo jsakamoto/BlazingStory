@@ -4,13 +4,6 @@ namespace BlazingStory.ToolKit.Utils;
 
 internal static class HtmlParser
 {
-    internal static List<HtmlElement>? ParseMarkupString(this string markupString)
-    {
-        var listHtmlElement = ParseElements(markupString);
-
-        return listHtmlElement;
-    }
-
     private static string TransformSelfClosingTags(string input)
     {
         // Define regex pattern to match self-closing tags
@@ -33,19 +26,16 @@ internal static class HtmlParser
         return transformed;
     }
 
-    private static List<HtmlElement>? ParseElements(string? html)
+    internal static List<HtmlElement>? ParseMarkupString(string? html)
     {
-        if (string.IsNullOrWhiteSpace(html))
-        {
-            return null!;
-        }
+        if (string.IsNullOrWhiteSpace(html)) return null;
 
         html = TransformSelfClosingTags(html);
 
         var elements = new List<HtmlElement>();
         var tagPattern = new Regex(@"<(?<tag>\w+)(?<attributes>(?:\s+\w+=""[^""]*""|\s+\w+='[^']*'|\s+\w+=(?:""[^""]*""|'[^']*'|[^>\s]+))*?)\s*\/?>|<\/(?<closingTag>\w+)>|(?<text>[^<]+)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
         var stack = new Stack<HtmlElement>();
-        HtmlElement? currentElement = null;
+        var currentElement = default(HtmlElement?);
 
         var matches = tagPattern.Matches(html);
 
@@ -115,20 +105,15 @@ internal static class HtmlParser
 
     private static Dictionary<string, string>? ParseAttributes(string? attributes)
     {
-        if (string.IsNullOrWhiteSpace(attributes))
-        {
-            return null!;
-        }
+        if (string.IsNullOrWhiteSpace(attributes)) return null;
 
         var attributesDict = new Dictionary<string, string>();
         var attributePattern = new Regex(@"(?<name>\w+)\s*=\s*""(?<value>[^""]*)""|(?<nameNoQuotes>\w+)\s*=\s*(?<valueNoQuotes>[^\s>]+)");
 
         var matches = attributePattern.Matches(attributes);
 
-        for (var i = 0; i < matches.Count; i++)
+        foreach (Match match in matches)
         {
-            var match = matches[i];
-
             if (match.Groups["name"].Success)
             {
                 attributesDict[match.Groups["name"].Value] = match.Groups["value"].Value;
@@ -146,7 +131,7 @@ internal static class HtmlParser
 /// <summary>
 /// This class represents an HTML tag.
 /// </summary>
-public class HtmlElement
+internal class HtmlElement
 {
     public string? TagName { get; set; }
     public Dictionary<string, string>? Attributes { get; set; }

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 
 namespace BlazingStory.ToolKit.Utils;
 
-public static class HtmlParserToRenderFragment
+internal static class HtmlParserToRenderFragment
 {
     private static readonly Lazy<MethodInfo> AddContentMethod = new(() => typeof(RenderTreeBuilder).GetMethod(nameof(RenderTreeBuilder.AddContent), [typeof(int), typeof(string)]) ?? throw new InvalidOperationException());
 
@@ -22,11 +22,11 @@ public static class HtmlParserToRenderFragment
     /// <returns>
     /// The <see cref="RenderFragment" /> that will render the given string content.
     /// </returns>
-    public static RenderFragment ToRenderFragment(this string? internalValue)
+    internal static RenderFragment ToRenderFragment(this string? internalValue)
     {
         RenderFragment fragment;
 
-        var tags = internalValue?.ParseMarkupString();
+        var tags = HtmlParser.ParseMarkupString(internalValue);
 
         if (tags is not null && tags.Any())
         {
@@ -59,7 +59,7 @@ public static class HtmlParserToRenderFragment
     /// <returns>
     /// The <see cref="RenderFragment&lt;TValue&gt;" /> that will render the given string content.
     /// </returns>
-    public static object ToRenderFragment(this string text, Type argumentType)
+    internal static object ToRenderFragment(this string text, Type argumentType)
     {
         var addContentCall = Expression.Call(BuilderParam.Value, AddContentMethod.Value, Expression.Constant(0), Expression.Constant(text));
         var renderFragment = Expression.Lambda(typeof(RenderFragment), addContentCall, BuilderParam.Value);
@@ -91,7 +91,7 @@ public static class HtmlParserToRenderFragment
         }
 
         var isHtmlTag = element.TagName.IsHtmlTag();
-        var componentType = !isHtmlTag ? element.TagName.FindComponentType() : null;
+        var componentType = !isHtmlTag ? ComponentExtensions.FindComponentType(element.TagName) : null;
 
         if (isHtmlTag)
         {

@@ -9,12 +9,8 @@ namespace BlazingStory.ToolKit.Utils;
 /// <seealso cref="Microsoft.AspNetCore.Components.ComponentBase" />
 internal class ContainerComponent<T> : ComponentBase
 {
+    [Parameter]
     public RenderFragment? Content { get; set; }
-
-    internal void BuildTree(RenderTreeBuilder builder)
-    {
-        this.BuildRenderTree(builder);
-    }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
