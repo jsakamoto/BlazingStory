@@ -38,13 +38,3 @@ Tests/
   Fixtures/                    - Test fixture projects
 build/                         - Custom MSBuild .targets files
 ```
-
-## Build and Test
-
-```shell
-# Build
-dotnet build
-
-# Run tests
-dotnet test
-```
