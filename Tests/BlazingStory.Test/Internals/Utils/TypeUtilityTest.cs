@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using BlazingStory.ToolKit.Utils;
 using Microsoft.AspNetCore.Components;
@@ -132,6 +133,51 @@ public class TypeUtilityTest
         // Then
         var doubleValue = result.IsInstanceOf<double>();
         doubleValue.Is(3.141592);
+    }
+
+    [Test]
+    public void TryConvertType_Double_from_Value_with_NonEnglish_Culture_Test()
+    {
+        // Given - Set a culture that uses comma as decimal separator (e.g., French)
+        var originalCulture = CultureInfo.CurrentCulture;
+        try
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("fr-FR");
+            var target = TypeUtility.ExtractTypeStructure(typeof(double));
+
+            // When - Parse a string with dot as decimal separator (invariant format)
+            TypeUtility.TryConvertType(target, "3.141592", out var result).IsTrue();
+
+            // Then - Should still parse correctly regardless of current culture
+            var doubleValue = result.IsInstanceOf<double>();
+            doubleValue.Is(3.141592);
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
+    }
+
+    [Test]
+    public void TryConvertType_Int_from_Value_with_NonEnglish_Culture_Test()
+    {
+        // Given - Set a culture that uses different number formatting
+        var originalCulture = CultureInfo.CurrentCulture;
+        try
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("fr-FR");
+            var target = TypeUtility.ExtractTypeStructure(typeof(int));
+
+            // When
+            TypeUtility.TryConvertType(target, "1024", out var result).IsTrue();
+
+            // Then
+            result.IsInstanceOf<int>().Is(1024);
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
     }
 
     [Test]
