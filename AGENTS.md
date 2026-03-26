@@ -1,50 +1,50 @@
 # AGENTS.md
 
-## プロジェクト概要
+## Project Overview
 
-**Blazing Story** は、[Storybook](https://storybook.js.org/) の Blazor 向けクローンです。UI コンポーネントやページを分離して構築・カタログ化するためのフロントエンドワークショップを提供します。ほぼ 100% Blazor ネイティブで構築されており、npm や webpack などの JavaScript ツールチェーンは不要です。また、MCP (Model Context Protocol) サーバー機能により、AI エージェントへのコンポーネント情報の公開も可能です。
+**Blazing Story** is a clone of [Storybook](https://storybook.js.org/) for Blazor, providing a frontend workshop for building and cataloging UI components and pages in isolation. It is built on almost 100% Blazor native, requiring no JavaScript toolchain such as npm or webpack. It also offers an MCP (Model Context Protocol) server feature to expose component information to AI agents.
 
-ライセンス: MPL-2.0
+License: MPL-2.0
 
-## NuGet パッケージ
+## NuGet Packages
 
-このリポジトリは以下の NuGet パッケージを生成します。
+This repository produces the following NuGet packages.
 
-| パッケージ名 | 役割 |
+| Package | Role |
 |---|---|
-| **BlazingStory** | メインライブラリ。Storybook 風の UI カタログ機能を提供する |
-| **BlazingStory.Abstractions** | 抽象インターフェースや基本型を定義する基盤レイヤー |
-| **BlazingStory.Addons** | アドオン拡張のためのフレームワーク |
-| **BlazingStory.Addons.BuiltIns** | 組み込みアドオンの実装 |
-| **BlazingStory.ToolKit** | 共通ユーティリティを提供するツールキット |
-| **BlazingStory.McpServer** | MCP サーバー統合機能 (AI/LLM 連携) |
-| **BlazingStory.ProjectTemplates** | `dotnet new` 用のプロジェクトテンプレート |
+| **BlazingStory** | Main library providing Storybook-like UI catalog functionality |
+| **BlazingStory.Abstractions** | Foundation layer defining abstract interfaces and base types |
+| **BlazingStory.Addons** | Framework for addon extensions |
+| **BlazingStory.Addons.BuiltIns** | Built-in addon implementations |
+| **BlazingStory.ToolKit** | Shared utility toolkit |
+| **BlazingStory.McpServer** | MCP server integration (AI/LLM support) |
+| **BlazingStory.ProjectTemplates** | Project templates for `dotnet new` |
 
-## フォルダ構成
+## Folder Structure
 
 ```
-BlazingStory/                  … メインライブラリ (BlazingStory パッケージ)
-BlazingStory.Abstractions/     … 抽象型・インターフェース (BlazingStory.Abstractions パッケージ)
-BlazingStory.Addons/           … アドオンフレームワーク (BlazingStory.Addons パッケージ)
-BlazingStory.Addons.BuiltIns/  … 組み込みアドオン (BlazingStory.Addons.BuiltIns パッケージ)
-BlazingStory.ToolKit/          … ユーティリティ (BlazingStory.ToolKit パッケージ)
-BlazingStory.McpServer/        … MCP サーバー (BlazingStory.McpServer パッケージ)
-BlazingStory.Stories/          … デモ・参照用の Blazor WebAssembly アプリ (パッケージ生成なし)
-ProjectTemplate/               … dotnet テンプレート (BlazingStory.ProjectTemplates パッケージ)
-Samples/                       … サンプルアプリケーション
+BlazingStory/                  - Main library (BlazingStory package)
+BlazingStory.Abstractions/     - Abstract types & interfaces (BlazingStory.Abstractions package)
+BlazingStory.Addons/           - Addon framework (BlazingStory.Addons package)
+BlazingStory.Addons.BuiltIns/  - Built-in addons (BlazingStory.Addons.BuiltIns package)
+BlazingStory.ToolKit/          - Utilities (BlazingStory.ToolKit package)
+BlazingStory.McpServer/        - MCP server (BlazingStory.McpServer package)
+BlazingStory.Stories/          - Demo/reference Blazor WebAssembly app (no package output)
+ProjectTemplate/               - dotnet templates (BlazingStory.ProjectTemplates package)
+Samples/                       - Sample applications
 Tests/
-  BlazingStory.Test/           … メインのテストプロジェクト
-  BlazingStory.Build.Test/     … ビルド関連のテストプロジェクト
-  Fixtures/                    … テスト用フィクスチャプロジェクト群
-build/                         … MSBuild のカスタム .targets ファイル
+  BlazingStory.Test/           - Main test project
+  BlazingStory.Build.Test/     - Build-related test project
+  Fixtures/                    - Test fixture projects
+build/                         - Custom MSBuild .targets files
 ```
 
-## ビルドとテスト
+## Build and Test
 
 ```shell
-# ビルド
+# Build
 dotnet build
 
-# テスト実行
+# Run tests
 dotnet test
 ```
