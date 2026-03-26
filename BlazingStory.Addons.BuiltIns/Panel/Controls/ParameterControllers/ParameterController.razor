@@ -18,9 +18,7 @@ else if (TypeUtility.IsNumericType(primaryType))
 {
     <NumberParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
 }
-else if (primaryType.IsArray || (primaryType.IsGenericType && (primaryType.GetGenericTypeDefinition() == typeof(List<>)
-|| primaryType.GetGenericTypeDefinition() == typeof(IList<>) || primaryType.GetGenericTypeDefinition() ==
-typeof(IEnumerable<>))))
+else if (IsArrayOrListType(primaryType))
 {
     <ArrayParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
 }
@@ -50,4 +48,12 @@ else
     /// <summary>Gets or sets the callback invoked when the user changes the parameter value.</summary>
     [Parameter]
     public EventCallback<ParameterInputEventArgs> OnInput { get; set; }
+
+    private static bool IsArrayOrListType(Type type)
+    {
+        if (type.IsArray) return true;
+        return type.IsGenericType
+            && typeof(System.Collections.IEnumerable).IsAssignableFrom(type)
+            && type.GetGenericArguments().Length == 1;
+    }
 }
