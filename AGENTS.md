@@ -6,6 +6,8 @@
 
 License: MPL-2.0
 
+Documentation: https://blazingstory.github.io/docs/
+
 ## NuGet Packages
 
 This repository produces the following NuGet packages.
