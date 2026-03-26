@@ -1,0 +1,36 @@
+<IconButton Icon="@this.Icon"
+            Title="@this.GetTitleText()"
+            Active="@this.IsActive()"
+            FlagStyle="@this.FlagStyle" 
+            OnClick="ClickHandler" />
+
+@code
+{
+    [Parameter]
+    public SvgIconType Icon { get; set; }
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    [Parameter]
+    public bool FlagStyle { get; set; } = true;
+
+    [Parameter]
+    public Command? Command { get; set; }
+
+    private bool IsActive()
+    {
+        return this.Command?.Flag ?? false;
+    }
+
+    private string? GetTitleText()
+    {
+        if (string.IsNullOrEmpty(this.Title)) return this.Command?.GetTitleText();
+        return string.Format(this.Title, this.Command?.GetHotKeyName());
+    }
+
+    private async Task ClickHandler()
+    {
+        if (this.Command is not null) await this.Command.InvokeAsync();
+    }
+}

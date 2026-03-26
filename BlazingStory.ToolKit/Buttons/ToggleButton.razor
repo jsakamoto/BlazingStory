@@ -1,0 +1,20 @@
+<label class="toggle-button">
+    <input type="checkbox" checked="@this.Value" @onchange="@((arg) => this.OnChange.InvokeAsync(arg))" title="Change to @((!this.Value).ToString().ToLower())" />
+    <span>False</span>
+    <span>True</span>
+</label>
+
+@code
+{
+    /// <summary>
+    /// The current boolean state of the toggle.
+    /// </summary>
+    [Parameter]
+    public bool Value { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the toggle state changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<ChangeEventArgs> OnChange { get; set; }
+}

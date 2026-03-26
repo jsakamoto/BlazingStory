@@ -1,0 +1,13 @@
+@if (!string.IsNullOrEmpty(this.Text))
+{
+    <span class="badge">@Text</span>
+}
+
+@code
+{
+    /// <summary>
+    /// The text to display inside the badge.
+    /// </summary>
+    [Parameter]
+    public string? Text { get; set; }
+}

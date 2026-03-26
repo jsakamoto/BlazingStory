@@ -1,9 +1,18 @@
-﻿@using static BlazingStory.Types.NavigationTreeOrderBuilder
+@using BlazingStory.Configurations
+@using static BlazingStory.Types.NavigationTreeOrderBuilder
 
-<BlazingStory.Internals.Components.Icons.SvgIcons />
+<SvgIcons />
 
 <BlazingStoryApp Assemblies="[typeof(App).Assembly]"
                  DefaultLayout="typeof(DefaultLayout)"
-                 NavigationTreeOrder="@N["Internals", N["Components","Pages", N["Canvas", N["Controls"]]]]"
-                 EnableHotReloading="true">
+                 OnInitialize="OnInitialize">
 </BlazingStoryApp>
+
+@code 
+{
+    private void OnInitialize(IBlazingStoryBuilder builder)
+    {
+        builder.Options.EnableHotReloading = true;
+        builder.Options.NavigationTreeOrder = N["Internals", N["Components", "Pages", N["Canvas", N["Controls"]]]];
+    }
+}

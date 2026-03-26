@@ -5,6 +5,7 @@
     "description": "Storybook の Blazor 版のクローンである Blazing Story WebAssembly アプリを作成するためのプロジェクト テンプレート。",
     "parameter.Hosted.name": "ASP.NET Core でホスト(_H)",
     "parameter.IncludeSampleContent.name": "サンプルのコンポーネントとそのストーリーを含める(_I)",
-    "parameter.IncludeSampleContent.description": "基本的な使用パターンを示すサンプルのコンポーネントとそのストーリーを追加するかどうかを構成します。"
+    "parameter.IncludeSampleContent.description": "基本的な使用パターンを示すサンプルのコンポーネントとそのストーリーを追加するかどうかを構成します。",
+    "parameter.LocalhostTld.name": "アプリケーション URL に .dev.localhost TLD を使用する"
   }
 }

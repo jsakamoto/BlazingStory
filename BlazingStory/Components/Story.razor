@@ -1,4 +1,4 @@
-﻿@using System.Diagnostics.CodeAnalysis;
+@using System.Diagnostics.CodeAnalysis;
 @using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 @typeparam TComponent where TComponent: notnull
 @attribute [CascadingTypeParameter(nameof(TComponent))]
@@ -43,21 +43,21 @@
     public RenderFragment? Arguments { get; set; }
 
     [Parameter, EditorRequired]
-    public RenderFragment<StoryContext>? Template { get; set; }
+    public RenderFragment<IStoryContext>? Template { get; set; }
     
     /// <summary>
     /// A render fragment that provides additional descriptive content for the story.
     /// </summary>
     [Parameter] public RenderFragment? Description { get; set; }
 
-    private StoryContext? _StoryContext;
+    private IStoryContext? _StoryContext;
 
     protected override void OnInitialized()
     {
         if (this.Template == null) throw new InvalidOperationException($"The Template parameter is required.");
 
         var xmlDocComment = this.Services.GetRequiredService<IXmlDocComment>();
-        this._StoryContext = new(this.ComponentParameters ?? ParameterExtractor.GetParametersFromComponentType(typeof(TComponent), xmlDocComment));
+        this._StoryContext = new StoryContext(this.ComponentParameters ?? ParameterExtractor.GetParametersFromComponentType(typeof(TComponent), xmlDocComment));
 
         if (this.StoryContainer == null)
         {

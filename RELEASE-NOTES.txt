@@ -1,5 +1,36 @@
-v.1.0.0-preview.62
+v.1.0.0-preview.71
 - Feature: Added ArrayParameterController for array/list parameter editing in the control panel. Supports string, bool, number, and enum arrays with add/remove/edit UI. Uses theme-aware CSS variables for dark/light mode compatibility.
+
+v.1.0.0-preview.70
+- Improve: Enabled the full usage of RenderFragment (note: this is not fully supported with EditForm and/or InputBase). (PR #53, contributed by @WimVdSAllPhi)
+
+v.1.0.0-preview.69
+- Fix: Fixed hot reload build errors (CS8785/CS0234) caused by the MD2RazorGenerator package by updating it to v.1.2.4 in the project templates.
+
+v.1.0.0-preview.68
+- Feature: Introduced the Addon mechanism, enabling developers to extend the UI with custom toolbar items, panels, and preview decorators.
+
+v.1.0.0-preview.67
+- Fix: Resolved a bug where DateTime, DateTimeOffset, DateOnly, and TimeOnly values could not be parsed in the Action Log panel. (PR #96, contributed by @Shrumpf)
+- Fix: Fixed the PopupMenu to close when a menu item is clicked.
+
+v.1.0.0-preview.66
+- Fix: Split view resizing doesn't work on recent browser versions.
+
+v.1.0.0-preview.65
+- Fix: An InvalidOperationException was thrown when IL trimming was enabled on a published Blazor WebAssembly app. (Issue #89)
+- Fix: CSS from certain NuGet packages was not loaded correctly.
+
+v.1.0.0-preview.64
+- Improve: Removed the dependency on the Toolbelt.Blazor.GetProperty.Script NuGet package for .NET 10 or later projects.
+
+v.1.0.0-preview.63
+- Enhancement: Dramatically reduced preview frame display time by implementing iframe pooling, which reuses initialized Blazor runtime instances.
+- Enhancement: Preview frames are now rendered only when visible in the viewport, significantly reducing resource consumption.
+
+v.1.0.0-preview.62
+- Update: .NET 10 support.
+- Update: Improve canvas preview pane splitter behavior.
 
 v.1.0.0-preview.61
 - Fix: The browser title did not update when a Custom Page was selected.
@@ -86,7 +117,7 @@ v.1.0.0-preview.36
 - Fix: hotkeys didn't work on Blazor Server hosting model.
 
 v.1.0.0-preview.35
-- Fix: a Story server app deployed under the subpath didn't work.
+- Fix: a Story server app deployed under the sub-path didn't work.
 
 v.1.0.0-preview.34
 - Fix: navigation next/prev stories, docs, and components didn't work.
@@ -226,7 +257,7 @@ v.1.0.0-preview.1.2
 - Improve the README and the project template to explain how to add custom css and js files for stories.
 
 v.1.0.0-preview.1.1
-- Fix: 3rd party libraries CSS file importing failed if the app deployed under subpath.
+- Fix: 3rd party libraries CSS file importing failed if the app deployed under sub-path.
 
 v.1.0.0-preview.1
 - 1st release.

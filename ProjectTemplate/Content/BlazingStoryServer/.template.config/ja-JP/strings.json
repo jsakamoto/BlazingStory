@@ -5,6 +5,7 @@
     "description": "Storybook の Blazor 版のクローンである Blazing Story Server アプリを作成するためのプロジェクト テンプレート。",
     "parameter.IncludeSampleContent.name": "サンプルのコンポーネントとそのストーリーを含める(_I)",
     "parameter.IncludeSampleContent.description": "基本的な使用パターンを示すサンプルのコンポーネントとそのストーリーを追加するかどうかを構成します。",
-    "parameter.McpServer.description": "指定されている場合、MCPサーバー機能が有効になり、コンポーネントとそのストーリーに関する情報が Model Context Protocol を通じて公開されます。"
+    "parameter.McpServer.description": "指定されている場合、MCPサーバー機能が有効になり、コンポーネントとそのストーリーに関する情報が Model Context Protocol を通じて公開されます。",
+    "parameter.LocalhostTld.name": "アプリケーション URL に .dev.localhost TLD を使用する"
   }
 }

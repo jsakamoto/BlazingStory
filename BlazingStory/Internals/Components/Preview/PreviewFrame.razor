@@ -1,14 +1,16 @@
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 
-<div class="preview-frame">
-    <iframe id="@this._IframeElementId" @ref="_Iframe" src="@_InitialPreviewFrameUrl" @onload="OnPreviewIFrameLoaded"></iframe>
-</div>
+<IntersectionView @ref="_IntersectionView"
+                  class="preview-frame"
+                  @onframeheightchange="FrameHeightChangeEventCallback">
+    <PooledIFrame Src="@_PreviewFrameUrl" Attached="OnPreviewIFrameAttached" />
+</IntersectionView>
 
 @code
 {
     [Parameter, EditorRequired]
-    public required Story Story { get; set; }
+    public required IStory Story { get; set; }
 
     [Parameter]
     public string? ViewMode { get; set; }
@@ -23,67 +25,44 @@
     public IReadOnlyDictionary<string, object?>? Globals { get; set; }
 
     [Parameter]
-    public EventCallback<ComponentActionEventArgs> OnComponentAction { get; set; }
+    public EventCallback<int> OnFrameHeightChanged { get; set; }
 
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
 
-    private readonly string _IframeElementId = "F" + Guid.NewGuid().ToString();
-
     /// <summary>
     /// Gets the initial preview frame URL.
     /// </summary>
-    public string CurrentPreviewFrameUrl => this._CurrentPreviewFrameUrl;
+    public string CurrentPreviewFrameUrl => this._PreviewFrameUrl;
 
-    private ElementReference _Iframe;
+    private IntersectionView? _IntersectionView;
 
-    private string _InitialPreviewFrameUrl = "";
+    private ElementReference _IframeContainer => this._IntersectionView?.ElementReference ?? default;
 
-    private string _CurrentPreviewFrameUrl = "";
+    private string _PreviewFrameUrl = "";
 
     private readonly JSModule _JSModule;
-
-    private bool _AfterFirstRendered = false;
-
-    private DotNetObjectReference<PreviewFrame>? _ThisRef;
-
-    private IJSObjectReference? _EventMonitorSubscriber;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PreviewFrame"/> class.
     /// </summary>
     public PreviewFrame()
     {
-        this._JSModule = new(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        this._InitialPreviewFrameUrl = this._CurrentPreviewFrameUrl = this.GetPreviewFrameUrl();
+        this._PreviewFrameUrl = await this.GetPreviewFrameUrlAsync();
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        await this.UpdatePreviewFrameUrlAsync();
+        await base.OnParametersSetAsync();
+        this._PreviewFrameUrl = await this.GetPreviewFrameUrlAsync();
     }
 
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (!firstRender) return;
-        this.StateHasChanged();
-        this._AfterFirstRendered = true;
-    }
-
-    private async ValueTask UpdatePreviewFrameUrlAsync()
-    {
-        if (!this._AfterFirstRendered) return;
-        var nextPreviewFrameUrl = this.GetPreviewFrameUrl();
-        if (this._CurrentPreviewFrameUrl == nextPreviewFrameUrl) return;
-        this._CurrentPreviewFrameUrl = nextPreviewFrameUrl;
-        await _JSModule.InvokeVoidAsync("navigatePreviewFrameTo", this._Iframe, nextPreviewFrameUrl);
-    }
-
-    private async Task OnPreviewIFrameLoaded(ProgressEventArgs obj)
+    private async Task OnPreviewIFrameAttached()
     {
         try
         {
@@ -93,74 +72,87 @@
                 await EnsureDotnetWatchScriptInjected();
             }
 
-            this._ThisRef = DotNetObjectReference.Create(this);
-            this._EventMonitorSubscriber = await _JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentActionEvent", this._Iframe, this._ThisRef, nameof(ComponentActionEventCallback));
+            var frameHeight = await _JSModule.InvokeAsync<int>("getFrameHeight", this._IframeContainer);
+            await this.OnFrameHeightChanged.InvokeAsync(frameHeight);
         }
 
         // In some cases, such as when a user navigates away from the page during this async operation,
         // the JSModule may be disposed before the async operation completes.
         // Ignore the "ObjectDisposedException" exception in this case.
-        catch (ObjectDisposedException){ }
+        catch (ObjectDisposedException) { }
     }
 
     /// <summary>
     /// Gets the URL for the preview frame, from the component parameters(args).
     /// </summary>
-    private string GetPreviewFrameUrl()
+    private async ValueTask<string> GetPreviewFrameUrlAsync()
     {
         // "Stringify" the component args to encode them to the URL query string.
-        var args = this.Args?.ToDictionary(
-            keySelector: x => x.Key,
-            elementSelector: x => (object?)this.Story.Context.ConvertParameterValueToString(x.Key, x.Value)
-        );
+        var args = new Dictionary<string, object?>();
+        foreach (var arg in this.Args?.AsEnumerable() ?? [])
+        {
+            args[arg.Key] = await this.ConvertParameterValueToStringAsync(arg.Key, arg.Value);
+        }
 
         return UriParameterKit.GetUri(
             uri: "./iframe.html",
             parameters: new Dictionary<string, object?>
-                {
-                    ["viewMode"] = this.ViewMode,
-                    ["id"] = this.Id,
-                    ["args"] = UriParameterKit.EncodeKeyValues(args),
-                    ["globals"] = UriParameterKit.EncodeKeyValues(this.Globals)
-                });
+            {
+                ["viewMode"] = this.ViewMode,
+                ["id"] = this.Id,
+                ["args"] = UriParameterKit.EncodeKeyValues(args),
+                ["globals"] = UriParameterKit.EncodeKeyValues(this.Globals)
+            });
     }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2060")]
+    private async ValueTask<string> ConvertParameterValueToStringAsync(string name, object? value)
+    {
+        return await RenderFragmentKit.TryToMarkupStringAsync(value, fallback: _ =>
+        {
+            if (this.Story.Context.Parameters.TryGetByName(name, out var param))
+            {
+                if (param.TypeStructure.IsNullable && value == null) return "(null)";
+            }
+            return value?.ToString() ?? "";
+        });
+    }
 
     internal async ValueTask ReloadAsync()
     {
-        await this._JSModule.InvokeVoidAsync("reloadPreviewFrame", this._Iframe);
+        await this._JSModule.InvokeVoidAsync("reloadPreviewFrame", this._IframeContainer);
     }
 
     internal async ValueTask ZoomInAsync()
     {
-        await this._JSModule.InvokeVoidAsync("zoomInPreviewFrame", this._Iframe);
+        await this._JSModule.InvokeVoidAsync("zoomInPreviewFrame", this._IframeContainer);
     }
 
     internal async ValueTask ZoomOutAsync()
     {
-        await this._JSModule.InvokeVoidAsync("zoomOutPreviewFrame", this._Iframe);
+        await this._JSModule.InvokeVoidAsync("zoomOutPreviewFrame", this._IframeContainer);
     }
 
     internal async ValueTask ResetZoomAsync()
     {
-        await this._JSModule.InvokeVoidAsync("resetZoomPreviewFrame", this._Iframe);
+        await this._JSModule.InvokeVoidAsync("resetZoomPreviewFrame", this._IframeContainer);
     }
 
     private async ValueTask EnsureDotnetWatchScriptInjected()
     {
-        await this._JSModule.InvokeVoidAsync("ensureDotnetWatchScriptInjected", this._Iframe);
+        await this._JSModule.InvokeVoidAsync("ensureDotnetWatchScriptInjected", this._IframeContainer);
     }
 
-    [JSInvokable(nameof(ComponentActionEventCallback))]
-    public async Task ComponentActionEventCallback(string name, string argsJson)
+    /// <summary>
+    /// Invoked when the frame height changes.
+    /// </summary>
+    private async Task FrameHeightChangeEventCallback(FrameHeightChangeEventArgs args)
     {
-        await this.OnComponentAction.InvokeAsync(new(name, argsJson));
+        await this.OnFrameHeightChanged.InvokeAsync(args.Height);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _EventMonitorSubscriber.DisposeIfConnectedAsync("dispose");
         await _JSModule.DisposeAsync();
-        _ThisRef?.Dispose();
     }
 }

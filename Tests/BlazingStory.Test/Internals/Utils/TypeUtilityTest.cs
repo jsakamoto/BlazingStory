@@ -1,6 +1,6 @@
-﻿using BlazingStory.Internals.Utils;
-using Microsoft.AspNetCore.Components;
 using System.Net;
+using BlazingStory.ToolKit.Utils;
+using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Test.Internals.Utils;
 
@@ -18,7 +18,7 @@ public class TypeUtilityTest
         // Then
         var renderFragment = result.IsInstanceOf<RenderFragment>();
 
-        using var ctx = new Bunit.TestContext();
+        using var ctx = new Bunit.BunitContext();
         using var cut = ctx.Render(renderFragment);
         cut.Markup.Is("Hello, World.");
     }
@@ -35,7 +35,7 @@ public class TypeUtilityTest
         // Then
         var renderFragment = result.IsInstanceOf<RenderFragment<DateTime>>();
 
-        using var ctx = new Bunit.TestContext();
+        using var ctx = new Bunit.BunitContext();
         using var cut = ctx.Render(renderFragment.Invoke(default));
         cut.Markup.Is("Tempura et dolor");
     }

@@ -1,4 +1,4 @@
-﻿@import "variables.scss";
+@import "variables.scss";
 @import "variables.colors.light.scss";
 @import "variables.colors.dark.scss";
 
@@ -26,39 +26,17 @@
 @import "../../Internals/Components/ToolBar/TabButton.razor.scss";
 @import "../../Internals/Components/ToolBar/Separator.razor.scss";
 
-@import "../../Internals/Components/Icons/Badge.razor.scss";
-@import "../../Internals/Components/Icons/SvgIcon.razor.scss";
 @import "../../Internals/Components/Icons/KeyMap.razor.scss";
-@import "../../Internals/Components/Icons/UnderConstruction.razor.scss";
 
-@import "../../Internals/Components/Buttons/CornerButton.razor.scss";
-@import "../../Internals/Components/Buttons/IconButton.razor.scss";
-@import "../../Internals/Components/Buttons/SquareButton.razor.scss";
-@import "../../Internals/Components/Buttons/ToggleButton.razor.scss";
-
-@import "../../Internals/Components/Inputs/ColorInput.razor.scss";
-@import "../../Internals/Components/Inputs/NullInputRadio.razor.scss";
-@import "../../Internals/Components/Inputs/NumberInput.razor.scss";
-@import "../../Internals/Components/Inputs/Select.razor.scss";
-@import "../../Internals/Components/Inputs/TextArea.razor.scss";
 @import "../../Internals/Components/Inputs/HotKeyEditorInput.razor.scss";
 
-@import "../../Internals/Components/Menus/PopupMenu.razor.scss";
-@import "../../Internals/Components/Menus/MenuItem.razor.scss";
-@import "../../Internals/Components/Menus/MenuItemDivider.razor.scss";
+@import "../../Internals/Components/Layouts/PooledIFrame.razor.scss";
 @import "../../Internals/Components/Menus/CommandMenuItem.razor.scss";
-
 @import "../../Internals/Components/Preview/PreviewFrame.razor.scss";
 
 @import "../../Internals/Pages/Index.razor.scss";
 @import "../../Internals/Pages/Canvas/CanvasPage.razor.scss";
 @import "../../Internals/Pages/Canvas/AddOnPanel.razor.scss";
-@import "../../Internals/Pages/Canvas/Controls/ControlsPanel.razor.scss";
-@import "../../Internals/Pages/Canvas/Controls/ParameterControllers/Controllers/BoolParameterController.razor.scss";
-@import "../../Internals/Pages/Canvas/Controls/ParameterControllers/Controllers/NumberParameterController.razor.scss";
-@import "../../Internals/Pages/Canvas/Actions/ActionsPanel.razor.scss";
-@import "../../Internals/Pages/Canvas/Actions/ActionsPanelLogLine.razor.scss";
-@import "../../Internals/Pages/Canvas/Actions/ActionsPanelTags.razor.scss";
 @import "../../Internals/Pages/Docs/CodeView.razor.scss";
 @import "../../Internals/Pages/Docs/DocsPage.razor.scss";
 @import "../../Internals/Pages/CustomPage.razor.scss";

@@ -1,4 +1,5 @@
-﻿import { CSSStyle, MessageArgument } from "../../Scripts/types";
+import type { } from "../../wwwroot/js/types/browser-dom";
+import type { MessageArgument } from "../../wwwroot/js/types/custom-messages";
 
 const keydown = "keydown";
 const pointerdown = "pointerdown";
@@ -14,12 +15,13 @@ type IFrameSessionState = {
 export const initializeCanvasFrame = () => {
     const doc = document;
     const wnd = window;
+    const htmlElement = doc.body.parentElement;
 
     // Restore the session state.
     const sessionState = {
         ...{ zoom: 1 }, ...JSON.parse(sessionStorage.getItem(SessionStateKey) || "{}")
     } as IFrameSessionState;
-    (doc.body.style as CSSStyle).zoom = "" + sessionState.zoom;
+    doc.body.style.zoom = "" + sessionState.zoom;
 
     // Handle "Reload" message
     wnd.addEventListener("message", (event) => {
@@ -27,7 +29,7 @@ export const initializeCanvasFrame = () => {
         if (event.origin !== location.origin || message.action !== "reload") return;
 
         // Save state to session storage before reloading.
-        sessionState.zoom = (doc.body.style as CSSStyle).zoom || "1";
+        sessionState.zoom = doc.body.style.zoom || "1";
         sessionStorage.setItem(SessionStateKey, JSON.stringify(sessionState));
 
         location.reload();
@@ -66,22 +68,28 @@ export const initializeCanvasFrame = () => {
         } as MessageArgument, location.origin);
     });
 
+    if (htmlElement) {
+        const resizeObserver = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+                const height = Math.ceil(entry.target.getBoundingClientRect().height);
+                const iframeElement = [...wnd.parent.document.querySelectorAll('iframe')].find(f => f.contentWindow === wnd);
+                if (iframeElement) {
+                    const event = new CustomEvent('frameheightchange', {
+                        cancelable: false,
+                        bubbles: true,
+                        detail: { height }
+                    });
+                    iframeElement.dispatchEvent(event);
+                }
+            }
+        });
+        resizeObserver.observe(htmlElement);
+    }
+
     wnd.BlazingStory = wnd.BlazingStory || {};
     wnd.BlazingStory.canvasFrameInitialized = true;
 
-    // Notify the parent window of this frame height.
-    // This is required to make a vertical scroll bar never shown in preview frames on the "Docs" page.
-    // (See also: BlazingStory/wwwroot/helper.ts)
-    const frameElementId = wnd.frameElement?.id || '';
-    const htmlElement = document.body.parentElement;
-    const scrollHeight = htmlElement?.scrollHeight || 0;
-    wnd.parent.postMessage({
-        action: "frameview-height",
-        frameId: frameElementId,
-        height: scrollHeight
-    } as MessageArgument, location.origin);
-
-    // After sending the frame height, add a class to the html element to make the frame scrollable.
+    // After initialization, add a class to the html element to make the frame scrollable.
     // (The html element without the "_blazing_story_ready_for_visible" CSS class is applied "overflow:none")
     // This is required to make annoying scroll bars invisible while adjusting the preview frame size to fit iframe contents.
     // After adjustment, the CSS class is added, and then the preview frame contents are scrollable.

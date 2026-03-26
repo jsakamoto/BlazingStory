@@ -1,5 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using BlazingStory.Internals.Utils;
+using System.Diagnostics.CodeAnalysis;
+using BlazingStory.ToolKit.JSInterop;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.JSInterop;
@@ -27,7 +27,7 @@ internal class WebAssets
     {
         var httpClient = this._Services.GetRequiredService<HttpClient>();
         var jsRuntime = this._Services.GetRequiredService<IJSRuntime>();
-        var updateToken = UriParameterKit.GetUpdateToken(jsRuntime);
+        var updateToken = jsRuntime.GetUpdateToken(VersionInfo.GetEscapedVersionText());
         return await httpClient.GetStringAsync(path + updateToken);
     }
 

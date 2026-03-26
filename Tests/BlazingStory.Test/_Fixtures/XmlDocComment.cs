@@ -1,5 +1,5 @@
-﻿using BlazingStory.Internals.Services.XmlDocComment;
-using Moq;
+using BlazingStory.Internals.Services.XmlDocComment;
+using NSubstitute;
 
 namespace BlazingStory.Test._Fixtures;
 
@@ -11,5 +11,5 @@ internal static class XmlDocComment
     /// <summary>
     /// Dummy instance of <see cref="IXmlDocComment"/>.
     /// </summary>
-    internal static IXmlDocComment Dummy => Mock.Of<IXmlDocComment>();
+    internal static IXmlDocComment Dummy => Substitute.For<IXmlDocComment>();
 }

@@ -15,12 +15,20 @@
     "Solution": {
       "longName": "solution"
     },
+    "SolutionX": {
+      "longName": "solutionx",
+      "shortName": "sx"
+    },
     "IncludeSampleContent": {
       "longName": "include-sample"
     },
     "McpServer": {
       "longName": "mcp-server",
       "shortName": "mcp"
+    },
+    "LocalhostTld": {
+      "longName": "localhost-tld",
+      "shortName": ""
     },
     "kestrelHttpPort": {
       "isHidden": true

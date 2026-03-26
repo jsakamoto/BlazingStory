@@ -1,11 +1,7 @@
-import { MessageArgument } from "../Scripts/types";
+import type { MessageArgument } from "../../wwwroot/js/types/custom-messages";
 
 const doc = document;
 const lstorage = localStorage;
-
-export const setLocalStorageItem = (key: string, value: string): void => { lstorage.setItem(key, value); };
-
-export const getLocalStorageItem = (key: string): string | null => (lstorage.getItem(key) || null);
 
 export const copyTextToClipboard = (text: string): Promise<void> => navigator.clipboard.writeText(text);
 
@@ -40,16 +36,6 @@ export const setupMessageReceiverFromIFrame = (): void => {
             case pointerdown:
                 const clickEvent = new MouseEvent(pointerdown, { bubbles: true });
                 doc.body.dispatchEvent(clickEvent);
-                break;
-
-            // Set the height of the preview frame element to be the height reported from the iframe.
-            // This is required to make a vertical scroll bar never shown in preview frames on the "Docs" page.
-            // (See also: BlazingStory/Internals/Pages/IFrame.razor.ts)
-            case "frameview-height":
-                const previewFrameViewPort = doc.querySelector(`.preview-frame-viewport:has(iframe#${message.frameId})`) as HTMLElement | null;
-                if (previewFrameViewPort) {
-                    previewFrameViewPort.style.height = message.height + "px";
-                }
                 break;
         }
     }, false);

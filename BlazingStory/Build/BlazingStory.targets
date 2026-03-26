@@ -1,4 +1,5 @@
 <Project>
+  <Import Project="$(MSBuildThisFileDirectory)CustomTasks\_BS_ResolveAdditionalReferenceDocsTask.targets" />
 
   <!--
   This target is used to generate the BlazingStoryAssemblyInfo.cs file wihch contains project meta data such as project directory, root namespace.
@@ -42,6 +43,22 @@
   <PropertyGroup>
     <CopyDocumentationFilesFromPackages Condition=" '$(CopyDocumentationFilesFromPackages)' == '' ">true</CopyDocumentationFilesFromPackages>
   </PropertyGroup>
+
+  <!--
+  This target is used to copy the XML Doc Comment files comming from frameworks to the Blazor Server base directory.
+  This is required to support the "Details" descriptions in the "Docs" pages.
+  -->
+  <Target Name="_BS_ResolveAdditionalReferenceDocs" BeforeTargets="_CopyFilesMarkedCopyLocal" AfterTargets="ResolveAssemblyReferences">
+    <PropertyGroup>
+      <_BS_AdditionalReferenceDocsPatterns Condition=" '$(_BS_AdditionalReferenceDocsPatterns)' == '' " >Microsoft.AspNetCore.Components*.dll;</_BS_AdditionalReferenceDocsPatterns>
+    </PropertyGroup>
+    <_BS_ResolveAdditionalReferenceDocsTask
+      ReferencePaths="@(ReferencePath)"
+      ReferenceCopyLocalPaths="@(ReferenceCopyLocalPaths)"
+      TargetAssemblyPattern="$(_BS_AdditionalReferenceDocsPatterns)">
+      <Output TaskParameter="AdditionalReferenceCopyLocalPaths" ItemName="ReferenceCopyLocalPaths" />
+    </_BS_ResolveAdditionalReferenceDocsTask>
+  </Target>
 
   <!--
   This target is used to add the XML Doc Comment files to the Blazor WebAssembly Static Web Assets.

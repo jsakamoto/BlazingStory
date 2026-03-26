@@ -36,16 +36,20 @@
       "datatype": "choice",
       "choices": [
         {
-          "choice": "net9.0",
-          "description": "Target net90"
+          "choice": "net8.0",
+          "description": "Target net8.0"
         },
         {
-          "choice": "net8.0",
-          "description": "Target net80"
+          "choice": "net9.0",
+          "description": "Target net9.0"
+        },
+        {
+          "choice": "net10.0",
+          "description": "Target net10.0"
         }
       ],
       "replaces": "net8.0",
-      "defaultValue": "net9.0"
+      "defaultValue": "net10.0"
     },
     "kestrelHttpPort": {
       "type": "parameter",
@@ -143,6 +147,12 @@
       "defaultValue": "false",
       "description": "If specified, adds a solution file for the standalone Blazor WebAssembly app."
     },
+    "SolutionX": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "If specified, adds an XML solution file for the standalone Blazor Web app."
+    },
     "IncludeSampleContent":{
       "type": "parameter",
       "datatype": "bool",
@@ -154,6 +164,14 @@
       "datatype": "bool",
       "defaultValue": "false",
       "description": "If specified, this enables the MCP server feature that exposes information about components and their stories via the Model Context Protocol."
+    },
+    "LocalhostTld": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "displayName": "Use the .dev.localhost TLD in the application URL",
+      "description": "Whether to combine the project name with the .dev.localhost TLD in the application URL for local development, e.g. https://myapp.dev.localhost:12345.",
+      "isEnabled": "(Framework == \"net10.0\")"
     }
   },
   "guids": [
@@ -162,7 +180,7 @@
     "0341B023-80E5-4FEA-B58E-CD70D1D432EC",
     "12616DCF-E921-48CA-A211-A262FA10D5E9"
   ],
-  "sourceName": "StoryServerApp",
+  "sourceName": "StoryServerApp.1",
   "sources": [
     {
       "source": "./",
@@ -174,9 +192,15 @@
       ],
       "modifiers": [
         {
-          "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+          "condition": "!Solution || SolutionX || (HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
           "exclude": [
-            "*.sln"
+            "StoryServerApp.1.sln"
+          ]
+        },
+        {
+          "condition": "Solution || !SolutionX || (HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+          "exclude": [
+            "StoryServerApp.1.slnx"
           ]
         },
         {
@@ -190,12 +214,16 @@
   ],
   "primaryOutputs": [
     {
-      "condition": "HostIdentifier == \"dotnetcli\" || HostIdentifier == \"dotnetcli-preview\"",
-      "path": "StoryServerApp.sln"
+      "condition": "Solution || HostIdentifier == \"dotnetcli\" || HostIdentifier == \"dotnetcli-preview\"",
+      "path": "StoryServerApp.1.sln"
     },
     {
-      "condition": "HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\"",
-      "path": "StoryServerApp.csproj"
+      "condition": "SolutionX || HostIdentifier == \"dotnetcli\" || HostIdentifier == \"dotnetcli-preview\"",
+      "path": "StoryServerApp.1.slnx"
+    },
+    {
+      "condition": "!Soution && !SolutionX && HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\"",
+      "path": "StoryServerApp.1.csproj"
     }
   ],
   "postActions": [

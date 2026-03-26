@@ -1,0 +1,97 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+
+<PanelTitle>
+    Action
+    @if ((this.ActionLogs?.Count ?? 0) > 0)
+    {
+        <Badge Text="@this.ActionLogs?.Count.ToString()" />
+    }
+</PanelTitle>
+
+<ImportStyleSheet Href="./_content/BlazingStory.Addons.BuiltIns/css/actions-panel.min.css" />
+
+<div class="actions-panel">
+
+    <div class="actions-panel-scroll-window">
+        @foreach (var log in this.ActionLogs ?? [])
+        {
+            <ActionsPanelLogLine @key="log.Id" Repeat="@log.Repeat" Name="@log.Name" Value="@log.ArgsJsonElement" />
+        }
+    </div>
+
+    <CornerButton OnClick="OnClickClear">
+        Clear
+    </CornerButton>
+</div>
+
+@code
+{
+    /// <summary>Gets or sets the currently displayed story, used to detect story switches and clear the log.</summary>
+    [CascadingParameter(Name = "Story")]
+    public IStory? Story { get; set; }
+
+    private IStory? _PrevStory;
+
+    /// <summary>Gets or sets the list of captured action log entries to display.</summary>
+    [Parameter]
+    public List<ComponentActionLog>? ActionLogs { get; set; } = [];
+
+    /// <summary>Gets or sets the callback invoked when the <see cref="ActionLogs"/> list changes.</summary>
+    [Parameter]
+    public EventCallback<List<ComponentActionLog>?> ActionLogsChanged { get; set; }
+
+    private JSModule _JSModule;
+
+    private DotNetObjectReference<ActionsPanel>? _ThisRef;
+
+    private IJSObjectReference? _ComponentActionSubscriber = null;
+
+    public ActionsPanel()
+    {
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Panel/Actions/ActionsPanel.razor.js");
+    }
+
+    override protected async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        if (!Object.ReferenceEquals(this.Story, this._PrevStory))
+        {
+            this.ActionLogs?.Clear();
+            await this.ActionLogsChanged.InvokeAsync(ActionLogs);
+        }
+        this._PrevStory = this.Story;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        this._ThisRef = DotNetObjectReference.Create(this);
+        this._ComponentActionSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentAction", this._ThisRef, nameof(OnComponentAction));
+    }
+
+    /// <summary>
+    /// Receives a component action event dispatched from JavaScript and prepends it to the action log.
+    /// </summary>
+    /// <param name="args">The event arguments containing the action name and serialized arguments.</param>
+    [JSInvokable, EditorBrowsable(EditorBrowsableState.Never)]
+    public async Task OnComponentAction(ComponentActionEventArgs args)
+    {
+        this.ActionLogs?.Insert(0, new(args.Name ?? "(null)", args.ArgsJson ?? "null"));
+        await this.ActionLogsChanged.InvokeAsync(ActionLogs);
+        this.StateHasChanged();
+    }
+
+    private async Task OnClickClear()
+    {
+        this.ActionLogs?.Clear();
+        await this.ActionLogsChanged.InvokeAsync(ActionLogs);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await this._ComponentActionSubscriber.DisposeIfConnectedAsync("dispose");
+        await this._JSModule.DisposeAsync();
+        this._ThisRef?.Dispose();
+    }
+}

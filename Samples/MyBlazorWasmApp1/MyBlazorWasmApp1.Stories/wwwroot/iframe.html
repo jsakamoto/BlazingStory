@@ -6,14 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MyBlazorWasmApp1.Stories</title>
     <base href="/" />
+    <link rel="preload" id="webassembly" />
     <!--
-    If you need to add <link> or <script> elements to include CSS or JavaScript files 
-    for canvas views of your Stories, 
+    If you need to add <link> or <script> elements to include CSS or JavaScript files
+    for canvas views of your Stories,
     YOU SHOULD PLACE THEM HERE, not in the "index.html" file.
     -->
     <link rel="stylesheet" href="css/blazor-ui.css" />
-    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="_content/MyBlazorWasmApp1/css/app.css" />
     <link rel="stylesheet" href="MyBlazorWasmApp1.Stories.styles.css" />
+    <script type="importmap"></script>
 </head>
 
 <body>
@@ -27,10 +29,10 @@
     </div>
 
     <!--
-    If you need to add <script> elements to include JavaScript files for canvas views of your Stories, 
+    If you need to add <script> elements to include JavaScript files for canvas views of your Stories,
     YOU SHOULD PLACE THEM HERE, not in the "index.html" file.
     -->
-    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
 </body>
 
 </html>

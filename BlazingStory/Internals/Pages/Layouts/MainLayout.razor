@@ -1,18 +1,20 @@
-﻿@inherits LayoutComponentBase
+@using BlazingStory.ToolKit.JSInterop
 @using Toolbelt.Blazor.HotKeys2
 @using static Toolbelt.Blazor.HotKeys2.ModCode
+@inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
 <HeadContent>
 	@{
-		var updateToken = UriParameterKit.GetUpdateToken(this.JSRuntime);
+		var updateToken = this.JSRuntime.GetUpdateToken(VersionInfo.GetEscapedVersionText());
 	}
-	<link rel="stylesheet" href="_content/Toolbelt.Blazor.SplitContainer/Toolbelt.Blazor.SplitContainer.bundle.scp.css@(updateToken)" />
+	<link rel="stylesheet" href="@ScopedCssAssets.SplitContainer" />
 	<link rel="preload" href="_content/BlazingStory/fonts/nunito-sans-regular.woff2@(updateToken)" as="font" type="font/woff2" crossorigin />
 	<link rel="preload" href="_content/BlazingStory/fonts/nunito-sans-bold.woff2@(updateToken)" as="font" type="font/woff2" crossorigin />
 	<link rel="stylesheet" href="_content/BlazingStory/fonts/fonts.css@(updateToken)" />
 	<link rel="stylesheet" href="_content/BlazingStory/css/styles.min.css@(updateToken)" />
+	<link rel="stylesheet" href="_content/BlazingStory.ToolKit/css/styles.min.css@(updateToken)" />
 </HeadContent>
 
 <SvgIcons />
@@ -88,7 +90,7 @@
 			this.StateHasChanged();
 
 			await this.HelperScript.SetupKeyDownReceiverAsync();
-			this._SideBarSize = await this.HelperScript.GetLocalStorageItemAsync(this.SideBarSizeKeyName, this._SideBarSize);
+			this._SideBarSize = await this.JSRuntime.GetLocalStorageItemAsync(this.SideBarSizeKeyName, this._SideBarSize);
 			this.StateHasChanged();
 		}
 
@@ -135,7 +137,7 @@
 
 	private async Task OnSideBarSizeChanged()
 	{
-		await this.HelperScript.SetLocalStorageItemAsync(this.SideBarSizeKeyName, _SideBarSize);
+		await this.JSRuntime.SetLocalStorageItemAsync(this.SideBarSizeKeyName, _SideBarSize);
 	}
 
 	private ValueTask OnToggleSideBarVisible() => this.ToggleSideBarVisibliy(this._SideBarVisibleCommand);
