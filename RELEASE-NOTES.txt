@@ -1,5 +1,5 @@
 v.1.0.0-preview.70
-- Improve: Enabled the full usage of RenderFragment (note: this is not fully supported with EditForm and/or InputBase).
+- Improve: Enabled the full usage of RenderFragment (note: this is not fully supported with EditForm and/or InputBase). (PR #53, contributed by @WimVdSAllPhi)
 
 v.1.0.0-preview.69
 - Fix: Fixed hot reload build errors (CS8785/CS0234) caused by the MD2RazorGenerator package by updating it to v.1.2.4 in the project templates.
