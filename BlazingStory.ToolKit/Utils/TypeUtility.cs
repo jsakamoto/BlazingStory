@@ -128,15 +128,14 @@ public static class TypeUtility
 
         else if (primaryType == typeof(RenderFragment))
         {
-            RenderFragment renderFragment = builder => builder.AddContent(0, sourceString);
-            convertedValue = renderFragment;
+            convertedValue = sourceString.ToRenderFragment();
             return true;
         }
 
         else if (primaryType.IsGenericTypeOf(typeof(RenderFragment<>)))
         {
             var argumentType = primaryType.GetGenericArguments().First();
-            convertedValue = RenderFragmentKit.FromString(argumentType, sourceString);
+            convertedValue = sourceString.ToRenderFragment(argumentType);
             return true;
         }
 

@@ -1,3 +1,6 @@
+v.1.0.0-preview.70
+- Improve: Enabled the full usage of RenderFragment (note: this is not fully supported with EditForm and/or InputBase). (PR #53, contributed by @WimVdSAllPhi)
+
 v.1.0.0-preview.69
 - Fix: Fixed hot reload build errors (CS8785/CS0234) caused by the MD2RazorGenerator package by updating it to v.1.2.4 in the project templates.
 
@@ -111,7 +114,7 @@ v.1.0.0-preview.36
 - Fix: hotkeys didn't work on Blazor Server hosting model.
 
 v.1.0.0-preview.35
-- Fix: a Story server app deployed under the subpath didn't work.
+- Fix: a Story server app deployed under the sub-path didn't work.
 
 v.1.0.0-preview.34
 - Fix: navigation next/prev stories, docs, and components didn't work.
@@ -251,7 +254,7 @@ v.1.0.0-preview.1.2
 - Improve the README and the project template to explain how to add custom css and js files for stories.
 
 v.1.0.0-preview.1.1
-- Fix: 3rd party libraries CSS file importing failed if the app deployed under subpath.
+- Fix: 3rd party libraries CSS file importing failed if the app deployed under sub-path.
 
 v.1.0.0-preview.1
 - 1st release.

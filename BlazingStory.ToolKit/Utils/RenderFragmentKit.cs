@@ -1,12 +1,11 @@
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 using BlazingStory.ToolKit.Extensions;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
-using Microsoft.AspNetCore.Components.RenderTree;
-using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace BlazingStory.ToolKit.Utils;
 
@@ -16,129 +15,62 @@ namespace BlazingStory.ToolKit.Utils;
 public static class RenderFragmentKit
 {
     /// <summary>
-    /// When the given object is <see cref="RenderFragment"/> or <see cref="RenderFragment&lt;TValue&gt;"/>, returns true and the string content what is the given <see cref="RenderFragment"/> renders.
+    /// Get the string content what is the given <see cref="RenderFragment" /> renders.
     /// </summary>
-    /// <param name="obj">The object to convert to string if it is <see cref="RenderFragment"/> or <see cref="RenderFragment&lt;TValue&gt;"/>.</param>
-    /// <param name="result">The string content what is the given <see cref="RenderFragment"/> or <see cref="RenderFragment&lt;TValue&gt;"/> renders.</param>
-    /// <returns>True if the given object is <see cref="RenderFragment"/> or <see cref="RenderFragment&lt;TValue&gt;"/>. Otherwise, false.</returns>
-    [UnconditionalSuppressMessage("Trimming", "IL2060")]
-    [DynamicDependency(NonPublicMethods, "BlazingStory.Internals.Utils.RenderFragmentKit", "BlazingStory")]
-    public static bool TryToString(object? obj, [NotNullWhen(true)] out string? result)
+    /// <param name="fragment">RenderFragment to get the string content.</param>
+    /// <returns>The string content what is the given <see cref="RenderFragment" /> renders.</returns>
+    [SuppressMessage("Usage", "BL0006:Do not use RenderTree types", Justification = "<Pending>")]
+    public static async ValueTask<string> ToMarkupStringAsync(this RenderFragment fragment)
     {
-        if (obj is RenderFragment renderFragment)
-        {
-            result = ToString(renderFragment);
-            return true;
-        }
-        else if (obj?.GetType().IsGenericTypeOf(typeof(RenderFragment<>)) == true)
-        {
-            var typeOfContext = obj.GetType().GetGenericArguments().First();
-            var toStringMethod = ToStringMethodT.Value.MakeGenericMethod(typeOfContext);
+        await using var services = new ServiceCollection().BuildServiceProvider();
+        await using var htmlRenderer = new HtmlRenderer(services, NullLoggerFactory.Instance);
 
-            result = toStringMethod.Invoke(null, new[] { obj }) as string ?? "";
-            return true;
-        }
-        else
+        var result = await htmlRenderer.Dispatcher.InvokeAsync(async () =>
         {
-            result = null;
-            return false;
-        }
+            var output = await htmlRenderer.RenderComponentAsync<ContainerComponent<object>>(
+                    ParameterView.FromDictionary(new Dictionary<string, object?>
+                    {{ "Content", fragment }}));
+
+            return output.ToHtmlString();
+        });
+
+        return result;
     }
 
-    private static readonly Lazy<MethodInfo> ToStringMethodT = new(() => typeof(RenderFragmentKit)
+    [UnconditionalSuppressMessage("Trimming", "IL2060")]
+    public static async ValueTask<string> TryToMarkupStringAsync(object? value, Func<object?, string>? fallback = null)
+    {
+        if (value is string str) return str;
+        if (value is RenderFragment renderFragment) return await renderFragment.ToMarkupStringAsync();
+        if (value?.GetType().IsGenericTypeOf(typeof(RenderFragment<>)) == true)
+        {
+            var typeOfContext = value.GetType().GetGenericArguments().First();
+            var toMarkupStringAsyncMethod = RenderFragmentKit.ToMarkupStringAsyncT.Value.MakeGenericMethod(typeOfContext);
+            var result = toMarkupStringAsyncMethod.Invoke(null, [value]);
+            if (result is ValueTask<string> taskResult) return await taskResult;
+        }
+
+        return fallback?.Invoke(value) ?? value?.ToString() ?? string.Empty;
+    }
+
+    /// <summary>
+    /// Get the string content what is the given <see cref="RenderFragment&lt;TValue&gt;" /> renders.
+    /// </summary>
+    /// <param name="renderFragment">The <see cref="RenderFragment&lt;TValue&gt;" /> to get the string content.</param>
+    /// <returns>The string content what is the given <see cref="RenderFragment&lt;TValue&gt;" /> renders.</returns>
+    public static async ValueTask<string?> ToMarkupStringAsync<TContext>(this RenderFragment<TContext>? renderFragment)
+    {
+        var innerRenderFragment = renderFragment?.Invoke(default!);
+        if (innerRenderFragment is null) return string.Empty;
+
+        return await innerRenderFragment.ToMarkupStringAsync();
+    }
+
+    private static readonly Lazy<MethodInfo> ToMarkupStringAsyncT = new(() => typeof(RenderFragmentKit)
            .GetMethods(BindingFlags.Public | BindingFlags.Static)
-           .Where(m => m.Name == nameof(ToString))
+           .Where(m => m.Name == nameof(ToMarkupStringAsync))
            .Where(m => m.IsGenericMethod)
            .First());
-
-    /// <summary>
-    /// Get the string content what is the given <see cref="RenderFragment&lt;TValue&gt;"/> renders.
-    /// </summary>
-    /// <param name="renderFragment">The <see cref="RenderFragment&lt;TValue&gt;"/> to get the string content.</param>
-    /// <returns>The string content what is the given <see cref="RenderFragment&lt;TValue&gt;"/> renders.</returns>
-    public static string ToString<TContext>(RenderFragment<TContext>? renderFragment)
-    {
-        if (renderFragment == null) return string.Empty;
-        var innerRenderFragment = renderFragment.Invoke(default!);
-        return ToString(innerRenderFragment);
-    }
-
-#pragma warning disable BL0006 // Do not use RenderTree types
-
-    /// <summary>
-    /// Get the string content what is the given <see cref="RenderFragment"/> renders.
-    /// </summary>
-    /// <param name="renderFragment">The <see cref="RenderFragment"/> to get the string content.</param>
-    /// <returns>The string content what is the given <see cref="RenderFragment"/> renders.</returns>
-    internal static string ToString(RenderFragment? renderFragment)
-    {
-        var renderTreeBuilder = new RenderTreeBuilder();
-        renderFragment?.Invoke(renderTreeBuilder);
-
-        var frames = renderTreeBuilder.GetFrames();
-        var stringBuilder = new StringBuilder();
-        for (var i = 0; i < frames.Count; i++)
-        {
-            var frame = frames.Array[i];
-            switch (frame.FrameType)
-            {
-                case RenderTreeFrameType.Text:
-                    stringBuilder.Append(frame.TextContent);
-                    break;
-                case RenderTreeFrameType.Markup:
-                    stringBuilder.Append(frame.MarkupContent);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        return stringBuilder.ToString();
-    }
-#pragma warning restore BL0006 // Do not use RenderTree types
-
-    private static readonly Lazy<MethodInfo> AddContentMethod = new(() => typeof(RenderTreeBuilder).GetMethod(nameof(RenderTreeBuilder.AddContent), new[] { typeof(int), typeof(string) }) ?? throw new InvalidOperationException());
-
-    private static readonly Lazy<ParameterExpression> BuilderParam = new(() => Expression.Parameter(typeof(RenderTreeBuilder), "builder"));
-
-    /// <summary>
-    /// Convert the given string to <see cref="RenderFragment"/>.
-    /// </summary>
-    /// <param name="text">The string content what is the <see cref="RenderFragment&lt;TValue&gt;"/> will render.</param>
-    /// <returns>The <see cref="RenderFragment"/> that will render the given string content.</returns>
-    public static RenderFragment FromString(string text)
-    {
-        return (builder) => builder.AddContent(0, text);
-    }
-
-    /// <summary>
-    /// Convert the given string to <see cref="RenderFragment&lt;TValue&gt;"/>.
-    /// </summary>
-    /// <typeparam name="T">The type argument of <see cref="RenderFragment&lt;TValue&gt;"/>.</typeparam>
-    /// <param name="text">The string content what is the <see cref="RenderFragment&lt;TValue&gt;"/> will render.</param>
-    /// <returns>The <see cref="RenderFragment&lt;TValue&gt;"/> that will render the given string content.</returns>
-    public static object FromString<T>(string text)
-    {
-        return FromString(typeof(T), text);
-    }
-
-    /// <summary>
-    /// Convert the given string to <see cref="RenderFragment&lt;TValue&gt;"/>.
-    /// </summary>
-    /// <param name="argumentType">The type argument of <see cref="RenderFragment&lt;TValue&gt;"/>.</param>
-    /// <param name="text">The string content what is the <see cref="RenderFragment&lt;TValue&gt;"/> will render.</param>
-    /// <returns>The <see cref="RenderFragment&lt;TValue&gt;"/> that will render the given string content.</returns>
-    public static object FromString(Type argumentType, string text)
-    {
-        var addContentCall = Expression.Call(BuilderParam.Value, AddContentMethod.Value, Expression.Constant(0), Expression.Constant(text));
-        var renderFragment = Expression.Lambda(typeof(RenderFragment), addContentCall, BuilderParam.Value);
-
-        var argParam = Expression.Parameter(argumentType, "arg");
-        var renderFragmentTDelegateType = typeof(RenderFragment<>).MakeGenericType(argumentType);
-        var renderFragmentT = Expression.Lambda(renderFragmentTDelegateType, renderFragment, argParam);
-
-        return renderFragmentT.Compile();
-    }
 
     /// <summary>
     /// Returns whether the given value is a <see cref="RenderFragment"/> or <see cref="RenderFragment{TValue}"/>.
@@ -149,4 +81,19 @@ public static class RenderFragmentKit
         var type = value is Type t ? t : value?.GetType();
         return type == typeof(RenderFragment) || type?.IsGenericTypeOf(typeof(RenderFragment<>)) == true;
     }
+
+    [Obsolete("This method is no longer used and will be removed in a future version."), EditorBrowsable(EditorBrowsableState.Never)]
+    public static bool TryToString(object? obj, [NotNullWhen(true)] out string? result) => throw new NotImplementedException();
+
+    [Obsolete("This method is no longer used and will be removed in a future version."), EditorBrowsable(EditorBrowsableState.Never)]
+    public static string ToString<TContext>(RenderFragment<TContext>? renderFragment) => throw new NotImplementedException();
+
+    [Obsolete("This method is no longer used and will be removed in a future version."), EditorBrowsable(EditorBrowsableState.Never)]
+    public static RenderFragment FromString(string text) => throw new NotImplementedException();
+
+    [Obsolete("This method is no longer used and will be removed in a future version."), EditorBrowsable(EditorBrowsableState.Never)]
+    public static object FromString<T>(string text) => throw new NotImplementedException();
+
+    [Obsolete("This method is no longer used and will be removed in a future version."), EditorBrowsable(EditorBrowsableState.Never)]
+    public static object FromString(Type argumentType, string text) => throw new NotImplementedException();
 }

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using BlazingStory.Components;
 using BlazingStory.Internals.Services;
 using BlazingStory.Internals.Services.Docs;
@@ -107,7 +107,7 @@ internal class StoriesTool
         var projectionTasks = container.Stories.Select(async (BlazingStory.Internals.Models.Story s) =>
         {
             var originalCodeText = await StoriesRazorSource.GetSourceCodeAsync(s);
-            var transformedCodeText = StoriesRazorSource.UpdateSourceTextWithArgument(s, originalCodeText);
+            var transformedCodeText = await StoriesRazorSource.UpdateSourceTextWithArgumentAsync(s, originalCodeText);
 
             var description = await CustomStaticHtmlRenderer.RenderToHtmlStringAsync(s.Description, scope.ServiceProvider);
             description = string.Join('\n', description.Split('\n').Select(line => line.Trim(' ', '\t', '\n')));

@@ -121,11 +121,11 @@ internal static class StoriesRazorSource
     /// <param name="story">The story to update the source code.</param>
     /// <param name="codeText">The source code of the story to update.</param>
     /// <returns></returns>
-    internal static string UpdateSourceTextWithArgument(IStory story, string codeText)
+    internal static async ValueTask<string> UpdateSourceTextWithArgumentAsync(IStory story, string codeText)
     {
         var componentTagPattern = CreateComponentTagPattern(story);
         var context = new UpdateSourceContext(story.Context.Parameters, componentTagPattern);
-        return UpdateSourceTextWithArgument(context, codeText, story.Context.Args, hasAtAttributeOnce: false);
+        return await UpdateSourceTextWithArgumentAsync(context, codeText, story.Context.Args, hasAtAttributeOnce: false);
     }
 
     private static string CreateComponentTagPattern(IStory story)
@@ -177,7 +177,7 @@ internal static class StoriesRazorSource
         return true;
     }
 
-    private static string UpdateSourceTextWithArgument(UpdateSourceContext context, string codeText, Arguments args, bool hasAtAttributeOnce = true)
+    private static async ValueTask<string> UpdateSourceTextWithArgumentAsync(UpdateSourceContext context, string codeText, Arguments args, bool hasAtAttributeOnce = true)
     {
         // "        <ButtonComponent       Text="Hello" @attributes=\"context.Args\" />"
         //  ~~~~~~~~ ~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -190,12 +190,12 @@ internal static class StoriesRazorSource
             for (var i = 0; i < tagMatch.Parameters.Count; i++)
             {
                 if (!TryUpdateCodeText(context, codeText, tagMatch, args, i, out var updatedCodeText, out var nextArgs)) continue;
-                return UpdateSourceTextWithArgument(context, updatedCodeText, nextArgs);
+                return await UpdateSourceTextWithArgumentAsync(context, updatedCodeText, nextArgs);
             }
         }
 
         // Update render fragments
-        return UpdateRenderFragments(context, codeText, tagMatch, args);
+        return await UpdateRenderFragmentsAsync(context, codeText, tagMatch, args);
     }
 
     private static bool TryUpdateCodeText(UpdateSourceContext context, string codeText, TagMatch tagMatch, Arguments args, int i, [NotNullWhen(true)] out string? updatedCodeText, [NotNullWhen(true)] out Arguments? nextArgs)
@@ -254,7 +254,7 @@ internal static class StoriesRazorSource
         }
     }
 
-    private static string UpdateRenderFragments(UpdateSourceContext context, string codeText, TagMatch tagMatch, Arguments args)
+    private static async ValueTask<string> UpdateRenderFragmentsAsync(UpdateSourceContext context, string codeText, TagMatch tagMatch, Arguments args)
     {
         var renderFragmentArgs = args.Where(item => context.IsRenderFragmentParam(item.Key)).ToArray();
 
@@ -276,7 +276,7 @@ internal static class StoriesRazorSource
         {
             if (renderFragmentKeys.Contains(arg.Key)) continue;
 
-            var text = RenderFragmentKit.TryToString(arg.Value, out var t) ? t : arg.Value?.ToString() ?? "";
+            var text = await RenderFragmentKit.TryToMarkupStringAsync(arg.Value);
 
             if (arg.Key == "ChildContent" && renderFragmentArgs.Length == 1)
             {

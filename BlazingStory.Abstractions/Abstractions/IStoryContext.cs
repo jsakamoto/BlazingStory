@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace BlazingStory.Abstractions;
 
 /// <summary>
@@ -49,11 +51,7 @@ public interface IStoryContext
     /// <param name="newValue">The new value to set.</param>
     ValueTask AddOrUpdateArgumentAsync(string name, object? newValue);
 
-    /// <summary>
-    /// Converts a parameter value to its string representation.
-    /// </summary>
-    /// <param name="name">The parameter name.</param>
-    /// <param name="value">The value to convert.</param>
+    [Obsolete("This method is no longer used and will be removed in a future version."), EditorBrowsable(EditorBrowsableState.Never)]
     string ConvertParameterValueToString(string name, object? value);
 
     /// <summary>
