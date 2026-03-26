@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Reflection;
 using BlazingStory.Abstractions;
 using BlazingStory.ToolKit.Extensions;
@@ -142,7 +143,7 @@ public static class TypeUtility
         else if (IsParsableType(primaryType))
         {
             var tryParseMethod = primaryType.GetMethod(nameof(IParsable<int>.TryParse), BindingFlags.Public | BindingFlags.Static, [typeof(string), typeof(IFormatProvider), primaryType.MakeByRefType()]);
-            var parameters = new object?[] { sourceString, default(IFormatProvider), Activator.CreateInstance(primaryType) };
+            var parameters = new object?[] { sourceString, CultureInfo.InvariantCulture, Activator.CreateInstance(primaryType) };
             if ((bool)(tryParseMethod?.Invoke(null, parameters) ?? false))
             {
                 convertedValue = parameters[2];
