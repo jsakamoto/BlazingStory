@@ -1,4 +1,4 @@
-﻿@using System.Collections
+@using System.Collections
 @using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
 @inherits ParameterControllerBase
 
@@ -67,63 +67,6 @@ else
 {
     <span>@(Value?.ToString() ?? "-")</span>
 }
-
-<style>
-    .array-parameter-controller {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .array-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding-bottom: 4px;
-        border-bottom: 1px solid var(--bs-border-color);
-        font-size: 0.9em;
-        font-weight: 500;
-    }
-
-    .empty-state {
-        text-align: center;
-        color: var(--bs-dimmed-text-color);
-        padding: 12px;
-        font-style: italic;
-        font-size: 0.9em;
-    }
-
-    .array-items {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        max-height: 300px;
-        overflow-y: auto;
-    }
-
-    .array-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 8px;
-        padding: 4px;
-        background: var(--bs-dimmed-back-color);
-        border-radius: 4px;
-        border: 1px solid var(--bs-border-color);
-    }
-
-    .item-index {
-        font-family: monospace;
-        font-size: 0.85em;
-        color: var(--bs-dimmed-text-color);
-        min-width: 30px;
-        padding-top: 6px;
-        text-align: right;
-    }
-
-    .item-control {
-        flex: 1;
-    }
-</style>
 
 @code {
     private List<object?> _arrayItems = [];
