@@ -26,8 +26,8 @@ else
     </LayoutView>
 
     <CascadingValue Name="Globals" Value="this._Globals">
-        <CascadingValue Name="Args" Value="this._Args">
-            <CascadingValue Name="Story" Value="this._Story">
+        <CascadingValue Name="Story" Value="this._Story">
+            <CascadingValue Name="Args" Value="this._Args">
                 @foreach (var previewDecorator in this.AddonManager.GetPreviewDecorators())
                 {
                     <DynamicComponent @key="previewDecorator.Id"
@@ -98,7 +98,7 @@ else
         var queryStrings = HttpUtility.ParseQueryString(new Uri(this.NavigationManager.Uri).Query);
         var isUpdatedArgs = this.DecodeQueryParams(queryStrings, "args", ref this._ArgsString, ref this._Args);
         var isUpdatedGlobals = this.DecodeQueryParams(queryStrings, "globals", ref this._GlobalsString, ref this._Globals);
-        
+
         if (isUpdatedArgs || isUpdatedGlobals) this.StateHasChanged();
     }
 
