@@ -1,0 +1,210 @@
+@using System.Collections
+@using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+@inherits ParameterControllerBase
+
+@if (this.Value is Unknown)
+{
+    <SquareButton Text="Set array" OnClick="InitializeEmpty" />
+}
+else if (this._elementType is not null)
+{
+    <div class="array-parameter-controller">
+        <div class="array-header">
+            <span>@GetArrayTypeName() [@_arrayItems.Count]</span>
+            <SquareButton Text="Add Item" OnClick="AddItem" />
+        </div>
+
+        @if (_arrayItems.Count == 0)
+        {
+            <div class="empty-state">
+                <em>Empty array - click "Add Item" to insert items</em>
+            </div>
+        }
+        else
+        {
+            <div class="array-items">
+                @for (int i = 0; i < _arrayItems.Count; i++)
+                {
+                    var index = i; // Capture for closure
+
+                    <div class="array-item">
+                        <span class="item-index">[@index]</span>
+                        <div class="item-control">
+                            @if (_elementType == typeof(string))
+                            {
+                                <TextArea Value="@(_arrayItems[index]?.ToString() ?? "")" PlaceHolder="Enter text..."
+                                          OnInput="@(e => UpdateItem(index, e.Value?.ToString()))" />
+                            }
+                            else if (_elementType == typeof(bool))
+                            {
+                                <ToggleButton Value="@(_arrayItems[index] is true)"
+                                              OnChange="@(value => UpdateItem(index, value))" />
+                            }
+                            else if (this._elementType is not null && TypeUtility.IsNumericType(this._elementType))
+                            {
+                                <NumberInput Value="@(_arrayItems[index]?.ToString() ?? "")" PlaceHolder="Enter number..."
+                                             AllowDecimalPoint="@TypeUtility.IsDecimalPointType(this._elementType)""
+                                             OnInput="@(e => UpdateItem(index, e.Value?.ToString()))" />
+                            }
+                            else if (_elementType?.IsEnum == true)
+                            {
+                                <Select Value="@(_arrayItems[index]?.ToString() ?? "")" Items="@_enumOptions"
+                                        OnChange="@(e => UpdateItem(index, e.Value?.ToString()))" />
+                            }
+                            else
+                            {
+                                <span>@(_arrayItems[index]?.ToString() ?? "-")</span>
+                            }
+                        </div>
+                        <IconButton Icon="SvgIconType.Close" OnClick="@(() => RemoveItem(index))" />
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}
+else
+{
+    <span>@(Value?.ToString() ?? "-")</span>
+}
+
+@code {
+    private List<object?> _arrayItems = [];
+    private Type? _elementType;
+    private string[] _enumOptions = [];
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        this.InitializeArrayItems();
+    }
+
+    private void InitializeArrayItems()
+    {
+        var primaryType = this.Parameter.TypeStructure.PrimaryType;
+
+        // Determine element type
+#pragma warning disable IL2077 // The return value of GetElementType/GetGenericArguments does not have matching annotations.
+        this._elementType = 
+            primaryType.IsArray ? primaryType.GetElementType() : 
+            primaryType.IsGenericType ? primaryType.GetGenericArguments().FirstOrDefault() : 
+            null;
+#pragma warning restore IL2077
+
+        // Cache enum names
+        this._enumOptions = this._elementType is { IsEnum: true }
+            ? Enum.GetNames(this._elementType)
+            : [];
+
+        // Initialize items from current value
+        this._arrayItems.Clear();
+        if (this.Value is IEnumerable enumerable and not string)
+        {
+            foreach (var item in enumerable)
+            {
+                this._arrayItems.Add(item);
+            }
+        }
+    }
+
+    private string GetArrayTypeName()
+    {
+        if (this._elementType == null) return "Array";
+        var keyword = TypeUtility.GetTypeNameAsLangKeyword(this._elementType);
+        return $"{keyword}[]";
+    }
+
+    private object? GetDefaultValue()
+    {
+        if (this._elementType == null) return null;
+        if (this._elementType == typeof(string)) return string.Empty;
+        if (this._elementType.IsEnum) return Enum.GetValues(this._elementType).GetValue(0) ?? default;
+#pragma warning disable IL2077 // _elementType's type may not satisfy DynamicallyAccessedMembers for Activator.CreateInstance.
+        if (this._elementType.IsValueType) return Activator.CreateInstance(this._elementType) ?? default;
+#pragma warning restore IL2077
+        return null;
+    }
+
+    private async Task InitializeEmpty()
+    {
+        await this.UpdateArray();
+    }
+
+    private async Task AddItem()
+    {
+        if (this._elementType == null) return;
+
+        // Add default value based on type
+        var defaultValue = this.GetDefaultValue();
+        this._arrayItems.Add(defaultValue);
+        await this.UpdateArray();
+    }
+
+    private async Task RemoveItem(int index)
+    {
+        if (index >= 0 && index < this._arrayItems.Count)
+        {
+            this._arrayItems.RemoveAt(index);
+            await this.UpdateArray();
+        }
+    }
+
+    private async Task UpdateItem(int index, object? value)
+    {
+        if (index < 0 || index >= this._arrayItems.Count || this._elementType == null) return;
+
+        // Convert value to correct type
+        var convertedValue = this.ConvertToElementType(value);
+        this._arrayItems[index] = convertedValue;
+        await this.UpdateArray();
+    }
+
+    private object? ConvertToElementType(object? value)
+    {
+        if (this._elementType == null || value == null) return null;
+#pragma warning disable IL2077 // _elementType may not satisfy DynamicallyAccessedMembers for TypeStructure ctor.
+        var typeStructure = new BlazingStory.Abstractions.TypeStructure(
+            isNullable: false, 
+            isGeneric: false, 
+            primaryType: this._elementType, 
+            secondaryTypes: []);
+#pragma warning restore IL2077            
+        return TypeUtility.TryConvertType(typeStructure, value.ToString() ?? "", out var converted)
+            ? converted
+            : this.GetDefaultValue();
+    }
+
+    private async Task UpdateArray()
+    {
+        if (this._elementType == null) return;
+
+        var primaryType = this.Parameter.TypeStructure.PrimaryType;
+        object? arrayValue = null;
+
+        if (primaryType.IsArray)
+        {
+            // Create typed array
+            var array = Array.CreateInstance(this._elementType, this._arrayItems.Count);
+            for (var i = 0; i < this._arrayItems.Count; i++)
+            {
+                array.SetValue(this._arrayItems[i], i);
+            }
+            arrayValue = array;
+        }
+        else if (primaryType.IsGenericType)
+        {
+            // Create generic list
+            var listType = typeof(List<>).MakeGenericType(this._elementType);
+            var list = Activator.CreateInstance(listType) as IList;
+            if (list is null) return;
+
+            foreach (var item in this._arrayItems)
+            {
+                list.Add(item);
+            }
+            arrayValue = list;
+        }
+
+        await this.OnInputAsync(arrayValue);
+    }
+}

@@ -2,6 +2,7 @@ using Bunit;
 
 namespace BlazingStory.Test.Internals.Components.Inputs;
 
+[SetCulture("en-US")]
 public class NumberInputTest
 {
     [Test]

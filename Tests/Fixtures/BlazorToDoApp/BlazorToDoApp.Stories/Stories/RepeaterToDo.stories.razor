@@ -1,12 +1,14 @@
-﻿@attribute [Stories("Components/atoms/Repeater")]
+@attribute [Stories("Components/atoms/Repeater (ToDo)")]
 
 <Stories TComponent="Repeater<ToDoItem>">
+
     <Story Name="Default">
         <Template>
             <Repeater Items="_items" Context="repeaterContext" ItemTemplate="_itemTemplate" @attributes="context.Args">
             </Repeater>
         </Template>
     </Story>
+
 </Stories>
 
 @code

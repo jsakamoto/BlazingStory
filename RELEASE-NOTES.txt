@@ -1,3 +1,6 @@
+v.1.0.0-preview.71
+- Feature: Added ArrayParameterController for array/list parameter editing in the control panel. Supports string, bool, number, and enum arrays with add/remove/edit UI. Uses theme-aware CSS variables for dark/light mode compatibility.
+
 v.1.0.0-preview.70
 - Improve: Enabled the full usage of RenderFragment (note: this is not fully supported with EditForm and/or InputBase). (PR #53, contributed by @WimVdSAllPhi)
 

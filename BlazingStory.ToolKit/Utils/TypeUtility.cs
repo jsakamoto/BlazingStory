@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using BlazingStory.Abstractions;
@@ -91,7 +92,18 @@ public static class TypeUtility
     /// <param name="sourceString">The string to convert from.</param>
     /// <param name="convertedValue">The converted value if the conversion is successful.</param>
     /// <returns>True if the conversion is successful, otherwise false.</returns>
-    public static bool TryConvertType(TypeStructure targetTypeStructure, string sourceString, out object? convertedValue)
+    public static bool TryConvertType(TypeStructure targetTypeStructure, string sourceString, out object? convertedValue) => TryConvertType(targetTypeStructure, sourceString, out convertedValue, formatProvider: null);
+
+    /// <summary>
+    /// Try to convert the given string to the given type.<br/>
+    /// (Most cases, this method uses for deserialize URL query parameters of iframe to component parameters.)
+    /// </summary>
+    /// <param name="targetTypeStructure">The structure of the type to convert to.</param>
+    /// <param name="sourceString">The string to convert from.</param>
+    /// <param name="convertedValue">The converted value if the conversion is successful.</param>
+    /// <param name="formatProvider">The format provider to use for parsing, if applicable.</param>
+    /// <returns>True if the conversion is successful, otherwise false.</returns>
+    public static bool TryConvertType(TypeStructure targetTypeStructure, string sourceString, out object? convertedValue, IFormatProvider? formatProvider)
     {
         var primaryType = targetTypeStructure.PrimaryType;
         var isNullable = targetTypeStructure.IsNullable;
@@ -139,10 +151,41 @@ public static class TypeUtility
             return true;
         }
 
+        else if (primaryType.IsArray)
+        {
+            var elementType = primaryType.GetElementType();
+            if (elementType is not null)
+            {
+                convertedValue = ConvertToCollection(
+                    sourceString,
+                    elementType,
+                    createCollection: (size) => Array.CreateInstance(elementType, size),
+                    setValue: (array, index, value) => array.SetValue(value, index),
+                    formatProvider);
+                return true;
+            }
+            convertedValue = null;
+            return false;
+        }
+
+        else if (targetTypeStructure.IsGeneric && IsListCompatibleType(primaryType))
+        {
+            var elementType = targetTypeStructure.SecondaryTypes[0];
+            var listType = typeof(List<>).MakeGenericType(elementType);
+
+            convertedValue = ConvertToCollection(
+                sourceString,
+                elementType,
+                createCollection: (size) => (IList)Activator.CreateInstance(listType)!,
+                setValue: (list, index, value) => list.Add(value),
+                formatProvider);
+            return true;
+        }
+
         else if (IsParsableType(primaryType))
         {
             var tryParseMethod = primaryType.GetMethod(nameof(IParsable<int>.TryParse), BindingFlags.Public | BindingFlags.Static, [typeof(string), typeof(IFormatProvider), primaryType.MakeByRefType()]);
-            var parameters = new object?[] { sourceString, default(IFormatProvider), Activator.CreateInstance(primaryType) };
+            var parameters = new object?[] { sourceString, formatProvider, Activator.CreateInstance(primaryType) };
             if ((bool)(tryParseMethod?.Invoke(null, parameters) ?? false))
             {
                 convertedValue = parameters[2];
@@ -152,6 +195,45 @@ public static class TypeUtility
 
         convertedValue = null;
         return false;
+    }
+
+    private static TCollection ConvertToCollection<TCollection>(string sourceString, Type elementType, Func<int, TCollection> createCollection, Action<TCollection, int, object?> setValue, IFormatProvider? formatProvider)
+    {
+        var items = sourceString.Split(',')
+            .Select(s => s.Replace("%2c", ",").Replace("%25", "%"))
+            .ToArray();
+        var collection = createCollection(items.Length);
+
+        for (var i = 0; i < items.Length; i++)
+        {
+#pragma warning disable IL2067
+            var elementStructure = ExtractTypeStructure(elementType);
+#pragma warning restore IL2067
+            if (TryConvertType(elementStructure, items[i], out var elementValue, formatProvider))
+            {
+                setValue(collection, i, elementValue);
+            }
+            else setValue(collection, i, null);
+        }
+
+        return collection;
+    }
+
+    /// <summary>
+    /// Returns whether the given type is <see cref="List{T}"/> or a generic collection interface assignable from <see cref="List{T}"/>,
+    /// such as <see cref="IEnumerable{T}"/>, <see cref="ICollection{T}"/>, <see cref="IList{T}"/>,
+    /// <see cref="IReadOnlyCollection{T}"/>, or <see cref="IReadOnlyList{T}"/>.
+    /// </summary>
+    private static bool IsListCompatibleType(Type type)
+    {
+        if (!type.IsGenericType) return false;
+        var openType = type.GetGenericTypeDefinition();
+        return openType == typeof(List<>)
+            || openType == typeof(IEnumerable<>)
+            || openType == typeof(ICollection<>)
+            || openType == typeof(IList<>)
+            || openType == typeof(IReadOnlyCollection<>)
+            || openType == typeof(IReadOnlyList<>);
     }
 
     /// <summary>

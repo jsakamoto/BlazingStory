@@ -1,3 +1,4 @@
+@using System.Globalization
 @code
 {
     /// <summary>Gets or sets the current story whose context will be updated from URL args.</summary>
@@ -30,8 +31,7 @@
         {
             var parameter = parameters.FirstOrDefault(p => p.Name == arg.Key);
             if (parameter == null) continue;
-            if (!TypeUtility.TryConvertType(parameter.TypeStructure, arg.Value, out var value)) continue;
-
+            if (!TypeUtility.TryConvertType(parameter.TypeStructure, arg.Value, out var value, CultureInfo.InvariantCulture)) continue;
             await this.Story.Context.AddOrUpdateArgumentAsync(arg.Key, value);
         }
     }
