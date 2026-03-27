@@ -1,3 +1,5 @@
+@using System.Collections
+@using System.Globalization
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 
@@ -108,13 +110,35 @@
     [UnconditionalSuppressMessage("Trimming", "IL2060")]
     private async ValueTask<string> ConvertParameterValueToStringAsync(string name, object? value)
     {
+        static string ToFormattedString(object? obj) => obj switch
+        {
+            null => "(null)",
+            IFormattable f => f.ToString(format: null, formatProvider: CultureInfo.InvariantCulture),
+            _ => obj.ToString() ?? ""
+        };
+
+        static string EscapeCollectionItemString(string str) => str.Replace("%", "%25").Replace(",", "%2c");
+
         return await RenderFragmentKit.TryToMarkupStringAsync(value, fallback: _ =>
         {
             if (this.Story.Context.Parameters.TryGetByName(name, out var param))
             {
-                if (param.TypeStructure.IsNullable && value == null) return "(null)";
+                if (param.TypeStructure.IsNullable && value == null) return ToFormattedString(value);
+
+                // If the type of the parameter is compatible with IEnumerable, render the value as a list of items.
+                if (param.TypeStructure.PrimaryType.IsAssignableTo(typeof(IEnumerable)))
+                {
+                    var enumerable = value as IEnumerable;
+                    if (enumerable == null) return ToFormattedString(value);
+                    var items = new List<string>();
+                    foreach (var item in enumerable)
+                    {
+                        items.Add(EscapeCollectionItemString(ToFormattedString(item)));
+                    }
+                    return string.Join(",", items);
+                }
             }
-            return value?.ToString() ?? "";
+            return ToFormattedString(value);
         });
     }
 
