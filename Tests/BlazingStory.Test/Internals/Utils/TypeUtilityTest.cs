@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Test.Internals.Utils;
 
+[SetCulture("en-US")]
 public class TypeUtilityTest
 {
     [Test]
