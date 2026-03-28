@@ -1,3 +1,6 @@
+v.1.0.0-preview.72
+- Fix: Resolved .js module import failures on case-sensitive file systems (e.g., Linux) caused by incorrect URL casing in the content base path.
+
 v.1.0.0-preview.71
 - Feature: Added ArrayParameterController for array/list parameter editing in the control panel. Supports string, bool, number, and enum arrays with add/remove/edit UI. (PR #87, contributed by @WimVdSAllPhi)
 - Fix: Fixed a regression where the Actions panel stopped capturing events after switching stories.
