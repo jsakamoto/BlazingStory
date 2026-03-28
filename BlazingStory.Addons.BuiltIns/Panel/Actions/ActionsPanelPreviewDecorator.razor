@@ -24,7 +24,9 @@
     {
         await base.OnParametersSetAsync();
         if (Object.ReferenceEquals(this.Story, this._PrevStory)) return;
+        if (this._PrevStory is not null) this._PrevStory.Context.ArgumentsReset -= WireUpEventMonitorsAsync;
         this._PrevStory = this.Story;
+        if (this.Story is not null) this.Story.Context.ArgumentsReset += WireUpEventMonitorsAsync;
         await this.WireUpEventMonitorsAsync();
     }
 
@@ -94,6 +96,7 @@
 
     public async ValueTask DisposeAsync()
     {
+        if (this.Story is not null) this.Story.Context.ArgumentsReset -= WireUpEventMonitorsAsync;
         await this._JSModule.DisposeAsync();
     }
 }

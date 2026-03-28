@@ -17,6 +17,8 @@ internal class StoryContext : IStoryContext
 
     public event AsyncEventHandler? ArgumentChanged;
 
+    public event AsyncEventHandler? ArgumentsReset;
+
     /// <summary>
     /// This event is used to notify the story that it should re-render.
     /// </summary>
@@ -47,6 +49,8 @@ internal class StoryContext : IStoryContext
     public async ValueTask ResetArgumentsAsync()
     {
         this._Args.Clear();
+        await this.ArgumentsReset.InvokeAsync();
+
         foreach (var param in this.Parameters.Where(p => p.DefaultValue is not null))
         {
             this._Args[param.Name] = param.DefaultValue;

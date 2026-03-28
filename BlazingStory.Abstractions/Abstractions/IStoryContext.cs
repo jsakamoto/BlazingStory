@@ -23,6 +23,11 @@ public interface IStoryContext
     event AsyncEventHandler? ArgumentChanged;
 
     /// <summary>
+    /// Occurs when argument values are all reset to their default values.
+    /// </summary>
+    event AsyncEventHandler? ArgumentsReset;
+
+    /// <summary>
     /// This event is used to notify the story that it should re-render.
     /// </summary>
     event EventHandler? ShouldRender;
