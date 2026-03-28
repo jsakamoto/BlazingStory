@@ -1,4 +1,4 @@
-﻿using System.Xml.Linq;
+using System.Xml.Linq;
 using System.Xml.XPath;
 using BlazingStory.Build.Test._Fixtures;
 using Toolbelt.Diagnostics;
@@ -45,7 +45,7 @@ internal class BuildXmlDocCommentTest
         // When
         var listenUrl = $"http://localhost:{TcpNetwork.GetAvailableTCPv4Port()}";
         using var dotnetRun = XProcess.Start("dotnet", $"run --urls {listenUrl}", testFixtureSpace.TestAppProjDir, ConfigureXProcessOptions);
-        var success = await dotnetRun.WaitForOutputAsync(output => output.TrimStart().StartsWith("Now listening on: http"), millsecondsTimeout: 30000);
+        var success = await dotnetRun.WaitForOutputAsync(output => output.TrimStart().StartsWith("Now listening on: http"), options => options.IdleTimeout = 30000);
         success.IsTrue(message: dotnetRun.Output);
 
         // Then
