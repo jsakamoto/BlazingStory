@@ -5,7 +5,7 @@ namespace BlazingStory.ToolKit.Internals.Utils;
 
 internal static class JSModuleFactory
 {
-    private const string _DefaultBasePath = "./_content/BlazingStory.Toolkit/";
+    private const string _DefaultBasePath = "./_content/BlazingStory.ToolKit/";
 
     internal static JSModule Create(Func<IJSRuntime> jSRuntimeFactory, string modulePath)
     {
