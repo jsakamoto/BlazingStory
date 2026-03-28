@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <linker>
   <assembly fullname="BlazingStory">
-    <type fullname="BlazingStory.Addons.*" preserve="all" />
-    <type fullname="BlazingStory.Internals.Addons.*" preserve="all" />
     <type fullname="BlazingStory.Internals.Components.*" preserve="all" />
     <type fullname="BlazingStory.Internals.Pages.*" preserve="all" />
     <type fullname="BlazingStory.Internals.Events.Args.*" preserve="all" />
+  </assembly>
+  <assembly fullname="BlazingStory.Addons.BuiltIns">
+    <type fullname="BlazingStory.Addons.BuiltIns.Panel.Actions.ComponentActionEventArgs" preserve="all" />
+  </assembly>
+  <assembly fullname="Microsoft.AspNetCore.Components.Web">
+    <type fullname="Microsoft.AspNetCore.Components.Web.ClipboardEventArgs" preserve="all" />
+    <type fullname="Microsoft.AspNetCore.Components.Web.DragEventArgs" preserve="all" />
+    <type fullname="Microsoft.AspNetCore.Components.Web.ErrorEventArgs" preserve="all" />
+    <type fullname="Microsoft.AspNetCore.Components.Web.FocusEventArgs" preserve="all" />
+    <type fullname="Microsoft.AspNetCore.Components.Web.KeyboardEventArgs" preserve="all" />
+    <type fullname="Microsoft.AspNetCore.Components.Web.MouseEventArgs" preserve="all" />
+    <type fullname="Microsoft.AspNetCore.Components.Web.PointerEventArgs" preserve="all" />
+    <type fullname="Microsoft.AspNetCore.Components.Web.ProgressEventArgs" preserve="all" />
+    <type fullname="Microsoft.AspNetCore.Components.Web.TouchEventArgs" preserve="all" />
+    <type fullname="Microsoft.AspNetCore.Components.Web.WheelEventArgs" preserve="all" />
   </assembly>
 </linker>
