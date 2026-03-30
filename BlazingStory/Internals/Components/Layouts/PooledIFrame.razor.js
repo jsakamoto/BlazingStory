@@ -43,13 +43,54 @@ const waitForIFrameReady = async (iframe) => {
         }
     });
 };
+const createIFrameViaFetch = async (src) => {
+    const iframe = document.createElement('iframe');
+    iframe.src = 'about:blank';
+    // Try loading the iframe HTML via fetch to bypass broken response compression
+    // (e.g. Visual Studio dev server's ERR_CONTENT_DECODING_FAILED issue).
+    // We fetch index.html (which is served correctly) instead of iframe.html
+    // (which may be corrupted by VS dev server compression).
+    const baseUrl = new URL(src, document.baseURI);
+    const candidates = [baseUrl.origin + baseUrl.pathname, baseUrl.origin + '/index.html'];
+    for (const url of candidates) {
+        try {
+            const resp = await fetch(url);
+            if (resp.ok) {
+                let html = await resp.text();
+                html = html.replace('<base href="/"', `<base href="${baseUrl.origin}/"`);
+                iframe._fetchedHtml = html;
+                iframe._targetSrc = src;
+                break;
+            }
+        }
+        catch { /* try next candidate */ }
+    }
+    if (!iframe._fetchedHtml) {
+        iframe.src = src;
+    }
+    return iframe;
+};
+const writeHtmlToIFrame = (iframe) => {
+    if (!iframe._fetchedHtml) return;
+    const doc = iframe.contentDocument;
+    doc.open();
+    doc.write(iframe._fetchedHtml);
+    doc.close();
+    // Set the iframe location hash to carry the query parameters for Blazor routing.
+    const targetUrl = new URL(iframe._targetSrc, document.baseURI);
+    if (targetUrl.search) {
+        iframe.contentWindow.history.replaceState(null, '', targetUrl.pathname + targetUrl.search);
+    }
+    delete iframe._fetchedHtml;
+    delete iframe._targetSrc;
+};
 export const rent = async (containerElement, initialSrc, baseUri) => {
     const createIFrame = (src) => {
         const iframe = document.createElement('iframe');
         iframe.src = src;
         return iframe;
     };
-    const iframe = iframePoolElement.querySelector('iframe') ?? createIFrame(initialSrc);
+    let iframe = iframePoolElement.querySelector('iframe') ?? await createIFrameViaFetch(initialSrc);
     const iframeInPool = iframesInPool.find(item => item.iframe === iframe);
     if (iframeInPool) {
         clearTimeout(iframeInPool.TTLTimer);
@@ -61,6 +102,7 @@ export const rent = async (containerElement, initialSrc, baseUri) => {
     else {
         containerElement.moveBefore(iframe, null);
     }
+    writeHtmlToIFrame(iframe);
     const { contentWindow } = await waitForIFrameReady(iframe);
     if (contentWindow.location.href !== initialSrc) {
         await navigate(iframe, initialSrc, baseUri);
