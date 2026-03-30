@@ -12,7 +12,7 @@
         @if (_IsDropdownOpen)
         {
             <div class="searchable-select-dropdown">
-                @{ var filteredOptions = _FilteredOptions.ToArray(); }
+                @{ var filteredOptions = string.IsNullOrEmpty(_FilterText) ? _Options : _FilteredOptions.ToArray(); }
                 @if (filteredOptions.Any())
                 {
                     @foreach (var option in filteredOptions)
@@ -117,14 +117,15 @@ else
     private async Task _SelectOption((bool Selected, string? Text) option)
     {
         _IsDropdownOpen = false;
-        _FilterText = "";
+        _FilterText = option.Text ?? "";
         await OnChange.InvokeAsync(new ChangeEventArgs { Value = option.Text });
     }
 
     private void _OnFocusOut(FocusEventArgs args)
     {
         _IsDropdownOpen = false;
-        _FilterText = "";
+        var selectedText = _Options.FirstOrDefault(x => x.Selected).Text;
+        _FilterText = selectedText ?? "";
     }
 
     private async Task _OnKeyDown(KeyboardEventArgs args)

@@ -1,6 +1,7 @@
 @attribute [Stories("Examples/LargeEnumSelect")]
 
 <Stories TComponent="LargeEnumComponent">
+    <ArgType For="_ => _.Value" Control="ControlType.Select" />
     <Story Name="Default">
         <Template>
             <LargeEnumComponent @attributes="context.Args" />

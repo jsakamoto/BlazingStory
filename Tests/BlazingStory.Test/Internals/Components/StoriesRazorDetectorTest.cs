@@ -43,6 +43,6 @@ internal class StoriesRazorDetectorTest
             .Add(_ => _.StoriesStore, storiesStore));
 
         // Then
-        storiesStore.StoryContainers.Count().Is(7);
+        storiesStore.StoryContainers.Count().Is(8);
     }
 }
