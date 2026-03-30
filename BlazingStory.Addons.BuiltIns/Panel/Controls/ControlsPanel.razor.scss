@@ -73,6 +73,10 @@
                         border-radius: 3px;
                         border: 1px solid var(--bs-dimmed-back-color);
                     }
+
+                    & > .parameter-type-overflow {
+                        font-style: italic;
+                    }
                 }
             }
 

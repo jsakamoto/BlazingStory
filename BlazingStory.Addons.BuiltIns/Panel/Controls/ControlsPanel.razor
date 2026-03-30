@@ -47,10 +47,23 @@
                             </div>
 
                             <div class="parameter-type-holder">
-                                @foreach (var typeString in parameter.GetParameterTypeStrings())
+                                @{
+                                    var typeStrings = parameter.GetParameterTypeStrings().ToArray();
+                                    var maxVisible = 10;
+                                    var visibleStrings = typeStrings.Length > maxVisible
+                                        ? typeStrings.Take(maxVisible)
+                                        : typeStrings;
+                                }
+                                @foreach (var typeString in visibleStrings)
                                 {
                                     <span class="parameter-type">
                                         @typeString
+                                    </span>
+                                }
+                                @if (typeStrings.Length > maxVisible)
+                                {
+                                    <span class="parameter-type parameter-type-overflow">
+                                        ... and @(typeStrings.Length - maxVisible) more
                                     </span>
                                 }
                             </div>
