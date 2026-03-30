@@ -10,3 +10,54 @@
     fill: currentColor;
     pointer-events: none;
 }
+
+.searchable-select {
+    position: relative;
+    display: inline-flex;
+    width: 100%;
+
+    .searchable-select-input {
+        width: 100%;
+        cursor: text;
+    }
+
+    .searchable-select-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        max-height: 240px;
+        overflow-y: auto;
+        background: var(--bs-panel-bg, #fff);
+        border: 1px solid var(--bs-border-color, #ccc);
+        border-radius: 4px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        margin-top: 2px;
+
+        .searchable-select-option {
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            &:hover {
+                background: var(--bs-hover-bg, #f0f0f0);
+            }
+
+            &.selected {
+                font-weight: 600;
+                background: var(--bs-selected-bg, #e8f0fe);
+            }
+        }
+
+        .searchable-select-no-results {
+            padding: 8px 12px;
+            font-size: 13px;
+            color: var(--bs-muted-color, #888);
+            font-style: italic;
+        }
+    }
+}

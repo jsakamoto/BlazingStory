@@ -1,22 +1,60 @@
-<span class="select bs-basic-inputs-holder">
-    <SvgIcon Type="SvgIconType.Chevron" />
-
-    @*
-    The `@key` directive is used to force the re-rendering of the select element when the `_NoSelected` field changes.
-    This is necessary because once any available options are selected, adding the `selected` attribute to the disabled 
-    option element for the purpose of restoring the initial state never affects the select element.
-    *@
-    <select @key="_NoSelected" class="bs-basic-inputs" @onchange="this.OnChange">
-        <option disabled selected="@this._NoSelected">Choose option...</option>
-        @foreach (var option in this._Options)
+@if (_IsSearchable)
+{
+    <div class="searchable-select bs-basic-inputs-holder" @onfocusout="_OnFocusOut">
+        <input class="bs-basic-inputs searchable-select-input"
+               type="text"
+               value="@_FilterText"
+               placeholder="@_InputPlaceholder"
+               @oninput="_OnFilterInput"
+               @onfocus="_OnInputFocus"
+               @onkeydown="_OnKeyDown"
+               autocomplete="off" />
+        @if (_IsDropdownOpen)
         {
-            <option selected="@option.Selected">@option.Text</option>
+            <div class="searchable-select-dropdown">
+                @if (_FilteredOptions.Any())
+                {
+                    @foreach (var option in _FilteredOptions)
+                    {
+                        var capturedOption = option;
+                        <div class="searchable-select-option @(option.Selected ? "selected" : "")"
+                             @onmousedown="() => _SelectOption(capturedOption)">
+                            @option.Text
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="searchable-select-no-results">No matches</div>
+                }
+            </div>
         }
-    </select>
-</span>
+    </div>
+}
+else
+{
+    <span class="select bs-basic-inputs-holder">
+        <SvgIcon Type="SvgIconType.Chevron" />
+
+        @*
+        The `@key` directive is used to force the re-rendering of the select element when the `_NoSelected` field changes.
+        This is necessary because once any available options are selected, adding the `selected` attribute to the disabled 
+        option element for the purpose of restoring the initial state never affects the select element.
+        *@
+        <select @key="_NoSelected" class="bs-basic-inputs" @onchange="this.OnChange">
+            <option disabled selected="@this._NoSelected">Choose option...</option>
+            @foreach (var option in this._Options)
+            {
+                <option selected="@option.Selected">@option.Text</option>
+            }
+        </select>
+    </span>
+}
 
 @code
 {
+    private const int SearchableThreshold = 20;
+
     /// <summary>
     /// The currently selected value.
     /// </summary>
@@ -39,6 +77,19 @@
 
     private bool _NoSelected = false;
 
+    private bool _IsSearchable => (_Options.Count()) > SearchableThreshold;
+
+    private string _FilterText = "";
+
+    private bool _IsDropdownOpen = false;
+
+    private string? _InputPlaceholder => _Options.FirstOrDefault(x => x.Selected).Text ?? "Choose option...";
+
+    private IEnumerable<(bool Selected, string? Text)> _FilteredOptions =>
+        string.IsNullOrEmpty(_FilterText)
+            ? _Options
+            : _Options.Where(x => x.Text?.Contains(_FilterText, StringComparison.OrdinalIgnoreCase) == true);
+
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
@@ -48,5 +99,49 @@
             .ToArray();
 
         this._NoSelected = !this._Options.Any(item => item.Selected);
+    }
+
+    private void _OnInputFocus()
+    {
+        _FilterText = "";
+        _IsDropdownOpen = true;
+    }
+
+    private void _OnFilterInput(ChangeEventArgs args)
+    {
+        _FilterText = args.Value?.ToString() ?? "";
+        _IsDropdownOpen = true;
+    }
+
+    private async Task _SelectOption((bool Selected, string? Text) option)
+    {
+        _IsDropdownOpen = false;
+        _FilterText = "";
+        await OnChange.InvokeAsync(new ChangeEventArgs { Value = option.Text });
+    }
+
+    private void _OnFocusOut(FocusEventArgs args)
+    {
+        _IsDropdownOpen = false;
+        _FilterText = "";
+    }
+
+    private async Task _OnKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Escape")
+        {
+            _IsDropdownOpen = false;
+            _FilterText = "";
+            return;
+        }
+
+        if (args.Key == "Enter")
+        {
+            var matches = _FilteredOptions.ToArray();
+            if (matches.Length == 1)
+            {
+                await _SelectOption(matches.First());
+            }
+        }
     }
 }
