@@ -2,6 +2,22 @@
   <Import Project="$(MSBuildThisFileDirectory)CustomTasks\_BS_ResolveAdditionalReferenceDocsTask.targets" />
 
   <!--
+  Exclude iframe.html from static web asset pre-compression.
+  .NET 10's MapStaticAssets pre-compresses HTML files (gzip), but Visual Studio's dev server
+  applies additional compression on top of the already-compressed response, causing
+  ERR_CONTENT_DECODING_FAILED in the browser. Excluding iframe.html ensures MapStaticAssets
+  always serves the plain file, allowing VS to compress it correctly once.
+  See: https://github.com/jsakamoto/BlazingStory/issues/88
+  -->
+  <Target Name="_BS_ExcludeIframeHtmlFromCompression" BeforeTargets="ResolveBuildCompressedStaticWebAssetsConfiguration;ResolvePublishCompressedStaticWebAssetsConfiguration">
+    <PropertyGroup>
+      <CompressionExcludePatterns>$(CompressionExcludePatterns);**/iframe.html</CompressionExcludePatterns>
+    </PropertyGroup>
+  </Target>
+
+
+
+  <!--
   This target is used to generate the BlazingStoryAssemblyInfo.cs file wihch contains project meta data such as project directory, root namespace.
   This is required to the "Show Code" feature in the "Docs" pages.
   -->
