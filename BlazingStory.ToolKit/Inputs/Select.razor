@@ -12,9 +12,10 @@
         @if (_IsDropdownOpen)
         {
             <div class="searchable-select-dropdown">
-                @if (_FilteredOptions.Any())
+                @{ var filteredOptions = _FilteredOptions.ToArray(); }
+                @if (filteredOptions.Any())
                 {
-                    @foreach (var option in _FilteredOptions)
+                    @foreach (var option in filteredOptions)
                     {
                         var capturedOption = option;
                         <div class="searchable-select-option @(option.Selected ? "selected" : "")"
@@ -73,11 +74,11 @@ else
     [Parameter]
     public EventCallback<ChangeEventArgs> OnChange { get; set; }
 
-    private IEnumerable<(bool Selected, string? Text)> _Options = Enumerable.Empty<(bool, string?)>();
+    private (bool Selected, string? Text)[] _Options = [];
 
     private bool _NoSelected = false;
 
-    private bool _IsSearchable => (_Options.Count()) > SearchableThreshold;
+    private bool _IsSearchable => _Options.Count() > SearchableThreshold;
 
     private string _FilterText = "";
 

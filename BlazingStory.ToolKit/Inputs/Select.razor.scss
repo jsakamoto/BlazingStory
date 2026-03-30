@@ -29,8 +29,8 @@
         z-index: 100;
         max-height: 240px;
         overflow-y: auto;
-        background: var(--bs-panel-bg, #fff);
-        border: 1px solid var(--bs-border-color, #ccc);
+        background: var(--bs-inputs-background);
+        border: 1px solid var(--bs-border-color);
         border-radius: 4px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         margin-top: 2px;
@@ -44,19 +44,19 @@
             text-overflow: ellipsis;
 
             &:hover {
-                background: var(--bs-hover-bg, #f0f0f0);
+                background: var(--bs-hover-back-color);
             }
 
             &.selected {
                 font-weight: 600;
-                background: var(--bs-selected-bg, #e8f0fe);
+                background: var(--bs-hover-light-back-color);
             }
         }
 
         .searchable-select-no-results {
             padding: 8px 12px;
             font-size: 13px;
-            color: var(--bs-muted-color, #888);
+            color: var(--bs-dimmed-text-color);
             font-style: italic;
         }
     }
