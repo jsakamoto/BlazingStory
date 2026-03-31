@@ -1,3 +1,8 @@
+v.1.0.0-preview.73
+- Fix: Resolved an issue where the story preview iframe failed to render correctly. (Issue #88, PR #109 contributed by @Kebechet)
+- Improve: Updated the ModelContextProtocol.AspNetCore library from 0.3.0-preview.3 to 1.2.0.
+- Improve: Improved the MCP server response to correctly conform to the MCP specification's Structured Content, particularly for error notifications.
+
 v.1.0.0-preview.72
 - Fix: Resolved .js module import failures on case-sensitive file systems (e.g., Linux) caused by incorrect URL casing in the content base path.
 
