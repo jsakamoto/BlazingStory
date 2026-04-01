@@ -16,6 +16,10 @@
     display: inline-flex;
     width: 100%;
 
+    &.bs-basic-inputs-holder {
+        overflow: visible;
+    }
+
     .searchable-select-input {
         width: 100%;
         cursor: text;

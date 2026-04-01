@@ -1097,6 +1097,8 @@ a.menu-item.command-menu-item {
 }
 .docs-page .docs-main .docs-contents > .first-story {
   margin: 25px 0 40px 0;
+  position: relative;
+  z-index: 1;
 }
 .docs-page .docs-main .docs-contents .story-description {
   margin: 12px 0 24px 0;

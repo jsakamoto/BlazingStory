@@ -234,6 +234,54 @@ svg.svg-icon {
   pointer-events: none;
 }
 
+.searchable-select {
+  position: relative;
+  display: inline-flex;
+  width: 100%;
+}
+.searchable-select.bs-basic-inputs-holder {
+  overflow: visible;
+}
+.searchable-select .searchable-select-input {
+  width: 100%;
+  cursor: text;
+}
+.searchable-select .searchable-select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--bs-inputs-background);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-top: 2px;
+}
+.searchable-select .searchable-select-dropdown .searchable-select-option {
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.searchable-select .searchable-select-dropdown .searchable-select-option:hover {
+  background: var(--bs-hover-back-color);
+}
+.searchable-select .searchable-select-dropdown .searchable-select-option.selected {
+  font-weight: 600;
+  background: var(--bs-hover-light-back-color);
+}
+.searchable-select .searchable-select-dropdown .searchable-select-no-results {
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--bs-dimmed-text-color);
+  font-style: italic;
+}
+
 .text-area-container {
   position: relative;
   display: block;
