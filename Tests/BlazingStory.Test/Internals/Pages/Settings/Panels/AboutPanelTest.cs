@@ -10,6 +10,9 @@ namespace BlazingStory.Test.Internals.Pages.Settings.Panels;
 
 internal class AboutPanelTest
 {
+    [SetUp]
+    public void SetUp() => AboutPanel.ResetCache();
+
     private class FakeHttpMessageHandler : HttpMessageHandler
     {
         private readonly HttpStatusCode _StatusCode;

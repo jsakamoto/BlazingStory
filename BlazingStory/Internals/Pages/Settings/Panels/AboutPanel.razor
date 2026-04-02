@@ -42,9 +42,24 @@
         [property: JsonPropertyName("avatar_url")] string AvatarUrl,
         [property: JsonPropertyName("html_url")] string HtmlUrl);
 
+    private static IReadOnlyList<ContributorInfo>? _CachedContributors;
+    private static DateTime _CacheExpiry;
+
+    internal static void ResetCache()
+    {
+        _CachedContributors = null;
+        _CacheExpiry = default;
+    }
+
     [UnconditionalSuppressMessage("Trimming", "IL2026")]
     protected override async Task OnInitializedAsync()
     {
+        if (_CachedContributors is not null && DateTime.UtcNow < _CacheExpiry)
+        {
+            this._Contributors = _CachedContributors;
+            return;
+        }
+
         try
         {
             var httpClient = this.Services.GetRequiredService<HttpClient>();
@@ -55,6 +70,8 @@
             if (response.IsSuccessStatusCode)
             {
                 this._Contributors = await response.Content.ReadFromJsonAsync<List<ContributorInfo>>() ?? [];
+                _CachedContributors = this._Contributors;
+                _CacheExpiry = DateTime.UtcNow.AddHours(1);
             }
         }
         catch
