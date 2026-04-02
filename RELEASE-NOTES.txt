@@ -1,3 +1,6 @@
+v.1.0.0-preview.74
+- Feature: Added a searchable/filterable Select component that automatically activates for enums with more than 20 items, providing type-to-filter and keyboard navigation. (PR #106 contributed by @Kebechet)
+
 v.1.0.0-preview.73
 - Fix: Resolved an issue where the story preview iframe failed to render correctly. (Issue #88, PR #109 contributed by @Kebechet)
 - Improve: Updated the ModelContextProtocol.AspNetCore library from 0.3.0-preview.3 to 1.2.0.

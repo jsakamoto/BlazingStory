@@ -1,8 +1,8 @@
 namespace BlazingStory;
 internal static class VersionInfo
 {
-    internal static string GetVersionText() => "1.0.0-preview.73";
-    internal static string GetEscapedVersionText() => "1.0.0-preview.73";
-    internal static string GetFormattedVersionText() => "1.0 Preview 73";
-    internal static string GetBuildTimestamp() => "March 2026";
+    internal static string GetVersionText() => "1.0.0-preview.74";
+    internal static string GetEscapedVersionText() => "1.0.0-preview.74";
+    internal static string GetFormattedVersionText() => "1.0 Preview 74";
+    internal static string GetBuildTimestamp() => "April 2026";
 }
