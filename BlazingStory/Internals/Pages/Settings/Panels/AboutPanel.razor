@@ -1,7 +1,10 @@
 @using System.Diagnostics
+@using System.Diagnostics.CodeAnalysis
+@using System.Net.Http.Json
 @using System.Reflection
 @using System.Runtime.CompilerServices
 @using System.Runtime.Versioning
+@using System.Text.Json.Serialization
 
 <div class="settings-about-panel">
 
@@ -10,4 +13,53 @@
         Blazing Story @VersionInfo.GetVersionText()
     </header>
 
+    @if (this._Contributors.Count > 0)
+    {
+        <section class="contributors-section">
+            <h3>Contributors <span class="contributors-count">@this._Contributors.Count</span></h3>
+            <div class="contributors-grid">
+                @foreach (var contributor in this._Contributors)
+                {
+                    <a href="@contributor.HtmlUrl" target="_blank" rel="noopener noreferrer" title="@contributor.Login">
+                        <img src="@contributor.AvatarUrl" alt="@contributor.Login" width="40" height="40" loading="lazy" />
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
 </div>
+
+@code
+{
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
+    private IReadOnlyList<ContributorInfo> _Contributors = [];
+
+    private record ContributorInfo(
+        [property: JsonPropertyName("login")] string Login,
+        [property: JsonPropertyName("avatar_url")] string AvatarUrl,
+        [property: JsonPropertyName("html_url")] string HtmlUrl);
+
+    [UnconditionalSuppressMessage("Trimming", "IL2026")]
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var httpClient = this.Services.GetRequiredService<HttpClient>();
+            using var request = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/jsakamoto/BlazingStory/contributors");
+            request.Headers.Add("Accept", "application/vnd.github+json");
+            request.Headers.Add("User-Agent", "BlazingStory");
+            var response = await httpClient.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                this._Contributors = await response.Content.ReadFromJsonAsync<List<ContributorInfo>>() ?? [];
+            }
+        }
+        catch
+        {
+            // Silently ignore errors - contributors section will simply not be displayed.
+        }
+    }
+}
