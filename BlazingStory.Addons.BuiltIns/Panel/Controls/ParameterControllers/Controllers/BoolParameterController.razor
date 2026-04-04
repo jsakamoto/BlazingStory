@@ -4,7 +4,7 @@
 }
 @if (this.Value is Unknown || (!nullable && this.Value is null))
 {
-    <SquareButton Text="Set boolean" OnClick="@(() => OnInputAsync(false))" />
+    <SquareButton OnClick="@(() => OnInputAsync(false))">Set boolean</SquareButton>
 }
 else if (nullable)
 {

@@ -4,7 +4,7 @@
 }
 @if (this.Value is Unknown || (!nullable && this.Value is null))
 {
-    <SquareButton Text="Set number" OnClick="ChangeToNonNull" />
+    <SquareButton OnClick="ChangeToNonNull">Set number</SquareButton>
 }
 else if (nullable)
 {

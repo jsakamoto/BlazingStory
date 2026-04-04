@@ -4,14 +4,14 @@
 
 @if (this.Value is Unknown)
 {
-    <SquareButton Text="Set array" OnClick="InitializeEmpty" />
+    <SquareButton OnClick="InitializeEmpty">Set array</SquareButton>
 }
 else if (this._elementType is not null)
 {
     <div class="array-parameter-controller">
         <div class="array-header">
             <span>@GetArrayTypeName() [@_arrayItems.Count]</span>
-            <SquareButton Text="Add Item" OnClick="AddItem" />
+            <SquareButton OnClick="AddItem">Add Item</SquareButton>
         </div>
 
         @if (_arrayItems.Count == 0)
