@@ -1302,28 +1302,19 @@ a.menu-item.command-menu-item {
   margin-bottom: 20px;
   color: var(--bs-text-color);
 }
-.settings-page-panel footer {
-  display: flex;
-  margin-top: 20px;
-  padding-top: 20px;
-  height: 22px;
-  border-top: solid 1px var(--bs-border-color);
-  font-weight: 700;
-}
-.settings-page-panel footer a {
-  text-decoration: none;
-  color: var(--bs-dimmed-text-color);
-  transition: all 150ms ease-out;
-}
-.settings-page-panel footer a:hover, .settings-page-panel footer a:focus {
-  color: var(--bs-dimmed-hover-text-color);
-}
 
+.settings-about-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
 .settings-about-panel header {
   color: var(--bs-sidebar-header-title-color);
 }
-.settings-about-panel .contributors-section {
-  margin-top: 24px;
+.settings-about-panel .resource-links {
+  display: flex;
+  gap: 12px;
 }
 .settings-about-panel .contributors-section h3 {
   font-size: 16px;

@@ -10,8 +10,34 @@
 
     <header>
         <img src="./_content/BlazingStory/images/icon.min.svg" width="32" height="32" style="margin-right:8px;" />
-        Blazing Story @VersionInfo.GetVersionText()
+        <span>Blazing Story</span>
     </header>
+
+    <section class="version-text">
+        @VersionInfo.GetVersionText()
+    </section>
+
+    <section class="resource-links">
+        <SquareButton Href="https://github.com/jsakamoto/BlazingStory" Target="_blank">
+            <SvgIcon Type="SvgIconType.GitHub" />
+            GitHub
+        </SquareButton>
+        <SquareButton Href="https://github.com/jsakamoto/BlazingStory" Target="_blank">
+            <SvgIcon Type="SvgIconType.Document" />
+            Documentation
+        </SquareButton>
+    </section>
+
+    <section>
+        <p>
+            Open source software under the <a href="https://github.com/jsakamoto/BlazingStory/blob/main/LICENSE" target="_blank">Mozilla Public License 2.0</a>.
+        </p>
+        <p>
+            See also
+            <a href="https://github.com/jsakamoto/BlazingStory/blob/main/THIRD-PARTY-NOTICES.txt" target="_blank">Third-Party Notices</a>
+            for bundled third-party components and license information.
+        </p>
+    </section>
 
     @if (this._Contributors.Count > 0)
     {
