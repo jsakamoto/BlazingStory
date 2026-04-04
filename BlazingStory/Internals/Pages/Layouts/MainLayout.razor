@@ -117,7 +117,6 @@
 		{
 			(CommandType.AboutYourBlazingStory, new(default, "About your Blazing Story", icon: SvgIconType.CircleInfo)),
 			(CommandType.ReleaseNotes, new(default, "Release notes", icon: SvgIconType.ReleaseNotes)),
-			(CommandType.Documentation, new(default, "Documentation", linkUrl: "https://blazingstory.github.io/docs/", icon: SvgIconType.OpenNewTab)),
 			(CommandType.KeyboardShortcuts, new(new(Ctrl | Shift, Code.Comma), "Keyboard shortcuts", icon: SvgIconType.KeyboardShortcuts)),
 
 			(CommandType.SideBarVisible,new(new(Alt, Code.S), "Show sidebar", flag: true)),
@@ -130,7 +129,9 @@
 			(CommandType.NextComponent, new(new(Alt, Code.ArrowDown), "Next component")),
 			(CommandType.PreviousStory, new(new(Alt, Code.ArrowLeft), "Previous story")),
 			(CommandType.NextStory, new(new(Alt, Code.ArrowRight), "Next story")),
-			(CommandType.CollapseAll, new(new(Ctrl | Shift, Code.ArrowUp), "Collapse all"))
+			(CommandType.CollapseAll, new(new(Ctrl | Shift, Code.ArrowUp), "Collapse all")),
+
+			(CommandType.Documentation, new(default, "Documentation", linkUrl: "https://blazingstory.github.io/docs/", icon: SvgIconType.Document)),
 		});
 		return commandServce;
 	}
