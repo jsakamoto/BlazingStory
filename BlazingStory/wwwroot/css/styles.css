@@ -1322,6 +1322,49 @@ a.menu-item.command-menu-item {
 .settings-about-panel header {
   color: var(--bs-sidebar-header-title-color);
 }
+.settings-about-panel .contributors-section {
+  margin-top: 24px;
+}
+.settings-about-panel .contributors-section h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--bs-text-color);
+  margin-bottom: 12px;
+}
+.settings-about-panel .contributors-section h3 .contributors-count {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--bs-dimmed-text-color);
+  background-color: var(--bs-border-color);
+  border-radius: 10px;
+  padding: 1px 8px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+.settings-about-panel .contributors-section .contributors-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.settings-about-panel .contributors-section .contributors-grid a {
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: opacity 150ms ease-out;
+}
+.settings-about-panel .contributors-section .contributors-grid a:hover, .settings-about-panel .contributors-section .contributors-grid a:focus {
+  opacity: 0.8;
+}
+.settings-about-panel .contributors-section .contributors-grid a img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
 
 .settings-keyboard-shortcuts-panel header {
   color: var(--bs-sidebar-header-title-color);
