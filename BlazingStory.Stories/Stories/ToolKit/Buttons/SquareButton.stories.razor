@@ -1,0 +1,52 @@
+@attribute [Stories("ToolKit/Buttons/SquareButton")]
+
+<Stories TComponent="SquareButton" Layout="typeof(MarginedFrame)">
+
+    <Story Name="Default">
+
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_text" />
+            <Arg For="_ => _.ButtonStyle" Value="ButtonStyle.Default" />
+        </Arguments>
+
+        <Template>
+            <SquareButton @attributes="context.Args">
+            </SquareButton>
+        </Template>
+
+    </Story>
+
+    <Story Name="Slim Style">
+
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_text" />
+            <Arg For="_ => _.ButtonStyle" Value="ButtonStyle.Slim" />
+        </Arguments>
+
+        <Template>
+            <SquareButton @attributes="context.Args">
+            </SquareButton>
+        </Template>
+
+    </Story>
+
+    <Story Name="Link">
+
+        <Arguments>
+            <Arg For="_ => _.Href" Value='"https://blazingstory.github.io/docs"' />
+            <Arg For="_ => _.Target" Value='"_blank"' />
+        </Arguments>
+
+        <Template>
+            <SquareButton @attributes="context.Args">
+                <SvgIcon Type="SvgIconType.Document"/> Documentation
+            </SquareButton>
+        </Template>
+
+    </Story>
+
+</Stories>
+
+@code {
+    private RenderFragment _text = @<text>Hello, World!</text>;
+}

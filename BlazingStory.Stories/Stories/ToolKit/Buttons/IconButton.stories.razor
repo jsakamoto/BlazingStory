@@ -1,0 +1,36 @@
+@attribute [Stories("ToolKit/Buttons/IconButton")]
+
+<Stories TComponent="IconButton" Layout="typeof(MarginedFrame)">
+    <ArgType For="_ => _.Icon" Control="ControlType.Select" />
+
+    <Story Name="Default">
+
+        <Arguments>
+            <Arg For="_ => _.Icon" Value="SvgIconType.Document" />
+        </Arguments>
+
+        <Template>
+            <IconButton @attributes="context.Args">
+            </IconButton>
+        </Template>
+
+    </Story>
+
+    <Story Name="In-Active">
+
+        <Arguments>
+            <Arg For="_ => _.Icon" Value="SvgIconType.Document" />
+            <Arg For="_ => _.Active" Value="false" />
+        </Arguments>
+
+        <Template>
+            <IconButton @attributes="context.Args">
+            </IconButton>
+        </Template>
+
+    </Story>
+
+</Stories>
+
+@code {
+}
