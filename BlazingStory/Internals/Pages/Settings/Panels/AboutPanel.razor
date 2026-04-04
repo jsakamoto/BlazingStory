@@ -6,6 +6,8 @@
 @using System.Runtime.Versioning
 @using System.Text.Json.Serialization
 
+<PageTitle>About - @this.BlazingStoryApp.Title</PageTitle>
+
 <div class="settings-about-panel">
 
     <header>
@@ -60,6 +62,9 @@
 {
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
+
+    [CascadingParameter]
+    protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
 
     private IReadOnlyList<ContributorInfo> _Contributors = [];
 

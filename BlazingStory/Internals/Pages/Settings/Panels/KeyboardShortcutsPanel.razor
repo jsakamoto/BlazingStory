@@ -1,6 +1,8 @@
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 
+<PageTitle>Keyboard shortcuts - @this.BlazingStoryApp.Title</PageTitle>
+
 <div class="settings-keyboard-shortcuts-panel">
 
     <header>Keyboard shortcuts</header>
@@ -35,6 +37,9 @@
 {
     [CascadingParameter]
     public required IServiceProvider ServiceProvider { get; init; }
+
+    [CascadingParameter]
+    protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
 
     private IEnumerable<Command> _commands = Enumerable.Empty<Command>();
 
