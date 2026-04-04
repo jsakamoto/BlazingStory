@@ -1,0 +1,559 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BlazingStory.Addons.BuiltIns</name>
+    </assembly>
+    <members>
+        <member name="T:BlazingStory.Addons.BuiltIns.Internals.Utils.JSModuleFactory">
+            <summary>
+            Creates <see cref="T:BlazingStory.ToolKit.JSInterop.JSModule"/> instances scoped to the BlazingStory.Addons.BuiltIns content root.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Internals.Utils.JSModuleFactory.Create(System.Func{Microsoft.JSInterop.IJSRuntime},System.String)">
+            <summary>
+            Creates a <see cref="T:BlazingStory.ToolKit.JSInterop.JSModule"/> for the specified module path relative to the BuiltIns content root.
+            </summary>
+            <param name="jSRuntimeFactory">A factory that returns the <see cref="T:Microsoft.JSInterop.IJSRuntime"/> instance to use.</param>
+            <param name="modulePath">The path to the JavaScript module, relative to the BuiltIns content root.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanel">
+            <summary>
+            A panel that displays a log of component event callback invocations captured during story interaction.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanel.Story">
+            <summary>Gets or sets the currently displayed story, used to detect story switches and clear the log.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanel.ActionLogs">
+            <summary>Gets or sets the list of captured action log entries to display.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanel.ActionLogsChanged">
+            <summary>Gets or sets the callback invoked when the <see cref="P:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanel.ActionLogs"/> list changes.</summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanel.OnComponentAction(BlazingStory.Addons.BuiltIns.Panel.Actions.ComponentActionEventArgs)">
+            <summary>
+            Receives a component action event dispatched from JavaScript and prepends it to the action log.
+            </summary>
+            <param name="args">The event arguments containing the action name and serialized arguments.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanelAddon">
+            <summary>
+            Registers the Actions panel and its preview decorator with the addon builder.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanelAddon.Initialize(BlazingStory.Addons.IAddonBuilder)">
+            <summary>
+            Registers the <see cref="T:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanel"/> and <see cref="T:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanelPreviewDecorator"/> with the provided builder.
+            </summary>
+            <param name="builder">The addon builder used to register panels and decorators.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanelLogLine">
+            <summary>
+            Renders a single action log entry in the Actions panel, with support for expanding nested JSON objects and arrays.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanelLogLine.Repeat">
+            <summary>Gets or sets the number of consecutive times this action has been repeated.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanelLogLine.Name">
+            <summary>Gets or sets the name of the action or property being displayed.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanelLogLine.Value">
+            <summary>Gets or sets the JSON value to render for this log line.</summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanelPreviewDecorator">
+            <summary>
+            A preview decorator that intercepts component event callbacks and dispatches them as action events for the Actions panel to display.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanelPreviewDecorator.Story">
+            <summary>Gets or sets the current story whose event callbacks will be intercepted for action logging.</summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanelPreviewDecorator.EventTArgMonitorHandler``1(System.String,``0)">
+            <summary>
+            Handles a generic event callback invocation by serializing the arguments and dispatching the action event to the Actions panel.
+            </summary>
+            <param name="name">The name of the event callback parameter.</param>
+            <param name="eventArgs">The event arguments to serialize and dispatch.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanelTags">
+            <summary>
+            Provides shared render fragments used to display separators and JSON values in the Actions panel.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Actions.ComponentActionEventArgs">
+            <summary>
+            Holds the data for a component action event captured in the Actions panel.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Actions.ComponentActionEventArgs.Name">
+            <summary>
+            Gets the name of the event callback that was invoked.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Actions.ComponentActionEventArgs.ArgsJson">
+            <summary>
+            Gets the JSON-serialized representation of the event arguments.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Actions.ComponentActionLog">
+            <summary>
+            Represents a single logged entry in the Actions panel for a component event callback invocation.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Addons.BuiltIns.Panel.Actions.ComponentActionLog.Id">
+            <summary>
+            The unique identifier for this log entry.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Addons.BuiltIns.Panel.Actions.ComponentActionLog.Name">
+            <summary>
+            The name of the event callback that was invoked.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Addons.BuiltIns.Panel.Actions.ComponentActionLog.ArgsJson">
+            <summary>
+            The raw JSON string of the event arguments, or "void" for parameterless callbacks.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Addons.BuiltIns.Panel.Actions.ComponentActionLog.Repeat">
+            <summary>
+            The number of consecutive times this same action has been logged.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Addons.BuiltIns.Panel.Actions.ComponentActionLog.ArgsJsonElement">
+            <summary>
+            The parsed <see cref="T:System.Text.Json.JsonElement"/> of the event arguments for display purposes.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Actions.ComponentActionLog.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of <see cref="T:BlazingStory.Addons.BuiltIns.Panel.Actions.ComponentActionLog"/> with the given name and JSON arguments.
+            </summary>
+            <param name="name">The name of the invoked event callback.</param>
+            <param name="argsJson">The JSON-serialized arguments, or "void" for parameterless callbacks.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Actions.JsonFallbackConverter`1">
+            <summary>
+            A <see cref="T:System.Text.Json.Serialization.JsonConverter`1"/> that gracefully handles unsupported types and cyclic references by writing a descriptive string instead of throwing.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Actions.JsonFallbackConverter`1.Read(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)">
+            <summary>
+            Read is not supported; always throws <see cref="T:System.NotSupportedException"/>.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Actions.JsonFallbackConverter`1.#ctor(System.Collections.Generic.Stack{System.Object})">
+            <summary>
+            Initializes a new instance of <see cref="T:BlazingStory.Addons.BuiltIns.Panel.Actions.JsonFallbackConverter`1"/> with an optional shared visited-object stack for cyclic-reference tracking.
+            </summary>
+            <param name="visited">An existing stack of visited objects to detect cycles, or <c>null</c> to create a new one.</param>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Actions.JsonFallbackConverter`1.Write(System.Text.Json.Utf8JsonWriter,`0,System.Text.Json.JsonSerializerOptions)">
+            <summary>
+            Serializes <paramref name="value"/> to JSON, substituting unsupported or cyclic values with a descriptive fallback string.
+            </summary>
+            <param name="writer">The writer to serialize into.</param>
+            <param name="value">The value to serialize.</param>
+            <param name="options">The serializer options in effect.</param>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Actions.JsonFallbackConverter`1.PrepareJsonSerializerOptions(System.Text.Json.JsonSerializerOptions,System.Type)">
+            <summary>
+            Returns a <see cref="T:System.Text.Json.JsonSerializerOptions"/> instance augmented with a <see cref="T:BlazingStory.Addons.BuiltIns.Panel.Actions.JsonFallbackConverter`1"/> for the given value type if it is a plain object type.
+            </summary>
+            <param name="options">The base serializer options to extend.</param>
+            <param name="valueType">The runtime type of the value being serialized.</param>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Actions.JsonFallbackConverter`1.IsUnsupportedType(System.Type)">
+            <summary>
+            Determines whether the specified type cannot be meaningfully serialized (e.g., delegates, expressions, or event callbacks).
+            </summary>
+            <param name="type">The type to test.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Actions.JsonFallbackSerializer">
+            <summary>
+            Provides methods for serializing objects to JSON without any exceptions even when the object contains unsupported types or cyclic references.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Actions.JsonFallbackSerializer.Serialize``1(``0,System.Action{System.Text.Json.JsonSerializerOptions})">
+            <summary>
+            Serializes the specified object to a JSON string.<br/>
+            If the property value is an unsupported type, the property value is serialized as a string that indicates the type is unsupported.<br/>
+            The cyclic references are detected and serialized as a string that indicates the cyclic references are not supported.
+            </summary>
+            <typeparam name="T">The type of the object to serialize.</typeparam>
+            <param name="value">The object to serialize.</param>
+            <param name="configure">An optional action to configure the <see cref="T:System.Text.Json.JsonSerializerOptions"/>.</param>
+            <returns>A JSON string representation of the object.</returns>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanel">
+            <summary>
+            A panel that renders interactive input controls for each parameter of the currently displayed story.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanel.Story">
+            <summary>Gets or sets the currently displayed story whose parameters are rendered as controls.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanel.ViewMode">
+            <summary>Gets or sets the current view mode, used to determine whether to show extended parameter details.</summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanel.GetParameters">
+            <summary>
+            Get parameters of the component from the current story.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanel.GetKey(BlazingStory.Abstractions.IComponentParameter)">
+            <summary>
+            Returns a stable key string for the given parameter, combining the story navigation path and parameter name.
+            </summary>
+            <param name="parameter">The component parameter to compute a key for.</param>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanel.GetArgumentValue(System.String)">
+            <summary>
+            Retrieves the current argument value for the specified parameter name from the story context.
+            </summary>
+            <param name="parameterName">The name of the parameter whose current argument value is requested.</param>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanel.ResetControls">
+            <summary>
+            Resets all story arguments back to their default values.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanel.OnInputAsync(System.Object,BlazingStory.Abstractions.IComponentParameter)">
+            <summary>
+            Updates the story argument for the given parameter with the supplied value.
+            </summary>
+            <param name="value">The new value to apply.</param>
+            <param name="parameter">The component parameter being updated.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanelAddon">
+            <summary>
+            Registers the Controls panel and its preview decorator with the addon builder.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanelAddon.Initialize(BlazingStory.Addons.IAddonBuilder)">
+            <summary>
+            Registers the <see cref="T:BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanel"/> and <see cref="T:BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanelPreviewDecorator"/> with the provided builder.
+            </summary>
+            <param name="builder">The addon builder used to register panels and decorators.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanelPreviewDecorator">
+            <summary>
+            A preview decorator that applies URL argument values to the story context when the Args cascading parameter changes.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanelPreviewDecorator.Story">
+            <summary>Gets or sets the current story whose context will be updated from URL args.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanelPreviewDecorator.Args">
+            <summary>Gets or sets the URL-encoded argument key-value pairs to apply to the story context.</summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers.ArrayParameterController">
+            <summary>
+            A parameter controller that renders an editable list UI for array and list parameters,
+            supporting string, bool, numeric, and enum element types.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers.BoolParameterController">
+            <summary>
+            A parameter controller that renders a toggle button (and optional null radio) for boolean parameters.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers.EnumParameterController">
+            <summary>
+            A parameter controller that renders a select dropdown or radio group for enum parameters.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers.NumberParameterController">
+            <summary>
+            A parameter controller that renders a numeric text input for number parameters.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers.ParameterControllerBase">
+            <summary>
+            Base class for all parameter controller components, providing common parameters and an input notification helper.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers.ParameterControllerBase.Key">
+            <summary>
+            Gets or sets the unique key used to identify this controller instance.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers.ParameterControllerBase.Parameter">
+            <summary>
+            Gets or sets the component parameter metadata this controller is bound to.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers.ParameterControllerBase.Value">
+            <summary>
+            Gets or sets the current value of the parameter.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers.ParameterControllerBase.OnInput">
+            <summary>
+            Gets or sets the callback invoked when the user changes the parameter value.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers.ParameterControllerBase.OnInputAsync(System.Object)">
+            <summary>
+            Invokes the <see cref="P:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers.ParameterControllerBase.OnInput"/> callback with the supplied value wrapped in a <see cref="T:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.ParameterInputEventArgs"/>.
+            </summary>
+            <param name="value">The new value to report.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers.RenderFragmentParameterController">
+            <summary>
+            A parameter controller that renders a text area for <see cref="T:Microsoft.AspNetCore.Components.RenderFragment"/> parameters.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers.TextParameterController">
+            <summary>
+            A parameter controller that renders a text area or color picker for string parameters depending on the control type.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.ParameterController">
+            <summary>
+            Selects and renders the appropriate parameter controller component based on the parameter's type.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.ParameterController.Key">
+            <summary>Gets or sets the unique key identifying this controller instance.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.ParameterController.Parameter">
+            <summary>Gets or sets the component parameter metadata used to select and configure the appropriate controller.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.ParameterController.Value">
+            <summary>Gets or sets the current value of the parameter.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.ParameterController.OnInput">
+            <summary>Gets or sets the callback invoked when the user changes the parameter value.</summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.ParameterInputEventArgs">
+            <summary>
+            Carries the new value and associated parameter metadata when a control input changes.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.ParameterInputEventArgs.Value">
+            <summary>
+            The new value entered by the user.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.ParameterInputEventArgs.Parameter">
+            <summary>
+            The component parameter whose control was changed.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.ParameterInputEventArgs.#ctor(System.Object,BlazingStory.Abstractions.IComponentParameter)">
+            <summary>
+            Initializes a new instance of <see cref="T:BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.ParameterInputEventArgs"/> with the supplied value and parameter.
+            </summary>
+            <param name="value">The new value provided by the user.</param>
+            <param name="parameter">The component parameter associated with the input event.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.Background.BackgroundAddon">
+            <summary>
+            Registers the Background toolbar content and its preview decorator with the addon builder.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Toolbar.Background.BackgroundAddon.Initialize(BlazingStory.Addons.IAddonBuilder)">
+            <summary>
+            Registers <see cref="T:BlazingStory.Addons.BuiltIns.Toolbar.Background.BackgroundToolbarContent"/> and <see cref="T:BlazingStory.Addons.BuiltIns.Toolbar.Background.BackgroundPreviewDecorator"/> with the provided builder.
+            </summary>
+            <param name="builder">The addon builder used to register toolbar content and decorators.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.Background.BackgroundPreviewDecorator">
+            <summary>
+            A preview decorator that applies the selected background color to the story canvas via JavaScript.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Background.BackgroundPreviewDecorator.Globals">
+            <summary>Gets or sets the global arguments dictionary, used to read the selected background color.</summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.Background.BackgroundToolbarContent">
+            <summary>
+            Toolbar content that provides a popup menu for selecting the story canvas background color.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Background.BackgroundToolbarContent.Globals">
+            <summary>Gets the global arguments used to store and propagate the selected background color.</summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.ChangeSize.ChangeSizeAddon">
+            <summary>
+            Registers the Change Size toolbar content with the addon builder.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Toolbar.ChangeSize.ChangeSizeAddon.Initialize(BlazingStory.Addons.IAddonBuilder)">
+            <summary>
+            Registers <see cref="T:BlazingStory.Addons.BuiltIns.Toolbar.ChangeSize.ChangeSizeToolbarContent"/> with the provided builder.
+            </summary>
+            <param name="builder">The addon builder used to register toolbar content.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.ChangeSize.ChangeSizeToolbarContent">
+            <summary>
+            Toolbar content that provides a popup menu for selecting a predefined viewport size and orientation for the story canvas.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.ChangeSize.ChangeSizeToolbarContent.Globals">
+            <summary>Gets the global arguments used to store and propagate the selected viewport size state.</summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.ChangeSize.Orientation">
+            <summary>
+            Specifies the screen orientation applied to the story canvas viewport.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Addons.BuiltIns.Toolbar.ChangeSize.Orientation.Portrait">
+            <summary>The viewport is taller than it is wide.</summary>
+        </member>
+        <member name="F:BlazingStory.Addons.BuiltIns.Toolbar.ChangeSize.Orientation.Landscape">
+            <summary>The viewport is wider than it is tall.</summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.ChangeSize.SizeType">
+            <summary>
+            Identifies the predefined viewport size preset for the story canvas.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Addons.BuiltIns.Toolbar.ChangeSize.SizeType.None">
+            <summary>No size constraint; the canvas uses its natural size.</summary>
+        </member>
+        <member name="F:BlazingStory.Addons.BuiltIns.Toolbar.ChangeSize.SizeType.SmallMobile">
+            <summary>Small mobile preset (320 x 568).</summary>
+        </member>
+        <member name="F:BlazingStory.Addons.BuiltIns.Toolbar.ChangeSize.SizeType.LargeMobile">
+            <summary>Large mobile preset (414 x 896).</summary>
+        </member>
+        <member name="F:BlazingStory.Addons.BuiltIns.Toolbar.ChangeSize.SizeType.Tablet">
+            <summary>Tablet preset (834 x 1112).</summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.Grid.GridAddon">
+            <summary>
+            Registers the Grid toolbar content and its preview decorator with the addon builder.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Toolbar.Grid.GridAddon.Initialize(BlazingStory.Addons.IAddonBuilder)">
+            <summary>
+            Registers <see cref="T:BlazingStory.Addons.BuiltIns.Toolbar.Grid.GridToolbarContent"/> and <see cref="T:BlazingStory.Addons.BuiltIns.Toolbar.Grid.GridPreviewDecorator"/> with the provided builder.
+            </summary>
+            <param name="builder">The addon builder used to register toolbar content and decorators.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.Grid.GridPreviewDecorator">
+            <summary>
+            A preview decorator that conditionally applies the background-grid stylesheet to the story canvas.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Grid.GridPreviewDecorator.Globals">
+            <summary>Gets or sets the global arguments dictionary, used to read whether the background grid is enabled.</summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.Grid.GridToolbarContent">
+            <summary>
+            Toolbar content that provides a toggle button for enabling or disabling the background grid overlay on the story canvas.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Grid.GridToolbarContent.Globals">
+            <summary>Gets the global arguments used to store and propagate the grid-enabled state.</summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasureAddon">
+            <summary>
+            Registers the Measure toolbar content and its preview decorator with the addon builder.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasureAddon.Initialize(BlazingStory.Addons.IAddonBuilder)">
+            <summary>
+            Registers <see cref="T:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasureToolbarContent"/> and <see cref="T:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator"/> with the provided builder.
+            </summary>
+            <param name="builder">The addon builder used to register toolbar content and decorators.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator">
+            <summary>
+            A preview decorator that renders visual overlays showing the box-model dimensions (content area, padding, and margin) of hovered elements.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.Globals">
+            <summary>Gets or sets the global arguments dictionary, used to read whether element measurement is enabled.</summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.DOMRect">
+            <summary>Represents the position and size of a DOM element's bounding rectangle.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.DOMRect.X">
+            <summary>Gets or sets the x-coordinate of the rectangle's left edge.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.DOMRect.Y">
+            <summary>Gets or sets the y-coordinate of the rectangle's top edge.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.DOMRect.Width">
+            <summary>Gets or sets the width of the rectangle.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.DOMRect.Height">
+            <summary>Gets or sets the height of the rectangle.</summary>
+        </member>
+        <member name="F:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.DOMRect.Empty">
+            <summary>An empty <see cref="T:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.DOMRect"/> with all fields set to zero.</summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.SpacingSize">
+            <summary>Represents the four-sided spacing (top, right, bottom, left) of a CSS box-model property.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.SpacingSize.Top">
+            <summary>Gets or sets the top spacing value.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.SpacingSize.Left">
+            <summary>Gets or sets the left spacing value.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.SpacingSize.Bottom">
+            <summary>Gets or sets the bottom spacing value.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.SpacingSize.Right">
+            <summary>Gets or sets the right spacing value.</summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.Measurement">
+            <summary>Contains the boundary rectangle, padding, and margin measurements for a hovered DOM element.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.Measurement.Boundary">
+            <summary>Gets or sets the element's bounding rectangle including padding.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.Measurement.Padding">
+            <summary>Gets or sets the computed padding sizes of the element.</summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.Measurement.Margin">
+            <summary>Gets or sets the computed margin sizes of the element.</summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.TargetElementChanged(BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasurePreviewDecorator.Measurement)">
+            <summary>
+            Called from JavaScript when the hovered target element changes; updates the measurement overlay styles.
+            </summary>
+            <param name="measurement">The new measurement data for the hovered element, or <c>null</c> if no element is targeted.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasureToolbarContent">
+            <summary>
+            Toolbar content that provides a toggle button for enabling or disabling the element-measurement overlay on the story canvas.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasureToolbarContent.Globals">
+            <summary>Gets the global arguments used to store and propagate the measure-enabled state.</summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.Outlines.OutlinesAddon">
+            <summary>
+            Registers the Outlines toolbar content and its preview decorator with the addon builder.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.BuiltIns.Toolbar.Outlines.OutlinesAddon.Initialize(BlazingStory.Addons.IAddonBuilder)">
+            <summary>
+            Registers <see cref="T:BlazingStory.Addons.BuiltIns.Toolbar.Outlines.OutlinesToolbarContent"/> and <see cref="T:BlazingStory.Addons.BuiltIns.Toolbar.Outlines.OutlinesPreviewDecorator"/> with the provided builder.
+            </summary>
+            <param name="builder">The addon builder used to register toolbar content and decorators.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.Outlines.OutlinesPreviewDecorator">
+            <summary>
+            A preview decorator that conditionally applies the outlines stylesheet to visually highlight element boundaries on the story canvas.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Outlines.OutlinesPreviewDecorator.Globals">
+            <summary>Gets or sets the global arguments dictionary, used to read whether the outlines overlay is enabled.</summary>
+        </member>
+        <member name="T:BlazingStory.Addons.BuiltIns.Toolbar.Outlines.OutlinesToolbarContent">
+            <summary>
+            Toolbar content that provides a toggle button for enabling or disabling CSS outlines on elements within the story canvas.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.BuiltIns.Toolbar.Outlines.OutlinesToolbarContent.Globals">
+            <summary>Gets the global arguments used to store and propagate the outlines-enabled state.</summary>
+        </member>
+    </members>
+</doc>

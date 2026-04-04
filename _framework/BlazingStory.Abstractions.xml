@@ -1,0 +1,281 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BlazingStory.Abstractions</name>
+    </assembly>
+    <members>
+        <member name="T:BlazingStory.Abstractions.AsyncEventHandler">
+            <summary>
+            Represents an asynchronous event handler that returns a <see cref="T:System.Threading.Tasks.ValueTask"/>.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Abstractions.AsyncEventHandlerExtensions">
+            <summary>
+            Provides extension methods for <see cref="T:BlazingStory.Abstractions.AsyncEventHandler"/>.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Abstractions.AsyncEventHandlerExtensions.InvokeAsync(BlazingStory.Abstractions.AsyncEventHandler)">
+            <summary>
+            Invokes all delegates in the invocation list sequentially and awaits each one.
+            </summary>
+            <param name="handler">The event handler to invoke.</param>
+        </member>
+        <member name="T:BlazingStory.Abstractions.IComponentParameter">
+            <summary>
+            Represents a component parameter with its metadata and value.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Abstractions.IComponentParameter.Name">
+            <summary>
+            Gets the name of the parameter.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Abstractions.IComponentParameter.Type">
+            <summary>
+            Gets the CLR type of the parameter.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Abstractions.IComponentParameter.TypeStructure">
+            <summary>
+            Gets the type structure describing nullability and generic information of the parameter.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Abstractions.IComponentParameter.Summary">
+            <summary>
+            Gets the summary description of the parameter extracted from XML documentation.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Abstractions.IComponentParameter.Required">
+            <summary>
+            Gets a value indicating whether the parameter is required.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Abstractions.IComponentParameter.Control">
+            <summary>
+            Gets or sets the UI control type used to edit this parameter.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Abstractions.IComponentParameter.DefaultValue">
+            <summary>
+            Gets or sets the default value of the parameter.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Abstractions.IComponentParameter.UpdateSummaryFromXmlDocCommentAsync">
+            <summary>
+            Update summary property text of this parameter by reading a XML document comment file.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Abstractions.IComponentParameter.GetParameterTypeStrings">
+            <summary>
+            Gets the string representations of the parameter type.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Abstractions.IStory">
+            <summary>
+            Represents a single story definition for a UI component.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Abstractions.IStory.Title">
+            <summary>
+            Gets the display title of this story.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Abstractions.IStory.Name">
+            <summary>
+            Gets the name of this story.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Abstractions.IStory.ComponentType">
+            <summary>
+            The type of the target UI component in this story.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Abstractions.IStory.StoriesRazorDescriptor">
+            <summary>
+            Gets the descriptor of the Stories Razor component that defines this story.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Abstractions.IStory.Context">
+            <summary>
+            Gets the story context containing arguments and parameters for this story.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Abstractions.IStory.NavigationPath">
+            <summary>
+            Gets a navigation path string for this story.<br/>
+            (ex. "examples-ui-button--primary")
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Abstractions.IStoryContext">
+            <summary>
+            Provides access to a story's arguments, parameters, and state management.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Abstractions.IStoryContext.Args">
+            <summary>
+            Gets the current argument values keyed by parameter name.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Abstractions.IStoryContext.Parameters">
+            <summary>
+            Gets the component parameters associated with this story.
+            </summary>
+        </member>
+        <member name="E:BlazingStory.Abstractions.IStoryContext.ArgumentChanged">
+            <summary>
+            Occurs when an argument value is changed.
+            </summary>
+        </member>
+        <member name="E:BlazingStory.Abstractions.IStoryContext.ArgumentsReset">
+            <summary>
+            Occurs when argument values are all reset to their default values.
+            </summary>
+        </member>
+        <member name="E:BlazingStory.Abstractions.IStoryContext.ShouldRender">
+            <summary>
+            This event is used to notify the story that it should re-render.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Abstractions.IStoryContext.GetNoEventParameterCount">
+            <summary>
+            Get the number of parameters that are not event parameters.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Abstractions.IStoryContext.InitArgument(System.String,System.Object)">
+            <summary>
+            Initializes an argument with the specified name and value.
+            </summary>
+            <param name="name">The parameter name.</param>
+            <param name="value">The initial value.</param>
+        </member>
+        <member name="M:BlazingStory.Abstractions.IStoryContext.ResetArgumentsAsync">
+            <summary>
+            Resets all arguments to their default values.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Abstractions.IStoryContext.AddOrUpdateArgumentAsync(System.String,System.Object)">
+            <summary>
+            Adds a new argument or updates an existing one with the specified value.
+            </summary>
+            <param name="name">The parameter name.</param>
+            <param name="newValue">The new value to set.</param>
+        </member>
+        <member name="M:BlazingStory.Abstractions.IStoryContext.InvokeShouldRender">
+            <summary>
+            This method is used to notify the story that it should re-render.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Abstractions.StoriesRazorDescriptor">
+            <summary>
+            Holds the type and attribute information for a Stories Razor component.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Abstractions.StoriesRazorDescriptor.TypeOfStoriesRazor">
+            <summary>
+            The type of the Stories Razor component.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Abstractions.StoriesRazorDescriptor.StoriesAttribute">
+            <summary>
+            The <see cref="T:BlazingStory.Types.StoriesAttribute"/> applied to the Stories Razor component.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Abstractions.StoriesRazorDescriptor.#ctor(System.Type,BlazingStory.Types.StoriesAttribute)">
+            <summary>
+            Initializes a new instance of the <see cref="T:BlazingStory.Abstractions.StoriesRazorDescriptor"/> class.
+            </summary>
+            <param name="typeOfStoriesRazor">The type of the Stories Razor component.</param>
+            <param name="storiesAttribute">The attribute applied to the Stories Razor component.</param>
+        </member>
+        <member name="T:BlazingStory.Abstractions.TypeStructure">
+            <summary>
+            Describes the structure of a type, including nullability, generics, and constituent types.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Abstractions.TypeStructure.IsNullable">
+            <summary>
+            Indicates whether the type is nullable.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Abstractions.TypeStructure.IsGeneric">
+            <summary>
+            Indicates whether the type is a generic type.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Abstractions.TypeStructure.PrimaryType">
+            <summary>
+            The primary (outermost) type.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Abstractions.TypeStructure.SecondaryTypes">
+            <summary>
+            The generic type arguments, if any.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Abstractions.TypeStructure.#ctor(System.Boolean,System.Boolean,System.Type,System.Type[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:BlazingStory.Abstractions.TypeStructure"/> class.
+            </summary>
+            <param name="isNullable">Whether the type is nullable.</param>
+            <param name="isGeneric">Whether the type is generic.</param>
+            <param name="primaryType">The primary type.</param>
+            <param name="secondaryTypes">The generic type arguments.</param>
+        </member>
+        <member name="M:BlazingStory.Abstractions.TypeStructure.Deconstruct(System.Boolean@,System.Boolean@,System.Type@,System.Type[]@)">
+            <summary>
+            Deconstructs this instance into its constituent parts.
+            </summary>
+            <param name="isNullable">Whether the type is nullable.</param>
+            <param name="isGeneric">Whether the type is generic.</param>
+            <param name="primaryType">The primary type.</param>
+            <param name="secondaryTypes">The generic type arguments.</param>
+        </member>
+        <member name="T:BlazingStory.Types.ControlType">
+            <summary>
+            Specifies the type of UI control used to edit a story parameter in the Controls panel.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Types.ControlType.Default">
+            <summary>
+            Uses the default control automatically determined by the parameter type.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Types.ControlType.Radio">
+            <summary>
+            Uses radio buttons for selection.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Types.ControlType.Select">
+            <summary>
+            Uses a dropdown select box for selection.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Types.ControlType.Color">
+            <summary>
+            Uses a color picker control.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Types.StoriesAttribute">
+            <summary>
+            Marks a component class as a stories definition and assigns it a title for navigation.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Types.StoriesAttribute.Title">
+            <summary>
+            Gets or sets the title used to group and display the stories in the navigation tree.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Types.StoriesAttribute.FilePath">
+            <summary>
+            Gets the source file path of the caller that applied this attribute.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Types.StoriesAttribute.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:BlazingStory.Types.StoriesAttribute"/> class.
+            </summary>
+            <param name="title">The title used to group and display the stories.</param>
+            <param name="callerFilePath">The file path of the caller, automatically provided by the compiler.</param>
+        </member>
+    </members>
+</doc>

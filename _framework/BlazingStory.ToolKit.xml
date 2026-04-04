@@ -1,0 +1,939 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BlazingStory.ToolKit</name>
+    </assembly>
+    <members>
+        <member name="T:BlazingStory.ToolKit.Buttons.ButtonStyle">
+            <summary>
+            Defines the visual style variants available for button components.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Buttons.ButtonStyle.Default">
+            <summary>The standard button style.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Buttons.ButtonStyle.Slim">
+            <summary>A compact, reduced-padding button style.</summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Buttons.CornerButton">
+            <summary>
+            A Blazor component that renders a small button intended for corner placement within a panel or container.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.CornerButton.Class">
+            <summary>
+            Additional CSS class names to apply to the button element.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.CornerButton.OnClick">
+            <summary>
+            Callback invoked when the button is clicked.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.CornerButton.ChildContent">
+            <summary>
+            The content rendered inside the button.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Buttons.IconButton">
+            <summary>
+            A Blazor component that renders a button or anchor element with an SVG icon and optional label text.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.IconButton.Icon">
+            <summary>
+            The SVG icon to display inside the button.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.IconButton.Text">
+            <summary>
+            Optional label text rendered next to the icon.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.IconButton.OnClick">
+            <summary>
+            Callback invoked when the button is clicked.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.IconButton.Title">
+            <summary>
+            The tooltip text shown on hover.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.IconButton.Class">
+            <summary>
+            Additional CSS class names to apply to the button or anchor element.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.IconButton.Href">
+            <summary>
+            When set, renders the component as an anchor element navigating to this URL.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.IconButton.Target">
+            <summary>
+            The anchor target attribute used when <see cref="P:BlazingStory.ToolKit.Buttons.IconButton.Href"/> is set.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.IconButton.FlagStyle">
+            <summary>
+            Whether the "active" CSS class is applied when <see cref="P:BlazingStory.ToolKit.Buttons.IconButton.Active"/> is true.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.IconButton.Active">
+            <summary>
+            Whether the button is in an active (pressed) state.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Buttons.ResetButton">
+            <summary>
+            A Blazor component that renders a reset icon button for clearing control values.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.ResetButton.OnClick">
+            <summary>
+            Callback invoked when the reset button is clicked.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.ResetButton.Class">
+            <summary>
+            Additional CSS class names to apply to the button.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Buttons.SquareButton">
+            <summary>
+            A Blazor component that renders a square-shaped button with configurable text and style.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.SquareButton.ChildContent">
+            <summary>
+            The content to be rendered inside the button, such as text or icons.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.SquareButton.OnClick">
+            <summary>
+            Callback invoked when the button is clicked.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.SquareButton.ButtonStyle">
+            <summary>
+            The visual style variant applied to the button.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.SquareButton.Href">
+            <summary>
+            When set, renders the component as an anchor element navigating to this URL.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.SquareButton.Target">
+            <summary>
+            The anchor target attribute used when <see cref="P:BlazingStory.ToolKit.Buttons.SquareButton.Href"/> is set.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Buttons.ToggleButton">
+            <summary>
+            A Blazor component that renders a toggle button displaying "False" / "True" states backed by a boolean value.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.ToggleButton.Value">
+            <summary>
+            The current boolean state of the toggle.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.ToggleButton.OnChange">
+            <summary>
+            Callback invoked when the toggle state changes.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.BasicButton.ChildContent">
+            <summary>
+            The content to be rendered inside the button, such as text or icons.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.BasicButton.OnClick">
+            <summary>
+            Callback invoked when the button is clicked.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.BasicButton.Title">
+            <summary>
+            The tooltip text shown on hover.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.BasicButton.Class">
+            <summary>
+            Additional CSS class names to apply to the button or anchor element.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.BasicButton.Href">
+            <summary>
+            When set, renders the component as an anchor element navigating to this URL.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Buttons.BasicButton.Target">
+            <summary>
+            The anchor target attribute used when <see cref="P:BlazingStory.ToolKit.Buttons.BasicButton.Href"/> is set.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Extensions.ExtensionMethods">
+            <summary>
+            General-purpose extension methods for common collection and type operations.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Extensions.ExtensionMethods.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
+            <summary>
+            Executes an action for each element in the sequence.
+            </summary>
+            <param name="values">The sequence to iterate.</param>
+            <param name="action">The action to invoke on each element.</param>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Extensions.ExtensionMethods.Select``1(System.Array,System.Func{System.Object,``0})">
+            <summary>
+            Projects each element of a non-generic <see cref="T:System.Array"/> into a new form.
+            </summary>
+            <param name="array">The array to project.</param>
+            <param name="projection">A transform function applied to each element.</param>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Extensions.ExtensionMethods.Exclude(System.Collections.Generic.IReadOnlyDictionary{System.String,System.Object},System.String[])">
+            <summary>
+            Returns a new dictionary that contains all the elements of the original dictionary except the ones with the specified keys.
+            </summary>
+            <param name="value">A dictionary to exclude the specified keys.</param>
+            <param name="keysToExclude">Key strings to exclude from the dictionary.</param>
+            <returns>A dictionary that contains all the elements of the original dictionary except the ones with the specified keys.</returns>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Extensions.ExtensionMethods.IsGenericTypeOf(System.Type,System.Type)">
+            <summary>
+            Returns the type is a generic type of the specified type.
+            </summary>
+            <param name="targetType">A type object to compare with the specified generics type.</param>
+            <param name="genericsType">A generics type to compare with the specified type.</param>
+            <returns>Returns true if the specified type is the specified generics type. otherwise, false.</returns>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Extensions.ValueTaskExtensions">
+            <summary>
+            Extension methods for <see cref="T:System.Threading.Tasks.ValueTask"/>.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Extensions.ValueTaskExtensions.AndLogException(System.Threading.Tasks.ValueTask,Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            Registers a continuation on the <see cref="T:System.Threading.Tasks.ValueTask"/> that logs any exception to the given logger if the task faults.
+            </summary>
+            <param name="task">The task to observe.</param>
+            <param name="logger">The logger to write the error to.</param>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Icons.Badge">
+            <summary>
+            A Blazor component that renders a small badge label, displayed only when <c>Text</c> is non-empty.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Icons.Badge.Text">
+            <summary>
+            The text to display inside the badge.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Icons.SvgIcon">
+            <summary>
+            A Blazor component that renders an SVG icon by referencing a symbol defined in <see cref="T:BlazingStory.ToolKit.Icons.SvgIcons"/>.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Icons.SvgIcon.Type">
+            <summary>
+            The icon type that determines which SVG symbol to render.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Icons.SvgIcon.Class">
+            <summary>
+            Additional CSS class names to apply to the SVG element.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Icons.SvgIcon.OnClick">
+            <summary>
+            Callback invoked when the icon is clicked.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Icons.SvgIcons">
+            <summary>
+            A Blazor component that embeds all SVG symbol definitions used by <see cref="T:BlazingStory.ToolKit.Icons.SvgIcon"/> components.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Icons.SvgIconType">
+            <summary>
+            Identifies the SVG icon to render with the <see cref="T:BlazingStory.ToolKit.Icons.SvgIcon"/> component.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Folder">
+            <summary>Folder icon used in the navigation tree.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Component">
+            <summary>Component icon used in the navigation tree.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Document">
+            <summary>Document icon used in the navigation tree.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.BookmarkHollow">
+            <summary>Hollow bookmark icon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.ExpandAll">
+            <summary>Expand-all icon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.CollapseAll">
+            <summary>Collapse-all icon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Gear">
+            <summary>Gear / settings icon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Find">
+            <summary>Find / search icon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.NavigationBack">
+            <summary>Navigate-back arrow icon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.TrashCan">
+            <summary>Trash can / delete icon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Reload">
+            <summary>Reload icon for the canvas toolbar.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.ZoomIn">
+            <summary>Zoom-in icon for the canvas toolbar.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.ZoomOut">
+            <summary>Zoom-out icon for the canvas toolbar.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.ZoomReset">
+            <summary>Zoom-reset icon for the canvas toolbar.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Background">
+            <summary>Background toggle icon for the canvas toolbar.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Grid">
+            <summary>Grid overlay icon for the canvas toolbar.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.ChangeSize">
+            <summary>Change-size icon for the canvas toolbar.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Swap">
+            <summary>Swap / exchange arrows icon for the canvas toolbar.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Measure">
+            <summary>Measure / ruler icon for the canvas toolbar.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Outlines">
+            <summary>Outlines toggle icon for the canvas toolbar.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Reset">
+            <summary>Reset icon used in the Controls addon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Chevron">
+            <summary>Chevron (down arrow) icon used in the Controls addon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Exchange">
+            <summary>Exchange icon used in the Controls addon color input.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Close">
+            <summary>Close (×) icon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.CircleClose">
+            <summary>Circle-close icon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.RightSidePane">
+            <summary>Right side-pane toggle icon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.BottomSidePane">
+            <summary>Bottom side-pane toggle icon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.OpenNewTab">
+            <summary>Open-in-new-tab icon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Link">
+            <summary>Hyperlink icon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.FullScreen">
+            <summary>Full-screen icon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Check">
+            <summary>Checkmark icon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.Sidebar">
+            <summary>Sidebar / hamburger-menu icon.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.CircleInfo">
+            <summary>Circle-info icon used in the settings menu.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.ReleaseNotes">
+            <summary>Release-notes icon used in the settings menu.</summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Icons.SvgIconType.KeyboardShortcuts">
+            <summary>Keyboard-shortcuts icon used in the settings menu.</summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Inputs.ColorInput">
+            <summary>
+            A Blazor component that renders a text input combined with a color picker for CSS color values.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.ColorInput.Value">
+            <summary>
+            The current color value as a CSS color string.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.ColorInput.PlaceHolder">
+            <summary>
+            The placeholder text displayed in the text input when no value is set.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.ColorInput.OnInput">
+            <summary>
+            Callback invoked when the color value changes.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Inputs.ColorInput.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:BlazingStory.ToolKit.Inputs.ColorInput"/>.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Inputs.NullInputRadio">
+            <summary>
+            A Blazor component that renders a radio button labeled "null" for selecting a null value.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.NullInputRadio.Name">
+            <summary>
+            The radio button group name used to group this radio with others.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.NullInputRadio.Checked">
+            <summary>
+            Whether this radio button is currently checked.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.NullInputRadio.OnChange">
+            <summary>
+            Callback invoked when this radio button is selected.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Inputs.NumberInput">
+            <summary>
+            A Blazor component that renders a number input with optional decimal point support and auto-focus.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.NumberInput.Value">
+            <summary>
+            The current numeric value as a string.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.NumberInput.PlaceHolder">
+            <summary>
+            The placeholder text displayed when no value is entered.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.NumberInput.Required">
+            <summary>
+            Whether the input is marked as required.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.NumberInput.AllowDecimalPoint">
+            <summary>
+            Whether decimal point entry is allowed; the step value adjusts dynamically to match the input.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.NumberInput.InitialForcus">
+            <summary>
+            Whether the input should receive focus automatically when the parameter value changes.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.NumberInput.OnInput">
+            <summary>
+            Callback invoked when the input value changes.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.NumberInput.OnFocus">
+            <summary>
+            Callback invoked when the input receives focus.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Inputs.RadioGroup">
+            <summary>
+            A Blazor component that renders a group of radio buttons for selecting one value from a set of items.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.RadioGroup.Name">
+            <summary>
+            The radio button group name used to associate all radio buttons in this group.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.RadioGroup.Value">
+            <summary>
+            The currently selected value.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.RadioGroup.Items">
+            <summary>
+            The collection of items to render as radio buttons.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.RadioGroup.OnChange">
+            <summary>
+            Callback invoked when the selected radio button changes.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Inputs.Select">
+            <summary>
+            A Blazor component that renders a styled drop-down select element for choosing one value from a list.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.Select.Value">
+            <summary>
+            The currently selected value.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.Select.Items">
+            <summary>
+            The collection of items to populate as select options.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.Select.OnChange">
+            <summary>
+            Callback invoked when the selected option changes.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Inputs.TextArea">
+            <summary>
+            A Blazor component that renders an auto-growing textarea input.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.TextArea.Value">
+            <summary>
+            The current text value of the textarea.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.TextArea.PlaceHolder">
+            <summary>
+            The placeholder text displayed when the textarea is empty.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Inputs.TextArea.OnInput">
+            <summary>
+            Callback invoked when the textarea content changes.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.JSInterop.IJSExtensions">
+            <summary>
+            Extension methods for <see cref="T:Microsoft.JSInterop.IJSRuntime"/> and <see cref="T:Microsoft.JSInterop.IJSObjectReference"/>.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.JSInterop.IJSExtensions.ImportAsync(Microsoft.JSInterop.IJSRuntime,System.String,System.String)">
+            <summary>
+            Import a JavaScript module from the specified path.
+            </summary>
+            <param name="jsRuntime">The <see cref="T:Microsoft.JSInterop.IJSRuntime"/> instance.</param>
+            <param name="modulePath">The path to the JavaScript module to import, like "./Component.razor.js".</param>
+            <param name="updateToken">A cache-busting token appended as a query string parameter.</param>
+        </member>
+        <member name="M:BlazingStory.ToolKit.JSInterop.IJSExtensions.InvokeVoidIfConnectedAsync(Microsoft.JSInterop.IJSObjectReference,System.String,System.Object[])">
+            <summary>
+            Invoke a JavaScript function with the specified identifier.<br/>
+            This method will not throw an exception if the <see cref="T:Microsoft.JSInterop.IJSObjectReference"/> is disconnected.
+            </summary>
+            <param name="value">The <see cref="T:Microsoft.JSInterop.IJSObjectReference"/> instance.</param>
+            <param name="identifier">An identifier for the function to invoke.</param>
+            <param name="args">JSON-serializable arguments.</param>
+        </member>
+        <member name="M:BlazingStory.ToolKit.JSInterop.IJSExtensions.GetLocalStorageItemAsync(Microsoft.JSInterop.IJSRuntime,System.String)">
+            <summary>
+            Gets a string value from local storage by key, or null if not found.
+            </summary>
+            <param name="jsRuntime">The <see cref="T:Microsoft.JSInterop.IJSRuntime"/> instance.</param>
+            <param name="key">The local storage key.</param>
+        </member>
+        <member name="M:BlazingStory.ToolKit.JSInterop.IJSExtensions.GetLocalStorageItemAsync(Microsoft.JSInterop.IJSRuntime,System.String,System.String)">
+            <summary>
+            Gets a string value from local storage by key, returning <paramref name="defaultValue"/> if not found.
+            </summary>
+            <param name="jsRuntime">The <see cref="T:Microsoft.JSInterop.IJSRuntime"/> instance.</param>
+            <param name="key">The local storage key.</param>
+            <param name="defaultValue">The value to return when the key is absent.</param>
+        </member>
+        <member name="M:BlazingStory.ToolKit.JSInterop.IJSExtensions.SetLocalStorageItemAsync``1(Microsoft.JSInterop.IJSRuntime,System.String,``0)">
+            <summary>
+            Stores a value in local storage under the given key.
+            </summary>
+            <param name="jsRuntime">The <see cref="T:Microsoft.JSInterop.IJSRuntime"/> instance.</param>
+            <param name="key">The local storage key.</param>
+            <param name="value">The value to store.</param>
+        </member>
+        <member name="M:BlazingStory.ToolKit.JSInterop.IJSExtensions.SaveObjectToLocalStorageAsync``1(Microsoft.JSInterop.IJSRuntime,System.String,``0)">
+            <summary>
+            Serializes an object to JSON and saves it in local storage under the given key.
+            </summary>
+            <param name="jsRuntime">The <see cref="T:Microsoft.JSInterop.IJSRuntime"/> instance.</param>
+            <param name="key">The local storage key.</param>
+            <param name="obj">The object to serialize and store.</param>
+        </member>
+        <member name="M:BlazingStory.ToolKit.JSInterop.IJSExtensions.LoadObjectFromLocalStorageAsync``1(Microsoft.JSInterop.IJSRuntime,System.String,``0)">
+            <summary>
+            Loads and deserializes a JSON object from local storage, returning <paramref name="defaultObject"/> if absent or unparseable.
+            </summary>
+            <param name="jsRuntime">The <see cref="T:Microsoft.JSInterop.IJSRuntime"/> instance.</param>
+            <param name="key">The local storage key.</param>
+            <param name="defaultObject">The fallback value when the key is absent or deserialization fails.</param>
+        </member>
+        <member name="M:BlazingStory.ToolKit.JSInterop.IJSExtensions.GetLocalStorageItemAsync``1(Microsoft.JSInterop.IJSRuntime,System.String,``0)">
+            <summary>
+            Gets a local storage value parsed as <typeparamref name="T"/>, returning <paramref name="defaultValue"/> if absent or unparseable.
+            </summary>
+            <param name="jsRuntime">The <see cref="T:Microsoft.JSInterop.IJSRuntime"/> instance.</param>
+            <param name="key">The local storage key.</param>
+            <param name="defaultValue">The fallback value when the key is absent or parsing fails.</param>
+        </member>
+        <member name="M:BlazingStory.ToolKit.JSInterop.IJSExtensions.DisposeIfConnectedAsync(Microsoft.JSInterop.IJSObjectReference,System.String)">
+            <summary>
+            Dispose this <see cref="T:Microsoft.JSInterop.IJSObjectReference"/> object.<br/>
+            If <paramref name="methodToCallBeforeDispose"/> is not null, it will be invoked before disposing the object.<br/>
+            This method will not throw an exception if the <see cref="T:Microsoft.JSInterop.IJSObjectReference"/> is disconnected.
+            </summary>
+            <param name="value">The <see cref="T:Microsoft.JSInterop.IJSObjectReference"/> instance.</param>
+            <param name="methodToCallBeforeDispose">If specified, this method will be invoked before disposing the object.</param>
+        </member>
+        <member name="M:BlazingStory.ToolKit.JSInterop.IJSExtensions.GetUpdateToken(Microsoft.JSInterop.IJSRuntime,System.String)">
+            <summary>
+            Get the query string that ensures the loading of the latest static assets.<br/>
+            This method will return a string like "?v=1.0.0-preview.2.3" if the browser is online. Otherwise, "".<br/>
+            (This method depends on the "Toolbelt.Blazor.getProperty" JavaScript function, which is provided by Toolbelt.Blazor.GetProperty.Script NuGet package)
+            </summary>
+            <param name="jSRuntime">The <see cref="T:Microsoft.JSInterop.IJSRuntime"/> instance to retrieve browser's on-line status</param>
+            <param name="updateToken">The update token to be included in the query string. This is usually a version number or a timestamp that changes whenever the static assets are updated.</param>
+        </member>
+        <member name="T:BlazingStory.ToolKit.JSInterop.JSModule">
+            <summary>
+            A wrapper around a lazily-loaded JavaScript ES module that provides typed invocation helpers.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.JSInterop.JSModule.#ctor(System.Func{Microsoft.JSInterop.IJSRuntime},System.String,System.String)">
+            <summary>
+            Initializes a new instance of <see cref="T:BlazingStory.ToolKit.JSInterop.JSModule"/>.
+            </summary>
+            <param name="jSRuntime">A factory that returns the <see cref="T:Microsoft.JSInterop.IJSRuntime"/> instance.</param>
+            <param name="modulePath">The path to the JavaScript module file.</param>
+            <param name="updateToken">A cache-busting token appended as a query string parameter when importing the module.</param>
+        </member>
+        <member name="M:BlazingStory.ToolKit.JSInterop.JSModule.EnsureModuleAsync">
+            <summary>
+            Ensures that the required JavaScript module is loaded and ready for use.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.JSInterop.JSModule.InvokeVoidIfConnectedAsync(System.String,System.Object[])">
+            <summary>
+            Invokes a void JavaScript function on the module without throwing if the JS runtime is disconnected.
+            </summary>
+            <param name="identifier">The JavaScript function name to invoke.</param>
+            <param name="args">JSON-serializable arguments.</param>
+        </member>
+        <member name="M:BlazingStory.ToolKit.JSInterop.JSModule.InvokeVoidAsync(System.String,System.Object[])">
+            <summary>
+            Invokes a void JavaScript function on the module, loading the module first if needed.
+            </summary>
+            <param name="identifier">The JavaScript function name to invoke.</param>
+            <param name="args">JSON-serializable arguments.</param>
+        </member>
+        <member name="M:BlazingStory.ToolKit.JSInterop.JSModule.InvokeAsync``1(System.String,System.Object[])">
+            <summary>
+            Invokes a JavaScript function on the module and returns the result, loading the module first if needed.
+            </summary>
+            <param name="identifier">The JavaScript function name to invoke.</param>
+            <param name="args">JSON-serializable arguments.</param>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Menus.MenuItem">
+            <summary>
+            A Blazor component that renders a single clickable menu item.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Menus.MenuItem.OnClick">
+            <summary>
+            Callback invoked when the menu item is clicked.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Menus.MenuItem.Active">
+            <summary>
+            Whether the menu item is in an active (selected) state.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Menus.MenuItem.ChildContent">
+            <summary>
+            The content rendered inside the menu item.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Menus.MenuItemDivider">
+            <summary>
+            A Blazor component that renders a horizontal divider between menu items.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Menus.PopupMenu">
+            <summary>
+            A Blazor component that renders a trigger element which opens a popup menu on click.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Menus.PopupMenu.Class">
+            <summary>
+            Additional CSS class names to apply to the popup menu root element.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Menus.PopupMenu.MarginTop">
+            <summary>
+            The top margin in pixels applied to the popup panel.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Menus.PopupMenu.Trigger">
+            <summary>
+            The content rendered as the trigger that opens the popup menu.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Menus.PopupMenu.MenuItems">
+            <summary>
+            The menu item content rendered inside the popup panel.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Menus.PopupMenu.Services">
+            <summary>
+            The cascading service provider used to resolve dependencies such as <see cref="T:Toolbelt.Blazor.HotKeys2.HotKeys"/>.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Menus.PopupMenu.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:BlazingStory.ToolKit.Menus.PopupMenu"/>.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Menus.PopupMenu.ClosePopup">
+            <summary>
+            Closes the popup menu and unsubscribes from document events.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Styles.ImportStyleSheet">
+            <summary>
+            A Blazor component that dynamically imports a stylesheet link element into the document.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Styles.ImportStyleSheet.Href">
+            <summary>
+            The URL of the stylesheet to import.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.ToolKit.Styles.ImportStyleSheet.Disabled">
+            <summary>
+            Whether the stylesheet import is disabled.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Styles.ImportStyleSheet.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:BlazingStory.ToolKit.Styles.ImportStyleSheet"/>.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Utils.ComponentExtensions">
+            <summary>
+            This class contains extension methods for the Razor Components.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Utils.Namespace">
+            <summary>
+            The class that represents the full name of a namespace.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Utils.ContainerComponent`1">
+            <summary>
+            This class is a container component that is used to render a RenderFragment.
+            </summary>
+            <seealso cref="T:Microsoft.AspNetCore.Components.ComponentBase" />
+        </member>
+        <member name="T:BlazingStory.ToolKit.Utils.HtmlHelper">
+            <summary>
+            This class contains extension methods for the HTML elements.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Utils.HtmlElement">
+            <summary>
+            This class represents an HTML tag.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.HtmlParserToRenderFragment.ToRenderFragment(System.String)">
+            <summary>
+            Convert the given string to <see cref="T:Microsoft.AspNetCore.Components.RenderFragment" />.
+            </summary>
+            <param name="internalValue">
+            The string content what is the <see cref="T:Microsoft.AspNetCore.Components.RenderFragment" /> will render.
+            </param>
+            <returns>
+            The <see cref="T:Microsoft.AspNetCore.Components.RenderFragment" /> that will render the given string content.
+            </returns>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.HtmlParserToRenderFragment.ToRenderFragment(System.String,System.Type)">
+            <summary>
+            Convert the given string to <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1" />.
+            </summary>
+            <param name="argumentType">
+            The type argument of <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1" />.
+            </param>
+            <param name="text">
+            The string content what is the <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1" /> will render.
+            </param>
+            <returns>
+            The <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1" /> that will render the given string content.
+            </returns>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.HtmlParserToRenderFragment.TryParseAttributeValue(System.String,System.Type,System.Object@)">
+            <summary>
+            Try to parse the given attribute value to the target type.
+            </summary>
+            <param name="value">
+            The attribute value to parse.
+            </param>
+            <param name="targetType">
+            The target type to parse the attribute value.
+            </param>
+            <param name="parsedValue">
+            The parsed value.
+            </param>
+            <returns>
+            If the attribute value is successfully parsed to the target type, returns true. Otherwise, false.
+            </returns>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Utils.RenderFragmentKit">
+            <summary>
+            The utility class for operations involved with <see cref="T:Microsoft.AspNetCore.Components.RenderFragment"/>.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.RenderFragmentKit.ToMarkupStringAsync(Microsoft.AspNetCore.Components.RenderFragment)">
+            <summary>
+            Get the string content what is the given <see cref="T:Microsoft.AspNetCore.Components.RenderFragment" /> renders.
+            </summary>
+            <param name="fragment">RenderFragment to get the string content.</param>
+            <returns>The string content what is the given <see cref="T:Microsoft.AspNetCore.Components.RenderFragment" /> renders.</returns>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.RenderFragmentKit.ToMarkupStringAsync``1(Microsoft.AspNetCore.Components.RenderFragment{``0})">
+            <summary>
+            Get the string content what is the given <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1" /> renders.
+            </summary>
+            <param name="renderFragment">The <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1" /> to get the string content.</param>
+            <returns>The string content what is the given <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1" /> renders.</returns>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.RenderFragmentKit.IsRenderFragment(System.Object)">
+            <summary>
+            Returns whether the given value is a <see cref="T:Microsoft.AspNetCore.Components.RenderFragment"/> or <see cref="T:Microsoft.AspNetCore.Components.RenderFragment`1"/>.
+            </summary>
+            <param name="value">The value or type to check.</param>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Utils.TypeUtility">
+            <summary>
+            Utility class for type inspection and conversion operations.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.TypeUtility.GetTypeDisplayText(System.Type)">
+            <summary>
+            Returns the display text of the given type as a C# language keyword, including enum values if applicable.
+            </summary>
+            <param name="type">The type to get the display text for.</param>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.TypeUtility.ExtractTypeStructure(System.Type)">
+            <summary>
+            Extracts type structure of the given type.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.TypeUtility.GetTypeNameAsLangKeyword(System.Type)">
+            <summary>
+            Get name of the type as a C# language keyword.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.TypeUtility.TryConvertType(BlazingStory.Abstractions.TypeStructure,System.String,System.Object@)">
+            <summary>
+            Try to convert the given string to the given type.<br/>
+            (Most cases, this method uses for deserialize URL query parameters of iframe to component parameters.)
+            </summary>
+            <param name="targetTypeStructure">The structure of the type to convert to.</param>
+            <param name="sourceString">The string to convert from.</param>
+            <param name="convertedValue">The converted value if the conversion is successful.</param>
+            <returns>True if the conversion is successful, otherwise false.</returns>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.TypeUtility.TryConvertType(BlazingStory.Abstractions.TypeStructure,System.String,System.Object@,System.IFormatProvider)">
+            <summary>
+            Try to convert the given string to the given type.<br/>
+            (Most cases, this method uses for deserialize URL query parameters of iframe to component parameters.)
+            </summary>
+            <param name="targetTypeStructure">The structure of the type to convert to.</param>
+            <param name="sourceString">The string to convert from.</param>
+            <param name="convertedValue">The converted value if the conversion is successful.</param>
+            <param name="formatProvider">The format provider to use for parsing, if applicable.</param>
+            <returns>True if the conversion is successful, otherwise false.</returns>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.TypeUtility.IsListCompatibleType(System.Type)">
+            <summary>
+            Returns whether the given type is <see cref="T:System.Collections.Generic.List`1"/> or a generic collection interface assignable from <see cref="T:System.Collections.Generic.List`1"/>,
+            such as <see cref="T:System.Collections.Generic.IEnumerable`1"/>, <see cref="T:System.Collections.Generic.ICollection`1"/>, <see cref="T:System.Collections.Generic.IList`1"/>,
+            <see cref="T:System.Collections.Generic.IReadOnlyCollection`1"/>, or <see cref="T:System.Collections.Generic.IReadOnlyList`1"/>.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.TypeUtility.IsParsableType(System.Type)">
+            <summary>
+            Returns whether the given type implements <see cref="T:System.IParsable`1"/>.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.TypeUtility.IsNumericType(System.Type)">
+            <summary>
+            Returns whether the given type is a numeric type.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.TypeUtility.IsDecimalPointType(System.Type)">
+            <summary>
+            Returns whether the given type is a decimal point type.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.TypeUtility.GetOpenType(System.Type)">
+            <summary>
+            Get open type of the given type.<br/>
+            When you pass the `List&lt;T&gt;` type, this method returns `List&lt;&gt;`.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.TypeUtility.IsPlainObjectType(System.Type)">
+            <summary>
+            Returns whether the given object is a plain object type that should be serialized as a JSON object, like '{"foo":123,"bar:456}}'.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Utils.Unknown">
+            <summary>
+            Represents an unknown or unresolvable value.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.ToolKit.Utils.Unknown.Value">
+            <summary>
+            The singleton instance representing an unknown value.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.Unknown.ToString">
+            <summary>
+            Returns a dash ("-") to indicate an unknown value.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.ToolKit.Utils.UriParameterKit">
+            <summary>
+            Utility class for handling URL parameters.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.UriParameterKit.EncodeKeyValues``1(System.Collections.Generic.IReadOnlyDictionary{System.String,``0})">
+            <summary>
+            Encodes a dictionary of key-value pairs into a semicolon-delimited, URL-escaped string.
+            </summary>
+            <param name="keyValues">The key-value pairs to encode.</param>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.UriParameterKit.DecodeKeyValues(System.String)">
+            <summary>
+            Decodes a semicolon-delimited, URL-escaped string into a dictionary of key-value pairs.
+            </summary>
+            <param name="text">The encoded string to decode.</param>
+        </member>
+        <member name="M:BlazingStory.ToolKit.Utils.UriParameterKit.GetUri(System.String,System.Collections.Generic.IReadOnlyDictionary{System.String,System.Object})">
+            <summary>
+            Appends the given parameters as a query string to the given URI.
+            </summary>
+            <param name="uri">The base URI.</param>
+            <param name="parameters">The query parameters to append.</param>
+        </member>
+    </members>
+</doc>

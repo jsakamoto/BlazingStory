@@ -1,0 +1,152 @@
+﻿.controls-panel table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: var(--bs-caption-text-color);
+  font-size: 13px;
+  line-height: 20px;
+  text-align: left;
+  width: 100%;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+}
+.controls-panel table tbody {
+  background-color: var(--bs-add-on-panel-back-color);
+}
+.controls-panel table tbody tr {
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: var(--bs-add-on-panel-border-color);
+}
+.controls-panel table th {
+  color: var(--bs-caption-text-half-color1);
+}
+.controls-panel table th.name {
+  padding: 10px 15px 10px 20px;
+  width: 25%;
+}
+.controls-panel table th.control {
+  display: flex;
+}
+.controls-panel table th.control span {
+  flex: 1;
+}
+.controls-panel table th.control .reset-button {
+  margin: -4px -12px -4px 0;
+}
+.controls-panel table td.name {
+  padding: 10px 0 10px 20px;
+  font-weight: bold;
+  vertical-align: top;
+  width: 25%;
+}
+.controls-panel table td.description {
+  padding: 10px 15px;
+  width: 35%;
+}
+.controls-panel table td.description > .parameter-type-holder {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+.controls-panel table td.description > .parameter-type-holder > .parameter-type {
+  display: inline-block;
+  font-family: var(--bs-monospace-font-family);
+  font-size: 12px;
+  color: var(--bs-dimmed-text-color);
+  background-color: var(--bs-back-color);
+  padding: 2px 5px;
+  line-height: 13px;
+  margin-bottom: 4px;
+  border-radius: 3px;
+  border: 1px solid var(--bs-dimmed-back-color);
+}
+.controls-panel table td .required {
+  color: #FF4400;
+  font-weight: normal;
+  font-family: var(--bs-monospace-font-family);
+  cursor: help;
+}
+.controls-panel table th.control, .controls-panel table td.control {
+  padding: 10px 20px 10px 15px;
+}
+
+.array-parameter-controller {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.array-parameter-controller .array-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--bs-border-color);
+  font-size: 0.9em;
+  font-weight: 500;
+}
+.array-parameter-controller .empty-state {
+  text-align: center;
+  color: var(--bs-dimmed-text-color);
+  padding: 12px;
+  font-style: italic;
+  font-size: 0.9em;
+}
+.array-parameter-controller .array-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.array-parameter-controller .array-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 4px;
+  background: var(--bs-dimmed-back-color);
+  border-radius: 4px;
+  border: 1px solid var(--bs-border-color);
+}
+.array-parameter-controller .item-index {
+  font-family: monospace;
+  font-size: 0.85em;
+  color: var(--bs-dimmed-text-color);
+  min-width: 30px;
+  padding-top: 6px;
+  text-align: right;
+}
+.array-parameter-controller .item-control {
+  flex: 1;
+}
+
+.bool-parameter-controller {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  align-items: center;
+}
+.bool-parameter-controller label {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.bool-parameter-controller label .toggle-button {
+  margin: 0;
+}
+
+.number-parameter-controller {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+.number-parameter-controller label {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.number-parameter-controller .input-value {
+  flex: 1;
+}
