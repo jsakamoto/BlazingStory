@@ -84,4 +84,7 @@ public enum SvgIconType
     ReleaseNotes,
     /// <summary>Keyboard-shortcuts icon used in the settings menu.</summary>
     KeyboardShortcuts,
+
+    // ---- icons on the About page ----
+    GitHub,
 }
