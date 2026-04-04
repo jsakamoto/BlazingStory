@@ -1,20 +1,17 @@
-@using System.ComponentModel
-@{
-#pragma warning disable CS0618 // Type or member is obsolete
-}
-<BasicButton Class="@CssClass("square-button", new { ButtonStyle })" OnClick="this.OnClick" Href="@this.Href" Target="@this.Target">
-    @Text
-    @ChildContent
-</BasicButton>
-@{
-#pragma warning restore CS0618 // Type or member is obsolete
-}
-
-@code
+@if (string.IsNullOrEmpty(this.Href))
 {
-    [Obsolete, Parameter, EditorBrowsable(EditorBrowsableState.Never)]
-    public string? Text { get; set; }
+    <button class="@("basic-button " + this.Class)" title="@this.Title" @onclick="this.OnClick">
+        @ChildContent
+    </button>
+}
+else
+{
+    <a class="@("basic-button " + this.Class)" title="@this.Title" @onclick="this.OnClick" href="@this.Href" target="@this.Target">
+        @ChildContent
+    </a>
+}
 
+@code {
     /// <summary>
     /// The content to be rendered inside the button, such as text or icons.
     /// </summary>
@@ -25,13 +22,19 @@
     /// Callback invoked when the button is clicked.
     /// </summary>
     [Parameter]
-    public EventCallback OnClick { get; set; }
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
 
     /// <summary>
-    /// The visual style variant applied to the button.
+    /// The tooltip text shown on hover.
     /// </summary>
     [Parameter]
-    public ButtonStyle ButtonStyle { get; set; } = ButtonStyle.Default;
+    public string? Title { get; set; }
+
+    /// <summary>
+    /// Additional CSS class names to apply to the button or anchor element.
+    /// </summary>
+    [Parameter]
+    public string? Class { get; set; }
 
     /// <summary>
     /// When set, renders the component as an anchor element navigating to this URL.

@@ -1,23 +1,10 @@
-@if (string.IsNullOrEmpty(this.Href))
-{
-    <button class="icon-button @GetCssClass()" title="@this.Title" @onclick="this.ClickHandler">
-        <SvgIcon Type="Icon" />
-        @if (!string.IsNullOrEmpty(this.Text))
-        {
-            <span class="text">@this.Text</span>
-        }
-    </button>
-}
-else
-{
-    <a class="icon-button @GetCssClass()" title="@this.Title" @onclick="this.ClickHandler" href="@this.Href" target="@this.Target">
-        <SvgIcon Type="Icon" />
-        @if (!string.IsNullOrEmpty (this.Text))
-        {
-            <span class="text">@this.Text</span>
-        }
-    </a>
-}
+<BasicButton Class="@GetCssClass()" Title="@this.Title" OnClick="this.OnClick" Href="@this.Href" Target="@this.Target">
+    <SvgIcon Type="Icon" />
+    @if (!string.IsNullOrEmpty(this.Text))
+    {
+        <span class="text">@this.Text</span>
+    }
+</BasicButton>
 
 @code {
     /// <summary>
@@ -76,11 +63,6 @@ else
 
     private string GetCssClass()
     {
-        return $"{this.Class} {(this.Active && this.FlagStyle ? "active" : "")}";
-    }
-
-    private async Task ClickHandler(MouseEventArgs args)
-    {
-        await this.OnClick.InvokeAsync(args);
+        return $"icon-button {this.Class} {(this.Active && this.FlagStyle ? "active" : "")}";
     }
 }

@@ -1,12 +1,17 @@
 .square-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     background: var(--bs-back-color);
     color: var(--bs-inputs-text-color);
+    --bs-link-color: var(--bs-inputs-text-color);
     font-weight: bold;
     box-shadow: var(--bs-square-button-box-shadow);
     border-radius: 4px;
     padding: 10px 16px;
     font-size: var(--bs-control-caption-size);
-    line-height: 1;
+    line-height: 12px;
+    max-height: 32px;
     transition: all 150ms ease-out;
 
     &:hover {
@@ -19,5 +24,9 @@
 
     &.button-style-slim {
         padding: 8px 10px;
+    }
+
+    svg.svg-icon {
+        margin: 0;
     }
 }

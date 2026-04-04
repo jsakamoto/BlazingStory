@@ -1,10 +1,34 @@
-﻿.icon-button {
+﻿.basic-button {
+  color: var(--bs-dimmed-text-color);
+  --bs-link-color: var(--bs-dimmed-text-color);
+  text-decoration: none;
+}
+
+.corner-button {
+  font-family: var(--bs-font-family);
+  color: var(--bs-caption-text-color);
+  background-color: var(--bs-inputs-background);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  line-height: 16px;
+  border: solid 1px var(--bs-border-color);
+  border-radius: 4px 0 0 0;
+  border-bottom: none;
+  border-right: none;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+.corner-button:focus {
+  box-shadow: var(--bs-focused-color) 0 -3px 0 0 inset;
+}
+
+.icon-button {
   min-width: 28px;
   height: 28px;
   border-radius: 4px;
   padding: 1px 6px;
-  color: var(--bs-dimmed-text-color);
-  --bs-link-color: var(--bs-dimmed-text-color);
   display: flex;
   align-items: center;
 }
@@ -38,35 +62,20 @@ a.icon-button {
   padding-top: 1px;
 }
 
-.corner-button {
-  font-family: var(--bs-font-family);
-  color: var(--bs-caption-text-color);
-  background-color: var(--bs-inputs-background);
-  font-size: 12px;
-  font-weight: 700;
-  padding: 4px 10px;
-  line-height: 16px;
-  border: solid 1px var(--bs-border-color);
-  border-radius: 4px 0 0 0;
-  border-bottom: none;
-  border-right: none;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-}
-.corner-button:focus {
-  box-shadow: var(--bs-focused-color) 0 -3px 0 0 inset;
-}
-
 .square-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   background: var(--bs-back-color);
   color: var(--bs-inputs-text-color);
+  --bs-link-color: var(--bs-inputs-text-color);
   font-weight: bold;
   box-shadow: var(--bs-square-button-box-shadow);
   border-radius: 4px;
   padding: 10px 16px;
   font-size: var(--bs-control-caption-size);
-  line-height: 1;
+  line-height: 12px;
+  max-height: 32px;
   transition: all 150ms ease-out;
 }
 .square-button:hover {
@@ -77,6 +86,9 @@ a.icon-button {
 }
 .square-button.button-style-slim {
   padding: 8px 10px;
+}
+.square-button svg.svg-icon {
+  margin: 0;
 }
 
 .toggle-button {
