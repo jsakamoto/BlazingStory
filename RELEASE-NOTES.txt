@@ -1,3 +1,6 @@
+v.1.0.0-preview.75
+- Improve: Redesigned the About page with resource links, legal notices, and a contributor avatars section that displays GitHub profile icons.
+
 v.1.0.0-preview.74
 - Feature: Added a searchable/filterable Select component that automatically activates for enums with more than 20 items, providing type-to-filter and keyboard navigation. (PR #106 contributed by @Kebechet)
 
