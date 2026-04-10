@@ -1,5 +1,7 @@
 <Project>
 
+  <Import Project="../build/WriteLinesToFileLF.targets" />
+
   <PropertyGroup>
     <PrepareForBuildDependsOn>$(PrepareForBuildDependsOn);_GenerateScopedCssAssetsClass</PrepareForBuildDependsOn>
   </PropertyGroup>
@@ -11,13 +13,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ScopedCssAssetsLines Include="namespace $(RootNamespace)%3b%0d%0a"/>
+      <ScopedCssAssetsLines Include="namespace $(RootNamespace)%3b%0a"/>
       <ScopedCssAssetsLines Include="internal static class ScopedCssAssets"/>
       <ScopedCssAssetsLines Include="{"/>
       <ScopedCssAssetsLines Include="%20%20%20%20internal const string SplitContainer = &quot;%(SplitContainerScopedCss.BasePath)/%(SplitContainerScopedCss.RelativePath)&quot;%3b"/>
       <ScopedCssAssetsLines Include="}"/>
     </ItemGroup>
-    <WriteLinesToFile File="ScopedCssAssets.cs" Overwrite="true" Lines="@(ScopedCssAssetsLines)" WriteOnlyWhenDifferent="true"></WriteLinesToFile>
+    <WriteLinesToFileLF File="ScopedCssAssets.cs" Overwrite="true" Lines="@(ScopedCssAssetsLines)" WriteOnlyWhenDifferent="true"></WriteLinesToFileLF>
 
   </Target>
 
