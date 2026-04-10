@@ -6,6 +6,11 @@
     <File Path="THIRD-PARTY-NOTICES.txt" />
     <File Path="VersionInfo.props" />
   </Folder>
+  <Folder Name="/Shared Build Scripts/">
+    <File Path="build/ReleaseNotes.targets" />
+    <File Path="build/VersionInfo.targets" />
+    <File Path="build/WriteLinesToFileLF.targets" />
+  </Folder>
   <Folder Name="/Tests/">
     <Project Path="Tests/BlazingStory.Build.Test/BlazingStory.Build.Test.csproj" />
     <Project Path="Tests/BlazingStory.Test/BlazingStory.Test.csproj" />
