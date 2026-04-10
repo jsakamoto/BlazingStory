@@ -10,7 +10,6 @@
 
   <PropertyGroup>
     <Version>1.0.2</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>..\Artifacts\</PackageOutputPath>
   </PropertyGroup>
 
