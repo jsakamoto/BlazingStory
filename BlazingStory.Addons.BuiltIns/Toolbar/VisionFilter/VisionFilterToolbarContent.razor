@@ -1,0 +1,85 @@
+@inject IJSRuntime JSRuntime
+
+<PopupMenu MarginTop="6">
+    <Trigger>
+        <IconButton Icon="SvgIconType.Accessibility"
+                    Title="Change vision filter"
+                    Active="@(this._VisionFilter != VisionFilterType.None)" />
+    </Trigger>
+    <MenuItems>
+
+        <MenuItem OnClick="() => OnClickVisionFilter(VisionFilterType.None)">
+            Reset color filter
+        </MenuItem>
+
+        @foreach (var item in _VisionFilterItems)
+        {
+            <MenuItem Active="@(this._VisionFilter == item.Filter)" OnClick="() => OnClickVisionFilter(item.Filter)">
+                <div>
+                    <div>@item.Label</div>
+                    @if (item.Description is not null)
+                    {
+                        <div style="font-size:0.75em; color:var(--bs-secondary-text); margin-left:0.25rem;">@item.Description</div>
+                    }
+                </div>
+            </MenuItem>
+        }
+    </MenuItems>
+</PopupMenu>
+
+@code
+{
+    /// <summary>Gets the global arguments used to store and propagate the selected background color.</summary>
+    [CascadingParameter]
+    public GlobalArguments Globals { get; set; } = default!;
+
+    private static class StorageKeys
+    {
+        public const string VisionFilter = "Addons.Vision.Filter";
+    }
+
+    private record VisionFilterItem(VisionFilterType Filter, string Label, string? Description);
+
+    private static readonly VisionFilterItem[] _VisionFilterItems =
+    {
+        new(VisionFilterType.Blurred, "Blurred vision", "22.9% of users"),
+        new(VisionFilterType.Deuteranomaly, "Deuteranomaly", "2.7% of users"),
+        new(VisionFilterType.Deuteranopia, "Deuteranopia", "0.56% of users"),
+        new(VisionFilterType.Protanomaly, "Protanomaly", "0.66% of users"),
+        new(VisionFilterType.Protanopia, "Protanopia", "0.59% of users"),
+        new(VisionFilterType.Tritanomaly, "Tritanomaly", "0.01% of users"),
+        new(VisionFilterType.Tritanopia, "Tritanopia", "0.016% of users"),
+        new(VisionFilterType.Achromatopsia, "Achromatopsia", "0.0001% of users"),
+        new(VisionFilterType.Grayscale, "Grayscale", null),
+    };
+
+    private VisionFilterType _VisionFilter = VisionFilterType.None;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        var visionFilterStr = await this.JSRuntime.GetLocalStorageItemAsync(StorageKeys.VisionFilter);
+        this._VisionFilter = Enum.TryParse<VisionFilterType>(visionFilterStr, out var visionFilter) ? visionFilter : VisionFilterType.None;
+        this.StateHasChanged();
+        this.UpdateGlobalArguments();
+    }
+
+    private async Task OnClickVisionFilter(VisionFilterType visionFilter)
+    {
+        if (visionFilter == VisionFilterType.None) await Task.Delay(10);
+        this._VisionFilter = visionFilter;
+        await this.JSRuntime.SetLocalStorageItemAsync(StorageKeys.VisionFilter, this._VisionFilter.ToString());
+
+        this.UpdateGlobalArguments();
+    }
+
+    private void UpdateGlobalArguments()
+    {
+        this.Globals["vision"] = this._VisionFilter switch
+        {
+            VisionFilterType.None => null,
+            _ => this._VisionFilter.ToString().ToLowerInvariant(),
+        };
+    }
+}
