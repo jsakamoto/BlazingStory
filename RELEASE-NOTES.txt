@@ -1,3 +1,6 @@
+v.1.0.0-preview.76
+- Feature: Added an accessibility vision filter addon that simulates color vision deficiencies (protanopia, deuteranopia, tritanopia, and more.)
+
 v.1.0.0-preview.75
 - Improve: Redesigned the About page with resource links, legal notices, and a contributor avatars section that displays GitHub profile icons.
 
