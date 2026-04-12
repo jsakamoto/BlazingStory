@@ -51,6 +51,8 @@ public enum SvgIconType
     Outlines,
     /// <summary>Accessibility icon for the canvas toolbar.</summary>
     Accessibility,
+    /// <summary>Reset-options icon for the canvas toolbar.</summary>
+    ResetOption,
 
     // ---- icons in the canvas page's Addons > Controls ----
     /// <summary>Reset icon used in the Controls addon.</summary>

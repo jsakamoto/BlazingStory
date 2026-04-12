@@ -1,31 +1,40 @@
 @inject IJSRuntime JSRuntime
 
-<PopupMenu MarginTop="6">
+<ImportStyleSheet Href="@($"/_content/BlazingStory.Addons.BuiltIns/css/vision-filter-toolbar.min.css")" />
+
+<VisionFilterDefinitions />
+
+<PopupMenu MarginTop="6" Class="vision-filter">
     <Trigger>
         <IconButton Icon="SvgIconType.Accessibility"
                     Title="Change vision filter"
-                    Active="@(this._VisionFilter != VisionFilterType.None)" />
+                    Active="@(this._SelectedVisionFilterItem is not null)" 
+                    Text="@(this._SelectedVisionFilterItem?.Label)" />
     </Trigger>
     <MenuItems>
 
-        <MenuItem OnClick="() => OnClickVisionFilter(VisionFilterType.None)">
+        <MenuItem OnClick="() => OnClickVisionFilter(null)">
+            <SvgIcon Type="SvgIconType.ResetOption" />
             Reset color filter
         </MenuItem>
 
         @foreach (var item in _VisionFilterItems)
         {
-            <MenuItem Active="@(this._VisionFilter == item.Filter)" OnClick="() => OnClickVisionFilter(item.Filter)">
-                <div>
-                    <div>@item.Label</div>
+            <MenuItem Active="@(this._SelectedVisionFilterItem == item)" OnClick="() => OnClickVisionFilter(item)">
+                <div class="@($"sample-image {item.Filter.ToString().ToLowerInvariant()}")">
+                </div>
+                <div class="text-content">
+                    <div class="label">@item.Label</div>
                     @if (item.Description is not null)
                     {
-                        <div style="font-size:0.75em; color:var(--bs-secondary-text); margin-left:0.25rem;">@item.Description</div>
+                        <div class="description">@item.Description</div>
                     }
                 </div>
             </MenuItem>
         }
     </MenuItems>
 </PopupMenu>
+
 
 @code
 {
@@ -53,33 +62,33 @@
         new(VisionFilterType.Grayscale, "Grayscale", null),
     };
 
-    private VisionFilterType _VisionFilter = VisionFilterType.None;
+    private VisionFilterItem? _SelectedVisionFilterItem = null;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
 
         var visionFilterStr = await this.JSRuntime.GetLocalStorageItemAsync(StorageKeys.VisionFilter);
-        this._VisionFilter = Enum.TryParse<VisionFilterType>(visionFilterStr, out var visionFilter) ? visionFilter : VisionFilterType.None;
+        var visionFilter = Enum.TryParse<VisionFilterType>(visionFilterStr, out var value) ? value : VisionFilterType.None;
+        _SelectedVisionFilterItem = _VisionFilterItems.FirstOrDefault(x => x.Filter == visionFilter);
+
         this.StateHasChanged();
         this.UpdateGlobalArguments();
     }
 
-    private async Task OnClickVisionFilter(VisionFilterType visionFilter)
+    private async Task OnClickVisionFilter(VisionFilterItem? item)
     {
-        if (visionFilter == VisionFilterType.None) await Task.Delay(10);
-        this._VisionFilter = visionFilter;
-        await this.JSRuntime.SetLocalStorageItemAsync(StorageKeys.VisionFilter, this._VisionFilter.ToString());
-
+        this._SelectedVisionFilterItem = item;
+        await this.JSRuntime.SetLocalStorageItemAsync(StorageKeys.VisionFilter, item?.Filter.ToString());
         this.UpdateGlobalArguments();
     }
 
     private void UpdateGlobalArguments()
     {
-        this.Globals["vision"] = this._VisionFilter switch
+        this.Globals["vision"] = this._SelectedVisionFilterItem switch
         {
-            VisionFilterType.None => null,
-            _ => this._VisionFilter.ToString().ToLowerInvariant(),
+            null => null,
+            _ => this._SelectedVisionFilterItem.Filter.ToString().ToLowerInvariant(),
         };
     }
 }

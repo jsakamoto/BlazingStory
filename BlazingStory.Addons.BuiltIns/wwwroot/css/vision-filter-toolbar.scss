@@ -1,0 +1,61 @@
+.vision-filter {
+    .menu-item {
+        justify-content: start;
+        gap: 8px;
+        height: unset;
+        min-height: 32px;
+    }
+
+    .sample-image {
+        outline: dashed 1px red;
+        width: 14px;
+        height: 14px;
+        border-radius: 14px;
+        background: linear-gradient(to right, rgb(244, 67, 54), rgb(255, 152, 0), rgb(255, 235, 59), rgb(139, 195, 74), rgb(33, 150, 243), rgb(156, 39, 176));
+
+        &.blurred {
+            filter: blur(2px);
+        }
+
+        &.deuteranomaly {
+            filter: url("#blazingstory-a11y-vision-deuteranomaly");
+        }
+
+        &.deuteranopia {
+            filter: url("#blazingstory-a11y-vision-deuteranopia");
+        }
+
+        &.protanomaly {
+            filter: url("#blazingstory-a11y-vision-protanomaly");
+        }
+
+        &.protanopia {
+            filter: url("#blazingstory-a11y-vision-protanopia");
+        }
+
+        &.tritanomaly {
+            filter: url("#blazingstory-a11y-vision-tritanomaly");
+        }
+
+        &.tritanopia {
+            filter: url("#blazingstory-a11y-vision-tritanopia");
+        }
+
+        &.achromatopsia {
+            filter: url("#blazingstory-a11y-vision-achromatopsia");
+        }
+
+        &.grayscale {
+            filter: grayscale(100%);
+        }
+    }
+
+    .text-content {
+        padding-top: 8px;
+        padding-bottom: 8px;
+
+        .description {
+            color: var(--bs-dimmed-text-color);
+        }
+    }
+}

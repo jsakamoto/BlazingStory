@@ -1,4 +1,4 @@
-[
+﻿[
   {
     "inputFile": "wwwroot/css/actions-panel.scss",
     "outputFile": "wwwroot/css/actions-panel.css"
@@ -14,5 +14,9 @@
   {
     "inputFile": "wwwroot/css/outline.scss",
     "outputFile": "wwwroot/css/outline.css"
+  },
+  {
+    "inputFile": "wwwroot/css/vision-filter-toolbar.scss",
+    "outputFile": "wwwroot/css/vision-filter-toolbar.css"
   }
 ]
