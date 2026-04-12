@@ -1,0 +1,94 @@
+@inject IJSRuntime JSRuntime
+
+<ImportStyleSheet Href="@($"/_content/BlazingStory.Addons.BuiltIns/css/vision-filter-toolbar.min.css")" />
+
+<VisionFilterDefinitions />
+
+<PopupMenu MarginTop="6" Class="vision-filter">
+    <Trigger>
+        <IconButton Icon="SvgIconType.Accessibility"
+                    Title="Change vision filter"
+                    Active="@(this._SelectedVisionFilterItem is not null)" 
+                    Text="@(this._SelectedVisionFilterItem?.Label)" />
+    </Trigger>
+    <MenuItems>
+
+        <MenuItem OnClick="() => OnClickVisionFilter(null)">
+            <SvgIcon Type="SvgIconType.ResetOption" />
+            Reset color filter
+        </MenuItem>
+
+        @foreach (var item in _VisionFilterItems)
+        {
+            <MenuItem Active="@(this._SelectedVisionFilterItem == item)" OnClick="() => OnClickVisionFilter(item)">
+                <div class="@($"sample-image {item.Filter.ToString().ToLowerInvariant()}")">
+                </div>
+                <div class="text-content">
+                    <div class="label">@item.Label</div>
+                    @if (item.Description is not null)
+                    {
+                        <div class="description">@item.Description</div>
+                    }
+                </div>
+            </MenuItem>
+        }
+    </MenuItems>
+</PopupMenu>
+
+
+@code
+{
+    /// <summary>Gets the global arguments used to store and propagate the selected background color.</summary>
+    [CascadingParameter]
+    public GlobalArguments Globals { get; set; } = default!;
+
+    private static class StorageKeys
+    {
+        public const string VisionFilter = "Addons.Vision.Filter";
+    }
+
+    private record VisionFilterItem(VisionFilterType Filter, string Label, string? Description);
+
+    private static readonly VisionFilterItem[] _VisionFilterItems =
+    {
+        new(VisionFilterType.Blurred, "Blurred vision", "22.9% of users"),
+        new(VisionFilterType.Deuteranomaly, "Deuteranomaly", "2.7% of users"),
+        new(VisionFilterType.Deuteranopia, "Deuteranopia", "0.56% of users"),
+        new(VisionFilterType.Protanomaly, "Protanomaly", "0.66% of users"),
+        new(VisionFilterType.Protanopia, "Protanopia", "0.59% of users"),
+        new(VisionFilterType.Tritanomaly, "Tritanomaly", "0.01% of users"),
+        new(VisionFilterType.Tritanopia, "Tritanopia", "0.016% of users"),
+        new(VisionFilterType.Achromatopsia, "Achromatopsia", "0.0001% of users"),
+        new(VisionFilterType.Grayscale, "Grayscale", null),
+    };
+
+    private VisionFilterItem? _SelectedVisionFilterItem = null;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        var visionFilterStr = await this.JSRuntime.GetLocalStorageItemAsync(StorageKeys.VisionFilter);
+        var visionFilter = Enum.TryParse<VisionFilterType>(visionFilterStr, out var value) ? value : VisionFilterType.None;
+        _SelectedVisionFilterItem = _VisionFilterItems.FirstOrDefault(x => x.Filter == visionFilter);
+
+        this.StateHasChanged();
+        this.UpdateGlobalArguments();
+    }
+
+    private async Task OnClickVisionFilter(VisionFilterItem? item)
+    {
+        this._SelectedVisionFilterItem = item;
+        await this.JSRuntime.SetLocalStorageItemAsync(StorageKeys.VisionFilter, item?.Filter.ToString());
+        this.UpdateGlobalArguments();
+    }
+
+    private void UpdateGlobalArguments()
+    {
+        this.Globals["vision"] = this._SelectedVisionFilterItem switch
+        {
+            null => null,
+            _ => this._SelectedVisionFilterItem.Filter.ToString().ToLowerInvariant(),
+        };
+    }
+}

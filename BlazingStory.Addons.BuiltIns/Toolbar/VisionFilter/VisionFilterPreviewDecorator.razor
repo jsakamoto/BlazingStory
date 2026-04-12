@@ -1,0 +1,21 @@
+<VisionFilterDefinitions />
+
+@if (this._visionFilter is not null)
+{
+    <ImportStyleSheet @key="this._visionFilter"
+                      Href="@($"/_content/BlazingStory.Addons.BuiltIns/css/vision-filters/{this._visionFilter}.css")" />
+}
+
+@code
+{
+    /// <summary>Gets or sets the global arguments dictionary, used to read whether the outlines overlay is enabled.</summary>
+    [CascadingParameter(Name = "Globals")]
+    public IReadOnlyDictionary<string, string>? Globals { get; set; }
+
+    private string? _visionFilter = null;
+
+    override protected void OnParametersSet()
+    {
+        this._visionFilter = this.Globals?.TryGetValue("vision", out var strValue) == true ? strValue : null;
+    }
+}
