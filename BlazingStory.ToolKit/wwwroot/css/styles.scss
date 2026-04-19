@@ -13,7 +13,11 @@
 @import "../../Inputs/Select.razor.scss";
 @import "../../Inputs/TextArea.razor.scss";
 
-
 @import "../../Menus/PopupMenu.razor.scss";
 @import "../../Menus/MenuItem.razor.scss";
 @import "../../Menus/MenuItemDivider.razor.scss";
+
+@import "../../ToolBar/ToolBar.razor.scss";
+@import "../../ToolBar/TabButtonGroup.razor.scss";
+@import "../../ToolBar/TabButton.razor.scss";
+@import "../../ToolBar/Separator.razor.scss";
