@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Components;
+
 namespace BlazingStory.Abstractions;
 
 /// <summary>
@@ -14,6 +16,11 @@ public interface IStory
     /// Gets the name of this story.
     /// </summary>
     string Name { get; }
+
+    /// <summary>
+    /// A render fragment that provides additional descriptive content for the story.
+    /// </summary>
+    RenderFragment? Description { get; }
 
     /// <summary>
     /// The type of the target UI component in this story.

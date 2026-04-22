@@ -2,5 +2,5 @@ namespace BlazingStory.ToolKit;
 
 internal static class VersionInfo
 {
-    internal static string GetEscapedVersionText() => "1.0.0-preview.76";
+    internal static string GetEscapedVersionText() => "1.0.0-preview.77";
 }
