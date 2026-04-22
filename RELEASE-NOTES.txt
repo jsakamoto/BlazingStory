@@ -1,3 +1,6 @@
+v.1.0.0-preview.77
+- Improve: Exposed the Description property on the IStory interface, making story descriptions accessible to addon developers and other consumers of the public API.
+
 v.1.0.0-preview.76
 - Feature: Added an accessibility vision filter addon that simulates color vision deficiencies (protanopia, deuteranopia, tritanopia, and more.)
 
