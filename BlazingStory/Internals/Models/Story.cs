@@ -10,13 +10,24 @@ internal class Story : IStory
     public StoriesRazorDescriptor StoriesRazorDescriptor { get; }
 
     /// <summary>
+    /// Gets the display title of this story.
+    /// </summary>
+    public string Title { get; }
+
+    /// <summary>
+    /// Gets the name of this story.
+    /// </summary>
+    public string Name { get; }
+
+    /// <summary>
+    /// A render fragment that provides additional descriptive content for the story.
+    /// </summary>
+    public RenderFragment? Description { get; }
+
+    /// <summary>
     /// The type of the target UI component in this story.
     /// </summary>
     public Type ComponentType { get; }
-
-    public string Title { get; }
-
-    public string Name { get; }
 
     /// <summary>
     /// Gets a navigation path string for this story.<br/>
@@ -33,8 +44,6 @@ internal class Story : IStory
     internal readonly Type? StoryLayout;
 
     internal readonly RenderFragment<IStoryContext> RenderFragment;
-
-    internal readonly RenderFragment? Description;
 
     internal Story(StoriesRazorDescriptor storiesRazorDescriptor, Type componentType, string name, IStoryContext context, [DynamicallyAccessedMembers(All)] Type? storiesLayout, [DynamicallyAccessedMembers(All)] Type? storyLayout, RenderFragment<IStoryContext> renderFragment, RenderFragment? description)
     {
