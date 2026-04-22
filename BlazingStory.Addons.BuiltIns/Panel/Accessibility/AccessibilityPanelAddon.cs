@@ -1,0 +1,17 @@
+namespace BlazingStory.Addons.BuiltIns.Panel.Accessibility;
+
+/// <summary>
+/// Registers the Accessibility panel and its preview decorator with the addon builder.
+/// </summary>
+internal class AccessibilityPanelAddon : IAddon
+{
+    /// <summary>
+    /// Initializes the addon by registering the Accessibility panel and its preview decorator with the provided addon builder.
+    /// </summary>
+    /// <param name="builder">The addon builder used to register panels and decorators.</param>
+    public void Initialize(IAddonBuilder builder)
+    {
+        builder.AddPanel<AccessibilityPanel>(order: 300, viewMode => viewMode is ViewMode.Story);
+        builder.AddPreviewDecorator<AccessibilityPanelPreviewDecorator>();
+    }
+}

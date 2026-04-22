@@ -1,0 +1,30 @@
+<PanelTitle>
+    Accessibility
+</PanelTitle>
+
+<div class="a11y-panel">
+    <ToolBar>
+        <TabButtonGroup>
+            <TabButton Active="@(_currentView == View.Violations)" OnClick="@(() => _currentView = View.Violations)">
+                Violations
+                <Badge Text="0" />
+            </TabButton>
+            <TabButton Active="@(_currentView == View.Passes)" OnClick="@(() => _currentView = View.Passes)">
+                Passes
+                <Badge Text="0" />
+            </TabButton>
+            <TabButton Active="@(_currentView == View.Inconclusive)" OnClick="@(() => _currentView = View.Inconclusive)">
+                Inconclusive
+                <Badge Text="0" />
+            </TabButton>
+        </TabButtonGroup>
+    </ToolBar>
+
+</div>
+
+@code
+{
+    private enum View { Violations, Passes, Inconclusive }
+
+    private View _currentView = View.Violations;
+}
