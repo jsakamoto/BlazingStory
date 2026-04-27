@@ -22,13 +22,16 @@
     "IncludeSampleContent": {
       "longName": "include-sample"
     },
+    "LocalhostTld": {
+      "longName": "localhost-tld",
+      "shortName": ""
+    },
     "McpServer": {
       "longName": "mcp-server",
       "shortName": "mcp"
     },
-    "LocalhostTld": {
-      "longName": "localhost-tld",
-      "shortName": ""
+    "AgentSkillsFolder": {
+      "longName": "skills"
     },
     "kestrelHttpPort": {
       "isHidden": true

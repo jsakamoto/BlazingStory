@@ -159,12 +159,6 @@
       "defaultValue": "true",
       "description": "If specified, adds a sample component and its stories."
     },
-    "McpServer":{
-      "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "false",
-      "description": "If specified, this enables the MCP server feature that exposes information about components and their stories via the Model Context Protocol."
-    },
     "LocalhostTld": {
       "type": "parameter",
       "datatype": "bool",
@@ -172,6 +166,32 @@
       "displayName": "Use the .dev.localhost TLD in the application URL",
       "description": "Whether to combine the project name with the .dev.localhost TLD in the application URL for local development, e.g. https://myapp.dev.localhost:12345.",
       "isEnabled": "(Framework == \"net10.0\")"
+    },
+    "McpServer": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "If specified, this enables the MCP server feature that exposes information about components and their stories via the Model Context Protocol."
+    },
+    "AgentSkillsFolder": {
+      "type": "parameter",
+      "description": "The target folder for installing agent skill files.",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "none",
+          "description": "None"
+        },
+        {
+          "choice": "claude",
+          "description": ".claude (Claude Code)"
+        },
+        {
+          "choice": "agents",
+          "description": ".agents (GitHub Copilot, OpenAI Codex, etc.)"
+        }
+      ],
+      "defaultValue": "none"
     }
   },
   "guids": [
@@ -208,6 +228,18 @@
           "exclude": [
             "Components/Stories/*.*"
           ]
+        },
+        {
+          "condition": "AgentSkillsFolder == \"none\"",
+          "exclude": [
+            ".agents/skills/**"
+          ]
+        },
+        {
+          "condition": "AgentSkillsFolder == \"claude\"",
+          "rename": {
+            ".agents" : ".claude"
+          }
         }
       ]
     }
