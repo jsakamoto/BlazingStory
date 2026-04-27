@@ -30,6 +30,12 @@
       "persistenceScope": "templateGroup"
     },
     {
+      "id": "LocalhostTld",
+      "isVisible": true,
+      "persistenceScope": "shared",
+      "persistenceScopeName": "Microsoft"
+    },
+    {
       "id": "McpServer",
       "name": {
         "text": "Enables the _MCP server feature"
@@ -38,10 +44,26 @@
       "persistenceScope": "templateGroup"
     },
     {
-      "id": "LocalhostTld",
+      "id": "AgentSkillsFolder",
+      "name": {
+        "text": "The target folder for installing agent skill files"
+      },
       "isVisible": true,
-      "persistenceScope": "shared",
-      "persistenceScopeName": "Microsoft"
+      "choices": [
+        {
+          "id": "none",
+          "name": { "text": "None" }
+         },
+        {
+          "id": "claude",
+          "name": { "text": ".claude (Claude Code)" }
+         },
+        {
+          "id": "agents",
+          "name": { "text": ".agents (GitHub Copilot, OpenAI Codex, etc.)" }
+         }
+      ],
+      "persistenceScope": "templateGroup"
     }
   ]
 }

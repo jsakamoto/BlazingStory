@@ -25,6 +25,9 @@
     "IncludeSampleContent": {
       "longName": "include-sample"
     },
+    "AgentSkillsFolder": {
+      "longName": "skills"
+    },
     "LocalhostTld": {
       "longName": "localhost-tld",
       "shortName": ""

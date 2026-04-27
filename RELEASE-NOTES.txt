@@ -1,3 +1,6 @@
+v.1.0.0-preview.78
+- Feature: Added an option in the project templates to install AI agent skill files into newly scaffolded Blazing Story projects.
+
 v.1.0.0-preview.77
 - Improve: Exposed the Description property on the IStory interface, making story descriptions accessible to addon developers and other consumers of the public API.
 
