@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="ComponentPack1" Version="1.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.27" />
   </ItemGroup>
 
 </Project>

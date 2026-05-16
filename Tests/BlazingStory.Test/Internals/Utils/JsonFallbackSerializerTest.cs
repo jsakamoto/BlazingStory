@@ -32,7 +32,7 @@ public class JsonFallbackSerializerTest
             }
             """);
 
-        Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+        Assert.DoesNotThrow((Action)(() => JsonDocument.Parse(json)));
     }
 
     public class TestEvent : EventArgs
@@ -108,7 +108,7 @@ public class JsonFallbackSerializerTest
             }
             """);
 
-        Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+        Assert.DoesNotThrow((Action)(() => JsonDocument.Parse(json)));
     }
 
     [Test]
@@ -129,7 +129,7 @@ public class JsonFallbackSerializerTest
         Assert.That(json, Does.Contain("NormalProperty"));
         Assert.That(json, Does.Not.Contain("42")); // or any marker for the indexer value
 
-        Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+        Assert.DoesNotThrow((Action)(() => JsonDocument.Parse(json)));
     }
 
     private class TestComponent : ComponentBase
@@ -202,7 +202,7 @@ public class JsonFallbackSerializerTest
             }
             """);
 
-        Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+        Assert.DoesNotThrow((Action)(() => JsonDocument.Parse(json)));
     }
 
     [Test]
@@ -217,7 +217,7 @@ public class JsonFallbackSerializerTest
         // THEN
         json.Is("\"2023-10-01T14:03:01.0230000Z\"");
 
-        Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+        Assert.DoesNotThrow((Action)(() => JsonDocument.Parse(json)));
     }
 
     [Test]
@@ -232,7 +232,7 @@ public class JsonFallbackSerializerTest
         // THEN
         json.Is("\"2025-09-19T22:01:03.6520000Z\"");
 
-        Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+        Assert.DoesNotThrow((Action)(() => JsonDocument.Parse(json)));
     }
 
     [Test]
@@ -247,7 +247,7 @@ public class JsonFallbackSerializerTest
         // THEN
         json.Is("\"2024-01-20\"");
 
-        Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+        Assert.DoesNotThrow((Action)(() => JsonDocument.Parse(json)));
     }
 
     [Test]
@@ -262,7 +262,7 @@ public class JsonFallbackSerializerTest
         // THEN
         json.Is("\"15:40:01.0000000\"");
 
-        Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+        Assert.DoesNotThrow((Action)(() => JsonDocument.Parse(json)));
     }
 
     [Test]
