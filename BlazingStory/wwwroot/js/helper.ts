@@ -1,4 +1,4 @@
-import type { MessageArgument } from "../../wwwroot/js/types/custom-messages";
+import type { MessageArgument } from "@blazingstory/types/custom-messages";
 
 const doc = document;
 const lstorage = localStorage;
