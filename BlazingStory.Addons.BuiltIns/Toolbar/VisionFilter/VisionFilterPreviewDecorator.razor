@@ -1,6 +1,6 @@
 <VisionFilterDefinitions />
 
-@if (this._visionFilter is not null)
+@if (!string.IsNullOrEmpty(this._visionFilter))
 {
     <ImportStyleSheet @key="this._visionFilter"
                       Href="@($"./_content/BlazingStory.Addons.BuiltIns/css/vision-filters/{this._visionFilter}.css")" />
