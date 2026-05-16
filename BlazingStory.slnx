@@ -1,4 +1,12 @@
 <Solution>
+  <Folder Name="/js/" />
+  <Folder Name="/js/types/">
+    <File Path="js/types/blazor.d.ts" />
+    <File Path="js/types/browser-dom.d.ts" />
+    <File Path="js/types/custom-events.d.ts" />
+    <File Path="js/types/custom-messages.d.ts" />
+    <File Path="js/types/disposable.d.ts" />
+  </Folder>
   <Folder Name="/README/">
     <File Path="LICENSE" />
     <File Path="README.md" />

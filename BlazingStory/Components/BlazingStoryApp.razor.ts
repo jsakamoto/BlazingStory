@@ -1,5 +1,5 @@
-import type { IDisposable } from "../wwwroot/js/types/disposable";
-import type { DotNetObjectReference } from "../wwwroot/js/types/blazor";
+import type { IDisposable } from "@blazingstory/types/disposable";
+import type { DotNetObjectReference } from "@blazingstory/types/blazor";
 
 const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 

@@ -40,7 +40,13 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+
+    "baseUrl": ".",
+    "include": [ "**/*.ts", "../js/types/**/*.d.ts" ],
+    "paths": {
+      "@blazingstory/types/*": [ "../js/types/*" ]
+    }
   },
   "compileOnSave": true
 }

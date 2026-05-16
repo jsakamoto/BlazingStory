@@ -1,6 +1,6 @@
-import type { } from "../../../wwwroot/js/types/browser-dom";
-import type { MessageArgument } from "../../../wwwroot/js/types/custom-messages";
-import type { FrameHeightChangeEvent } from "../../../wwwroot/js/types/custom-events";
+import type { } from "@blazingstory/types/browser-dom";
+import type { MessageArgument } from "@blazingstory/types/custom-messages";
+import type { FrameHeightChangeEvent } from "@blazingstory/types/custom-events";
 
 // Register custom event types
 Blazor?.registerCustomEventType('frameheightchange', {

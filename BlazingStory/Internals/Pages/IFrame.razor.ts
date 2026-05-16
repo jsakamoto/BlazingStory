@@ -1,5 +1,5 @@
-import type { } from "../../wwwroot/js/types/browser-dom";
-import type { MessageArgument } from "../../wwwroot/js/types/custom-messages";
+import type { } from "@blazingstory/types/browser-dom";
+import type { MessageArgument } from "@blazingstory/types/custom-messages";
 
 const keydown = "keydown";
 const pointerdown = "pointerdown";

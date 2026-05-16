@@ -1,4 +1,4 @@
-import type { } from "../../../wwwroot/js/types/browser-dom";
+import type { } from "@blazingstory/types/browser-dom";
 const maxIframesInPool = 5;
 const TTLForIFrameInPool = 1 * 60 * 1000; // 1 minutes
 //const TTLForIFrameInPool = 5 * 1000;

@@ -1,6 +1,6 @@
-import type { DotNetObjectReference } from "../../../../wwwroot/js/types/blazor";
-import type { IDisposable } from "../../../../wwwroot/js/types/disposable";
-import type { ComponentActionEvent } from "../../../../wwwroot/js/types/custom-events";
+import type { DotNetObjectReference } from "@blazingstory/types/blazor";
+import type { IDisposable } from "@blazingstory/types/disposable";
+import type { ComponentActionEvent } from "@blazingstory/types/custom-events";
 
 export const subscribeComponentAction = async (owner: DotNetObjectReference, callbackMethodName: string): Promise<IDisposable> => {
     const handler = async (e: ComponentActionEvent) => await owner.invokeMethodAsync(callbackMethodName, e.detail);

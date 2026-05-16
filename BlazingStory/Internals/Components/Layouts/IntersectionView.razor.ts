@@ -1,5 +1,5 @@
-import type { } from "../../../wwwroot/js/types/browser-dom";
-import type { IntersectionChangeEvent } from "../../../wwwroot/js/types/custom-events";
+import type { } from "@blazingstory/types/browser-dom";
+import type { IntersectionChangeEvent } from "@blazingstory/types/custom-events";
 
 // Register custom event types
 Blazor?.registerCustomEventType('intersectionchange', {
