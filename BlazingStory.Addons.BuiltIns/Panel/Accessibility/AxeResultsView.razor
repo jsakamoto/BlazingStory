@@ -1,0 +1,20 @@
+@using BlazingStory.Addons.BuiltIns.Panel.Accessibility.Axe
+<div class="axe-results-view" style="@GetStyleText()">
+    @foreach (var result in this.Results ?? [])
+    {
+        <AxeResultView @key="result.Id" Result="result" />
+    }
+</div>
+@code
+{
+    [Parameter]
+    public IEnumerable<Result>? Results { get; set; } = [];
+
+    [Parameter]
+    public bool Visible { get; set; }
+
+    private string GetStyleText()
+    {
+        return "visibility: " + (this.Visible ? "visible" : "hidden") + ";";
+    }
+}

@@ -1,30 +1,102 @@
+@using BlazingStory.Addons.BuiltIns.Panel.Accessibility.Axe
+@using Microsoft.Extensions.DependencyInjection
+@implements IDisposable
+
 <PanelTitle>
     Accessibility
+    @if ((this._AxeResults?.Violations?.Count() ?? 0) > 0)
+    {
+        <Badge Text="@this._AxeResults?.Violations.Count().ToString()" />
+    }
 </PanelTitle>
+
+<ImportStyleSheet Href="./_content/BlazingStory.Addons.BuiltIns/css/a11y-panel.min.css" />
 
 <div class="a11y-panel">
     <ToolBar>
         <TabButtonGroup>
             <TabButton Active="@(_currentView == View.Violations)" OnClick="@(() => _currentView = View.Violations)">
                 Violations
-                <Badge Text="0" />
+                <Badge Text="@(this._AxeResults?.Violations.Count().ToString() ?? "0")" />
             </TabButton>
             <TabButton Active="@(_currentView == View.Passes)" OnClick="@(() => _currentView = View.Passes)">
                 Passes
-                <Badge Text="0" />
+                <Badge Text="@(this._AxeResults?.Passes.Count().ToString() ?? "0")" />
             </TabButton>
             <TabButton Active="@(_currentView == View.Inconclusive)" OnClick="@(() => _currentView = View.Inconclusive)">
                 Inconclusive
-                <Badge Text="0" />
+                <Badge Text="@(this._AxeResults?.Incomplete.Count().ToString() ?? "0")" />
             </TabButton>
         </TabButtonGroup>
     </ToolBar>
 
+    <div class="axe-results-views">
+        <AxeResultsView Results="this._AxeResults?.Violations" Visible="(_currentView == View.Violations)" />
+        <AxeResultsView Results="this._AxeResults?.Passes" Visible="(_currentView == View.Passes)" />
+        <AxeResultsView Results="this._AxeResults?.Incomplete" Visible="(_currentView == View.Inconclusive)" />
+    </div>
 </div>
 
 @code
 {
+    [CascadingParameter(Name = "Story")]
+    public IStory? Story { get; set; }
+
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
     private enum View { Violations, Passes, Inconclusive }
 
     private View _currentView = View.Violations;
+
+    private Window _Window = default!;
+
+    private IDisposable? _WindowMessageSubscription;
+
+    private IStory? _PrevStory;
+
+    private AxeResults? _AxeResults;
+
+    protected override void OnInitialized()
+    {
+        this._Window = this.Services.GetRequiredService<Window>();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            this._WindowMessageSubscription = await this._Window.SubscribeMessage(OnMessageReceived);
+        }
+    }
+
+    private async Task OnMessageReceived(string? message)
+    {
+        if (message == AccessibilityPanelAddon.Message.PreviewAfterRender)
+        {
+            await this.RequestAxeRunAsync();
+        }
+        else if (message?.StartsWith(AccessibilityPanelAddon.Message.AxeResult) == true)
+        {
+            await OnReceiveAxeResultAsync(message.Substring(AccessibilityPanelAddon.Message.AxeResult.Length));
+        }
+    }
+
+    private async Task RequestAxeRunAsync()
+    {
+        if (this._PrevStory == this.Story) return;
+        this._PrevStory = this.Story;
+        await this._Window.PostMessage(".preview-frame iframe", AccessibilityPanelAddon.Message.RunAxe);
+    }
+
+    private async Task OnReceiveAxeResultAsync(string resultJsonString)
+    {
+        this._AxeResults = JsonSerializer.Deserialize<AxeResults>(resultJsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        this.StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        this._WindowMessageSubscription?.Dispose();
+    }
 }

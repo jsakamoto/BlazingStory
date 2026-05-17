@@ -8,6 +8,10 @@
     "outputFile": "wwwroot/css/controls-panel.css"
   },
   {
+    "inputFile": "wwwroot/css/a11y-panel.scss",
+    "outputFile": "wwwroot/css/a11y-panel.css"
+  },
+  {
     "inputFile": "wwwroot/css/background-grid.scss",
     "outputFile": "wwwroot/css/background-grid.css"
   },

@@ -1,0 +1,56 @@
+@using BlazingStory.Addons.BuiltIns.Panel.Accessibility.Axe
+
+<div class="@CssClass("axe-result-view", new { expanded = _Expanded })">
+    <div class="header" @onclick="() => _Expanded = !_Expanded">
+        <span class="title">
+            @Capitalize(this.Result.Id)
+        </span>
+        <span class="id">
+            @this.Result.Id
+        </span>
+        <span class="spacing" />
+        <span class="@CssClass("impact", new { impact = this.Result.Impact })">
+            @Capitalize(this.Result.Impact)
+        </span>
+        <span class="number-of-nodes">
+            @this.Result.Nodes.Count()
+        </span>
+        <SvgIcon Type="SvgIconType.Chevron" Class="expansion-indicator">
+        </SvgIcon>
+    </div>
+
+    <div class="details">
+        <div class="description">
+            <span class="text">@Result.Description</span>
+            <a class="help-link" href="@Result.HelpUrl" target="_blank">
+                Learn how to resolve this violation &gt;
+            </a>
+        </div>
+    </div>
+
+@*  <p>@Result.Help</p>
+    <ul>
+        @foreach (var node in Result.Nodes)
+        {
+            <li>
+                <p>Target: @string.Join(", ", node.Target)</p>
+                <p>HTML: @node.Html</p>
+                <p>Failure Summary: @node.FailureSummary</p>
+            </li>
+        }
+    </ul>
+ *@</div>
+
+@code
+{
+    [Parameter, EditorRequired]
+    public Result Result { get; set; }
+
+    private bool _Expanded = false;
+
+    private string Capitalize(string? text)
+    {
+        if (string.IsNullOrEmpty(text)) return "";
+        return char.ToUpper(text[0]) + text.Substring(1).Replace('-', ' ');
+    }
+}

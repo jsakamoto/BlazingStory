@@ -11,6 +11,9 @@
         </Arguments>
 
         <Template>
+            @{
+                // Console.WriteLine($"Rendering HotKeyEditorInput with HotKey: {_hotKey}");
+            }
             <HotKeyEditorInput @bind-HotKey="_hotKey" Validate="OnValidateHotkey" @attributes="context.Args">
             </HotKeyEditorInput>
         </Template>

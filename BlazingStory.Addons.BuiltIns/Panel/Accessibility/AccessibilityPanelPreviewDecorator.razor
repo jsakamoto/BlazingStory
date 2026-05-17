@@ -1,6 +1,70 @@
+@using Microsoft.Extensions.DependencyInjection
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
 @code
 {
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    [CascadingParameter(Name = "Story")]
+    public IStory? Story { get; set; }
+
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
+    private JSModule _JSModule;
+
+    private Window _Window = default!;
+
+    private IDisposable? _WindowMessageSubscription;
+
+    public AccessibilityPanelPreviewDecorator()
     {
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Panel/Accessibility/AccessibilityPanelPreviewDecorator.razor.js");
+    }
+
+    protected override void OnInitialized()
+    {
+        this._Window = this.Services.GetRequiredService<Window>();
+    }
+
+    private CancellationTokenSource? _cts;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            this._WindowMessageSubscription = await this._Window.SubscribeMessage(OnMessageReceived);
+        }
+
+        _cts?.Cancel();
+        _cts?.Dispose();
+        _cts = new CancellationTokenSource();
+        _ = NotifyAfterRenderAsync(_cts.Token);
+    }
+
+    private async Task OnMessageReceived(string? message)
+    {
+        if (message == AccessibilityPanelAddon.Message.RunAxe)
+        {
+            var resultJsonString = await this._JSModule.InvokeAsync<string>("run");
+            await this._Window.PostMessage("parent", AccessibilityPanelAddon.Message.AxeResult + resultJsonString);
+        }
+    }
+
+    private async Task NotifyAfterRenderAsync(CancellationToken token)
+    {
+        try
+        {
+            await Task.Delay(millisecondsDelay: 10, token);
+            await this._JSModule.EnsureModuleAsync();
+            await this._Window.PostMessage("parent", AccessibilityPanelAddon.Message.PreviewAfterRender);
+        }
+        catch (OperationCanceledException) { }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        this._WindowMessageSubscription?.Dispose();
+        _cts?.Cancel();
+        _cts?.Dispose();
+        await this._JSModule.DisposeAsync();
     }
 }

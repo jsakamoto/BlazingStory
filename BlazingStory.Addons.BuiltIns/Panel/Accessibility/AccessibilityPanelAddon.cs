@@ -5,6 +5,13 @@ namespace BlazingStory.Addons.BuiltIns.Panel.Accessibility;
 /// </summary>
 internal class AccessibilityPanelAddon : IAddon
 {
+    internal static class Message
+    {
+        public const string PreviewAfterRender = "Addons.BuiltIns.AccessibilityPanel.Preview.AfterRender";
+        public const string RunAxe = "Addons.BuiltIns.AccessibilityPanel.RunAxe";
+        public const string AxeResult = "Addons.BuiltIns.AccessibilityPanel.AxeResult:";
+    }
+
     /// <summary>
     /// Initializes the addon by registering the Accessibility panel and its preview decorator with the provided addon builder.
     /// </summary>

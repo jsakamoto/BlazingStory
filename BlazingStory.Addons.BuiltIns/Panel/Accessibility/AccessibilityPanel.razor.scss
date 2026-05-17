@@ -1,0 +1,11 @@
+.a11y-panel {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+
+    .axe-results-views {
+        flex: 1;
+        position: relative;
+    }
+}
