@@ -404,6 +404,7 @@ svg.svg-icon {
 }
 .toolbar-viewport.toolbar-visible {
   height: var(--bs-toolbar-height);
+  min-height: var(--bs-toolbar-height);
 }
 .toolbar-viewport.toolbar-visible .toolbar-content {
   margin-top: 0;

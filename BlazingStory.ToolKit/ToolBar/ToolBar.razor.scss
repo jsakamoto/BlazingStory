@@ -30,6 +30,7 @@
 
     &.toolbar-visible {
         height: var(--bs-toolbar-height);
+        min-height: var(--bs-toolbar-height);
 
         .toolbar-content {
             margin-top: 0;
