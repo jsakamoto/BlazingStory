@@ -28,6 +28,8 @@
                 <Badge Text="@(this._AxeResults?.Incomplete.Count().ToString() ?? "0")" />
             </TabButton>
         </TabButtonGroup>
+        <Spacer />
+        <IconButton Icon="SvgIconType.Reload" Title="Rerun accessibility scan" OnClick="() => RequestAxeRunAsync(force: true)"></IconButton>
     </ToolBar>
 
     <div class="axe-results-views">
@@ -82,7 +84,7 @@
         }
     }
 
-    private async Task RequestAxeRunAsync()
+    private async Task RequestAxeRunAsync(bool force = false)
     {
         if (this._PrevStory == this.Story) return;
         this._PrevStory = this.Story;

@@ -71,7 +71,13 @@
 
     .details {
         display: none;
-        padding: 10px 15px;
+        padding: 0 15px 10px 15px;
+
+        .help-link {
+            color: var(--bs-focused-color);
+            text-decoration: none;
+            white-space: nowrap;
+        }
     }
 }
 
@@ -83,6 +89,8 @@
     }
 
     .details {
-        display: block;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
     }
 }

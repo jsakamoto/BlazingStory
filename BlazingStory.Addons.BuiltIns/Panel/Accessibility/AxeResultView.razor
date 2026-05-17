@@ -1,6 +1,7 @@
 @using BlazingStory.Addons.BuiltIns.Panel.Accessibility.Axe
 
 <div class="@CssClass("axe-result-view", new { expanded = _Expanded })">
+
     <div class="header" @onclick="() => _Expanded = !_Expanded">
         <span class="title">
             @Capitalize(this.Result.Id)
@@ -26,20 +27,12 @@
                 Learn how to resolve this violation &gt;
             </a>
         </div>
+
+        <AxeNodesView Nodes="Result.Nodes" />
+
     </div>
 
-@*  <p>@Result.Help</p>
-    <ul>
-        @foreach (var node in Result.Nodes)
-        {
-            <li>
-                <p>Target: @string.Join(", ", node.Target)</p>
-                <p>HTML: @node.Html</p>
-                <p>Failure Summary: @node.FailureSummary</p>
-            </li>
-        }
-    </ul>
- *@</div>
+</div>
 
 @code
 {
