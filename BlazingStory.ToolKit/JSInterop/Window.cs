@@ -34,9 +34,9 @@ public sealed class Window : IAsyncDisposable
     {
         private readonly Window _Owner;
 
-        public readonly Action<string?> Action;
+        public readonly Func<string?, Task> Action;
 
-        public MessageSubscripton(Window owner, Action<string?> action)
+        public MessageSubscripton(Window owner, Func<string?, Task> action)
         {
             this._Owner = owner;
             this.Action = action;
@@ -61,7 +61,7 @@ public sealed class Window : IAsyncDisposable
 
     /// <summary>Subscribes to window messages and invokes the callback when a message is received.</summary>
     /// <param name="callback">The action to invoke when a message arrives.</param>
-    public async ValueTask<IDisposable> SubscribeMessage(Action<string?> callback)
+    public async ValueTask<IDisposable> SubscribeMessage(Func<string?, Task> callback)
     {
         await this.EnsureMessageListener();
         lock (this._MessageSubscriptions)
@@ -83,13 +83,15 @@ public sealed class Window : IAsyncDisposable
     [JSInvokable(nameof(OnMessageReceived)), EditorBrowsable(EditorBrowsableState.Never)]
     public async Task OnMessageReceived(string? message)
     {
-        lock (this._MessageSubscriptions)
+        static IEnumerable<Task> invokeAllAction(IEnumerable<MessageSubscripton> subscriptions, string? message)
         {
-            this._MessageSubscriptions.ForEach(s =>
-            {
-                try { s.Action(message); }
-                catch (Exception ex) { this._Logger.LogError(ex, "An error occurred while processing a window message."); }
-            });
+            lock (subscriptions) return subscriptions.Select(s => s.Action(message)).ToArray();
+        }
+
+        foreach (var task in invokeAllAction(this._MessageSubscriptions, message))
+        {
+            try { await task; }
+            catch (Exception ex) { this._Logger.LogError(ex, "An error occurred while processing a window message."); }
         }
     }
 
