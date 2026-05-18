@@ -21,15 +21,20 @@
     </div>
 
     <div class="details">
-        <div class="description">
-            <span class="text">@Result.Description</span>
-            <a class="help-link" href="@Result.HelpUrl" target="_blank">
-                Learn how to resolve this violation &gt;
-            </a>
+        <div class="details-inner">
+            <div class="details-content">
+
+                <div class="description">
+                    <span class="text">@Result.Description</span>
+                    <a class="help-link" href="@Result.HelpUrl" target="_blank">
+                        Learn how to resolve this violation &gt;
+                    </a>
+                </div>
+
+                <AxeNodesView Nodes="Result.Nodes" />
+
+            </div>
         </div>
-
-        <AxeNodesView Nodes="Result.Nodes" />
-
     </div>
 
 </div>

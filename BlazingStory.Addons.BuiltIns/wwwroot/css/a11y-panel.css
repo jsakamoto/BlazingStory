@@ -74,10 +74,26 @@
   display: none;
 }
 .axe-result-view .details {
-  display: none;
+  position: relative;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.2s ease-out;
+  overflow: hidden;
+}
+.axe-result-view .details-inner {
+  min-height: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.axe-result-view .details-inner .details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   padding: 0 15px 10px 15px;
 }
-.axe-result-view .details .help-link {
+.axe-result-view .details-inner .details-content .help-link {
   color: var(--bs-focused-color);
   text-decoration: none;
   white-space: nowrap;
@@ -87,9 +103,7 @@
   transform: rotate(-180deg);
 }
 .axe-result-view.expanded .details {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  grid-template-rows: 1fr;
 }
 
 .axe-nodes-view {
