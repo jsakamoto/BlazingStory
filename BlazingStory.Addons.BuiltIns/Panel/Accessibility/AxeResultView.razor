@@ -1,8 +1,8 @@
 @using BlazingStory.Addons.BuiltIns.Panel.Accessibility.Axe
 
-<div class="@CssClass("axe-result-view", new { expanded = _Expanded })">
+<div class="@CssClass("axe-result-view", new { expanded = Expanded })">
 
-    <div class="header" @onclick="() => _Expanded = !_Expanded">
+    <div class="header" @onclick="OnClickHeader">
         <span class="title">
             @Capitalize(this.Result.Id)
         </span>
@@ -44,11 +44,21 @@
     [Parameter, EditorRequired]
     public Result Result { get; set; }
 
-    private bool _Expanded = false;
+    [Parameter]
+    public bool Expanded { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> ExpandedChanged { get; set; }
 
     private string Capitalize(string? text)
     {
         if (string.IsNullOrEmpty(text)) return "";
         return char.ToUpper(text[0]) + text.Substring(1).Replace('-', ' ');
+    }
+
+    private async Task OnClickHeader()
+    {
+        this.Expanded = !this.Expanded;
+        await this.ExpandedChanged.InvokeAsync(this.Expanded);
     }
 }

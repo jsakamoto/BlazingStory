@@ -1,8 +1,8 @@
 @using BlazingStory.Addons.BuiltIns.Panel.Accessibility.Axe
 <div class="axe-results-view" style="@GetStyleText()">
-    @foreach (var result in this.Results ?? [])
+    @foreach (var viewModel in this._ResultViewModels)
     {
-        <AxeResultView @key="result.Id" Result="result" />
+        <AxeResultView @key="viewModel.Result.Id" Result="viewModel.Result" @bind-Expanded="viewModel.Expanded" @bind-Expanded:after="OnExpandedChanged" />
     }
 </div>
 @code
@@ -13,8 +13,57 @@
     [Parameter]
     public bool Visible { get; set; }
 
+    [Parameter]
+    public ExpansionState ExpansionState { get; set; }
+
+    [Parameter]
+    public EventCallback<ExpansionState> ExpansionStateChanged { get; set; }
+
+    private class ResultViewModel(Result result)
+    {
+        public readonly Result Result = result;
+        public bool Expanded;
+    }
+
+    private IEnumerable<Result> _PrevResults = [];
+
+    private IEnumerable<ResultViewModel> _ResultViewModels = [];
+
+    private ExpansionState _PrevExpansionState;
+
+    override protected void OnParametersSet()
+    {
+        if (!ReferenceEquals(this.Results, _PrevResults))
+        {
+            _ResultViewModels = (this.Results ?? []).Select(r => new ResultViewModel(r)).ToList();
+            _PrevResults = this.Results ?? [];
+        }
+
+        if (this.ExpansionState != _PrevExpansionState)
+        {
+            if (this.ExpansionState != ExpansionState.Indeterminate)
+            {
+                foreach (var vm in _ResultViewModels)
+                {
+                    vm.Expanded = this.ExpansionState == ExpansionState.ExpandedAll;
+                }
+            }
+            _PrevExpansionState = this.ExpansionState;
+        }
+    }
+
     private string GetStyleText()
     {
         return "visibility: " + (this.Visible ? "visible" : "hidden") + ";";
+    }
+
+    private async Task OnExpandedChanged()
+    {
+        this.ExpansionState =
+            this._ResultViewModels.Count() == 0 ? ExpansionState.CollapsedAll :
+            this._ResultViewModels.All(m => m.Expanded) ? ExpansionState.ExpandedAll :
+            this._ResultViewModels.All(m => !m.Expanded) ? ExpansionState.CollapsedAll :
+            ExpansionState.Indeterminate;
+        await this.ExpansionStateChanged.InvokeAsync(this.ExpansionState);
     }
 }

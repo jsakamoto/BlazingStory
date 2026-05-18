@@ -28,14 +28,38 @@
                 <Badge Text="@(this._AxeResults?.Incomplete.Count().ToString() ?? "0")" />
             </TabButton>
         </TabButtonGroup>
+
         <Spacer />
+
+        @if (GetCurrentExpansionStateRef() == ExpansionState.ExpandedAll)
+        {
+            <IconButton Icon="SvgIconType.CollapseAll"
+                        Title="Collapse all results"
+                        OnClick="() => SetCurrentExpansionState(ExpansionState.CollapsedAll)"></IconButton>
+        }
+        else
+        {
+            <IconButton Icon="SvgIconType.ExpandAll"
+                        Title="Expand all results"
+                        OnClick="() => SetCurrentExpansionState(ExpansionState.ExpandedAll)"></IconButton>
+        }
+
         <IconButton Icon="SvgIconType.Reload" Title="Rerun accessibility scan" OnClick="() => RequestAxeRunAsync(force: true)"></IconButton>
     </ToolBar>
 
     <div class="axe-results-views">
-        <AxeResultsView Results="this._AxeResults?.Violations" Visible="(_currentView == View.Violations)" />
-        <AxeResultsView Results="this._AxeResults?.Passes" Visible="(_currentView == View.Passes)" />
-        <AxeResultsView Results="this._AxeResults?.Incomplete" Visible="(_currentView == View.Inconclusive)" />
+        <AxeResultsView Results="this._AxeResults?.Violations"
+                        Visible="(_currentView == View.Violations)"
+                        @bind-ExpansionState="_ViolationsExpansionState"
+                        @bind-ExpansionState:after="OnExpansionStateChanged" />
+        <AxeResultsView Results="this._AxeResults?.Passes"
+                        Visible="(_currentView == View.Passes)"
+                        @bind-ExpansionState="_PassesExpansionState"
+                        @bind-ExpansionState:after="OnExpansionStateChanged" />
+        <AxeResultsView Results="this._AxeResults?.Incomplete"
+                        Visible="(_currentView == View.Inconclusive)"
+                        @bind-ExpansionState="_InconclusiveExpansionState"
+                        @bind-ExpansionState:after="OnExpansionStateChanged" />
     </div>
 </div>
 
@@ -58,6 +82,12 @@
     private IStory? _PrevStory;
 
     private AxeResults? _AxeResults;
+
+    private ExpansionState _ViolationsExpansionState = ExpansionState.CollapsedAll;
+
+    private ExpansionState _PassesExpansionState = ExpansionState.CollapsedAll;
+
+    private ExpansionState _InconclusiveExpansionState = ExpansionState.CollapsedAll;
 
     protected override void OnInitialized()
     {
@@ -86,8 +116,12 @@
 
     private async Task RequestAxeRunAsync(bool force = false)
     {
-        if (this._PrevStory == this.Story) return;
+        if (!force && this._PrevStory == this.Story) return;
         this._PrevStory = this.Story;
+        this._AxeResults = null;
+        this._ViolationsExpansionState = ExpansionState.CollapsedAll;
+        this._PassesExpansionState = ExpansionState.CollapsedAll;
+        this._InconclusiveExpansionState = ExpansionState.CollapsedAll;
         await this._Window.PostMessage(".preview-frame iframe", AccessibilityPanelAddon.Message.RunAxe);
     }
 
@@ -95,6 +129,35 @@
     {
         this._AxeResults = JsonSerializer.Deserialize<AxeResults>(resultJsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         this.StateHasChanged();
+    }
+
+    private void OnExpansionStateChanged()
+    {
+        /* NOP, Just kick the state change */
+    }
+
+    private ref ExpansionState GetCurrentExpansionStateRef()
+    {
+        switch (this._currentView)
+        {
+            case View.Violations: return ref this._ViolationsExpansionState;
+            case View.Passes: return ref this._PassesExpansionState;
+            case View.Inconclusive: return ref this._InconclusiveExpansionState;
+            default: throw new InvalidOperationException();
+        }
+    }
+
+    private void SetCurrentExpansionState(ExpansionState state)
+    {
+        var currentResults = this._currentView switch
+        {
+            View.Violations => this._AxeResults?.Violations,
+            View.Passes => this._AxeResults?.Passes,
+            View.Inconclusive => this._AxeResults?.Incomplete,
+            _ => throw new InvalidOperationException()
+        };
+
+        GetCurrentExpansionStateRef() = (currentResults?.Count() ?? 0) > 0 ? state : ExpansionState.CollapsedAll;
     }
 
     public void Dispose()
