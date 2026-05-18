@@ -39,25 +39,10 @@
             transition: transform linear 0.1s;
         }
 
-        .impact-minor {
-            --bs-axe-impact-color: rgb(255, 105, 51);
-        }
-
-        .impact-moderate {
-            --bs-axe-impact-color: rgb(255, 105, 51);
-        }
-
-        .impact-serious {
-            --bs-axe-impact-color: rgb(255, 105, 51);
-        }
-
-        .impact-critical {
-            --bs-axe-impact-color: rgb(255, 105, 51);
-        }
-
         .impact {
             color: var(--bs-axe-impact-color);
-            border: 1px solid var(--bs-axe-impact-color);
+            background: var(--bs-axe-impact-bg);
+            box-shadow: var(--bs-axe-impact-shadow);
             border-radius: 20px;
             padding: 0 10px;
             font-size: 12px;
@@ -108,5 +93,61 @@
 
     .details {
         grid-template-rows: 1fr;
+    }
+}
+
+.preferes-color-scheme-light {
+    .axe-result-view {
+        .impact-critical {
+            --bs-axe-impact-color: rgb(255, 255, 255);
+            --bs-axe-impact-bg: rgb(209, 56, 0);
+            --bs-axe-impact-shadow: rgba(255, 255, 255, 0) 0px 0px 0px 1px inset;
+        }
+
+        .impact-serious {
+            --bs-axe-impact-color: rgb(194, 52, 0);
+            --bs-axe-impact-bg: rgb(255, 240, 235);
+            --bs-axe-impact-shadow: rgb(255, 195, 173) 0px 0px 0px 1px inset;
+        }
+
+        .impact-moderate {
+            --bs-axe-impact-color: rgb(122, 65, 0);
+            --bs-axe-impact-bg: rgb(255, 247, 235);
+            --bs-axe-impact-shadow: rgb(255, 206, 133) 0px 0px 0px 1px inset;
+        }
+
+        .impact-minor {
+            --bs-axe-impact-color: rgb(92, 101, 112);
+            --bs-axe-impact-bg: rgb(246, 249, 252);
+            --bs-axe-impact-shadow: rgba(92, 101, 112, 0.2) 0px 0px 0px 1px inset;
+        }
+    }
+}
+
+.preferes-color-scheme-dark {
+    .axe-result-view {
+        .impact-critical {
+            --bs-axe-impact-color: rgb(255, 105, 51);
+            --bs-axe-impact-bg: rgba(255, 255, 255, 0);
+            --bs-axe-impact-shadow: rgb(255, 105, 51) 0px 0px 0px 1px inset;
+        }
+
+        .impact-serious {
+            --bs-axe-impact-color: rgb(255, 105, 51);
+            --bs-axe-impact-bg: rgba(255, 255, 255, 0);
+            --bs-axe-impact-shadow: rgba(255, 120, 71, 0.15) 0px 0px 0px 1px inset;
+        }
+
+        .impact-moderate {
+            --bs-axe-impact-color: rgb(255, 173, 51);
+            --bs-axe-impact-bg: rgba(255, 255, 255, 0);
+            --bs-axe-impact-shadow: rgba(255, 182, 71, 0.15) 0px 0px 0px 1px inset;
+        }
+
+        .impact-minor {
+            --bs-axe-impact-color: rgb(149, 153, 157);
+            --bs-axe-impact-bg: rgb(34, 35, 37);
+            --bs-axe-impact-shadow: rgba(149, 153, 157, 0.2) 0px 0px 0px 1px inset;
+        }
     }
 }
