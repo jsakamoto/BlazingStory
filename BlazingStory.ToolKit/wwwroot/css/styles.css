@@ -443,11 +443,14 @@ span.toolbar-separator {
 }
 
 pre.code-block {
-  font-family: var(--bs-monospace-font-family);
-  font-size: 13px;
-  color: var(--bs-code-text-color);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 pre.code-block code {
+  font-family: var(--bs-monospace-font-family);
+  font-size: var(--bs-text-size);
+  color: var(--bs-code-text-color);
   color: var(--bs-code-text-color, #ededed);
 }
 pre.code-block code .token.punctuation {
@@ -456,14 +459,17 @@ pre.code-block code .token.punctuation {
 pre.code-block code .token.tag {
   color: var(--bs-code-tag-color, #ffffb6);
 }
+pre.code-block code .token.property {
+  color: var(--bs-code-property-color, #9cdcfe);
+}
 pre.code-block code .token.attr-name {
   color: var(--bs-code-attr-name-color, #9cdcfe);
 }
 pre.code-block code .token.attr-value {
   color: var(--bs-code-attr-value-color, #b474dd);
 }
-pre.code-block code .token.punctuation {
-  color: var(--bs-code-punctuation-color, #ededed);
+pre.code-block code .token.selector {
+  color: var(--bs-code-selector-color, #a8ff60);
 }
 pre.code-block code .token.comment {
   color: var(--bs-code-comment-color, #57a64a);

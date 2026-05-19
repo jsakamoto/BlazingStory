@@ -1,9 +1,12 @@
 pre.code-block {
-    font-family: var(--bs-monospace-font-family);
-    font-size: 13px;
-    color: var(--bs-code-text-color);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     code {
+        font-family: var(--bs-monospace-font-family);
+        font-size: var(--bs-text-size);
+        color: var(--bs-code-text-color);
         color: var(--bs-code-text-color, #ededed);
         // Prism syntax highlighting
         .token {
@@ -15,6 +18,10 @@ pre.code-block {
                 color: var(--bs-code-tag-color, #ffffb6);
             }
 
+            &.property {
+                color: var(--bs-code-property-color, #9cdcfe);
+            }
+
             &.attr-name {
                 color: var(--bs-code-attr-name-color, #9cdcfe);
             }
@@ -23,8 +30,8 @@ pre.code-block {
                 color: var(--bs-code-attr-value-color, #b474dd);
             }
 
-            &.punctuation {
-                color: var(--bs-code-punctuation-color, #ededed);
+            &.selector {
+                color: var(--bs-code-selector-color, #a8ff60);
             }
 
             &.comment {
