@@ -2,10 +2,12 @@
     display: flex;
     gap: 15px;
 
+    .node-selector, .node-details {
+        overflow-x: hidden;
+    }
+
     .node-selector {
         flex: 0.5;
-        width: 50%;
-        max-width: 50%;
 
         .node-item {
             appearance: none;
@@ -37,7 +39,6 @@
 
     .node-details {
         flex: 0.5;
-        max-width: 50%;
         display: flex;
         flex-direction: column;
         gap: 15px;
@@ -46,6 +47,49 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+        }
+
+        .element, .selectors {
+            .caption {
+                font-family: var(--bs-monospace-font-family);
+                font-size: var(--bs-text-size);
+                color: var(--bs-code-comment-color);
+                font-style: italic;
+            }
+        }
+
+        .element {
+            pre {
+                white-space: normal;
+            }
+        }
+    }
+}
+
+.preferes-color-scheme-light {
+    .axe-nodes-view {
+        .node-details {
+            --bs-code-text-color: #2e3338;
+            --bs-code-punctuation-color: #393a34;
+            --bs-code-tag-color: #800000;
+            --bs-code-attr-name-color: #eb0000;
+            --bs-code-attr-value-color: #0000ff;
+            --bs-code-comment-color: #008000;
+            --bs-code-selector-color: #800000;
+        }
+    }
+}
+
+.preferes-color-scheme-dark {
+    .axe-nodes-view {
+        .node-details {
+            --bs-code-text-color: #ededed;
+            --bs-code-punctuation-color: #ededed;
+            --bs-code-tag-color: #a8ff60;
+            --bs-code-attr-name-color: #96cbfe;
+            --bs-code-attr-value-color: #b474dd;
+            --bs-code-comment-color: #95999d;
+            --bs-code-selector-color: #a8ff60;
         }
     }
 }

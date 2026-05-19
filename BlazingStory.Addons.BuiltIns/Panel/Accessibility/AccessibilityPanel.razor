@@ -47,7 +47,7 @@
         <IconButton Icon="SvgIconType.Reload" Title="Rerun accessibility scan" OnClick="() => RequestAxeRunAsync(force: true)"></IconButton>
     </ToolBar>
 
-    <div class="axe-results-views">
+    <div class="axe-results-views-container">
         <AxeResultsView Results="this._AxeResults?.Violations"
                         Visible="(_currentView == View.Violations)"
                         @bind-ExpansionState="_ViolationsExpansionState"

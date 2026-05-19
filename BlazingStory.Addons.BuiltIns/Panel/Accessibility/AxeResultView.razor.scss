@@ -55,7 +55,6 @@
     }
 
     .details {
-        position: relative;
         display: grid;
         grid-template-rows: 0fr;
         transition: grid-template-rows 0.2s ease-out;
@@ -64,16 +63,16 @@
 
     .details-inner {
         min-height: 0;
-        position: relative;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
+        overflow-x: hidden;
 
         .details-content {
             display: flex;
             flex-direction: column;
             gap: 20px;
-            padding: 0 15px 10px 15px;
+            padding: 0 15px 20px 15px;
 
             .help-link {
                 color: var(--bs-focused-color);
