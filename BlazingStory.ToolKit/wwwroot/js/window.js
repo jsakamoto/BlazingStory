@@ -1,13 +1,16 @@
-const getTargetWindow = (selector) => {
+const getTargetWindow = async (selector) => {
     if (selector === "parent")
         return window.parent;
-    const iframe = document.querySelector(selector);
-    if (iframe instanceof HTMLIFrameElement && iframe.contentWindow)
-        return iframe.contentWindow;
+    for (let i = 0; i < 30; i++) {
+        const iframe = document.querySelector(selector);
+        if (iframe instanceof HTMLIFrameElement && iframe.contentWindow)
+            return iframe.contentWindow;
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
     throw new Error(`No target window found for selector: ${selector}`);
 };
-export const postMessage = (selector, message) => {
-    const targetWindow = getTargetWindow(selector);
+export const postMessage = async (selector, message) => {
+    const targetWindow = await getTargetWindow(selector);
     targetWindow.postMessage(message, location.origin);
 };
 export const setupMessageListener = (obj) => {
