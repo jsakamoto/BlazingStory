@@ -2,7 +2,7 @@
 <div class="axe-results-view" style="@GetStyleText()">
     @foreach (var viewModel in this._ResultViewModels)
     {
-        <AxeResultView @key="viewModel.Result.Id" Result="viewModel.Result" @bind-Expanded="viewModel.Expanded" @bind-Expanded:after="OnExpandedChanged" />
+        <AxeResultView @key="viewModel.Result.Id" Result="viewModel.Result" Expanded="viewModel.Expanded" OnClickHeader="() => OnClickHeader(viewModel)" />
     }
 </div>
 @code
@@ -57,8 +57,10 @@
         return "visibility: " + (this.Visible ? "visible" : "hidden") + ";";
     }
 
-    private async Task OnExpandedChanged()
+    private async Task OnClickHeader(ResultViewModel viewModel)
     {
+        viewModel.Expanded = !viewModel.Expanded;
+
         this.ExpansionState =
             this._ResultViewModels.Count() == 0 ? ExpansionState.CollapsedAll :
             this._ResultViewModels.All(m => m.Expanded) ? ExpansionState.ExpandedAll :

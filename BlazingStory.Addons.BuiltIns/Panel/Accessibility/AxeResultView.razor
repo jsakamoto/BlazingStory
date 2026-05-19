@@ -48,17 +48,11 @@
     public bool Expanded { get; set; }
 
     [Parameter]
-    public EventCallback<bool> ExpandedChanged { get; set; }
+    public EventCallback OnClickHeader { get; set; }
 
     private string Capitalize(string? text)
     {
         if (string.IsNullOrEmpty(text)) return "";
         return char.ToUpper(text[0]) + text.Substring(1).Replace('-', ' ');
-    }
-
-    private async Task OnClickHeader()
-    {
-        this.Expanded = !this.Expanded;
-        await this.ExpandedChanged.InvokeAsync(this.Expanded);
     }
 }
