@@ -75,7 +75,7 @@
 
     private View _currentView = View.Violations;
 
-    private Window _Window = default!;
+    private Window? _Window;
 
     private IDisposable? _WindowMessageSubscription;
 
@@ -89,6 +89,10 @@
 
     private ExpansionState _InconclusiveExpansionState = ExpansionState.CollapsedAll;
 
+    private bool _WaitingForReady = false;
+
+    private int _MillisecondsDelay;
+
     protected override void OnInitialized()
     {
         this._Window = this.Services.GetRequiredService<Window>();
@@ -96,17 +100,31 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender && this._Window is not null)
         {
             this._WindowMessageSubscription = await this._Window.SubscribeMessage(OnMessageReceived);
+        }
+
+        if (!this._WaitingForReady)
+        {
+            this._WaitingForReady = true;
+            this._MillisecondsDelay = 100;
+            while (this._Window is not null && this._PrevStory != this.Story)
+            {
+                await this._Window.PostMessage(".preview-frame iframe", AccessibilityPanelAddon.Message.AskReady);
+                await Task.Delay(this._MillisecondsDelay);
+                if (this._PrevStory == this.Story || this._MillisecondsDelay > 3000) break;
+                this._MillisecondsDelay = this._MillisecondsDelay * 2;
+            }
+            this._WaitingForReady = false;
         }
     }
 
     private async Task OnMessageReceived(string? message)
     {
-        if (message == AccessibilityPanelAddon.Message.PreviewAfterRender)
+        if (message == AccessibilityPanelAddon.Message.Ready)
         {
-            await this.RequestAxeRunAsync();
+            await RequestAxeRunAsync();
         }
         else if (message?.StartsWith(AccessibilityPanelAddon.Message.AxeResult) == true)
         {
@@ -122,7 +140,7 @@
         this._ViolationsExpansionState = ExpansionState.CollapsedAll;
         this._PassesExpansionState = ExpansionState.CollapsedAll;
         this._InconclusiveExpansionState = ExpansionState.CollapsedAll;
-        await this._Window.PostMessage(".preview-frame iframe", AccessibilityPanelAddon.Message.RunAxe);
+        if (this._Window is not null) await this._Window.PostMessage(".preview-frame iframe", AccessibilityPanelAddon.Message.RunAxe);
     }
 
     private async Task OnReceiveAxeResultAsync(string resultJsonString)
@@ -162,6 +180,7 @@
 
     public void Dispose()
     {
+        this._Window = null;
         this._WindowMessageSubscription?.Dispose();
     }
 }

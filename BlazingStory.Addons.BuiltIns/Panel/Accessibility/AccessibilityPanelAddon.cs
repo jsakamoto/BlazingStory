@@ -7,7 +7,8 @@ internal class AccessibilityPanelAddon : IAddon
 {
     internal static class Message
     {
-        public const string PreviewAfterRender = "Addons.BuiltIns.AccessibilityPanel.Preview.AfterRender";
+        public const string AskReady = "Addons.BuiltIns.AccessibilityPanel.AskReady";
+        public const string Ready = "Addons.BuiltIns.AccessibilityPanel.Ready";
         public const string RunAxe = "Addons.BuiltIns.AccessibilityPanel.RunAxe";
         public const string AxeResult = "Addons.BuiltIns.AccessibilityPanel.AxeResult:";
     }
