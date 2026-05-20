@@ -143,6 +143,7 @@
         if (this._Window is not null) await this._Window.PostMessageAsync(".preview-frame iframe", AccessibilityPanelAddon.Message.RunAxe);
     }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "AxeResults and all referenced types are preserved via [DynamicallyAccessedMembers(All)].")]
     private async Task OnReceiveAxeResultAsync(string resultJsonString)
     {
         this._AxeResults = JsonSerializer.Deserialize<AxeResults>(resultJsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
