@@ -44,11 +44,14 @@
 }
 .axe-result-view .header .number-of-nodes {
   color: var(--bs-dimmed-text-color);
+  width: 28px;
+  text-align: center;
 }
 .axe-result-view .header .expansion-indicator {
   color: var(--bs-dimmed-text-color);
   transform: rotate(0deg);
   transition: transform linear 0.1s;
+  width: 28px;
 }
 .axe-result-view .header .impact {
   color: var(--bs-axe-impact-color);
@@ -57,6 +60,7 @@
   border-radius: 20px;
   padding: 0 10px;
   font-size: 12px;
+  font-weight: bold;
   line-height: 20px;
 }
 .axe-result-view .header .impact- {
