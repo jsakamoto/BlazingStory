@@ -1,44 +1,7 @@
 .code-view {
     overflow-x: auto;
     background-color: var(--bs-code-back-color);
-
-    pre:has(code) {
-        font-family: var(--bs-monospace-font-family);
-        font-size: 13px;
-        padding: 20px;
-        color: var(--bs-code-text-color);
-
-        code {
-            color: #ededed;
-            // Prism syntax highlighting
-            .token {
-                &.punctuation {
-                    color: #ededed;
-                }
-
-                &.tag {
-                    color: #ffffb6;
-                }
-
-                &.attr-name {
-                    color: #9cdcfe;
-                }
-
-                &.attr-value {
-                    color: #b474dd;
-                }
-
-                &.punctuation {
-                    color: #ededed;
-                }
-
-                &.comment {
-                    color: #57a64a;
-                    font-style: italic;
-                }
-            }
-        }
-    }
+    padding: 20px;
 
     .copy-button {
         color: var(--bs-code-copy-text-color);

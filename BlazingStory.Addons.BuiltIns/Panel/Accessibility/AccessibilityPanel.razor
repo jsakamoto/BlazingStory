@@ -1,0 +1,186 @@
+@using BlazingStory.Addons.BuiltIns.Panel.Accessibility.Axe
+@using Microsoft.Extensions.DependencyInjection
+@implements IDisposable
+
+<PanelTitle>
+    Accessibility
+    @if ((this._AxeResults?.Violations?.Count() ?? 0) > 0)
+    {
+        <Badge Text="@this._AxeResults?.Violations.Count().ToString()" />
+    }
+</PanelTitle>
+
+<ImportStyleSheet Href="./_content/BlazingStory.Addons.BuiltIns/css/a11y-panel.min.css" />
+
+<div class="a11y-panel">
+    <ToolBar>
+        <TabButtonGroup>
+            <TabButton Active="@(_currentView == View.Violations)" OnClick="@(() => _currentView = View.Violations)">
+                Violations
+                <Badge Text="@(this._AxeResults?.Violations.Count().ToString() ?? "0")" />
+            </TabButton>
+            <TabButton Active="@(_currentView == View.Passes)" OnClick="@(() => _currentView = View.Passes)">
+                Passes
+                <Badge Text="@(this._AxeResults?.Passes.Count().ToString() ?? "0")" />
+            </TabButton>
+            <TabButton Active="@(_currentView == View.Inconclusive)" OnClick="@(() => _currentView = View.Inconclusive)">
+                Inconclusive
+                <Badge Text="@(this._AxeResults?.Incomplete.Count().ToString() ?? "0")" />
+            </TabButton>
+        </TabButtonGroup>
+
+        <Spacer />
+
+        @if (GetCurrentExpansionStateRef() == ExpansionState.ExpandedAll)
+        {
+            <IconButton Icon="SvgIconType.CollapseAll"
+                        Title="Collapse all results"
+                        OnClick="() => SetCurrentExpansionState(ExpansionState.CollapsedAll)"></IconButton>
+        }
+        else
+        {
+            <IconButton Icon="SvgIconType.ExpandAll"
+                        Title="Expand all results"
+                        OnClick="() => SetCurrentExpansionState(ExpansionState.ExpandedAll)"></IconButton>
+        }
+
+        <IconButton Icon="SvgIconType.Reload" Title="Rerun accessibility scan" OnClick="() => RequestAxeRunAsync(force: true)"></IconButton>
+    </ToolBar>
+
+    <div class="axe-results-views-container">
+        <AxeResultsView Results="this._AxeResults?.Violations"
+                        Visible="(_currentView == View.Violations)"
+                        @bind-ExpansionState="_ViolationsExpansionState"
+                        @bind-ExpansionState:after="OnExpansionStateChanged" />
+        <AxeResultsView Results="this._AxeResults?.Passes"
+                        Visible="(_currentView == View.Passes)"
+                        @bind-ExpansionState="_PassesExpansionState"
+                        @bind-ExpansionState:after="OnExpansionStateChanged" />
+        <AxeResultsView Results="this._AxeResults?.Incomplete"
+                        Visible="(_currentView == View.Inconclusive)"
+                        @bind-ExpansionState="_InconclusiveExpansionState"
+                        @bind-ExpansionState:after="OnExpansionStateChanged" />
+    </div>
+</div>
+
+@code
+{
+    [CascadingParameter(Name = "Story")]
+    public IStory? Story { get; set; }
+
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
+    private enum View { Violations, Passes, Inconclusive }
+
+    private View _currentView = View.Violations;
+
+    private Window? _Window;
+
+    private IDisposable? _WindowMessageSubscription;
+
+    private IStory? _PrevStory;
+
+    private AxeResults? _AxeResults;
+
+    private ExpansionState _ViolationsExpansionState = ExpansionState.CollapsedAll;
+
+    private ExpansionState _PassesExpansionState = ExpansionState.CollapsedAll;
+
+    private ExpansionState _InconclusiveExpansionState = ExpansionState.CollapsedAll;
+
+    private bool _WaitingForReady = false;
+
+    private int _MillisecondsDelay;
+
+    protected override void OnInitialized()
+    {
+        this._Window = this.Services.GetRequiredService<Window>();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && this._Window is not null)
+        {
+            this._WindowMessageSubscription = await this._Window.SubscribeMessageAsync(OnMessageReceived);
+        }
+
+        if (!this._WaitingForReady)
+        {
+            this._WaitingForReady = true;
+            this._MillisecondsDelay = 100;
+            while (this._Window is not null && this._PrevStory != this.Story)
+            {
+                await this._Window.PostMessageAsync(".preview-frame iframe", AccessibilityPanelAddon.Message.AskReady);
+                await Task.Delay(this._MillisecondsDelay);
+                if (this._PrevStory == this.Story || this._MillisecondsDelay > 3000) break;
+                this._MillisecondsDelay = this._MillisecondsDelay * 2;
+            }
+            this._WaitingForReady = false;
+        }
+    }
+
+    private async Task OnMessageReceived(string? message)
+    {
+        if (message == AccessibilityPanelAddon.Message.Ready)
+        {
+            await RequestAxeRunAsync();
+        }
+        else if (message?.StartsWith(AccessibilityPanelAddon.Message.AxeResult) == true)
+        {
+            await OnReceiveAxeResultAsync(message.Substring(AccessibilityPanelAddon.Message.AxeResult.Length));
+        }
+    }
+
+    private async Task RequestAxeRunAsync(bool force = false)
+    {
+        if (!force && this._PrevStory == this.Story) return;
+        this._PrevStory = this.Story;
+        this._AxeResults = null;
+        this._ViolationsExpansionState = ExpansionState.CollapsedAll;
+        this._PassesExpansionState = ExpansionState.CollapsedAll;
+        this._InconclusiveExpansionState = ExpansionState.CollapsedAll;
+        if (this._Window is not null) await this._Window.PostMessageAsync(".preview-frame iframe", AccessibilityPanelAddon.Message.RunAxe);
+    }
+
+    private async Task OnReceiveAxeResultAsync(string resultJsonString)
+    {
+        this._AxeResults = JsonSerializer.Deserialize<AxeResults>(resultJsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        this.StateHasChanged();
+    }
+
+    private void OnExpansionStateChanged()
+    {
+        /* NOP, Just kick the state change */
+    }
+
+    private ref ExpansionState GetCurrentExpansionStateRef()
+    {
+        switch (this._currentView)
+        {
+            case View.Violations: return ref this._ViolationsExpansionState;
+            case View.Passes: return ref this._PassesExpansionState;
+            case View.Inconclusive: return ref this._InconclusiveExpansionState;
+            default: throw new InvalidOperationException();
+        }
+    }
+
+    private void SetCurrentExpansionState(ExpansionState state)
+    {
+        var currentResults = this._currentView switch
+        {
+            View.Violations => this._AxeResults?.Violations,
+            View.Passes => this._AxeResults?.Passes,
+            View.Inconclusive => this._AxeResults?.Incomplete,
+            _ => throw new InvalidOperationException()
+        };
+
+        GetCurrentExpansionStateRef() = (currentResults?.Count() ?? 0) > 0 ? state : ExpansionState.CollapsedAll;
+    }
+
+    public void Dispose()
+    {
+        this._Window = null;
+        this._WindowMessageSubscription?.Dispose();
+    }
+}

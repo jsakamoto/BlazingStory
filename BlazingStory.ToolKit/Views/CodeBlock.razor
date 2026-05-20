@@ -1,0 +1,40 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+
+<pre @key="_RenderGen" class="code-block"><code @ref="_CodeElementRef" class="@($"language-{Language}")">@this.CodeText</code></pre>
+
+@code
+{
+    [Parameter]
+    public string? CodeText { get; set; }
+
+    [Parameter]
+    public string? Language { get; set; } = "html";
+
+    private int _RenderGen = 0;
+
+    private ElementReference _CodeElementRef;
+
+    private readonly JSModule _JSModule;
+
+    public CodeBlock()
+    {
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "js/prism.js");
+    }
+
+    protected override bool ShouldRender()
+    {
+        this._RenderGen++;
+        return true;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await this._JSModule.InvokeVoidAsync("Prism.highlightElement", _CodeElementRef);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _JSModule.DisposeAsync();
+    }
+}

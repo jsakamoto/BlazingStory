@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/js/" />
   <Folder Name="/js/types/">
+    <File Path="js/types/axe.d.ts" />
     <File Path="js/types/blazor.d.ts" />
     <File Path="js/types/browser-dom.d.ts" />
     <File Path="js/types/custom-events.d.ts" />

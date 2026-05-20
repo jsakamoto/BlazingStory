@@ -1,0 +1,62 @@
+@using BlazingStory.Addons.BuiltIns.Panel.Accessibility.Axe
+@using BlazingStory.ToolKit.Views
+
+<div class="axe-nodes-view">
+
+    <div class="node-selector">
+        @foreach (var node in (this.Nodes ?? []).Select((value, index) => (Value: value, Index: index)))
+        {
+            <button @key="node.Index" class="@CssClass("node-item", new { active = _ActiveNodeIndex == node.Index })" @onclick="() => _ActiveNodeIndex = node.Index">
+                <span>@(node.Index + 1).</span>
+                <span>@node.Value.Html</span>
+            </button>
+        }
+    </div>
+
+    <div class="node-details">
+
+        <div class="checkes">
+            @foreach (var check in GetActiveNodeChecks())
+            {
+                <div @key="check.Id" class="check-message">
+                    @check.Message
+                </div>
+            }
+        </div>
+
+        <div class="element">
+            <div class="caption">/* element */</div>
+            <div>
+                <CodeBlock Language="html" CodeText="@GetActiveNode()?.Html" />
+            </div>
+        </div>
+
+        <div class="selectors">
+            <div class="caption">/* selector */</div>
+            <div>
+                <pre class="code-block">
+                    <code><span class="token selector">@string.Join(", ", GetActiveNode()?.Target ?? [])</span></code>
+                </pre>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+@code
+{
+    [Parameter]
+    public IEnumerable<NodeResult>? Nodes { get; set; }
+
+    private int _ActiveNodeIndex = 0;
+
+    private NodeResult? GetActiveNode() => Nodes?.ElementAtOrDefault(_ActiveNodeIndex);
+
+    private IEnumerable<CheckResult> GetActiveNodeChecks()
+    {
+        var activeNode = GetActiveNode();
+        if (activeNode is null) return [];
+        return activeNode.All.Concat(activeNode.Any).Concat(activeNode.None);
+    }
+}
