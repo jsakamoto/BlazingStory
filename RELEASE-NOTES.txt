@@ -1,3 +1,6 @@
+v.1.0.0-preview.80
+- Feature: Added an accessibility panel addon powered by axe-core that automatically checks story previews for accessibility violations and displays results with impact severity, affected nodes, and fix guidance.
+
 v.1.0.0-preview.79
 - Fix: Resolved an HTTP 404 error that occurred in the vision filter addon when no filter was selected, caused by an invalid CSS file path reference.
 
