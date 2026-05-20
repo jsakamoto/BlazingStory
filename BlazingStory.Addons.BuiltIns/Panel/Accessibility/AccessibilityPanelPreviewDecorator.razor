@@ -41,7 +41,7 @@
     {
         if (firstRender && this._Window is not null)
         {
-            this._WindowMessageSubscription = await this._Window.SubscribeMessage(OnMessageReceived);
+            this._WindowMessageSubscription = await this._Window.SubscribeMessageAsync(OnMessageReceived);
         }
 
         _cts?.Cancel();
@@ -55,12 +55,12 @@
         if (message == AccessibilityPanelAddon.Message.AskReady)
         {
             await this._Ready.Task;
-            if (this._Window is not null) await this._Window.PostMessage("parent", AccessibilityPanelAddon.Message.Ready);
+            if (this._Window is not null) await this._Window.PostMessageAsync("parent", AccessibilityPanelAddon.Message.Ready);
         }
         else if (message == AccessibilityPanelAddon.Message.RunAxe)
         {
             var resultJsonString = await this._JSModule.InvokeAsync<string>("run");
-            if (this._Window is not null) await this._Window.PostMessage("parent", AccessibilityPanelAddon.Message.AxeResult + resultJsonString);
+            if (this._Window is not null) await this._Window.PostMessageAsync("parent", AccessibilityPanelAddon.Message.AxeResult + resultJsonString);
         }
     }
 

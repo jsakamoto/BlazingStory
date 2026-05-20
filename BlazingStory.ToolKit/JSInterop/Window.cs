@@ -54,16 +54,16 @@ public sealed class Window : IAsyncDisposable
     /// <summary>Posts a message to the window element identified by the given CSS selector.</summary>
     /// <param name="selector">"parent" to target a parent window, or CSS selector to target a specific iframe element.</param>
     /// <param name="message">The message content to post.</param>
-    public async ValueTask PostMessage(string selector, string? message)
+    public async ValueTask PostMessageAsync(string selector, string? message)
     {
         await this._JSModule.InvokeVoidAsync("postMessage", selector, message);
     }
 
     /// <summary>Subscribes to window messages and invokes the callback when a message is received.</summary>
     /// <param name="callback">The action to invoke when a message arrives.</param>
-    public async ValueTask<IDisposable> SubscribeMessage(Func<string?, Task> callback)
+    public async ValueTask<IDisposable> SubscribeMessageAsync(Func<string?, Task> callback)
     {
-        await this.EnsureMessageListener();
+        await this.EnsureMessageListenerAsync();
         lock (this._MessageSubscriptions)
         {
             var subscription = new MessageSubscripton(this, callback);
@@ -72,7 +72,7 @@ public sealed class Window : IAsyncDisposable
         }
     }
 
-    private async ValueTask EnsureMessageListener()
+    private async ValueTask EnsureMessageListenerAsync()
     {
         if (this._MessageListener is not null) return;
         this._MessageListener = await this._JSModule.InvokeAsync<IJSObjectReference>("setupMessageListener", this._DotNetRef);
