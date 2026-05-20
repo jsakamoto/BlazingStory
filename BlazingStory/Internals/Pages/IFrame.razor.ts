@@ -4,6 +4,7 @@ import type { MessageArgument } from "@blazingstory/types/custom-messages";
 const keydown = "keydown";
 const pointerdown = "pointerdown";
 const SessionStateKey = "IFrame.SessionState";
+const UninitializedHeight = -1;
 
 type IFrameSessionState = {
     zoom: string
@@ -75,7 +76,7 @@ export const initializeCanvasFrame = () => {
     });
 
     if (htmlElement) {
-        let previousHeight = -1;
+        let previousHeight = UninitializedHeight;
         const resizeObserver = new ResizeObserver(() => {
             const height = calculateFrameHeight(doc);
             if (height === previousHeight) return;

@@ -1,6 +1,7 @@
 const keydown = "keydown";
 const pointerdown = "pointerdown";
 const SessionStateKey = "IFrame.SessionState";
+const UninitializedHeight = -1;
 const calculateFrameHeight = (doc) => {
     const zoomLevel = parseFloat(doc.body.style.zoom || "1");
     const contentHeight = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight);
@@ -46,7 +47,7 @@ export const initializeCanvasFrame = () => {
         }, location.origin);
     });
     if (htmlElement) {
-        let previousHeight = -1;
+        let previousHeight = UninitializedHeight;
         const resizeObserver = new ResizeObserver(() => {
             const height = calculateFrameHeight(doc);
             if (height === previousHeight)
