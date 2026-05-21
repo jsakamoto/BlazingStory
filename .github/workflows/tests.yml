@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checkout the code
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       # Install .NET SDK
       - name: Setup .NET SDK
