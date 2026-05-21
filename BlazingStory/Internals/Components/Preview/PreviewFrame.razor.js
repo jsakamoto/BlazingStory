@@ -49,7 +49,12 @@ export const zoomOutPreviewFrame = (container) => zoomPreviewFrame(container, zo
 export const resetZoomPreviewFrame = (container) => zoomPreviewFrame(container, _ => 1);
 export const getFrameHeight = async (container) => {
     const result = await getIFrame(container);
-    return Math.ceil(result?.contentDocument.body.parentElement?.getBoundingClientRect().height || 0);
+    if (!result)
+        return 0;
+    const { body, documentElement } = result.contentDocument;
+    const zoomLevel = parseFloat(body.style.zoom || '1');
+    const contentHeight = Math.max(body.scrollHeight, documentElement.scrollHeight);
+    return Math.ceil(contentHeight * zoomLevel);
 };
 const isDotnetWatchScriptInjected = (window) => {
     const scriptInjectedSentinel = '_dotnet_watch_ws_injected';

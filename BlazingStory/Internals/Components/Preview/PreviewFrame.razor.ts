@@ -54,7 +54,11 @@ export const resetZoomPreviewFrame = (container: HTMLElement) => zoomPreviewFram
 
 export const getFrameHeight = async (container: HTMLElement): Promise<number> => {
     const result = await getIFrame(container);
-    return Math.ceil(result?.contentDocument.body.parentElement?.getBoundingClientRect().height || 0);
+    if (!result) return 0;
+    const { body, documentElement } = result.contentDocument;
+    const zoomLevel = parseFloat(body.style.zoom || '1');
+    const contentHeight = Math.max(body.scrollHeight, documentElement.scrollHeight);
+    return Math.ceil(contentHeight * zoomLevel);
 }
 
 // Checks the '_dotnet_watch_ws_injected' property has been added to the window object,
@@ -79,4 +83,3 @@ export const ensureDotnetWatchScriptInjected = async (container: HTMLElement): P
     script.src = '_framework/aspnetcore-browser-refresh.js';
     contentDocument.body.appendChild(script);
 }
-

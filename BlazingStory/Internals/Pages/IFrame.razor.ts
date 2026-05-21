@@ -4,9 +4,16 @@ import type { MessageArgument } from "@blazingstory/types/custom-messages";
 const keydown = "keydown";
 const pointerdown = "pointerdown";
 const SessionStateKey = "IFrame.SessionState";
+const UninitializedHeight = -1;
 
 type IFrameSessionState = {
     zoom: string
+}
+
+const calculateFrameHeight = (doc: Document): number => {
+    const zoomLevel = parseFloat(doc.body.style.zoom || "1");
+    const contentHeight = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight);
+    return Math.ceil(contentHeight * zoomLevel);
 }
 
 /**
@@ -69,18 +76,19 @@ export const initializeCanvasFrame = () => {
     });
 
     if (htmlElement) {
-        const resizeObserver = new ResizeObserver((entries) => {
-            for (const entry of entries) {
-                const height = Math.ceil(entry.target.getBoundingClientRect().height);
-                const iframeElement = [...wnd.parent.document.querySelectorAll('iframe')].find(f => f.contentWindow === wnd);
-                if (iframeElement) {
-                    const event = new CustomEvent('frameheightchange', {
-                        cancelable: false,
-                        bubbles: true,
-                        detail: { height }
-                    });
-                    iframeElement.dispatchEvent(event);
-                }
+        let previousHeight = UninitializedHeight;
+        const resizeObserver = new ResizeObserver(() => {
+            const height = calculateFrameHeight(doc);
+            if (height === previousHeight) return;
+            previousHeight = height;
+            const iframeElement = [...wnd.parent.document.querySelectorAll('iframe')].find(f => f.contentWindow === wnd);
+            if (iframeElement) {
+                const event = new CustomEvent('frameheightchange', {
+                    cancelable: false,
+                    bubbles: true,
+                    detail: { height }
+                });
+                iframeElement.dispatchEvent(event);
             }
         });
         resizeObserver.observe(htmlElement);
