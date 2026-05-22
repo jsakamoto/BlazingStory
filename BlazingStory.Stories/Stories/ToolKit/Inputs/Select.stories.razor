@@ -1,0 +1,51 @@
+﻿@attribute [Stories("ToolKit/Inputs/Select")]
+
+<Stories TComponent="Select" Layout="typeof(MarginedFrame)">
+
+    <Story Name="Default">
+
+        <Arguments>
+            <Arg For="_ => _.Items" Value="new[] { 1, 2, 3 }" />
+        </Arguments>
+
+        <Template>
+            <Select @attributes="context.Args">
+            </Select>
+        </Template>
+
+    </Story>
+
+    <Story Name="Searchable">
+
+        <Arguments>
+            <Arg For="_ => _.Items" Value="_SvgIconTypeNames" />
+        </Arguments>
+
+        <Template>
+            <p>
+                Lorem ipsum dolor sit amet esse erat hendrerit te sea veniam. 
+                Dolor feugiat consetetur feugait erat amet. 
+                Sit tempor ipsum rebum labore consetetur labore sit et luptatum et et labore vero kasd est feugiat vel. Voluptua ipsum dolor est diam aliquip.
+            </p>
+            <Select @attributes="context.Args">
+            </Select>
+        </Template>
+
+    </Story>
+
+</Stories>
+
+@code
+{
+    private string[] _SvgIconTypeNames = [];
+
+    protected override void OnInitialized()
+    {
+        this._SvgIconTypeNames = Enum.GetValues(typeof(SvgIconType))
+            .Cast<object>()
+            .Select(e => e.ToString() ?? "")
+            .ToArray();
+    }
+}
+
+
