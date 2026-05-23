@@ -87,11 +87,11 @@ internal class CustomPagesTool
         var scored = Bm25Scorer.Search(index, query);
 
         var results = scored
-            .Where(hit => entriesByPath.ContainsKey(hit.Key))
-            .Select(hit =>
+            .Select(hit => entriesByPath.TryGetValue(hit.Key, out var entry) ? entry : null)
+            .Where(entry => entry is not null)
+            .Select(entry =>
             {
-                var entry = entriesByPath[hit.Key];
-                var plainText = Bm25Scorer.StripHtmlTags(entry.HtmlContent);
+                var plainText = Bm25Scorer.StripHtmlTags(entry!.HtmlContent);
                 var snippet = Bm25Scorer.ExtractSnippet(plainText, query);
                 return new CustomPageSearchHit(entry.Title, snippet);
             }).ToList();
