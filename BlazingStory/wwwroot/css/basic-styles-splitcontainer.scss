@@ -16,8 +16,8 @@
 
     &.splitter-orientation-vertical > .spliter-bar {
         &::after {
-            width: 10px;
-            right: 0;
+            width: 8px;
+            right: -5px;
             top: 0;
             bottom: 0;
             background-size: 50px 100%;
@@ -31,10 +31,10 @@
 
     &.splitter-orientation-horizontal > .spliter-bar {
         &::after {
-            height: 10px;
+            height: 8px;
             left: 0;
             right: 0;
-            bottom: 0;
+            bottom: -5px;
             background-size: 100% 50px;
             background-position: 50% 10px;
         }
