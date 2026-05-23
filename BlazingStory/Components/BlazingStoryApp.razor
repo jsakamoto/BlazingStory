@@ -198,10 +198,13 @@
 
     protected override void OnInitialized()
     {
-        CustomPageRazorDetector.DetectAndRegisterToStore(Assemblies, _CustomPageStore);
-
         var injectedStoriesStore = this.GlobalServices.GetService<StoriesStore>();
         if (injectedStoriesStore is not null) this._StoriesStore = injectedStoriesStore;
+
+        var injectedCustomPageStore = this.GlobalServices.GetService<CustomPageStore>();
+        if (injectedCustomPageStore is not null) this._CustomPageStore = injectedCustomPageStore;
+
+        CustomPageRazorDetector.DetectAndRegisterToStore(Assemblies, _CustomPageStore);
 
         var addonStore = new BlazingStory.Addons.Internals.AddonStore();
         this.ConfigureAddons(addonStore);
