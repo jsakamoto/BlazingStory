@@ -1,3 +1,7 @@
+v.1.0.0-preview.81
+- Improve: Added built-in preset layout components (e.g., `CenteredLayout`) available under `BlazingStory.Components.Layouts`, making it easier to apply common story preview layouts without custom code.
+- Fix: Resolved unpredictable zoom behavior in preview frames.
+
 v.1.0.0-preview.80
 - Feature: Added an accessibility panel addon powered by axe-core that automatically checks story previews for accessibility violations and displays results with impact severity, affected nodes, and fix guidance.
 
