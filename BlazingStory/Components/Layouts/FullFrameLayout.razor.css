@@ -1,0 +1,21 @@
+.bs-layouts-fullframe-outer {
+    box-sizing: border-box;
+    position: relative;
+    margin: calc(-1 * var(--bs-preview-body-margin, 16px));
+    padding: var(--bs-preview-body-margin, 16px);
+    display: flex;
+    flex-direction: column;
+}
+
+.bs-layouts-fullframe-inner {
+    position: relative;
+    flex: 1;
+}
+
+body[data-bs-parent-frame="docs"] .bs-layouts-fullframe-outer {
+    min-height: 95px;
+}
+
+body[data-bs-parent-frame="story"] .bs-layouts-fullframe-outer {
+    min-height: calc(100vh / var(--bs-zoom, 1));
+}
