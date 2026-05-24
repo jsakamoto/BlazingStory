@@ -61,6 +61,7 @@ export const rent = async (containerElement, initialSrc, baseUri) => {
     else {
         containerElement.moveBefore(iframe, null);
     }
+    iframe.contentWindow?.document.dispatchEvent(new Event('bs:poolediframe:attached'));
     const { contentWindow } = await waitForIFrameReady(iframe);
     if (contentWindow.location.href !== initialSrc) {
         await navigate(iframe, initialSrc, baseUri);

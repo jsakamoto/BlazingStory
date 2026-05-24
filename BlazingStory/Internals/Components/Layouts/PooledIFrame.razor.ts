@@ -53,7 +53,7 @@ const waitForIFrameReady = async <T>(iframe: HTMLIFrameElement) => {
 
 export const rent = async (containerElement: HTMLElement, initialSrc: string, baseUri: string): Promise<void> => {
 
-    const createIFrame = (src: string) => {
+    const createIFrame = (src: string): HTMLIFrameElement => {
         const iframe = document.createElement('iframe');
         iframe.src = src;
         return iframe;
@@ -71,6 +71,7 @@ export const rent = async (containerElement: HTMLElement, initialSrc: string, ba
     } else {
         containerElement.moveBefore(iframe, null);
     }
+    iframe.contentWindow?.document.dispatchEvent(new Event('bs:poolediframe:attached'));
 
     const { contentWindow } = await waitForIFrameReady(iframe);
     if (contentWindow.location.href !== initialSrc) {
