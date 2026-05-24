@@ -10,4 +10,5 @@ export type KeyEventArgument = {
 export type MessageArgument =
     { action: "keydown", eventArgs: KeyEventArgument } |
     { action: "pointerdown" } |
-    { action: "reload" };
+    { action: "reload" } |
+    { action: "zoom", zoomLevel: number };

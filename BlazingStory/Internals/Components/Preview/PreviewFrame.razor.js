@@ -43,8 +43,7 @@ const zoomPreviewFrame = async (container, getNextZoomLevel) => {
     const style = window.getComputedStyle(body);
     const currentZoomLevel = parseFloat(style.getPropertyValue('--bs-zoom') || style.zoom || '1');
     const nextZoomLevel = getNextZoomLevel(currentZoomLevel);
-    body.style.setProperty('--bs-zoom', '' + nextZoomLevel);
-    body.style.zoom = 'var(--bs-zoom, 1)';
+    result.contentWindow.postMessage({ action: "zoom", zoomLevel: nextZoomLevel });
 };
 export const zoomInPreviewFrame = (container) => zoomPreviewFrame(container, zoom => zoom * 1.25);
 export const zoomOutPreviewFrame = (container) => zoomPreviewFrame(container, zoom => zoom / 1.25);

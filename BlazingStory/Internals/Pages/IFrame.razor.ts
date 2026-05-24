@@ -9,17 +9,6 @@ type IFrameSessionState = {
     zoom: string
 }
 
-const getParentFrame = (wnd: Window) => {
-    return [...wnd.parent.document.querySelectorAll('iframe')].find(f => f.contentWindow === wnd);
-}
-
-const updateParentFrameType = (wnd: Window, body: HTMLElement) => {
-    const parentFrame = getParentFrame(wnd);
-    if (parentFrame?.closest(".docs-page")) body.dataset.bsParentFrame = "docs";
-    else if (parentFrame?.closest(".canvas-container")) body.dataset.bsParentFrame = "story";
-    else body.dataset.bsParentFrame = "unknown";
-}
-
 /**
  * Initialize the canvas (preview) frame.
  */
@@ -33,28 +22,55 @@ export const initializeCanvasFrame = () => {
     body.style.margin = "var(--bs-preview-body-margin, 16px)";
     if (body.style.minHeight === "100vh") body.style.removeProperty("min-height");
 
-    // Update the "data-bs-parent-frame" attribute of the body element, which is used to apply different styles depending on the parent frame type (docs page or story canvas).
-    doc.addEventListener("bs:poolediframe:attached", () => updateParentFrameType(wnd, body));
-    updateParentFrameType(wnd, body);
+    // Define a function to get the parent frame element (iframe) of the current window.
+    const getParentFrame = () => [...wnd.parent.document.querySelectorAll('iframe')].find(f => f.contentWindow === wnd);
 
-    // Restore the session state.
-    const sessionState = {
-        ...{ zoom: 1 }, ...JSON.parse(sessionStorage.getItem(SessionStateKey) || "{}")
-    } as IFrameSessionState;
-    body.style.zoom = "var(--bs-zoom, 1)";
-    body.style.setProperty("--bs-zoom", "" + sessionState.zoom);
+    // Define a function to update the parent frame type (docs, story, or unknown) in the data attribute of the body element.
+    const updateParentFrameType = () => {
+        const parentFrame = getParentFrame();
+        if (parentFrame?.closest(".docs-page")) body.dataset.bsParentFrame = "docs";
+        else if (parentFrame?.closest(".canvas-container")) body.dataset.bsParentFrame = "story";
+        else body.dataset.bsParentFrame = "unknown";
+    }
+
+    // Define a function to restore the session state (e.g., zoom level) from the session storage and apply it to the body style.
+    const restoreSessionState = () => {
+        const sessionState = {
+            ...{ zoom: 1 }, ...JSON.parse(sessionStorage.getItem(SessionStateKey) || "{}")
+        } as IFrameSessionState;
+        body.style.zoom = "var(--bs-zoom, 1)";
+        body.style.setProperty("--bs-zoom", "" + sessionState.zoom);
+        return sessionState;
+    }
+
+    // Define a function to reset the canvas frame, which updates the parent frame type and restores the session state.
+    const reset = () => {
+        updateParentFrameType();
+        return restoreSessionState();
+    }
+
+    // Listen to the "bs:poolediframe:attached" event, which is fired when the canvas frame is attached to the parent frame, and reset the canvas frame.
+    doc.addEventListener("bs:poolediframe:attached", reset);
+    const sessionState = reset();
 
     // Handle "Reload" message
     wnd.addEventListener("message", (event) => {
         const message = event.data as MessageArgument;
-        if (event.origin !== location.origin || message.action !== "reload") return;
+        if (event.origin !== location.origin) return;
 
-        // Save state to session storage before reloading.
-        const computedStyle = window.getComputedStyle(body);
-        sessionState.zoom = "" + parseFloat(computedStyle.getPropertyValue('--bs-zoom') || computedStyle.zoom || '1');
-        sessionStorage.setItem(SessionStateKey, JSON.stringify(sessionState));
+        switch (message.action) {
+            case "reload":
+                location.reload();
+                break;
+            case "zoom":
+                body.style.setProperty('--bs-zoom', '' + message.zoomLevel);
+                body.style.zoom = 'var(--bs-zoom, 1)';
 
-        location.reload();
+                // Save the zoom level to the session storage so that it can be restored when the canvas frame is reloaded or reattached.
+                sessionState.zoom = "" + message.zoomLevel;
+                sessionStorage.setItem(SessionStateKey, JSON.stringify(sessionState));
+                break;
+        }
     }, false);
 
     // Transfer the keydown event to parent window.
@@ -94,7 +110,7 @@ export const initializeCanvasFrame = () => {
         const resizeObserver = new ResizeObserver((entries) => {
             for (const entry of entries) {
                 const height = Math.ceil(entry.target.getBoundingClientRect().height);
-                const iframeElement = getParentFrame(wnd);
+                const iframeElement = getParentFrame();
                 if (iframeElement) {
                     const event = new CustomEvent('frameheightchange', {
                         cancelable: false,
