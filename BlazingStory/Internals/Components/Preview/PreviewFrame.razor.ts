@@ -39,11 +39,13 @@ export const reloadPreviewFrame = async (container: HTMLElement): Promise<void> 
 
 const zoomPreviewFrame = async (container: HTMLElement, getNextZoomLevel: (zoomLevel: number) => number): Promise<void> => {
     const result = await getIFrame(container);
-    if (!result) return;
-    const style = result.contentDocument.body.style;
-    const currentZoomLevel = parseFloat(style.zoom || '1');
+    const body = result?.contentDocument.body;
+    if (!body) return;
+    const style = window.getComputedStyle(body);
+    const currentZoomLevel = parseFloat(style.getPropertyValue('--bs-zoom') || style.zoom || '1');
     const nextZoomLevel = getNextZoomLevel(currentZoomLevel);
-    style.zoom = '' + nextZoomLevel;
+    body.style.setProperty('--bs-zoom', '' + nextZoomLevel);
+    body.style.zoom = 'var(--bs-zoom, 1)';
 }
 
 export const zoomInPreviewFrame = (container: HTMLElement) => zoomPreviewFrame(container, zoom => zoom * 1.25);

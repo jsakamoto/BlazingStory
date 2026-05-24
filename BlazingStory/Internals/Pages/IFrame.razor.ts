@@ -9,19 +9,40 @@ type IFrameSessionState = {
     zoom: string
 }
 
+const getParentFrame = (wnd: Window) => {
+    return [...wnd.parent.document.querySelectorAll('iframe')].find(f => f.contentWindow === wnd);
+}
+
+const updateParentFrameType = (wnd: Window, body: HTMLElement) => {
+    const parentFrame = getParentFrame(wnd);
+    if (parentFrame?.closest(".docs-page")) body.dataset.bsParentFrame = "docs";
+    else if (parentFrame?.closest(".canvas-container")) body.dataset.bsParentFrame = "story";
+    else body.dataset.bsParentFrame = "unknown";
+}
+
 /**
  * Initialize the canvas (preview) frame.
  */
 export const initializeCanvasFrame = () => {
-    const doc = document;
     const wnd = window;
-    const htmlElement = doc.body.parentElement;
+    const doc = document;
+    const body = doc.body;
+    const htmlElement = body.parentElement;
+
+    // Fix the body style.
+    body.style.margin = "var(--bs-preview-body-margin, 16px)";
+    if (body.style.minHeight === "100vh") body.style.removeProperty("min-height");
+
+    // Update the "data-bs-parent-frame" attribute of the body element, which is used to apply different styles depending on the parent frame type (docs page or story canvas).
+    doc.addEventListener("bs:poolediframe:attached", () => updateParentFrameType(wnd, body));
+    updateParentFrameType(wnd, body);
 
     // Restore the session state.
     const sessionState = {
         ...{ zoom: 1 }, ...JSON.parse(sessionStorage.getItem(SessionStateKey) || "{}")
     } as IFrameSessionState;
-    doc.body.style.zoom = "" + sessionState.zoom;
+    body.style.zoom = "var(--bs-zoom, 1)";
+    body.style.setProperty("--bs-zoom", "" + sessionState.zoom);
 
     // Handle "Reload" message
     wnd.addEventListener("message", (event) => {
@@ -29,7 +50,8 @@ export const initializeCanvasFrame = () => {
         if (event.origin !== location.origin || message.action !== "reload") return;
 
         // Save state to session storage before reloading.
-        sessionState.zoom = doc.body.style.zoom || "1";
+        const computedStyle = window.getComputedStyle(body);
+        sessionState.zoom = "" + parseFloat(computedStyle.getPropertyValue('--bs-zoom') || computedStyle.zoom || '1');
         sessionStorage.setItem(SessionStateKey, JSON.stringify(sessionState));
 
         location.reload();
@@ -72,7 +94,7 @@ export const initializeCanvasFrame = () => {
         const resizeObserver = new ResizeObserver((entries) => {
             for (const entry of entries) {
                 const height = Math.ceil(entry.target.getBoundingClientRect().height);
-                const iframeElement = [...wnd.parent.document.querySelectorAll('iframe')].find(f => f.contentWindow === wnd);
+                const iframeElement = getParentFrame(wnd);
                 if (iframeElement) {
                     const event = new CustomEvent('frameheightchange', {
                         cancelable: false,
