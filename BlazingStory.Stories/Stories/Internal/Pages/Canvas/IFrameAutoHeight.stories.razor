@@ -1,0 +1,39 @@
+@attribute [Stories("Internals/Pages/Canvas/IFrameAutoHeight")]
+@inject IJSRuntime JsRuntime
+
+<Stories TComponent="object">
+
+    <Story Name="Body position fixed">
+        <Description>
+            Verifies that the canvas frame height stays stable when the page body is set to position:fixed
+            (a scroll-lock pattern used by overlay components). Click the button to toggle. The preview
+            frame should keep showing the full content; it must not shrink while the body is fixed nor jump
+            when it is unfixed.
+        </Description>
+        <Template>
+            <Stack Direction="Direction.Column">
+                <SquareButton OnClick="ToggleScrollLock" ButtonStyle="ButtonStyle.Default">
+                    @(IsLocked ? "Unfix body" : "Set body.position = fixed")
+                </SquareButton>
+                <div style="height: 600px; background: #eceff1; color: #263238; display: flex; align-items: center; justify-content: center; font-family: sans-serif; font-size: 14px;">
+                    Tall content (600px). Preview frame must remain sized to fit this while the body is fixed.
+                </div>
+            </Stack>
+        </Template>
+    </Story>
+
+</Stories>
+
+@code
+{
+    private bool IsLocked;
+
+    private async Task ToggleScrollLock()
+    {
+        IsLocked = !IsLocked;
+        var js = IsLocked
+            ? "document.body.style.position='fixed';document.body.style.top='0';document.body.style.left='0';document.body.style.right='0';"
+            : "document.body.style.position='';document.body.style.top='';document.body.style.left='';document.body.style.right='';";
+        await JsRuntime.InvokeVoidAsync("eval", js);
+    }
+}
