@@ -1,3 +1,8 @@
+v.1.0.0-preview.82
+- Fix: Fixed pane snap-back after drag on comma-decimal locales (e.g., pl-PL, de-DE) by updating Toolbelt.Blazor.SplitContainer to v.2.1.1. (PR #12 in Toolbelt.Blazor.SplitContainer, contributed by @warnaa)
+- Fix: Added missing `@using BlazingStory.Components.Layouts` to project template `_Imports.razor`.
+- Fix: Added a default empty layout component to the Blazor Server project template to match the Wasm template.
+
 v.1.0.0-preview.81
 - Improve: Added built-in preset layout components (e.g., `CenteredLayout`) available under `BlazingStory.Components.Layouts`, making it easier to apply common story preview layouts without custom code.
 - Fix: Resolved unpredictable zoom behavior in preview frames.
