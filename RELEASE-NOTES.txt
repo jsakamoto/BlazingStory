@@ -1,3 +1,6 @@
+v.1.0.0-preview.83
+- Feature: Extended the MCP server to expose custom/Markdown pages, including full-text search support. (PR #118 contributed by @graphnode)
+
 v.1.0.0-preview.82
 - Fix: Fixed pane snap-back after drag on comma-decimal locales (e.g., pl-PL, de-DE) by updating Toolbelt.Blazor.SplitContainer to v.2.1.1. (PR #12 in Toolbelt.Blazor.SplitContainer, contributed by @warnaa)
 - Fix: Added missing `@using BlazingStory.Components.Layouts` to project template `_Imports.razor`.
