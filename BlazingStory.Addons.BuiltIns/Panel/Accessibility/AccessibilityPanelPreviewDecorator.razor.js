@@ -15,9 +15,20 @@ export const run = async () => {
     });
     const include = document.querySelectorAll(".preview-story-area");
     const result = await axe.run({ include, exclude: [] });
+    const flattenTarget = (results) => {
+        return results.map(result => {
+            return {
+                ...result,
+                nodes: result.nodes.map(node => ({
+                    ...node,
+                    target: node.target.flat()
+                }))
+            };
+        });
+    };
     return JSON.stringify({
-        violations: result.violations,
-        passes: result.passes,
-        incomplete: result.incomplete
+        violations: flattenTarget(result.violations),
+        passes: flattenTarget(result.passes),
+        incomplete: flattenTarget(result.incomplete)
     });
 };
