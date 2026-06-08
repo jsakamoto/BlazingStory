@@ -1,0 +1,71 @@
+﻿@using BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.UserControllers;
+@inherits UserControllerBase
+
+@* An Example of a user provided controller for Enum flags*@
+
+@foreach (var name in this._EnumNames) {
+    var isChecked = false;
+    var value = GetValue();
+    if (value.HasFlag(Enum.Parse<Demo1Enum1>(name))) {
+        isChecked = true;
+    }
+    <div>
+        <label>
+            <input type="checkbox" value="@name" checked="@isChecked" @onchange="@((arg) => this.OnChange(@name, arg))">
+            <span>@name</span>
+        </label>
+    </div>
+}
+
+@code
+{
+    /// <summary>
+    /// List of available values to pick from, from the Enum Flags
+    /// </summary>
+    private string[] _EnumNames = Array.Empty<string>();
+
+    /// <summary>
+    /// Get the Value in Enum form
+    /// </summary>
+    private Demo1Enum1 GetValue()
+    {
+        if (this.Context.Value == null) return Demo1Enum1.None;
+        return (Demo1Enum1)this.Context.Value;
+    }
+
+    protected override void OnInitialized() {
+        // Populate the list of available enum names
+        var enumnames = Enum.GetNames(typeof(Demo1Enum1));
+        // Remove "None"
+        enumnames = enumnames.Skip(1).ToArray();
+        this._EnumNames = enumnames;
+
+        // Properties we can access from the controller
+        //var key = this.Context.Key;
+        //var param = this.Context.Parameter;
+        //var value = this.Context.Value;
+        //var oninput = this.Context.OnInput;
+    }
+
+    private async Task OnChange(string name, ChangeEventArgs arg)
+    {
+        var current_value = GetValue();
+        var enumval = Enum.Parse<Demo1Enum1>(name);
+        if (arg.Value != null)
+        {
+            bool ischecked = false;
+            bool.TryParse(arg.Value.ToString(), out ischecked);
+            if (ischecked)
+            {
+                // Set flag
+                current_value |= enumval;
+            }
+            else
+            {
+                // Clear flag
+                current_value &= ~enumval;
+            }
+            await this.OnInputAsync(current_value);
+        }
+    }
+}

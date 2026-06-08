@@ -47,6 +47,11 @@ public interface IComponentParameter
     object? DefaultValue { get; set; }
 
     /// <summary>
+    /// Gets or sets the user controllers if defined.
+    /// </summary>
+    RenderFragment? UserControllerFragment { get; set; }
+
+    /// <summary>
     /// Update summary property text of this parameter by reading a XML document comment file.
     /// </summary>
     ValueTask UpdateSummaryFromXmlDocCommentAsync();
