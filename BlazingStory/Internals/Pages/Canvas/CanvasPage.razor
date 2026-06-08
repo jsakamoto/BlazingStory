@@ -108,7 +108,7 @@
 
     private HelperScript HelperScript = default!;
 
-    private AddonManager AddonManager => this.Services.GetRequiredService<AddonManager>();
+    private AddonManager? AddonManager;
 
     private CommandService _Commands = default!;
 
@@ -145,6 +145,7 @@
     protected override void OnInitialized()
     {
         this.HelperScript = this.Services.GetRequiredService<HelperScript>();
+        this.AddonManager = this.Services.GetRequiredService<AddonManager>();
         this.AddonManager.GlobalArgumentsChanged += OnGlobalArgumentsChanged;
 
         this._Commands = this.Services.GetRequiredService<CommandService>();
@@ -196,7 +197,7 @@
 
     private IEnumerable<ToolbarContentDescriptor> GetToolbarContents()
     {
-        return this.AddonManager.GetToolbarContents(BlazingStory.Addons.ViewMode.Story);
+        return this.AddonManager?.GetToolbarContents(BlazingStory.Addons.ViewMode.Story) ?? [];
     }
 
     private Dictionary<string, object?> GetGlobalArguments()
@@ -297,8 +298,8 @@
 
     public void Dispose()
     {
-        this.AddonManager.GlobalArgumentsChanged -= OnGlobalArgumentsChanged;
         this._Subscriptions.Dispose();
-        if (this._CurrentStory != null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
+        if (this.AddonManager is not null) this.AddonManager.GlobalArgumentsChanged -= OnGlobalArgumentsChanged;
+        if (this._CurrentStory is not null) this._CurrentStory.Context.ArgumentChanged -= Context_ArgumentChanged;
     }
 }
