@@ -14,7 +14,7 @@ public class UserControllerBase : ComponentBase
     public required UserControllerContext Context { get; set; }
 
     /// <summary>
-    /// Invokes the <see cref="OnInput"/> callback with the supplied value wrapped in a <see cref="ParameterInputEventArgs"/>.
+    /// Invokes the <see cref="UserControllerContext.OnInput"/> callback with the supplied value wrapped in a <see cref="ParameterInputEventArgs"/>.
     /// </summary>
     /// <param name="value">The new value to report.</param>
     protected async Task OnInputAsync(object? value)
