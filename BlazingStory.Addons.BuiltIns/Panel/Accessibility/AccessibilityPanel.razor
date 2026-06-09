@@ -92,8 +92,6 @@
 
     private bool _WaitingForReady = false;
 
-    private int _MillisecondsDelay;
-
     protected override void OnInitialized()
     {
         this._Window = this.Services.GetRequiredService<Window>();
@@ -106,18 +104,27 @@
             this._WindowMessageSubscription = await this._Window.SubscribeMessageAsync(OnMessageReceived);
         }
 
-        if (!this._WaitingForReady)
+        // When the story changes, we need to ask the preview frame if it's ready to run Axe against the new story.
+        if (this._PrevStory != this.Story && this._Window is not null)
         {
+            if (this._WaitingForReady) return; // Prevent recursive calls to this method while waiting for the preview frame to be ready.
+
             this._WaitingForReady = true;
-            this._MillisecondsDelay = 100;
-            while (this._Window is not null && this._PrevStory != this.Story)
+            this._AxeResults = null;
+
+            try
             {
-                await this._Window.PostMessageAsync(".preview-frame iframe", AccessibilityPanelAddon.Message.AskReady);
-                await Task.Delay(this._MillisecondsDelay);
-                if (this._PrevStory == this.Story || this._MillisecondsDelay > 3000) break;
-                this._MillisecondsDelay = this._MillisecondsDelay * 2;
+                for (var millisecondsDelay = 100; millisecondsDelay <= 3600 && this._PrevStory != this.Story; millisecondsDelay *= 2)
+                {
+                    await this._Window.PostMessageAsync(".preview-frame iframe", AccessibilityPanelAddon.Message.AskReady);
+                    await Task.Delay(millisecondsDelay);
+
+                    // If after 100 ms we still don't have results, trigger a state change to clear the previous results.
+                    if (millisecondsDelay == 100 && this._AxeResults is null) this.StateHasChanged();
+                }
             }
-            this._WaitingForReady = false;
+            catch (JSDisconnectedException) { }
+            finally { this._WaitingForReady = false; }
         }
     }
 
@@ -150,7 +157,7 @@
         try
         {
             // The Axe results are expected to be a JSON string, but we fetch it as a blob from the object URL
-            // and then open a stream to deserialize it, 
+            // and then open a stream to deserialize it,
             // because the results can be quite big and this way we avoid loading the whole content in memory as a string.
             await using var response = await JSRuntime.InvokeAsync<IJSObjectReference>("fetch", resultObjectUrl);
             await using var blob = await response.InvokeAsync<IJSStreamReference>("blob");
@@ -161,7 +168,7 @@
         finally
         {
             this.StateHasChanged();
-            try { await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", resultObjectUrl); } 
+            try { await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", resultObjectUrl); }
             catch (JSDisconnectedException) { }
         }
     }
