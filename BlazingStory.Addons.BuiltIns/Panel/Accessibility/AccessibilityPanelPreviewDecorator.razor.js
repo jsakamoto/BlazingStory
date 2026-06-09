@@ -26,9 +26,11 @@ export const run = async () => {
             };
         });
     };
-    return JSON.stringify({
+    const resultText = JSON.stringify({
         violations: flattenTarget(result.violations),
         passes: flattenTarget(result.passes),
         incomplete: flattenTarget(result.incomplete)
     });
+    const blob = new Blob([resultText], { type: 'text/plain' });
+    return URL.createObjectURL(blob);
 };

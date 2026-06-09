@@ -59,8 +59,8 @@
         }
         else if (message == AccessibilityPanelAddon.Message.RunAxe)
         {
-            var resultJsonString = await this._JSModule.InvokeAsync<string>("run");
-            if (this._Window is not null) await this._Window.PostMessageAsync("parent", AccessibilityPanelAddon.Message.AxeResult + resultJsonString);
+            var resultObjectUrl = await this._JSModule.InvokeAsync<string>("run");
+            if (this._Window is not null) await this._Window.PostMessageAsync("parent", AccessibilityPanelAddon.Message.AxeResult + resultObjectUrl);
         }
     }
 

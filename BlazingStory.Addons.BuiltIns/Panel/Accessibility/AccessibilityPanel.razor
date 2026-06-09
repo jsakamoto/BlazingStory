@@ -1,6 +1,7 @@
 @using BlazingStory.Addons.BuiltIns.Panel.Accessibility.Axe
 @using Microsoft.Extensions.DependencyInjection
 @implements IDisposable
+@inject IJSRuntime JSRuntime
 
 <PanelTitle>
     Accessibility
@@ -144,10 +145,25 @@
     }
 
     [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "AxeResults and all referenced types are preserved via [DynamicallyAccessedMembers(All)].")]
-    private async Task OnReceiveAxeResultAsync(string resultJsonString)
+    private async Task OnReceiveAxeResultAsync(string resultObjectUrl)
     {
-        this._AxeResults = JsonSerializer.Deserialize<AxeResults>(resultJsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-        this.StateHasChanged();
+        try
+        {
+            // The Axe results are expected to be a JSON string, but we fetch it as a blob from the object URL
+            // and then open a stream to deserialize it, 
+            // because the results can be quite big and this way we avoid loading the whole content in memory as a string.
+            await using var response = await JSRuntime.InvokeAsync<IJSObjectReference>("fetch", resultObjectUrl);
+            await using var blob = await response.InvokeAsync<IJSStreamReference>("blob");
+            using var stream = await blob.OpenReadStreamAsync();
+            this._AxeResults = await JsonSerializer.DeserializeAsync<AxeResults>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+        catch (JSDisconnectedException) { }
+        finally
+        {
+            this.StateHasChanged();
+            try { await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", resultObjectUrl); } 
+            catch (JSDisconnectedException) { }
+        }
     }
 
     private void OnExpansionStateChanged()

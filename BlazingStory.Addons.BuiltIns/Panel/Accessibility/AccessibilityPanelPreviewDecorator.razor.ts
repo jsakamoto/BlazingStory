@@ -6,7 +6,7 @@ const ensureAxeRuntimeModuleLoaded = async () => {
     await import(path);
 }
 
-export const run = async () => {
+export const run = async (): Promise<string> => {
 
     await ensureAxeRuntimeModuleLoaded();
     axe.reset();
@@ -32,9 +32,14 @@ export const run = async () => {
         });
     };
 
-    return JSON.stringify({
+    const resultText = JSON.stringify({
         violations: flattenTarget(result.violations),
         passes:  flattenTarget(result.passes),
         incomplete: flattenTarget(result.incomplete)
     });
+
+    // The result text can be large, so we create a blob and return a URL to it instead of returning the text directly.
+    // Otherwise, we might hit the disconnection of the circuit on Blazor Server due to large data transfer.
+    const blob = new Blob([resultText], { type: 'text/plain' });
+    return URL.createObjectURL(blob);
 }
