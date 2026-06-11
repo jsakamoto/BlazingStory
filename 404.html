@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyBlazorWasmApp1.Stories</title>
+    <base href="/BlazingStory/" />
+    <link href="_framework/dotnet.zoyinz05qq.js" rel="preload" as="script" fetchpriority="high" crossorigin="anonymous" integrity="sha256-I6N43iV0x754fsBAx9cqIe3g/S4qV6snuVQ2utlMY24=" />
+    <!--
+    If you need to add <link> or <script> elements to include CSS or JavaScript files 
+    for canvas views of your Stories, 
+    YOU SHOULD DO THAT IN THE "iframe.html" FILE, NOT HERE.
+    -->
+    <link rel="stylesheet" href="css/blazor-ui.css" />
+    <script type="importmap">{
+  "imports": {
+    "./_framework/blazor.webassembly.js": "./_framework/blazor.webassembly.958z1vx7fr.js",
+    "./_framework/dotnet.native.js": "./_framework/dotnet.native.l2t6wvs2ou.js",
+    "./_framework/dotnet.runtime.js": "./_framework/dotnet.runtime.a6jcqbs390.js",
+    "./_framework/dotnet.js": "./_framework/dotnet.zoyinz05qq.js"
+  },
+  "scopes": {},
+  "integrity": {
+    "./_framework/blazor.webassembly.958z1vx7fr.js": "sha256-A59Tr9HqEhHMu8kU7kruLI9ayw5MRS6Lvc6z7jCbghk=",
+    "./_framework/blazor.webassembly.js": "sha256-A59Tr9HqEhHMu8kU7kruLI9ayw5MRS6Lvc6z7jCbghk=",
+    "./_framework/dotnet.js": "sha256-I6N43iV0x754fsBAx9cqIe3g/S4qV6snuVQ2utlMY24=",
+    "./_framework/dotnet.native.js": "sha256-U+uaMJKP3ibklJXVEQfrsRnOS1xAHklx8uX8TKO5+6o=",
+    "./_framework/dotnet.native.l2t6wvs2ou.js": "sha256-U+uaMJKP3ibklJXVEQfrsRnOS1xAHklx8uX8TKO5+6o=",
+    "./_framework/dotnet.runtime.a6jcqbs390.js": "sha256-7i3usfTrnzC/9qWO4si5Bw4w7D9fUSnSBdhQ47blX2M=",
+    "./_framework/dotnet.runtime.js": "sha256-7i3usfTrnzC/9qWO4si5Bw4w7D9fUSnSBdhQ47blX2M=",
+    "./_framework/dotnet.zoyinz05qq.js": "sha256-I6N43iV0x754fsBAx9cqIe3g/S4qV6snuVQ2utlMY24="
+  }
+}</script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="loading-progress">
+            <svg>
+                <circle r="40%" cx="50%" cy="50%" />
+                <circle r="40%" cx="50%" cy="50%" />
+            </svg>
+            <div class="text"></div>
+            <img src="_content/BlazingStory/images/icon.min.svg" />
+        </div>
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <!--
+    If you need to add <script> elements to include JavaScript files for canvas views of your Stories, 
+    YOU SHOULD DO THAT IN THE "iframe.html" FILE, NOT HERE.
+    -->
+    <script src="_framework/blazor.webassembly.958z1vx7fr.js" autostart="false"></script>
+    <script src="brotliloader.min.js" type="module"></script>
+</body>
+
+</html>
