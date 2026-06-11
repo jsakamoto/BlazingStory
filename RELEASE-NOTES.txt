@@ -1,3 +1,6 @@
+v.1.0.0-preview.85
+- Fix: Resolved an issue where `null` values for non-nullable reference-type story arguments were displayed as the literal string `"(null)"` on initial load. (Issue #119, PR #120 contributed by @warnaa)
+
 v.1.0.0-preview.84
 - Fix: Resolved an error in the accessibility panel where the axe-core check result could not be retrieved under certain conditions.
 - Fix: Prevented Blazor Server circuit disconnects in the accessibility panel when accessibility scan results are large.
