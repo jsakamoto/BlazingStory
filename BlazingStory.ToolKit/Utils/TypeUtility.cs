@@ -108,7 +108,8 @@ public static class TypeUtility
         var primaryType = targetTypeStructure.PrimaryType;
         var isNullable = targetTypeStructure.IsNullable;
 
-        if (isNullable && sourceString == "(null)")
+        // Both OR branches needed: isNullable covers Nullable<T>, !IsValueType covers reference types.
+        if (sourceString == "(null)" && (isNullable || !primaryType.IsValueType))
         {
             convertedValue = null;
             return true;
