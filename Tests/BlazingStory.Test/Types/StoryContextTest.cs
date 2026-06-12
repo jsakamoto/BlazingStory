@@ -18,6 +18,6 @@ internal class StoryContextTest
         var parameterCount = context.GetNoEventParameterCount();
 
         // Then
-        parameterCount.Is(5);
+        parameterCount.Is(6);
     }
 }
