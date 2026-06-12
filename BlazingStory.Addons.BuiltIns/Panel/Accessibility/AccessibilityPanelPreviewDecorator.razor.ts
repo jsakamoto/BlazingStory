@@ -1,0 +1,45 @@
+import type * as AxeModule from "@blazingstory/types/axe";
+declare global { var axe: typeof AxeModule; }
+
+const ensureAxeRuntimeModuleLoaded = async () => {
+    const path = "../../js/axe.min.js";
+    await import(path);
+}
+
+export const run = async (): Promise<string> => {
+
+    await ensureAxeRuntimeModuleLoaded();
+    axe.reset();
+    axe.configure({
+        rules: [
+            {
+                id: "region",
+                enabled: false,
+            }]
+    });
+    const include = document.querySelectorAll(".preview-story-area");
+    const result = await axe.run({ include, exclude: [] });
+
+    const flattenTarget = (results: AxeModule.Result[]) => {
+        return results.map(result => {
+            return {
+                ...result,
+                nodes: result.nodes.map(node => ({
+                    ...node,
+                    target: node.target.flat()
+                }))
+            };
+        });
+    };
+
+    const resultText = JSON.stringify({
+        violations: flattenTarget(result.violations),
+        passes:  flattenTarget(result.passes),
+        incomplete: flattenTarget(result.incomplete)
+    });
+
+    // The result text can be large, so we create a blob and return a URL to it instead of returning the text directly.
+    // Otherwise, we might hit the disconnection of the circuit on Blazor Server due to large data transfer.
+    const blob = new Blob([resultText], { type: 'text/plain' });
+    return URL.createObjectURL(blob);
+}

@@ -1,0 +1,210 @@
+@using BlazingStory.Addons.BuiltIns.Panel.Accessibility.Axe
+@using Microsoft.Extensions.DependencyInjection
+@implements IDisposable
+@inject IJSRuntime JSRuntime
+
+<PanelTitle>
+    Accessibility
+    @if ((this._AxeResults?.Violations?.Count() ?? 0) > 0)
+    {
+        <Badge Text="@this._AxeResults?.Violations.Count().ToString()" />
+    }
+</PanelTitle>
+
+<ImportStyleSheet Href="./_content/BlazingStory.Addons.BuiltIns/css/a11y-panel.min.css" />
+
+<div class="a11y-panel">
+    <ToolBar>
+        <TabButtonGroup>
+            <TabButton Active="@(_currentView == View.Violations)" OnClick="@(() => _currentView = View.Violations)">
+                Violations
+                <Badge Text="@(this._AxeResults?.Violations.Count().ToString() ?? "0")" />
+            </TabButton>
+            <TabButton Active="@(_currentView == View.Passes)" OnClick="@(() => _currentView = View.Passes)">
+                Passes
+                <Badge Text="@(this._AxeResults?.Passes.Count().ToString() ?? "0")" />
+            </TabButton>
+            <TabButton Active="@(_currentView == View.Inconclusive)" OnClick="@(() => _currentView = View.Inconclusive)">
+                Inconclusive
+                <Badge Text="@(this._AxeResults?.Incomplete.Count().ToString() ?? "0")" />
+            </TabButton>
+        </TabButtonGroup>
+
+        <Spacer />
+
+        @if (GetCurrentExpansionStateRef() == ExpansionState.ExpandedAll)
+        {
+            <IconButton Icon="SvgIconType.CollapseAll"
+                        Title="Collapse all results"
+                        OnClick="() => SetCurrentExpansionState(ExpansionState.CollapsedAll)"></IconButton>
+        }
+        else
+        {
+            <IconButton Icon="SvgIconType.ExpandAll"
+                        Title="Expand all results"
+                        OnClick="() => SetCurrentExpansionState(ExpansionState.ExpandedAll)"></IconButton>
+        }
+
+        <IconButton Icon="SvgIconType.Reload" Title="Rerun accessibility scan" OnClick="() => RequestAxeRunAsync(force: true)"></IconButton>
+    </ToolBar>
+
+    <div class="axe-results-views-container">
+        <AxeResultsView Results="this._AxeResults?.Violations"
+                        Visible="(_currentView == View.Violations)"
+                        @bind-ExpansionState="_ViolationsExpansionState"
+                        @bind-ExpansionState:after="OnExpansionStateChanged" />
+        <AxeResultsView Results="this._AxeResults?.Passes"
+                        Visible="(_currentView == View.Passes)"
+                        @bind-ExpansionState="_PassesExpansionState"
+                        @bind-ExpansionState:after="OnExpansionStateChanged" />
+        <AxeResultsView Results="this._AxeResults?.Incomplete"
+                        Visible="(_currentView == View.Inconclusive)"
+                        @bind-ExpansionState="_InconclusiveExpansionState"
+                        @bind-ExpansionState:after="OnExpansionStateChanged" />
+    </div>
+</div>
+
+@code
+{
+    [CascadingParameter(Name = "Story")]
+    public IStory? Story { get; set; }
+
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
+    private enum View { Violations, Passes, Inconclusive }
+
+    private View _currentView = View.Violations;
+
+    private Window? _Window;
+
+    private IDisposable? _WindowMessageSubscription;
+
+    private IStory? _PrevStory;
+
+    private AxeResults? _AxeResults;
+
+    private ExpansionState _ViolationsExpansionState = ExpansionState.CollapsedAll;
+
+    private ExpansionState _PassesExpansionState = ExpansionState.CollapsedAll;
+
+    private ExpansionState _InconclusiveExpansionState = ExpansionState.CollapsedAll;
+
+    private bool _WaitingForReady = false;
+
+    protected override void OnInitialized()
+    {
+        this._Window = this.Services.GetRequiredService<Window>();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && this._Window is not null)
+        {
+            this._WindowMessageSubscription = await this._Window.SubscribeMessageAsync(OnMessageReceived);
+        }
+
+        // When the story changes, we need to ask the preview frame if it's ready to run Axe against the new story.
+        if (this._PrevStory != this.Story && this._Window is not null)
+        {
+            if (this._WaitingForReady) return; // Prevent recursive calls to this method while waiting for the preview frame to be ready.
+
+            this._WaitingForReady = true;
+            this._AxeResults = null;
+
+            try
+            {
+                for (var millisecondsDelay = 100; millisecondsDelay <= 3600 && this._PrevStory != this.Story; millisecondsDelay *= 2)
+                {
+                    await this._Window.PostMessageAsync(".preview-frame iframe", AccessibilityPanelAddon.Message.AskReady);
+                    await Task.Delay(millisecondsDelay);
+
+                    // If after 100 ms we still don't have results, trigger a state change to clear the previous results.
+                    if (millisecondsDelay == 100 && this._AxeResults is null) this.StateHasChanged();
+                }
+            }
+            catch (JSDisconnectedException) { }
+            finally { this._WaitingForReady = false; }
+        }
+    }
+
+    private async Task OnMessageReceived(string? message)
+    {
+        if (message == AccessibilityPanelAddon.Message.Ready)
+        {
+            await RequestAxeRunAsync();
+        }
+        else if (message?.StartsWith(AccessibilityPanelAddon.Message.AxeResult) == true)
+        {
+            await OnReceiveAxeResultAsync(message.Substring(AccessibilityPanelAddon.Message.AxeResult.Length));
+        }
+    }
+
+    private async Task RequestAxeRunAsync(bool force = false)
+    {
+        if (!force && this._PrevStory == this.Story) return;
+        this._PrevStory = this.Story;
+        this._AxeResults = null;
+        this._ViolationsExpansionState = ExpansionState.CollapsedAll;
+        this._PassesExpansionState = ExpansionState.CollapsedAll;
+        this._InconclusiveExpansionState = ExpansionState.CollapsedAll;
+        if (this._Window is not null) await this._Window.PostMessageAsync(".preview-frame iframe", AccessibilityPanelAddon.Message.RunAxe);
+    }
+
+    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "AxeResults and all referenced types are preserved via [DynamicallyAccessedMembers(All)].")]
+    private async Task OnReceiveAxeResultAsync(string resultObjectUrl)
+    {
+        try
+        {
+            // The Axe results are expected to be a JSON string, but we fetch it as a blob from the object URL
+            // and then open a stream to deserialize it,
+            // because the results can be quite big and this way we avoid loading the whole content in memory as a string.
+            await using var response = await JSRuntime.InvokeAsync<IJSObjectReference>("fetch", resultObjectUrl);
+            await using var blob = await response.InvokeAsync<IJSStreamReference>("blob");
+            using var stream = await blob.OpenReadStreamAsync();
+            this._AxeResults = await JsonSerializer.DeserializeAsync<AxeResults>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+        catch (JSDisconnectedException) { }
+        finally
+        {
+            this.StateHasChanged();
+            try { await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", resultObjectUrl); }
+            catch (JSDisconnectedException) { }
+        }
+    }
+
+    private void OnExpansionStateChanged()
+    {
+        /* NOP, Just kick the state change */
+    }
+
+    private ref ExpansionState GetCurrentExpansionStateRef()
+    {
+        switch (this._currentView)
+        {
+            case View.Violations: return ref this._ViolationsExpansionState;
+            case View.Passes: return ref this._PassesExpansionState;
+            case View.Inconclusive: return ref this._InconclusiveExpansionState;
+            default: throw new InvalidOperationException();
+        }
+    }
+
+    private void SetCurrentExpansionState(ExpansionState state)
+    {
+        var currentResults = this._currentView switch
+        {
+            View.Violations => this._AxeResults?.Violations,
+            View.Passes => this._AxeResults?.Passes,
+            View.Inconclusive => this._AxeResults?.Incomplete,
+            _ => throw new InvalidOperationException()
+        };
+
+        GetCurrentExpansionStateRef() = (currentResults?.Count() ?? 0) > 0 ? state : ExpansionState.CollapsedAll;
+    }
+
+    public void Dispose()
+    {
+        this._Window = null;
+        this._WindowMessageSubscription?.Dispose();
+    }
+}

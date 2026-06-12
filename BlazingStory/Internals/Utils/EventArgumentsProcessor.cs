@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using BlazingStory.Abstractions;
 using BlazingStory.Internals.Models;
 using Microsoft.AspNetCore.Components;
 
@@ -18,7 +19,7 @@ namespace BlazingStory.Internals.Utils;
 /// - Handles type conversions from JSON/JavaScript types to .NET types
 /// - Provides detailed logging for debugging event processing issues
 /// </summary>
-public static class EventArgumentsProcessor
+internal static class EventArgumentsProcessor
 {
     /// <summary>
     /// Extracts and converts a parameter value from component event arguments, supporting multiple
@@ -57,7 +58,7 @@ public static class EventArgumentsProcessor
     /// ExtractParameterValue(arrayArgs, "selectedItems", typeof(string[])); // Returns: string[]
     /// containing the selected items
     /// </example>
-    public static object? ExtractParameterValue<TArgs>(TArgs eventArgs, string parameterName, Type? expectedType)
+    internal static object? ExtractParameterValue<TArgs>(TArgs eventArgs, string parameterName, Type? expectedType)
     {
         object? value = eventArgs; // Default to the entire event arguments
 
@@ -118,7 +119,7 @@ public static class EventArgumentsProcessor
     /// paramName3 = MapEventNameToParameterName("CustomEvent"); // Returns: "CustomEvent" (no
     /// "Changed" suffix)
     /// </example>
-    public static string MapEventNameToParameterName(string eventName)
+    internal static string MapEventNameToParameterName(string eventName)
     {
         // Check if this follows the standard two-way binding convention
         return eventName.EndsWith("Changed")
@@ -161,7 +162,7 @@ public static class EventArgumentsProcessor
     /// ValidateTwoWayBindingPattern("ButtonClicked", story, "MyComponent"); // Returns: false
     /// (doesn't end with "Changed")
     /// </example>
-    public static bool ValidateTwoWayBindingPattern(string eventName, Story? story, string contextPrefix = "EventProcessor")
+    internal static bool ValidateTwoWayBindingPattern(string eventName, IStory? story, string contextPrefix = "EventProcessor")
     {
         // First check: Does the event follow the "XxxChanged" naming convention?
         if (!eventName.EndsWith("Changed"))
@@ -242,7 +243,7 @@ public static class EventArgumentsProcessor
     /// <returns>
     /// The parameter definition or null if not found
     /// </returns>
-    public static ComponentParameter? FindParameter(string parameterName, Story? story)
+    internal static IComponentParameter? FindParameter(string parameterName, IStory? story)
     {
         if (story?.Context?.Parameters == null)
         {

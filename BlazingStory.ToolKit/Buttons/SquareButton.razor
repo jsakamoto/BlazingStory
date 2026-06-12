@@ -1,0 +1,47 @@
+@using System.ComponentModel
+@{
+#pragma warning disable CS0612 // Type or member is obsolete
+}
+<BasicButton Class="@CssClass("square-button", new { ButtonStyle })" OnClick="this.OnClick" Href="@this.Href" Target="@this.Target">
+    @Text
+    @ChildContent
+</BasicButton>
+@{
+#pragma warning restore CS0612 // Type or member is obsolete
+}
+
+@code
+{
+    [Obsolete, Parameter, EditorBrowsable(EditorBrowsableState.Never)]
+    public string? Text { get; set; }
+
+    /// <summary>
+    /// The content to be rendered inside the button, such as text or icons.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the button is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    /// <summary>
+    /// The visual style variant applied to the button.
+    /// </summary>
+    [Parameter]
+    public ButtonStyle ButtonStyle { get; set; } = ButtonStyle.Default;
+
+    /// <summary>
+    /// When set, renders the component as an anchor element navigating to this URL.
+    /// </summary>
+    [Parameter]
+    public string? Href { get; set; }
+
+    /// <summary>
+    /// The anchor target attribute used when <see cref="Href"/> is set.
+    /// </summary>
+    [Parameter]
+    public string? Target { get; set; }
+}

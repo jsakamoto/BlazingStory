@@ -1,7 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using BlazingStory.Internals.Models;
 using BlazingStory.Types;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace BlazingStory.Internals.Services.Navigation;
 
@@ -19,10 +20,10 @@ internal class NavigationService
 
     private int _SearchResultSequence = 0;
 
-    public NavigationService(NavigationManager navigationManager, HelperScript helperScript)
+    public NavigationService(NavigationManager navigationManager, IJSRuntime jsRuntime)
     {
         this._NavigationManager = navigationManager;
-        this._NavigationHistory = new(helperScript);
+        this._NavigationHistory = new(jsRuntime);
     }
 
     internal NavigationTreeItem BuildNavigationTree(IEnumerable<StoryContainer> storyContainers, IEnumerable<CustomPageContainer> customPageContainers, IList<NavigationTreeOrderEntry>? customOrderings, string? expandedNavigationPath)

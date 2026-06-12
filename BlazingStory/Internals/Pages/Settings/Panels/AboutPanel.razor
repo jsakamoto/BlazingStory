@@ -1,13 +1,113 @@
 @using System.Diagnostics
+@using System.Diagnostics.CodeAnalysis
+@using System.Net.Http.Json
 @using System.Reflection
 @using System.Runtime.CompilerServices
 @using System.Runtime.Versioning
+@using System.Text.Json.Serialization
+
+<PageTitle>About - @this.BlazingStoryApp.Title</PageTitle>
 
 <div class="settings-about-panel">
 
     <header>
         <img src="./_content/BlazingStory/images/icon.min.svg" width="32" height="32" style="margin-right:8px;" />
-        Blazing Story @VersionInfo.GetVersionText()
+        <span>Blazing Story</span>
     </header>
 
+    <section class="version-text">
+        @VersionInfo.GetVersionText()
+    </section>
+
+    <section class="resource-links">
+        <SquareButton Href="https://github.com/jsakamoto/BlazingStory" Target="_blank">
+            <SvgIcon Type="SvgIconType.GitHub" />
+            GitHub
+        </SquareButton>
+        <SquareButton Href="https://github.com/jsakamoto/BlazingStory" Target="_blank">
+            <SvgIcon Type="SvgIconType.Document" />
+            Documentation
+        </SquareButton>
+    </section>
+
+    <section>
+        <p>
+            Open source software under the <a href="https://github.com/jsakamoto/BlazingStory/blob/main/LICENSE" target="_blank">Mozilla Public License 2.0</a>.
+        </p>
+        <p>
+            See also
+            <a href="https://github.com/jsakamoto/BlazingStory/blob/main/THIRD-PARTY-NOTICES.txt" target="_blank">Third-Party Notices</a>
+            for bundled third-party components and license information.
+        </p>
+    </section>
+
+    @if (this._Contributors.Count > 0)
+    {
+        <section class="contributors-section">
+            <h3>Contributors <span class="contributors-count">@this._Contributors.Count</span></h3>
+            <div class="contributors-grid">
+                @foreach (var contributor in this._Contributors)
+                {
+                    <a href="@contributor.HtmlUrl" target="_blank" rel="noopener noreferrer" title="@contributor.Login">
+                        <img src="@contributor.AvatarUrl" alt="@contributor.Login" width="40" height="40" loading="lazy" />
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
 </div>
+
+@code
+{
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
+    [CascadingParameter]
+    protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
+
+    private IReadOnlyList<ContributorInfo> _Contributors = [];
+
+    private record ContributorInfo(
+        [property: JsonPropertyName("login")] string Login,
+        [property: JsonPropertyName("avatar_url")] string AvatarUrl,
+        [property: JsonPropertyName("html_url")] string HtmlUrl);
+
+    private static IReadOnlyList<ContributorInfo>? _CachedContributors;
+    private static DateTime _CacheExpiry;
+
+    internal static void ResetCache()
+    {
+        _CachedContributors = null;
+        _CacheExpiry = default;
+    }
+
+    [UnconditionalSuppressMessage("Trimming", "IL2026")]
+    protected override async Task OnInitializedAsync()
+    {
+        if (_CachedContributors is not null && DateTime.UtcNow < _CacheExpiry)
+        {
+            this._Contributors = _CachedContributors;
+            return;
+        }
+
+        try
+        {
+            var httpClient = this.Services.GetRequiredService<HttpClient>();
+            using var request = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/jsakamoto/BlazingStory/contributors");
+            request.Headers.Add("Accept", "application/vnd.github+json");
+            request.Headers.Add("User-Agent", "BlazingStory");
+            var response = await httpClient.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                this._Contributors = await response.Content.ReadFromJsonAsync<List<ContributorInfo>>() ?? [];
+                _CachedContributors = this._Contributors;
+                _CacheExpiry = DateTime.UtcNow.AddHours(1);
+            }
+        }
+        catch
+        {
+            // Silently ignore errors - contributors section will simply not be displayed.
+        }
+    }
+}

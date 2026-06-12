@@ -1,0 +1,11 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="../../BlazingStory.McpServer/BlazingStory.McpServer.csproj" />
+  <Project Path="../../BlazingStory/BlazingStory.csproj" />
+  <Project Path="MyBlazorWasmApp1.Stories/MyBlazorWasmApp1.Stories.csproj" />
+  <Project Path="MyBlazorWasmApp1/MyBlazorWasmApp1.csproj" />
+</Solution>

@@ -1,0 +1,121 @@
+@using Microsoft.Extensions.DependencyInjection
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+
+<div @ref="this._PopupMenuElement" class="popup-menu @Class">
+
+    <div class="popup-menu-trigger">
+        <div class="popup-menu-trigger-content" @onclick="OpenPopup">
+            @Trigger
+        </div>
+        <div class="popup-menu-anchor">
+            @if (_PopupShown)
+            {
+                <div class="popup-menu-holder" style="@this._PopupStylesString">
+                    <div class="popup-menu-leader"></div>
+                    <div class="popup-menu-body" @onclick="@(async () => await ClosePopup())">
+                        @MenuItems
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>
+
+@code
+{
+    /// <summary>
+    /// Additional CSS class names to apply to the popup menu root element.
+    /// </summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>
+    /// The top margin in pixels applied to the popup panel.
+    /// </summary>
+    [Parameter]
+    public int MarginTop { get; set; } = 0;
+
+    /// <summary>
+    /// The content rendered as the trigger that opens the popup menu.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? Trigger { get; set; }
+
+    /// <summary>
+    /// The menu item content rendered inside the popup panel.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? MenuItems { get; set; }
+
+    /// <summary>
+    /// The cascading service provider used to resolve dependencies such as <see cref="HotKeys"/>.
+    /// </summary>
+    [CascadingParameter]
+    internal IServiceProvider Services { get; init; } = default!;
+
+    private HotKeysContext? _HotKeysContext;
+
+    private ElementReference _PopupMenuElement;
+
+    private bool _PopupShown = false;
+
+    private string _PopupStylesString => $"margin-top:{this.MarginTop}px;";
+
+    private readonly JSModule _JSModule;
+
+    private DotNetObjectReference<PopupMenu> _This;
+
+    private IJSObjectReference? _EventSubscriber;
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="PopupMenu"/>.
+    /// </summary>
+    public PopupMenu()
+    {
+        this._This = DotNetObjectReference.Create(this);
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Menus/PopupMenu.razor.js");
+    }
+
+    private async Task OpenPopup()
+    {
+        if (this._PopupShown)
+        {
+            await this.ClosePopup();
+            return;
+        }
+
+        this._EventSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeDocumentEvent", "pointerdown", this._This, nameof(ClosePopup), this._PopupMenuElement);
+        this._HotKeysContext = this.Services.GetRequiredService<HotKeys>().CreateContext().Add(Code.Escape, ClosePopup);
+        this._PopupShown = true;
+    }
+
+    /// <summary>
+    /// Closes the popup menu and unsubscribes from document events.
+    /// </summary>
+    [JSInvokable(nameof(ClosePopup))]
+    public async ValueTask ClosePopup()
+    {
+        await this.UnsubscribeEventAsync();
+        if (this._PopupShown == false) return;
+        this._PopupShown = false;
+        this.StateHasChanged();
+    }
+
+    private async ValueTask UnsubscribeEventAsync()
+    {
+        if (this._HotKeysContext is not null) await this._HotKeysContext.DisposeAsync();
+        this._HotKeysContext = null;
+
+        await this._EventSubscriber.DisposeIfConnectedAsync("dispose");
+        this._EventSubscriber = null;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await this.UnsubscribeEventAsync();
+        await this._JSModule.DisposeAsync();
+        this._This?.Dispose();
+    }
+}

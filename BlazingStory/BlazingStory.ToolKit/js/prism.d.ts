@@ -1,0 +1,1 @@
+export * from "../../../BlazingStory.ToolKit/wwwroot/js/prism";

@@ -1,0 +1,22 @@
+@using BlazingStory.Addons.Internals
+@using Microsoft.AspNetCore.Components.Sections
+
+<SectionContent SectionName="@($"panel-title-{this.PanelDescriptor.Id:N}")">
+    @ChildContent
+</SectionContent>
+
+@code
+{
+    /// <summary>
+    /// The descriptor of the panel whose title section this component targets.
+    /// </summary>
+    [CascadingParameter]
+    internal PanelDescriptor PanelDescriptor { get; init; } = default!;
+
+    /// <summary>
+    /// The content rendered as the panel tab title.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+}

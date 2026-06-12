@@ -1,4 +1,5 @@
-﻿using BlazingStory.Internals.Services;
+using BlazingStory.Internals.Utils;
+using BlazingStory.ToolKit.JSInterop;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -13,7 +14,7 @@ public class MarkdownPageBase : ComponentBase, IAsyncDisposable
 
     public MarkdownPageBase()
     {
-        this.JSModule = new(() => this.JSRuntime, "js/markdown-page.js");
+        this.JSModule = JSModuleFactory.Create(() => this.JSRuntime, "js/markdown-page.js");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

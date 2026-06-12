@@ -1,0 +1,22 @@
+@attribute [Stories("ToolKit/Buttons/CornerButton")]
+
+<Stories TComponent="CornerButton" Layout="typeof(BorderedFullFrameLayout)">
+
+    <Story Name="Default">
+
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_childContent" />
+        </Arguments>
+
+        <Template>
+            <CornerButton @attributes="context.Args">
+            </CornerButton>
+        </Template>
+
+    </Story>
+
+</Stories>
+
+@code {
+    RenderFragment _childContent = @<text>Click me</text>;
+}

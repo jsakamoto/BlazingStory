@@ -1,6 +1,8 @@
 @using System.Reflection;
 @using BlazingStory.Internals.Types;
 
+<PageTitle>Release Notes - @this.BlazingStoryApp.Title</PageTitle>
+
 <header>Blazing Story @VersionInfo.GetFormattedVersionText() - @VersionInfo.GetBuildTimestamp()</header>
 
 <section>
@@ -20,6 +22,9 @@
 {
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
+
+    [CascadingParameter]
+    protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
 
     private record ReleaseNoteSection(string VersionTitle, IEnumerable<string> ChangeLogs);
 

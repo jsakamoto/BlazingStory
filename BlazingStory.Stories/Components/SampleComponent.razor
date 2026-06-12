@@ -1,4 +1,5 @@
-﻿@code
+@using BlazingStory.Abstractions
+@code
 {
     [Parameter]
     public int Int32 { get; set; }
@@ -31,11 +32,11 @@
     public SampleEnum? NullableEnum { get; set; }
 
 
-    public static ComponentParameter CreateParameter(string name, ControlType control = ControlType.Default)
+    public static IComponentParameter CreateParameter(string name, ControlType control = ControlType.Default)
     {
-        return new(typeof(SampleComponent), typeof(SampleComponent).GetProperty(name)!, null!)
-            {
-                Control = control
-            };
+        return new ComponentParameter(typeof(SampleComponent), typeof(SampleComponent).GetProperty(name)!, null!)
+        {
+            Control = control
+        };
     }
 }

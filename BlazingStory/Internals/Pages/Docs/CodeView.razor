@@ -1,16 +1,15 @@
+@using BlazingStory.ToolKit.Views
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 
 @if (this.Visible)
 {
     <div class="code-view">
-
-        <pre><code @key="_RenderGen" @ref="_CodeElementRef" class="language-html">@this._CodeText</code></pre>
+        <CodeBlock CodeText="@this._CodeText" Language="html" />
 
         <CornerButton Class="copy-button" OnClick="OnClickCopyButton">
             @(this._Copied ? "Copied" : "Copy")
         </CornerButton>
-
     </div>
 }
 
@@ -20,74 +19,36 @@
     internal IServiceProvider Services { get; init; } = default!;
 
     [Parameter]
-    public Story? Story { get; set; }
+    public IStory? Story { get; set; }
 
     [Parameter]
     public bool Visible { get; set; }
 
-    private string? _SourceCodeText = null;
+    private Task<string>? _SourceCodeTextTask = null;
 
     private string? _CodeText;
 
     private bool _Copied = false;
 
-    private readonly JSModule _JSModule;
-
-    private ElementReference _CodeElementRef;
-
-    private bool _PrevVisible = false;
-
-    private int _RenderGen = 1;
-
-    private int _HighlightedGen = 0;
-
-    public CodeView()
-    {
-        this._JSModule = new(() => this.JSRuntime, "js/prism.js");
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        base.OnParametersSet();
-
-        if (!this._PrevVisible && this.Visible) this._RenderGen++;
-        this._PrevVisible = this.Visible;
-
-        if (this.Visible == true && this._SourceCodeText == null && this.Story != null)
-        {
-            this._SourceCodeText = await StoriesRazorSource.GetSourceCodeAsync(this.Story);
-            this.UpdateCodeTextWithArgument();
-        }
-    }
-
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         if (this.Story == null) throw new InvalidOperationException("Story is required");
         this.Story.Context.ArgumentChanged += this.Context_ArgumentChanged;
+        this._SourceCodeTextTask = StoriesRazorSource.GetSourceCodeAsync(this.Story).AsTask();
+        await this.UpdateCodeTextWithArgumentAsync();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private async ValueTask Context_ArgumentChanged()
     {
-        if (this.Visible && this._HighlightedGen != this._RenderGen)
-        {
-            await this._JSModule.InvokeVoidAsync("Prism.highlightElement", _CodeElementRef);
-            this._HighlightedGen = this._RenderGen;
-        }
-    }
-
-    private ValueTask Context_ArgumentChanged()
-    {
-        this.UpdateCodeTextWithArgument();
-        this._RenderGen++;
+        await this.UpdateCodeTextWithArgumentAsync();
         this.StateHasChanged();
-        return ValueTask.CompletedTask;
     }
 
-    private void UpdateCodeTextWithArgument()
+    private async ValueTask UpdateCodeTextWithArgumentAsync()
     {
-        this._CodeText = this._SourceCodeText;
-        if (this.Story == null || this._SourceCodeText == null) return;
-        this._CodeText = StoriesRazorSource.UpdateSourceTextWithArgument(Story, this._SourceCodeText);
+        if (this.Story == null || this._SourceCodeTextTask == null) return;
+        this._CodeText = await this._SourceCodeTextTask;
+        this._CodeText = await StoriesRazorSource.UpdateSourceTextWithArgumentAsync(this.Story, this._CodeText);
     }
 
     private async Task OnClickCopyButton()
@@ -105,6 +66,5 @@
     public async ValueTask DisposeAsync()
     {
         if (this.Story != null) this.Story.Context.ArgumentChanged -= this.Context_ArgumentChanged;
-        await _JSModule.DisposeAsync();
     }
 }

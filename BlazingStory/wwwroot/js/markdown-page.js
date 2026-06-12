@@ -1,5 +1,5 @@
+import { Prism } from "../../BlazingStory.ToolKit/js/prism.js";
 import { injectCopyButton } from "./copybutton.js";
-import { Prism } from "./prism.js";
 export const formatCodeBlock = (containerSelector) => {
     const containers = document.querySelectorAll(containerSelector);
     containers.forEach((container) => {

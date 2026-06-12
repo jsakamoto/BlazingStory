@@ -1,0 +1,25 @@
+<label class="null-input-radio">
+    <input type="radio" name="@Name" checked="@Checked" @onchange="OnChange" />
+    <span>null</span>
+</label>
+
+@code
+{
+    /// <summary>
+    /// The radio button group name used to group this radio with others.
+    /// </summary>
+    [Parameter]
+    public string? Name { get; set; }
+
+    /// <summary>
+    /// Whether this radio button is currently checked.
+    /// </summary>
+    [Parameter]
+    public bool Checked { get; set; }
+
+    /// <summary>
+    /// Callback invoked when this radio button is selected.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnChange { get; set; }
+}

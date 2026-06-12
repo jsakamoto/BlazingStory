@@ -1,0 +1,16 @@
+<IconButton Icon="SvgIconType.Reset" Class="@this.Class" Title="Reset controls" OnClick="this.OnClick" />
+
+@code
+{
+    /// <summary>
+    /// Callback invoked when the reset button is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    /// <summary>
+    /// Additional CSS class names to apply to the button.
+    /// </summary>
+    [Parameter]
+    public string? Class { get; set; }
+}

@@ -1,6 +1,8 @@
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 
+<PageTitle>Keyboard shortcuts - @this.BlazingStoryApp.Title</PageTitle>
+
 <div class="settings-keyboard-shortcuts-panel">
 
     <header>Keyboard shortcuts</header>
@@ -24,7 +26,9 @@
     </div>
 
     <div>
-        <SquareButton Text="Restore defaults" OnClick="RestoreDefaults" ButtonStyle="ButtonStyle.Slim" />
+        <SquareButton OnClick="RestoreDefaults" ButtonStyle="ButtonStyle.Slim">
+            Restore defaults
+        </SquareButton>
     </div>
 
 </div>
@@ -33,6 +37,9 @@
 {
     [CascadingParameter]
     public required IServiceProvider ServiceProvider { get; init; }
+
+    [CascadingParameter]
+    protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
 
     private IEnumerable<Command> _commands = Enumerable.Empty<Command>();
 
@@ -60,7 +67,7 @@
     {
         if (firstRender)
         {
-            await using var module = new JSModule(() => this.JSRuntime, "Internals/Pages/Settings/Panels/KeyboardShortcutsPanel.razor.js");
+            await using var module = JSModuleFactory.Create(() => this.JSRuntime, "Internals/Pages/Settings/Panels/KeyboardShortcutsPanel.razor.js");
             _keyHandler = await module.InvokeAsync<IJSObjectReference>("init", _commandListElementRef);
         }
     }

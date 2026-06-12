@@ -1,4 +1,5 @@
-﻿import { CSSStyle, MessageArgument } from "../../Scripts/types";
+import type { } from "@blazingstory/types/browser-dom";
+import type { MessageArgument } from "@blazingstory/types/custom-messages";
 
 const keydown = "keydown";
 const pointerdown = "pointerdown";
@@ -12,25 +13,64 @@ type IFrameSessionState = {
  * Initialize the canvas (preview) frame.
  */
 export const initializeCanvasFrame = () => {
-    const doc = document;
     const wnd = window;
+    const doc = document;
+    const body = doc.body;
+    const htmlElement = body.parentElement;
 
-    // Restore the session state.
-    const sessionState = {
-        ...{ zoom: 1 }, ...JSON.parse(sessionStorage.getItem(SessionStateKey) || "{}")
-    } as IFrameSessionState;
-    (doc.body.style as CSSStyle).zoom = "" + sessionState.zoom;
+    // Fix the body style.
+    body.style.margin = "var(--bs-preview-body-margin, 16px)";
+    if (body.style.minHeight === "100vh") body.style.removeProperty("min-height");
+
+    // Define a function to get the parent frame element (iframe) of the current window.
+    const getParentFrame = () => [...wnd.parent.document.querySelectorAll('iframe')].find(f => f.contentWindow === wnd);
+
+    // Define a function to update the parent frame type (docs, story, or unknown) in the data attribute of the body element.
+    const updateParentFrameType = () => {
+        const parentFrame = getParentFrame();
+        if (parentFrame?.closest(".docs-page")) body.dataset.bsParentFrame = "docs";
+        else if (parentFrame?.closest(".canvas-container")) body.dataset.bsParentFrame = "story";
+        else body.dataset.bsParentFrame = "unknown";
+    }
+
+    // Define a function to restore the session state (e.g., zoom level) from the session storage and apply it to the body style.
+    const restoreSessionState = () => {
+        const sessionState = {
+            ...{ zoom: 1 }, ...JSON.parse(sessionStorage.getItem(SessionStateKey) || "{}")
+        } as IFrameSessionState;
+        body.style.zoom = "var(--bs-zoom, 1)";
+        body.style.setProperty("--bs-zoom", "" + sessionState.zoom);
+        return sessionState;
+    }
+
+    // Define a function to reset the canvas frame, which updates the parent frame type and restores the session state.
+    const reset = () => {
+        updateParentFrameType();
+        return restoreSessionState();
+    }
+
+    // Listen to the "bs:poolediframe:attached" event, which is fired when the canvas frame is attached to the parent frame, and reset the canvas frame.
+    doc.addEventListener("bs:poolediframe:attached", reset);
+    const sessionState = reset();
 
     // Handle "Reload" message
     wnd.addEventListener("message", (event) => {
         const message = event.data as MessageArgument;
-        if (event.origin !== location.origin || message.action !== "reload") return;
+        if (event.origin !== location.origin) return;
 
-        // Save state to session storage before reloading.
-        sessionState.zoom = (doc.body.style as CSSStyle).zoom || "1";
-        sessionStorage.setItem(SessionStateKey, JSON.stringify(sessionState));
+        switch (message.action) {
+            case "reload":
+                location.reload();
+                break;
+            case "zoom":
+                body.style.setProperty('--bs-zoom', '' + message.zoomLevel);
+                body.style.zoom = 'var(--bs-zoom, 1)';
 
-        location.reload();
+                // Save the zoom level to the session storage so that it can be restored when the canvas frame is reloaded or reattached.
+                sessionState.zoom = "" + message.zoomLevel;
+                sessionStorage.setItem(SessionStateKey, JSON.stringify(sessionState));
+                break;
+        }
     }, false);
 
     // Transfer the keydown event to parent window.
@@ -66,22 +106,28 @@ export const initializeCanvasFrame = () => {
         } as MessageArgument, location.origin);
     });
 
+    if (htmlElement) {
+        const resizeObserver = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+                const height = Math.ceil(entry.target.getBoundingClientRect().height);
+                const iframeElement = getParentFrame();
+                if (iframeElement) {
+                    const event = new CustomEvent('frameheightchange', {
+                        cancelable: false,
+                        bubbles: true,
+                        detail: { height }
+                    });
+                    iframeElement.dispatchEvent(event);
+                }
+            }
+        });
+        resizeObserver.observe(htmlElement);
+    }
+
     wnd.BlazingStory = wnd.BlazingStory || {};
     wnd.BlazingStory.canvasFrameInitialized = true;
 
-    // Notify the parent window of this frame height.
-    // This is required to make a vertical scroll bar never shown in preview frames on the "Docs" page.
-    // (See also: BlazingStory/wwwroot/helper.ts)
-    const frameElementId = wnd.frameElement?.id || '';
-    const htmlElement = document.body.parentElement;
-    const scrollHeight = htmlElement?.scrollHeight || 0;
-    wnd.parent.postMessage({
-        action: "frameview-height",
-        frameId: frameElementId,
-        height: scrollHeight
-    } as MessageArgument, location.origin);
-
-    // After sending the frame height, add a class to the html element to make the frame scrollable.
+    // After initialization, add a class to the html element to make the frame scrollable.
     // (The html element without the "_blazing_story_ready_for_visible" CSS class is applied "overflow:none")
     // This is required to make annoying scroll bars invisible while adjusting the preview frame size to fit iframe contents.
     // After adjustment, the CSS class is added, and then the preview frame contents are scrollable.

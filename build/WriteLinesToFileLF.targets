@@ -1,0 +1,29 @@
+<Project>
+  <UsingTask TaskName="WriteLinesToFileLF" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <File ParameterType="System.String" Required="true" />
+      <Lines ParameterType="System.String[]" Required="true" />
+      <Overwrite ParameterType="System.Boolean" />
+      <WriteOnlyWhenDifferent ParameterType="System.Boolean" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+          var fullPath = System.IO.Path.GetFullPath(File);
+          var fileExists = System.IO.File.Exists(fullPath);
+          if (!this.Overwrite && fileExists) return true;
+        
+          var content = string.Join("\n", Lines).TrimEnd('\n') + '\n';
+
+          if (this.WriteOnlyWhenDifferent && fileExists)
+          {
+              var existingContent = System.IO.File.ReadAllText(fullPath);
+              if (existingContent == content) return true;
+          }
+          
+          System.IO.File.WriteAllText(fullPath, content);
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+</Project>

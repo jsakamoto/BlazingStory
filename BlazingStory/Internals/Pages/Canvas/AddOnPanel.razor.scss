@@ -10,3 +10,11 @@
     overflow: auto;
     position: relative;
 }
+
+.add-on-panel-pane {
+    display: none;
+}
+
+.add-on-panel-pane.active {
+    display: block;
+}

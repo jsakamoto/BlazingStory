@@ -20,7 +20,7 @@ internal class BlazingStoryServerComponentTest
         var navigationManager = host.Services.GetRequiredService<TestNavigationManager>();
         navigationManager.SetUrls(baseUri, uri: baseUri + path);
 
-        var cut = host.BunitContext.RenderComponent<BlazingStoryServerComponent<IndexPage, IFramePage>>();
+        var cut = host.BunitContext.Render<BlazingStoryServerComponent<IndexPage, IFramePage>>();
 
         cut.MarkupMatches($"<div>This is an {componentName}</div>");
     }

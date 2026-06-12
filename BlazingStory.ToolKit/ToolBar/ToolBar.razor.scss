@@ -1,0 +1,39 @@
+﻿.toolbar-viewport {
+    --bs-toolbar-height: 40px;
+    --bs-toolbar-content-gap: 6px;
+    box-shadow: var(--bs-border-shadow);
+    height: 0;
+    overflow-y: hidden;
+    display: flex;
+    transition: height linear 0.1s;
+    background-color: var(--bs-toolbar-back-color);
+
+    .toolbar-content {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--bs-toolbar-content-gap);
+        margin: 0 10px;
+        height: var(--bs-toolbar-height);
+        transition: margin-top linear 0.2s;
+        margin-top: calc(-1.5 * var(--bs-toolbar-height));
+        white-space: nowrap;
+
+        & .toolbar-content-text {
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--bs-dimmed-text-color);
+            padding: 10px;
+            margin: -2px 0 0 0;
+        }
+    }
+
+    &.toolbar-visible {
+        height: var(--bs-toolbar-height);
+        min-height: var(--bs-toolbar-height);
+
+        .toolbar-content {
+            margin-top: 0;
+        }
+    }
+}

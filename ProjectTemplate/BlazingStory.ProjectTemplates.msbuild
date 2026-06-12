@@ -14,9 +14,29 @@
   <PropertyGroup>
     <PackageVersion>$(Version)</PackageVersion>
   </PropertyGroup>
+
+  <Target Name="CheckGitHubCLI">
+    <Exec Command="gh --version" ConsoleToMsBuild="true" IgnoreExitCode="true">
+      <Output TaskParameter="ExitCode" PropertyName="GhExitCode" />
+    </Exec>
+    <Error Condition="'$(GhExitCode)' != '0'" Text="GitHub CLI (gh) is not installed or not in PATH. Please install it from https://github.com/cli/cli#installation" />
+  </Target>
+
+  <Target Name="InstallAgentSkills" BeforeTargets="GenerateNuspec" DependsOnTargets="CheckGitHubCLI">
+    <PropertyGroup>
+      <IntermediateSkillDir>$(IntermediateOutputPath).agents/skills</IntermediateSkillDir>
+    </PropertyGroup>
+    <Exec Command="gh skill install BlazingStory/agent-skills blazing-story-story --agent claude-code --dir &quot;$(IntermediateSkillDir)&quot; --force" ConsoleToMsBuild="true" />
+    <Exec Command="gh skill install BlazingStory/agent-skills blazing-story-addon --agent claude-code --dir &quot;$(IntermediateSkillDir)&quot; --force" ConsoleToMsBuild="true" />
+    <ItemGroup>
+        <InstalledSkills Include="$(IntermediateSkillDir)\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(InstalledSkills)" DestinationFolder="Content\BlazingStoryServer\.agents\skills\%(RecursiveDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(InstalledSkills)" DestinationFolder="Content\BlazingStoryWasm\Client\.agents\skills\%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
   
   <Target Name="PreparePackageProperties" BeforeTargets="GenerateNuspec">
-    
+
     <!-- READ "RELEASE-NOTES.txt" FILE AND CONFIGURE RELEASE NOTES TEXT -->
     <ReadLinesFromFile File="../RELEASE-NOTES.txt">
       <Output TaskParameter="Lines" ItemName="ReleaseNoteLines" />
@@ -28,7 +48,7 @@
       <PackageReleaseNotes>$([System.Text.RegularExpressions.Regex]::Match($(PackageReleaseNotes), "^(v\.[\d\.]+.+?)v\.[\d\.]+", System.Text.RegularExpressions.RegexOptions.Singleline).Groups[1].Value)</PackageReleaseNotes>
       <PackageReleaseNotes>$(PackageReleaseNotes)%0aTo see all the change logs, please visit the following URL.%0a- $(RepositoryUrl)blob/main/RELEASE-NOTES.txt</PackageReleaseNotes>
     </PropertyGroup>
-    
+
     <!-- CONFIGURE NUSPEC PROPERTIES -->
     <PropertyGroup>
       <RepositoryCommit></RepositoryCommit>

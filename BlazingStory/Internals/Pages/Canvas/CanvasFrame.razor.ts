@@ -1,35 +1,69 @@
 type StyleDescriptor = {
-    id: string,
-    href: string,
-    enable: boolean
+    id?: string;
+    enable?: boolean;
+    href?: string;
 };
 
-export const ensurePreviewStyle = (background: string, styleDescripters: StyleDescriptor[]) => {
-    const doc = document;
-    const head = doc.head;
-    const bodyStyle = doc.body.style;
+const ensureStyleLink = (style: StyleDescriptor): void => {
+    if (!style?.id) return;
 
-    bodyStyle.transition = "background-color 0.3s";
-    setTimeout(() => { bodyStyle.backgroundColor = background; }, 10);
+    const id = `bs-style-${style.id}`;
+    const existing = document.getElementById(id);
 
-
-    for (const descripter of styleDescripters) {
-        const linkElement = head.querySelector(`link#${descripter.id}`);
-        if (linkElement === null && descripter.enable) {
-            const newLinkElement = doc.createElement("link");
-            newLinkElement.id = descripter.id;
-            newLinkElement.href = descripter.href;
-            newLinkElement.rel = "stylesheet";
-            head.appendChild(newLinkElement);
-        }
-        else if (linkElement !== null && !descripter.enable) {
-            linkElement.remove();
-        }
+    if (!style.enable || !style.href) {
+        existing?.remove();
+        return;
     }
-}
 
-export const dispatchComponentActionEvent = (name: string, argsJson: string) => {
-    const componentActionEventDetail = { name, argsJson };
-    const event = new CustomEvent('componentActionEvent', { detail: componentActionEventDetail });
-    document.dispatchEvent(event);
-}
+    if (existing instanceof HTMLLinkElement) {
+        if (existing.href !== new URL(style.href, location.href).href) {
+            existing.href = style.href;
+        }
+        return;
+    }
+
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href = style.href;
+    document.head.appendChild(link);
+};
+
+export const ensurePreviewStyle = (
+    background?: string,
+    styleDescripters?: StyleDescriptor[],
+    theme?: string,
+    brand?: string,
+): void => {
+    if (background) {
+        document.body.style.background = background;
+    }
+
+    if (theme) {
+        document.body.dataset.bsTheme = theme;
+    }
+
+    if (brand) {
+        document.body.dataset.bsBrand = brand;
+    }
+
+    for (const style of styleDescripters ?? []) {
+        ensureStyleLink(style);
+    }
+};
+
+export const dispatchComponentActionEvent = (
+    name: string,
+    argsJson: string,
+): void => {
+    const frameElement = window.frameElement as HTMLIFrameElement | null;
+    window.parent.postMessage(
+        {
+            action: "component-action",
+            frameId: frameElement?.id,
+            name,
+            argsJson,
+        },
+        location.origin,
+    );
+};

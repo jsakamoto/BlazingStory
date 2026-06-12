@@ -3,19 +3,13 @@
         <IconButton Icon="SvgIconType.Gear" Title="Shortcuts" />
     </Trigger>
     <MenuItems>
-        @if (_CommandSegments != null)
+        @foreach (var commandSegment in this._CommandSegments)
         {
-            var topCommands = this._CommandSegments[true];
-            var restCommands = this._CommandSegments[false];
-            
-            @foreach (var command in topCommands)
+            if (commandSegment.Key != 1)
             {
-                <CommandMenuItem Command="command" />
+                <MenuItemDivider />
             }
-            
-            <MenuItemDivider />
-
-            @foreach (var command in restCommands)
+            @foreach (var command in commandSegment)
             {
                 <CommandMenuItem Command="command" />
             }
@@ -28,19 +22,26 @@
     [CascadingParameter]
     protected IServiceProvider Services { get; init; } = default!;
 
-    private IReadOnlyDictionary<bool, IEnumerable<Command>>? _CommandSegments;
+    private IEnumerable<IGrouping<int, Command>> _CommandSegments = [];
 
     protected override void OnInitialized()
     {
         var commandService = this.Services.GetRequiredService<CommandService>();
-        var topCommandsTypes = new[] { 
+        var topCommandsTypes = new[] {
             CommandType.AboutYourBlazingStory,
             CommandType.ReleaseNotes,
-            CommandType.Documentation,
             CommandType.KeyboardShortcuts,
         };
+        var lastCommandsTypes = new[] {
+            CommandType.Documentation,
+        };
         this._CommandSegments = commandService.Commands
-            .GroupBy(cmd => topCommandsTypes.Contains(cmd.Type))
-            .ToDictionary(g => g.Key, g => g.Select(a => a.Command).ToArray().AsEnumerable());
+            .GroupBy(cmd => cmd.Type switch
+            {
+                var t when topCommandsTypes.Contains(t) => 1,
+                var t when lastCommandsTypes.Contains(t) => 3,
+                _ => 2
+            },
+            cmd => cmd.Command);
     }
 }

@@ -1,0 +1,37 @@
+@foreach (var item in this.Items ?? Array.Empty<object?>())
+{
+    var isChecked = this.Value?.Equals(item) == true;
+    <div>
+        <label>
+            <input type="radio" name="@this.Name" value="@item" checked="@isChecked" @onchange="@((arg) => this.OnChange.InvokeAsync(arg))">
+            <span>@item</span>
+        </label>
+    </div>
+}
+
+@code
+{
+    /// <summary>
+    /// The radio button group name used to associate all radio buttons in this group.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public string? Name { get; set; }
+
+    /// <summary>
+    /// The currently selected value.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public object? Value { get; set; }
+
+    /// <summary>
+    /// The collection of items to render as radio buttons.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public Array? Items { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the selected radio button changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<ChangeEventArgs> OnChange { get; set; }
+}

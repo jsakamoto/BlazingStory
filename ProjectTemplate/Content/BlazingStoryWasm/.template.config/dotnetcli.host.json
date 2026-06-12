@@ -18,8 +18,19 @@
     "Solution": {
       "longName": "solution"
     },
+    "SolutionX": {
+      "longName": "solutionx",
+      "shortName": "sx"
+    },
     "IncludeSampleContent": {
       "longName": "include-sample"
+    },
+    "AgentSkillsFolder": {
+      "longName": "skills"
+    },
+    "LocalhostTld": {
+      "longName": "localhost-tld",
+      "shortName": ""
     },
     "kestrelHttpPort": {
       "isHidden": true

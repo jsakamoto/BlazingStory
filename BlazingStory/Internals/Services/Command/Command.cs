@@ -1,5 +1,5 @@
-﻿using BlazingStory.Internals.Components.Icons;
 using BlazingStory.Internals.Utils;
+using BlazingStory.ToolKit.Icons;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Internals.Services.Command;
@@ -11,7 +11,7 @@ public class Command
     public bool? Flag { get => this._Flag; set { if (this._Flag == value) return; this._Flag = value; this.StateChanged?.Invoke(this, EventArgs.Empty); } }
 
     internal readonly string? Title;
-    
+
     internal readonly SvgIconType? Icon;
 
     internal readonly string? LinkUrl;

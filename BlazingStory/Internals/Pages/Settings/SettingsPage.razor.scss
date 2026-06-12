@@ -16,23 +16,4 @@
         margin-bottom: 20px;
         color: var(--bs-text-color);
     }
-
-    footer {
-        display: flex;
-        margin-top: 20px;
-        padding-top: 20px;
-        height: 22px;
-        border-top: solid 1px var(--bs-border-color);
-        font-weight: 700;
-
-        a {
-            text-decoration: none;
-            color: var(--bs-dimmed-text-color);
-            transition: all 150ms ease-out;
-
-            &:hover, &:focus {
-                color: var(--bs-dimmed-hover-text-color);
-            }
-        }
-    }
 }

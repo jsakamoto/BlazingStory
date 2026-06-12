@@ -11,7 +11,7 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
-        await using var module = await this.JSRuntime.ImportAsync("Internals/Pages/IFrame.razor.js");
+        await using var module = JSModuleFactory.Create(() => this.JSRuntime, "Internals/Pages/IFrame.razor.js");
         await module.InvokeVoidAsync("initializeCanvasFrame");
     }
 }

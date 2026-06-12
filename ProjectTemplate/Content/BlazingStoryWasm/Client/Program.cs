@@ -1,7 +1,7 @@
 ﻿#if (Hosted)
-using BlazingStoryWasm.Client;
+using StoryWasmApp._1.Client;
 #else
-using BlazingStoryWasm;
+using StoryWasmApp._1;
 #endif
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

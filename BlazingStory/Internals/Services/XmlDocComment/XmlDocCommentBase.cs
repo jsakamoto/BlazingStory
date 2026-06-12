@@ -1,8 +1,8 @@
-﻿using System.Text.Encodings.Web;
+using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using BlazingStory.Internals.Utils;
+using BlazingStory.ToolKit.Utils;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Internals.Services.XmlDocComment;

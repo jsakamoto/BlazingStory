@@ -1,0 +1,18 @@
+.bs-layouts-centered {
+    box-sizing: border-box;
+    position: relative;
+    margin: calc(-1 * var(--bs-preview-body-margin, 16px));
+    min-width: fit-content;
+    padding: var(--bs-preview-body-margin, 16px);
+    display: flex;
+    justify-content: safe center;
+    align-items: center;
+}
+
+body[data-bs-parent-frame="docs"] .bs-layouts-centered {
+    min-height: 95px;
+}
+
+body[data-bs-parent-frame="story"] .bs-layouts-centered {
+    min-height: calc(100vh / var(--bs-zoom, 1));
+}

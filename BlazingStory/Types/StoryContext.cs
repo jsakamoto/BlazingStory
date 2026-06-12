@@ -1,35 +1,39 @@
+using System.ComponentModel;
+using BlazingStory.Abstractions;
 using BlazingStory.Internals.Models;
-using BlazingStory.Internals.Utils;
+using BlazingStory.ToolKit.Utils;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Types;
 
-public class StoryContext
+internal class StoryContext : IStoryContext
 {
-    public IReadOnlyDictionary<string, object?> Args => this._Args;
-
-    internal readonly IEnumerable<ComponentParameter> Parameters;
-
     private readonly Dictionary<string, object?> _DefaultArgs = new();
 
     private readonly Dictionary<string, object?> _Args = new();
+
+    public IReadOnlyDictionary<string, object?> Args => this._Args;
+
+    public IEnumerable<IComponentParameter> Parameters { get; }
+
+    public event AsyncEventHandler? ArgumentChanged;
+
+    public event AsyncEventHandler? ArgumentsReset;
+
+    /// <summary>
+    /// This event is used to notify the story that it should re-render.
+    /// </summary>
+    public event EventHandler? ShouldRender;
 
     internal StoryContext(IEnumerable<ComponentParameter> parameters)
     {
         this.Parameters = parameters;
     }
 
-    internal event AsyncEventHandler? ArgumentChanged;
-
-    /// <summary>
-    /// This event is used to notify the story that it should re-render.
-    /// </summary>
-    internal event EventHandler? ShouldRender;
-
     /// <summary>
     /// Get the number of parameters that are not event parameters.
     /// </summary>
-    internal int GetNoEventParameterCount()
+    public int GetNoEventParameterCount()
     {
         return this.Parameters
             .Select(p => p.GetParameterTypeStrings().FirstOrDefault())
@@ -37,15 +41,17 @@ public class StoryContext
             .Count();
     }
 
-    internal void InitArgument(string name, object? value)
+    public void InitArgument(string name, object? value)
     {
         this._DefaultArgs[name] = value;
         this._Args[name] = value;
     }
 
-    internal async ValueTask ResetArgumentsAsync()
+    public async ValueTask ResetArgumentsAsync()
     {
         this._Args.Clear();
+        await this.ArgumentsReset.InvokeAsync();
+
         foreach (var param in this.Parameters.Where(p => p.DefaultValue is not null))
         {
             this._Args[param.Name] = param.DefaultValue;
@@ -57,29 +63,7 @@ public class StoryContext
         await this.ArgumentChanged.InvokeAsync();
     }
 
-    internal async ValueTask ResetAndUpdateArgumentsAsync(IReadOnlyDictionary<string, object?> newArgs)
-    {
-        // Reset and update in one atomic operation to avoid intermediate re-renders
-        this._Args.Clear();
-        foreach (var param in this.Parameters.Where(p => p.DefaultValue is not null))
-        {
-            this._Args[param.Name] = param.DefaultValue;
-        }
-        foreach (var arg in this._DefaultArgs)
-        {
-            this._Args[arg.Key] = arg.Value;
-        }
-        // Apply new args, overwriting defaults
-        foreach (var kvp in newArgs)
-        {
-            this._Args[kvp.Key] = kvp.Value;
-        }
-
-        // Trigger ArgumentChanged only once at the end
-        await this.ArgumentChanged.InvokeAsync();
-    }
-
-    internal async ValueTask AddOrUpdateArgumentAsync(string name, object? newValue)
+    public async ValueTask AddOrUpdateArgumentAsync(string name, object? newValue)
     {
         if (this._Args.TryGetValue(name, out var value))
         {
@@ -106,6 +90,7 @@ public class StoryContext
                 {
                     continue;
                 }
+
                 this._Args[kvp.Key] = kvp.Value;
                 changed = true;
             }
@@ -117,35 +102,22 @@ public class StoryContext
         }
 
         if (changed)
+        {
             await this.ArgumentChanged.InvokeAsync();
+        }
     }
 
     /// <summary>
     /// This method is used to notify the story that it should re-render.
     /// </summary>
-    internal void InvokeShouldRender()
+    public void InvokeShouldRender()
     {
         this.ShouldRender?.Invoke(this, EventArgs.Empty);
     }
 
-    /// <summary>
-    /// Convert the given parameter value to a string. <br /> If the value is an instance of <see
-    /// cref="RenderFragment" /> or <see cref="RenderFragment&lt;T&gt;" />, this method returns the
-    /// string that will be rendered by that render fragment. <br /> If the value is an instance of
-    /// <see cref="Nullable&lt;T&gt;" />, this method returns "(null)" if the value is null.
-    /// </summary>
-    /// <param name="name">
-    /// The name of the parameter.
-    /// </param>
-    /// <param name="value">
-    /// The value of the parameter.
-    /// </param>
-    /// <returns>
-    /// The string representation of the parameter value.
-    /// </returns>
-    internal string ConvertParameterValueToString(string name, object? value)
+    [Obsolete("This method is no longer used and will be removed in a future version."), EditorBrowsable(EditorBrowsableState.Never)]
+    public string ConvertParameterValueToString(string name, object? value)
     {
-        // EventCallbacks should NEVER be serialized to strings
         if (value != null && value.GetType().Name.StartsWith("EventCallback"))
         {
             return value.ToString() ?? string.Empty;
@@ -156,13 +128,13 @@ public class StoryContext
             return str;
         }
 
-        if (this.Parameters.TryGetByName(name, out var param) && param.TypeStructure.IsNullable && value == null)
+        var parameter = this.Parameters.FirstOrDefault(p => p.Name == name);
+        if (parameter?.TypeStructure.IsNullable == true && value == null)
         {
             return "(null)";
         }
 
-        // Serialize arrays and objects as JSON
-        if (value != null && (value.GetType().IsArray || value.GetType().IsClass && value.GetType() != typeof(string)))
+        if (value != null && (value.GetType().IsArray || (value.GetType().IsClass && value.GetType() != typeof(string))))
         {
             try
             {
@@ -170,7 +142,6 @@ public class StoryContext
             }
             catch
             {
-                // Fall back to ToString() if serialization fails
             }
         }
 

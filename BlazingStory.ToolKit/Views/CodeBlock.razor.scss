@@ -1,0 +1,43 @@
+pre.code-block {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    code {
+        font-family: var(--bs-monospace-font-family);
+        font-size: var(--bs-text-size);
+        color: var(--bs-code-text-color);
+        color: var(--bs-code-text-color, #ededed);
+        // Prism syntax highlighting
+        .token {
+            &.punctuation {
+                color: var(--bs-code-punctuation-color, #ededed);
+            }
+
+            &.tag {
+                color: var(--bs-code-tag-color, #ffffb6);
+            }
+
+            &.property {
+                color: var(--bs-code-property-color, #9cdcfe);
+            }
+
+            &.attr-name {
+                color: var(--bs-code-attr-name-color, #9cdcfe);
+            }
+
+            &.attr-value {
+                color: var(--bs-code-attr-value-color, #b474dd);
+            }
+
+            &.selector {
+                color: var(--bs-code-selector-color, #a8ff60);
+            }
+
+            &.comment {
+                color: var(--bs-code-comment-color, #57a64a);
+                font-style: italic;
+            }
+        }
+    }
+}

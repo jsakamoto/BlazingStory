@@ -1,0 +1,23 @@
+﻿<svg viewBox="0 0 14 14" class="svg-icon @Class" @onclick="((arg) => this.OnClick.InvokeAsync(arg))">
+    <use href="#icon--@Type.ToString().ToLower()"></use>
+</svg>
+
+@code {
+    /// <summary>
+    /// The icon type that determines which SVG symbol to render.
+    /// </summary>
+    [Parameter]
+    public SvgIconType Type { get; set; }
+
+    /// <summary>
+    /// Additional CSS class names to apply to the SVG element.
+    /// </summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the icon is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+}

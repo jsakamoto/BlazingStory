@@ -1,9 +1,11 @@
 ﻿﻿@using System.Text.Json;
+@using BlazingStory.Abstractions;
+@using BlazingStory.Addons.BuiltIns.Panel.Actions;
 @using BlazingStory.Configurations;
-@using BlazingStory.Internals.Extensions;
 @using BlazingStory.Internals.Models;
 @using BlazingStory.Internals.Services;
 @using BlazingStory.Internals.Utils;
+@using BlazingStory.ToolKit.JSInterop;
 @using Microsoft.AspNetCore.Components;
 @using Microsoft.AspNetCore.Components.Web;
 @using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +14,8 @@
 @implements IAsyncDisposable
 
 <div id="storybook-preview-wrapper" class="preview-frame">
-    <iframe id="@this._IframeElementId" @ref="_Iframe" src="@_InitialPreviewFrameUrl" @onload="OnPreviewIFrameLoaded"></iframe>
+    <iframe id="@this._IframeElementId" @ref="_Iframe" src="@_InitialPreviewFrameUrl"
+            @onload="OnPreviewIFrameLoaded"></iframe>
 </div>
 
 @code
@@ -26,7 +29,7 @@
     /// Required parameter that must be provided by the parent component.
     /// </value>
     [Parameter, EditorRequired]
-    public Story? Story { get; set; }
+    public IStory? Story { get; set; }
 
     /// <summary>
     /// Gets or sets the current view mode for the story presentation.
@@ -94,6 +97,9 @@
     /// </value>
     [Parameter]
     public EventCallback<ComponentActionEventArgs> OnComponentAction { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnFrameHeightChanged { get; set; }
 
     /// <summary>
     /// Gets the current URL being displayed in the preview iframe.
@@ -184,7 +190,7 @@
         // Initialize the JavaScript module for iframe operations
         if (this.JSRuntime is not null)
         {
-            this._JSModule = new(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
+            this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
         }
 
         // Set both initial and current URLs to the same starting point
@@ -258,7 +264,11 @@
             this._ThisRef = DotNetObjectReference.Create(this);
 
             // Subscribe to component action events from the iframe
-            this._EventMonitorSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentActionEvent", this._Iframe, this._ThisRef, nameof(ComponentActionEventCallback));
+            this._EventMonitorSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentActionEvent",
+this._Iframe, this._ThisRef, nameof(ComponentActionEventCallback));
+
+            var frameHeight = await this._JSModule.InvokeAsync<int>("getFrameHeightFromIFrame", this._Iframe);
+            await this.OnFrameHeightChanged.InvokeAsync(frameHeight);
         }
         // Handle the case where the user navigates away during async operations
         // The JSModule may be disposed before the operation completes, which is expected
@@ -297,11 +307,11 @@
             uri: "./iframe.html",
             parameters: new Dictionary<string, object?>
             {
-                ["viewMode"] = this.ViewMode,        // Controls the display mode (story, docs, etc.)
-                ["id"] = this.Id,                    // Story identifier for routing
-                ["args"] = compressedArgs,           // Component parameters (compressed for efficiency)
-                ["globals"] = encodeGlobals,         // Global settings (theme, background, etc.)
-                ["frameId"] = this._IframeElementId  // Unique frame identifier for event routing
+                ["viewMode"] = this.ViewMode, // Controls the display mode (story, docs, etc.)
+                ["id"] = this.Id, // Story identifier for routing
+                ["args"] = compressedArgs, // Component parameters (compressed for efficiency)
+                ["globals"] = encodeGlobals, // Global settings (theme, background, etc.)
+                ["frameId"] = this._IframeElementId // Unique frame identifier for event routing
             });
     }
 
@@ -381,7 +391,7 @@
         var storyId = this.Story?.NavigationPath ?? "Unknown";
 
         // Always fire the component action event for monitoring/logging purposes
-        await this.OnComponentAction.InvokeAsync(new(name, argsJson));
+        await this.OnComponentAction.InvokeAsync(new ComponentActionEventArgs { Name = name, ArgsJson = argsJson });
 
         // Special processing for two-way binding events (events ending with "Changed")
         if (name.EndsWith("Changed") && !string.IsNullOrEmpty(argsJson))
@@ -496,5 +506,5 @@
 
         // Dispose the .NET object reference used for JavaScript callbacks
         this._ThisRef?.Dispose();
-    }    
+    }
 }

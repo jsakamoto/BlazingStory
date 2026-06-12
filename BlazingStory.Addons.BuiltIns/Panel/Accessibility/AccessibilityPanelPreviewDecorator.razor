@@ -1,0 +1,88 @@
+@using Microsoft.Extensions.DependencyInjection
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+@code
+{
+    [CascadingParameter(Name = "Story")]
+    public IStory? Story { get; set; }
+
+    [CascadingParameter]
+    protected IServiceProvider Services { get; init; } = default!;
+
+    private JSModule _JSModule;
+
+    private Window? _Window;
+
+    private IDisposable? _WindowMessageSubscription;
+
+    private int _MillisecondsDelay = 100;
+
+    private TaskCompletionSource _Ready = new();
+
+    private CancellationTokenSource? _cts;
+
+    public AccessibilityPanelPreviewDecorator()
+    {
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Panel/Accessibility/AccessibilityPanelPreviewDecorator.razor.js");
+    }
+
+    protected override void OnInitialized()
+    {
+        this._Window = this.Services.GetRequiredService<Window>();
+    }
+
+    protected override bool ShouldRender()
+    {
+        if (this._Ready.Task.IsCompleted) this._Ready = new TaskCompletionSource();
+        return base.ShouldRender();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && this._Window is not null)
+        {
+            this._WindowMessageSubscription = await this._Window.SubscribeMessageAsync(OnMessageReceived);
+        }
+
+        _cts?.Cancel();
+        _cts?.Dispose();
+        _cts = new CancellationTokenSource();
+        _ = MarkThisComponentReadyAsync(_cts.Token);
+    }
+
+    private async Task OnMessageReceived(string? message)
+    {
+        if (message == AccessibilityPanelAddon.Message.AskReady)
+        {
+            await this._Ready.Task;
+            if (this._Window is not null) await this._Window.PostMessageAsync("parent", AccessibilityPanelAddon.Message.Ready);
+        }
+        else if (message == AccessibilityPanelAddon.Message.RunAxe)
+        {
+            var resultObjectUrl = await this._JSModule.InvokeAsync<string>("run");
+            if (this._Window is not null) await this._Window.PostMessageAsync("parent", AccessibilityPanelAddon.Message.AxeResult + resultObjectUrl);
+        }
+    }
+
+    private async Task MarkThisComponentReadyAsync(CancellationToken token)
+    {
+        try
+        {
+            await Task.Delay(this._MillisecondsDelay, token);
+            await this._JSModule.EnsureModuleAsync();
+            this._Ready.TrySetResult();
+            this._MillisecondsDelay = 10;
+        }
+        catch (OperationCanceledException) { }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        this._Window = null;
+        this._Ready.TrySetCanceled();
+        this._WindowMessageSubscription?.Dispose();
+        _cts?.Cancel();
+        _cts?.Dispose();
+        await this._JSModule.DisposeAsync();
+    }
+}

@@ -24,6 +24,7 @@ internal class StoriesRazorDetectorTest
             .Select(c => $"{c.StoriesAttribute.Title},{c.TypeOfStoriesRazor.FullName}")
             .Is("Examples/UI/Button,BlazingStoryApp1.Stories.Button_stories",
                 "Examples/UI/DumpParameter,BlazingStoryApp1.Stories.DumpParameter_stories",
+                "Examples/LargeEnumSelect,BlazingStoryApp1.Stories.LargeEnumSelect_stories",
                 "Lorem/Ipsum/Header,BlazingStoryApp1.Stories.LoremIpsum_stories",
                 "Examples/UI/Rating,BlazingStoryApp1.Stories.Rating_stories",
                 "Examples/Select,BlazingStoryApp1.Stories.Select_stories",

@@ -10,15 +10,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checkout the code
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # Install .NET SDK
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: "9.0.x"
+          dotnet-version: "10.0.x"
       - name: Install .NET WebAssembly Tools
         run: dotnet workload install wasm-tools
+
+      # Add GitHub Packages as a NuGet source
+      - name: Add GitHub Packages source
+        run: dotnet nuget add source "https://nuget.pkg.github.com/jsakamoto/index.json" --name "GitHubPackages" --username "jsakamoto" --password "${{ secrets.GITHUB_TOKEN }}" --store-password-in-clear-text
 
       # Publish the site
       - name: Publish

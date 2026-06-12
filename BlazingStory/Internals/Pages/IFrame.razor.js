@@ -2,20 +2,52 @@ const keydown = "keydown";
 const pointerdown = "pointerdown";
 const SessionStateKey = "IFrame.SessionState";
 export const initializeCanvasFrame = () => {
-    var _a;
-    const doc = document;
     const wnd = window;
-    const sessionState = {
-        ...{ zoom: 1 }, ...JSON.parse(sessionStorage.getItem(SessionStateKey) || "{}")
+    const doc = document;
+    const body = doc.body;
+    const htmlElement = body.parentElement;
+    body.style.margin = "var(--bs-preview-body-margin, 16px)";
+    if (body.style.minHeight === "100vh")
+        body.style.removeProperty("min-height");
+    const getParentFrame = () => [...wnd.parent.document.querySelectorAll('iframe')].find(f => f.contentWindow === wnd);
+    const updateParentFrameType = () => {
+        const parentFrame = getParentFrame();
+        if (parentFrame?.closest(".docs-page"))
+            body.dataset.bsParentFrame = "docs";
+        else if (parentFrame?.closest(".canvas-container"))
+            body.dataset.bsParentFrame = "story";
+        else
+            body.dataset.bsParentFrame = "unknown";
     };
-    doc.body.style.zoom = "" + sessionState.zoom;
+    const restoreSessionState = () => {
+        const sessionState = {
+            ...{ zoom: 1 }, ...JSON.parse(sessionStorage.getItem(SessionStateKey) || "{}")
+        };
+        body.style.zoom = "var(--bs-zoom, 1)";
+        body.style.setProperty("--bs-zoom", "" + sessionState.zoom);
+        return sessionState;
+    };
+    const reset = () => {
+        updateParentFrameType();
+        return restoreSessionState();
+    };
+    doc.addEventListener("bs:poolediframe:attached", reset);
+    const sessionState = reset();
     wnd.addEventListener("message", (event) => {
         const message = event.data;
-        if (event.origin !== location.origin || message.action !== "reload")
+        if (event.origin !== location.origin)
             return;
-        sessionState.zoom = doc.body.style.zoom || "1";
-        sessionStorage.setItem(SessionStateKey, JSON.stringify(sessionState));
-        location.reload();
+        switch (message.action) {
+            case "reload":
+                location.reload();
+                break;
+            case "zoom":
+                body.style.setProperty('--bs-zoom', '' + message.zoomLevel);
+                body.style.zoom = 'var(--bs-zoom, 1)';
+                sessionState.zoom = "" + message.zoomLevel;
+                sessionStorage.setItem(SessionStateKey, JSON.stringify(sessionState));
+                break;
+        }
     }, false);
     doc.addEventListener(keydown, event => {
         const targetElement = event.target;
@@ -40,15 +72,24 @@ export const initializeCanvasFrame = () => {
             action: pointerdown
         }, location.origin);
     });
+    if (htmlElement) {
+        const resizeObserver = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+                const height = Math.ceil(entry.target.getBoundingClientRect().height);
+                const iframeElement = getParentFrame();
+                if (iframeElement) {
+                    const event = new CustomEvent('frameheightchange', {
+                        cancelable: false,
+                        bubbles: true,
+                        detail: { height }
+                    });
+                    iframeElement.dispatchEvent(event);
+                }
+            }
+        });
+        resizeObserver.observe(htmlElement);
+    }
     wnd.BlazingStory = wnd.BlazingStory || {};
     wnd.BlazingStory.canvasFrameInitialized = true;
-    const frameElementId = ((_a = wnd.frameElement) === null || _a === void 0 ? void 0 : _a.id) || '';
-    const htmlElement = document.body.parentElement;
-    const scrollHeight = (htmlElement === null || htmlElement === void 0 ? void 0 : htmlElement.scrollHeight) || 0;
-    wnd.parent.postMessage({
-        action: "frameview-height",
-        frameId: frameElementId,
-        height: scrollHeight
-    }, location.origin);
-    setTimeout(() => htmlElement === null || htmlElement === void 0 ? void 0 : htmlElement.classList.add("_blazing_story_ready_for_visible"), 300);
+    setTimeout(() => htmlElement?.classList.add("_blazing_story_ready_for_visible"), 300);
 };

@@ -1,0 +1,24 @@
+@attribute [Stories("Components/atoms/Repeater (string)")]
+
+<Stories TComponent="Repeater<string>">
+
+    <Story Name="String">
+        <Arguments>
+            <Arg For="_ => _.Items" Value="_stringItems" />
+        </Arguments>
+        <Template>
+            <Repeater Items="_stringItems" ItemTemplate="_stringItemTemplate" @attributes="context.Args">
+            </Repeater>
+        </Template>
+    </Story>
+
+</Stories>
+
+@code
+{
+    private IEnumerable<string> _stringItems = ["First item", "Second item", "Third item"];
+
+    private RenderFragment<RepeaterItemContext<string>> _stringItemTemplate = (RepeaterItemContext<string> context) => @<p>
+        <b style="color: royalblue;">@context.Item</b>
+    </p>;
+}

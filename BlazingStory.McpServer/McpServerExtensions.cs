@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using BlazingStory.Internals.Services;
+using BlazingStory.McpServer.Internals;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,10 +22,13 @@ public static class McpServerExtensions
     public static IMcpServerBuilder AddBlazingStoryMcpServer(this IServiceCollection services, Action<McpServerOptions>? configureMcpServerOptions = null)
     {
         services.AddScoped((_) => new StoriesStore());
+        services.AddScoped((_) => new CustomPageStore());
+        services.AddSingleton<CustomPageContentCache>();
         return services
             .AddMcpServer(options => configureMcpServerOptions?.Invoke(options))
             .WithHttpTransport(options => { })
-            .WithTools<StoriesTool>();
+            .WithTools<StoriesTool>()
+            .WithTools<CustomPagesTool>();
     }
 
     /// <summary>

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using BlazingStory.Components;
 using BlazingStory.Internals.Services;
 using BlazingStory.Internals.Services.Docs;
@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Endpoints;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using ModelContextProtocol;
 using ModelContextProtocol.Server;
 
 namespace BlazingStory.McpServer;
@@ -62,10 +63,10 @@ internal class StoriesTool
         using var scope = this._services.CreateScope();
         var storiesStore = await this.BuildStoriesStoreAsync(scope);
         var container = storiesStore.StoryContainers.FirstOrDefault(c => c.TargetComponentType.Name == componentName);
-        if (container is null) return new(error: true, message: $"Component '{componentName}' not found or parameter info not available.");
+        if (container is null) throw new McpException($"Component '{componentName}' not found or parameter info not available.");
 
         var story = container.Stories.FirstOrDefault();
-        if (story is null) return new(error: true, message: $"Parameter info of the component '{componentName}' not available since it has no stories.");
+        if (story is null) throw new McpException($"Parameter info of the component '{componentName}' not available since it has no stories.");
 
         await Parallel.ForEachAsync(story.Context.Parameters, async (parameter, token) =>
         {
@@ -102,12 +103,12 @@ internal class StoriesTool
         using var scope = this._services.CreateScope();
         var storiesStore = await this.BuildStoriesStoreAsync(scope);
         var container = storiesStore.StoryContainers.FirstOrDefault(c => c.TargetComponentType.Name == componentName);
-        if (container is null) return new(error: true, message: $"Component '{componentName}' not found or has no stories.");
+        if (container is null) throw new McpException($"Component '{componentName}' not found or has no stories.");
 
         var projectionTasks = container.Stories.Select(async (BlazingStory.Internals.Models.Story s) =>
         {
             var originalCodeText = await StoriesRazorSource.GetSourceCodeAsync(s);
-            var transformedCodeText = StoriesRazorSource.UpdateSourceTextWithArgument(s, originalCodeText);
+            var transformedCodeText = await StoriesRazorSource.UpdateSourceTextWithArgumentAsync(s, originalCodeText);
 
             var description = await CustomStaticHtmlRenderer.RenderToHtmlStringAsync(s.Description, scope.ServiceProvider);
             description = string.Join('\n', description.Split('\n').Select(line => line.Trim(' ', '\t', '\n')));

@@ -1,7 +1,8 @@
-﻿using BlazingStory.Internals.Services;
+using BlazingStory.ToolKit.Internals.Utils;
 
 namespace BlazingStory.Test.Internals.Services;
 
+[SetCulture("en-US")]
 internal class WebColorTest
 {
     private static string DumpAlpha(WebColor color) => $"A:{color.A}, AText:{color.AlphaText}";

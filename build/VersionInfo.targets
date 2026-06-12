@@ -1,0 +1,35 @@
+<Project>
+  <PropertyGroup>
+    <PrepareForBuildDependsOn>$(PrepareForBuildDependsOn);_BS_GenerateVersionInfoClass</PrepareForBuildDependsOn>
+  </PropertyGroup>
+
+  <UsingTask TaskName="_BS_GetEscapedVersionText" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <VersionText ParameterType="System.String" Required="true" />
+      <EscapedVersionText ParameterType="System.String" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+        this.EscapedVersionText = Uri.EscapeDataString(this.VersionText);
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="_BS_GenerateVersionInfoClass" Inputs="../VersionInfo.props" Outputs="VersionInfo.cs">
+    <_BS_GetEscapedVersionText VersionText="$(Version)">
+      <Output TaskParameter="EscapedVersionText" PropertyName="_BS_EscapedVersionText" />
+    </_BS_GetEscapedVersionText>
+    <ItemGroup>
+      <VersionInfoLines Include="namespace $(RootNamespace)%3b%0a"/>
+      <VersionInfoLines Include="internal static class VersionInfo"/>
+      <VersionInfoLines Include="{"/>
+      <VersionInfoLines Include="%20%20%20%20internal static string GetEscapedVersionText() => &quot;$(_BS_EscapedVersionText)&quot;%3b"/>
+      <VersionInfoLines Include="}"/>
+    </ItemGroup>
+    <WriteLinesToFile File="VersionInfo.cs" Overwrite="true" Lines="@(VersionInfoLines)"></WriteLinesToFile>
+  </Target>
+
+</Project>

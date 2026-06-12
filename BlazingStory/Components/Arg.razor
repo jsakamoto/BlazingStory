@@ -1,4 +1,4 @@
-﻿@using System.Linq.Expressions;
+@using System.Linq.Expressions;
 @typeparam TComponent where TComponent : notnull
 @typeparam TParameter
 
@@ -10,7 +10,7 @@
     public TParameter? Value { get; set; }
 
     [CascadingParameter]
-    internal StoryContext StoryContext { get; set; } = default!;
+    internal IStoryContext StoryContext { get; set; } = default!;
 
     protected override void OnInitialized()
     {

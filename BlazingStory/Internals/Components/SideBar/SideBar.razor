@@ -1,4 +1,4 @@
-﻿@using BlazingStory.Internals.Components.SideBar.NavigationTree
+@using BlazingStory.Internals.Components.SideBar.NavigationTree
 @using BlazingStory.Internals.Components.SideBar.SearchAndHistory
 
 <nav class="sidebar stack vertical">
@@ -54,10 +54,12 @@
     {
         var expandedNavigationPath = this.RouteData.RouteToStoryDocsOrCustom ? this.RouteData.Parameter : null;
         var navigationService = this.Services.GetRequiredService<NavigationService>();
+        var options = this.Services.GetRequiredService<BlazingStoryOptions>();
+
         this._NavigationRoot = navigationService.BuildNavigationTree(
             this.StoriesStore.StoryContainers, 
             this.CustomPageStore.CustomPageContainers, 
-            this.BlazingStoryApp.NavigationTreeOrder,
+            options.NavigationTreeOrder,
             expandedNavigationPath);
     }
 }

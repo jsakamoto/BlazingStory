@@ -3,7 +3,7 @@
 @using Toolbelt.Blazor.HotKeys2
 @using static Toolbelt.Blazor.HotKeys2.ModCode
 
-<Stories TComponent="HotKeyEditorInput" Layout="typeof(MarginedFrame)">
+<Stories TComponent="HotKeyEditorInput">
 
     <Story Name="Default">
         <Arguments>
@@ -11,6 +11,9 @@
         </Arguments>
 
         <Template>
+            @{
+                // Console.WriteLine($"Rendering HotKeyEditorInput with HotKey: {_hotKey}");
+            }
             <HotKeyEditorInput @bind-HotKey="_hotKey" Validate="OnValidateHotkey" @attributes="context.Args">
             </HotKeyEditorInput>
         </Template>

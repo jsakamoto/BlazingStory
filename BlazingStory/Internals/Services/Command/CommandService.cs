@@ -1,5 +1,6 @@
-﻿using BlazingStory.Internals.Utils;
+using BlazingStory.Internals.Utils;
 using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
 using Toolbelt.Blazor.HotKeys2;
 
 namespace BlazingStory.Internals.Services.Command;
@@ -12,10 +13,10 @@ internal class CommandService : IAsyncDisposable
 
     internal readonly CommandSet<CommandType> Commands;
 
-    public CommandService(HotKeys hotKeys, HelperScript helperScript, ILogger<CommandService> logger)
+    public CommandService(HotKeys hotKeys, IJSRuntime jsRuntime, ILogger<CommandService> logger)
     {
         this._Logger = logger;
-        this.Commands = new CommandSet<CommandType>(this.CommandStateKeyName, hotKeys, helperScript, logger);
+        this.Commands = new CommandSet<CommandType>(this.CommandStateKeyName, hotKeys, jsRuntime, logger);
     }
 
     public Command? this[CommandType type] => this.Commands[type];

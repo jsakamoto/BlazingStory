@@ -22,11 +22,15 @@ else
 app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
+#if (Framework == "net8.0" || Framework == "net9.0")
 app.UseStaticFiles();
+#endif
 
 app.UseRouting();
 
-
+#if (Framework != "net8.0" && Framework != "net9.0")
+app.MapStaticAssets();
+#endif
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");

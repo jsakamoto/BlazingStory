@@ -5,10 +5,11 @@
 @using System.Text.Json;
 @using System.Web;
 @using BlazingStory.Components;
-@using BlazingStory.Internals.Extensions;
 @using BlazingStory.Internals.Models;
 @using BlazingStory.Internals.Services;
 @using BlazingStory.Internals.Utils;
+@using BlazingStory.ToolKit.Extensions;
+@using BlazingStory.Types;
 @using Microsoft.AspNetCore.Components;
 @using Microsoft.AspNetCore.Components.Routing;
 @using Microsoft.Extensions.Logging;
@@ -107,7 +108,9 @@ else
     /// Suppressed code smell as reflection is necessary for generic event handling.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S3011:Reflection should not be used to increase accessibility of classes, methods, or fields", Justification = "Required for dynamic event callback creation")]
-    private static readonly Lazy<MethodInfo> _EventTArgMonitorHandlerMethod = new(() => typeof(CanvasFrame).GetMethod(nameof(EventTArgMonitorHandler), BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new InvalidOperationException());
+    private static readonly Lazy<MethodInfo> _EventTArgMonitorHandlerMethod = new(() =>
+typeof(CanvasFrame).GetMethod(nameof(EventTArgMonitorHandler), BindingFlags.NonPublic | BindingFlags.Instance) ?? throw
+new InvalidOperationException());
 
     /// <summary>
     /// Lazily-initialized MethodInfo for the EventCallbackFactory.Create method.
@@ -188,7 +191,7 @@ else
         // Initialize JavaScript module for canvas-specific operations
         if (this.JSRuntime is not null)
         {
-            this._JSModule = new(() => this.JSRuntime, "Internals/Pages/Canvas/CanvasFrame.razor.js");
+            this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Internals/Pages/Canvas/CanvasFrame.razor.js");
         }
 
         // Subscribe to navigation changes to keep URL synchronized with component state
@@ -366,10 +369,7 @@ else
             {
                 continue;
             }
-            if (!parameter.TypeStructure.TryConvertType(arg.Value, out var value))
-            {
-                continue;
-            }
+            var value = TypeConversionHelper.ConvertToExpectedType(arg.Value, parameter.TypeStructure.PrimaryType);
             updatedArgs[arg.Key] = value;
         }
 
@@ -380,7 +380,17 @@ else
         this._SuppressEventFiring = true;
         try
         {
-            await this._Story.Context.UpdateArgumentsAsync(updatedArgs);
+            if (this._Story.Context is StoryContext storyContext)
+            {
+                await storyContext.UpdateArgumentsAsync(updatedArgs);
+            }
+            else
+            {
+                foreach (var (key, value) in updatedArgs)
+                {
+                    await this._Story.Context.AddOrUpdateArgumentAsync(key, value);
+                }
+            }
             this.StateHasChanged();
 
             // Give the DOM time to update properties before re-enabling events
@@ -446,17 +456,20 @@ else
         var background = globalEffects.TryGetValue("backgrounds.value", out var backgroundStr) ? backgroundStr : "transparent";
 
         // Extract grid visibility setting for design alignment aids
-        var enableGrid = globalEffects.TryGetValue("backgrounds.grid", out var gridStr) ? bool.TryParse(gridStr, out var grid) ? grid : false : false;
+        var enableGrid = globalEffects.TryGetValue("backgrounds.grid", out var gridStr) ? bool.TryParse(gridStr, out var grid) ?
+grid : false : false;
 
         // Extract outline visibility setting for component boundary visualization
-        var enableOutline = globalEffects.TryGetValue("outline", out var outlineStr) ? bool.TryParse(outlineStr, out var outline) ? outline : false : false;
+        var enableOutline = globalEffects.TryGetValue("outline", out var outlineStr) ? bool.TryParse(outlineStr, out var
+outline) ? outline : false : false;
 
         // Extract theme and branding settings
         var theme = globalEffects.TryGetValue("theme.value", out var themeStr) ? themeStr : string.Empty;
         var brand = globalEffects.TryGetValue("brand.value", out var brandStr) ? brandStr : string.Empty;
 
         // Extract measurement tools setting for development debugging
-        this._EnableMeasure = globalEffects.TryGetValue("measureEnabled", out var measureStr) ? bool.TryParse(measureStr, out var measure) ? measure : false : false;
+        this._EnableMeasure = globalEffects.TryGetValue("measureEnabled", out var measureStr) ? bool.TryParse(measureStr, out
+var measure) ? measure : false : false;
 
         // Configure CSS resources for visual addons
         var basePath = "./_content/BlazingStory/css/preview/";
@@ -512,7 +525,8 @@ else
             if (parameter.Type.IsAssignableTo(typeof(EventCallback)))
             {
                 // Create a simple event callback that just logs the event name
-                var eventCallback = EventCallback.Factory.Create(this, (Func<Task>)(() => this.EventVoidMonitorHandler(parameter.Name)));
+                var eventCallback = EventCallback.Factory.Create(this, (Func<Task>)(() =>
+this.EventVoidMonitorHandler(parameter.Name)));
                 await this._Story.Context.AddOrUpdateArgumentAsync(parameter.Name, eventCallback);
             }
             // Handle generic EventCallback<T> (events with strongly-typed arguments)
@@ -535,7 +549,8 @@ else
 #pragma warning restore IL2060
 
                 // Build the method call: this.EventTArgMonitorHandler<T>(parameter.Name, eventArgs)
-                var callBody = Expression.Call(Expression.Constant(this), monitorHandler, Expression.Constant(parameter.Name), eventArgsParam);
+                var callBody = Expression.Call(Expression.Constant(this), monitorHandler, Expression.Constant(parameter.Name),
+eventArgsParam);
 
                 // Create the lambda: (eventArgs) => this.EventTArgMonitorHandler<T>(parameter.Name, eventArgs)
                 var monitorHandlerLambdaType = typeof(Func<,>).MakeGenericType(typeOfArgs, typeof(Task));
@@ -544,7 +559,8 @@ else
 
 #pragma warning disable IL2060 // Reflection is necessary for EventCallback creation
                 // Create the EventCallback<T> using the compiled delegate
-                var eventCallbackCreate = _EventCallbackCreateMethod.Value.MakeGenericMethod(typeOfArgs) ?? throw new InvalidOperationException();
+                var eventCallbackCreate = _EventCallbackCreateMethod.Value.MakeGenericMethod(typeOfArgs) ?? throw new
+InvalidOperationException();
 #pragma warning restore IL2060
 
                 // Invoke EventCallback.Factory.Create<T>(this, delegate) and add to story context
@@ -575,7 +591,8 @@ else
     /// <typeparam name="TArgs">The type of the event arguments</typeparam>
     /// <param name="name">The name of the event that was triggered</param>
     /// <param name="eventArgs">The strongly-typed event arguments containing the new values</param>
-    private async Task EventTArgMonitorHandler<[DynamicallyAccessedMembers(PublicProperties)] TArgs>(string name, TArgs eventArgs)
+    private async Task EventTArgMonitorHandler<[DynamicallyAccessedMembers(PublicProperties)] TArgs>(string name, TArgs
+eventArgs)
     {
         // Get story identifier for logging context
         var storyId = this._Story?.NavigationPath ?? "Unknown";
@@ -628,7 +645,7 @@ else
             }
 
             // Step 5: Serialize the event for external monitoring and logging
-            var json = JsonFallbackSerializer.Serialize(new Dictionary<string, object?> { { paramName, value } });
+            var json = JsonSerializer.Serialize(new Dictionary<string, object?> { { paramName, value } });
             await this._JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, json);
 
             // Step 6: Update the story context with the new parameter value

@@ -1,10 +1,87 @@
+v.1.0.0-preview.85
+- Fix: Resolved an issue where `null` values for non-nullable reference-type story arguments were displayed as the literal string `"(null)"` on initial load. (Issue #119, PR #120 contributed by @warnaa)
+
+v.1.0.0-preview.84
+- Fix: Resolved an error in the accessibility panel where the axe-core check result could not be retrieved under certain conditions.
+- Fix: Prevented Blazor Server circuit disconnects in the accessibility panel when accessibility scan results are large.
+- Improve: Improved accessibility re-scan behavior by clearing stale results only when result delivery is delayed, reducing visual flicker during story changes.
+
+v.1.0.0-preview.83
+- Feature: Extended the MCP server to expose custom/Markdown pages, including full-text search support. (PR #118 contributed by @graphnode)
+
+v.1.0.0-preview.82
+- Fix: Fixed pane snap-back after drag on comma-decimal locales (e.g., pl-PL, de-DE) by updating Toolbelt.Blazor.SplitContainer to v.2.1.1. (PR #12 in Toolbelt.Blazor.SplitContainer, contributed by @warnaa)
+- Fix: Added missing `@using BlazingStory.Components.Layouts` to project template `_Imports.razor`.
+- Fix: Added a default empty layout component to the Blazor Server project template to match the Wasm template.
+
+v.1.0.0-preview.81
+- Improve: Added built-in preset layout components (e.g., `CenteredLayout`) available under `BlazingStory.Components.Layouts`, making it easier to apply common story preview layouts without custom code.
+- Fix: Resolved unpredictable zoom behavior in preview frames.
+
+v.1.0.0-preview.80
+- Feature: Added an accessibility panel addon powered by axe-core that automatically checks story previews for accessibility violations and displays results with impact severity, affected nodes, and fix guidance.
+
+v.1.0.0-preview.79
+- Fix: Resolved an HTTP 404 error that occurred in the vision filter addon when no filter was selected, caused by an invalid CSS file path reference.
+
+v.1.0.0-preview.78
+- Feature: Added an option in the project templates to install AI agent skill files into newly scaffolded Blazing Story projects.
+
+v.1.0.0-preview.77
+- Improve: Exposed the Description property on the IStory interface, making story descriptions accessible to addon developers and other consumers of the public API.
+
+v.1.0.0-preview.76
+- Feature: Added an accessibility vision filter addon that simulates color vision deficiencies (protanopia, deuteranopia, tritanopia, and more.)
+
+v.1.0.0-preview.75
+- Improve: Redesigned the About page with resource links, legal notices, and a contributor avatars section that displays GitHub profile icons.
+
+v.1.0.0-preview.74
+- Feature: Added a searchable/filterable Select component that automatically activates for enums with more than 20 items, providing type-to-filter and keyboard navigation. (PR #106 contributed by @Kebechet)
+
+v.1.0.0-preview.73
+- Fix: Resolved an issue where the story preview iframe failed to render correctly. (Issue #88, PR #109 contributed by @Kebechet)
+- Improve: Updated the ModelContextProtocol.AspNetCore library from 0.3.0-preview.3 to 1.2.0.
+- Improve: Improved the MCP server response to correctly conform to the MCP specification's Structured Content, particularly for error notifications.
+
+v.1.0.0-preview.72
+- Fix: Resolved .js module import failures on case-sensitive file systems (e.g., Linux) caused by incorrect URL casing in the content base path.
+
+v.1.0.0-preview.71
+- Feature: Added ArrayParameterController for array/list parameter editing in the control panel. Supports string, bool, number, and enum arrays with add/remove/edit UI. (PR #87, contributed by @WimVdSAllPhi)
+- Fix: Fixed a regression where the Actions panel stopped capturing events after switching stories.
+- Fix: Resolved event argument properties being lost in the Actions panel when published as Blazor WebAssembly due to IL trimming.
+
+v.1.0.0-preview.70
+- Improve: Enabled the full usage of RenderFragment (note: this is not fully supported with EditForm and/or InputBase). (PR #53, contributed by @WimVdSAllPhi)
+
+v.1.0.0-preview.69
+- Fix: Fixed hot reload build errors (CS8785/CS0234) caused by the MD2RazorGenerator package by updating it to v.1.2.4 in the project templates.
+
+v.1.0.0-preview.68
+- Feature: Introduced the Addon mechanism, enabling developers to extend the UI with custom toolbar items, panels, and preview decorators.
+
+v.1.0.0-preview.67
+- Fix: Resolved a bug where DateTime, DateTimeOffset, DateOnly, and TimeOnly values could not be parsed in the Action Log panel. (PR #96, contributed by @Shrumpf)
+- Fix: Fixed the PopupMenu to close when a menu item is clicked.
+
+v.1.0.0-preview.66
+- Fix: Split view resizing doesn't work on recent browser versions.
+
+v.1.0.0-preview.65
+- Fix: An InvalidOperationException was thrown when IL trimming was enabled on a published Blazor WebAssembly app. (Issue #89)
+- Fix: CSS from certain NuGet packages was not loaded correctly.
+
+v.1.0.0-preview.64
+- Improve: Removed the dependency on the Toolbelt.Blazor.GetProperty.Script NuGet package for .NET 10 or later projects.
+
+v.1.0.0-preview.63
+- Enhancement: Dramatically reduced preview frame display time by implementing iframe pooling, which reuses initialized Blazor runtime instances.
+- Enhancement: Preview frames are now rendered only when visible in the viewport, significantly reducing resource consumption.
+
 v.1.0.0-preview.62
-- Fix: Added two-way binding support inside BlazingStory for improved reactivity.
-  - Added ArgsChanged event callback to PreviewFrame for better argument synchronization.
-  - Implemented debouncing in PreviewFrame and CanvasFrame to optimize argument updates and URL navigation.
-  - Refactored CanvasPage and StoryPreview to properly handle ArgsChanged events and improve state management.
-  - Updated StoryContext to support asynchronous argument updates for enhanced responsiveness.
-  - Cleaned up code and improved documentation across affected components.
+- Update: .NET 10 support.
+- Update: Improve canvas preview pane splitter behavior.
 
 v.1.0.0-preview.61
 - Fix: The browser title did not update when a Custom Page was selected.
@@ -91,7 +168,7 @@ v.1.0.0-preview.36
 - Fix: hotkeys didn't work on Blazor Server hosting model.
 
 v.1.0.0-preview.35
-- Fix: a Story server app deployed under the subpath didn't work.
+- Fix: a Story server app deployed under the sub-path didn't work.
 
 v.1.0.0-preview.34
 - Fix: navigation next/prev stories, docs, and components didn't work.
@@ -231,7 +308,7 @@ v.1.0.0-preview.1.2
 - Improve the README and the project template to explain how to add custom css and js files for stories.
 
 v.1.0.0-preview.1.1
-- Fix: 3rd party libraries CSS file importing failed if the app deployed under subpath.
+- Fix: 3rd party libraries CSS file importing failed if the app deployed under sub-path.
 
 v.1.0.0-preview.1
 - 1st release.

@@ -1,7 +1,6 @@
-﻿@using BlazingStory.Internals.Pages.Canvas.Controls.ParameterControllers.Controllers
 @attribute [Stories("Internals/Pages/Canvas/Controls/ParameterControllers/Controllers/BoolParameterController")]
 
-<Stories TComponent="BoolParameterController" Layout="typeof(MarginedFrame)">
+<Stories TComponent="BoolParameterController">
 
     <Story Name="Nullable - No Value">
         <Template>
@@ -91,9 +90,9 @@
 
 @code
 {
-    private readonly ComponentParameter Bool = SampleComponent.CreateParameter(nameof(SampleComponent.Bool));
+    private readonly IComponentParameter Bool = SampleComponent.CreateParameter(nameof(SampleComponent.Bool));
 
-    private readonly ComponentParameter NullableBool = SampleComponent.CreateParameter(nameof(SampleComponent.NullableBool));
+    private readonly IComponentParameter NullableBool = SampleComponent.CreateParameter(nameof(SampleComponent.NullableBool));
 
     private object? _V1 = Unknown.Value;
 
