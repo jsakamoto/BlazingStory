@@ -1,182 +1,510 @@
-@using System.Collections
-@using System.Globalization
-@implements IAsyncDisposable
-@inject IJSRuntime JSRuntime
+﻿﻿@using System.Text.Json;
+@using BlazingStory.Abstractions;
+@using BlazingStory.Addons.BuiltIns.Panel.Actions;
+@using BlazingStory.Configurations;
+@using BlazingStory.Internals.Models;
+@using BlazingStory.Internals.Services;
+@using BlazingStory.Internals.Utils;
+@using BlazingStory.ToolKit.JSInterop;
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.AspNetCore.Components.Web;
+@using Microsoft.Extensions.DependencyInjection;
+@using Microsoft.JSInterop;
 
-<IntersectionView @ref="_IntersectionView"
-                  class="preview-frame"
-                  @onframeheightchange="FrameHeightChangeEventCallback">
-    <PooledIFrame Src="@_PreviewFrameUrl" Attached="OnPreviewIFrameAttached" />
-</IntersectionView>
+@implements IAsyncDisposable
+
+<div id="storybook-preview-wrapper" class="preview-frame">
+    <iframe id="@this._IframeElementId" @ref="_Iframe" src="@_InitialPreviewFrameUrl"
+            @onload="OnPreviewIFrameLoaded"></iframe>
+</div>
 
 @code
 {
+    /// <summary>
+    /// Gets or sets the story to be rendered in the preview iframe.
+    /// This is the main content that determines which component and its configuration will be displayed.
+    /// </summary>
+    /// <value>
+    /// The story containing component metadata, parameters, and rendering instructions.
+    /// Required parameter that must be provided by the parent component.
+    /// </value>
     [Parameter, EditorRequired]
-    public required IStory Story { get; set; }
+    public IStory? Story { get; set; }
 
+    /// <summary>
+    /// Gets or sets the current view mode for the story presentation.
+    /// Controls how the story is displayed within the BlazingStory interface.
+    /// </summary>
+    /// <value>
+    /// The view mode string. Common values include "story", "docs", or "canvas".
+    /// Used to determine the appropriate rendering context and UI layout.
+    /// </value>
     [Parameter]
     public string? ViewMode { get; set; }
 
+    /// <summary>
+    /// Gets or sets the unique identifier for this preview frame instance.
+    /// Used for story navigation, URL routing, and frame-specific operations.
+    /// </summary>
+    /// <value>
+    /// The story identifier used in URLs and for internal tracking.
+    /// Typically corresponds to the story's navigation path or slug.
+    /// </value>
     [Parameter]
     public string? Id { get; set; }
 
+    /// <summary>
+    /// Gets or sets the current component arguments/parameters that control the story's behavior.
+    /// These values are passed to the rendered component and can be modified through two-way binding.
+    /// </summary>
+    /// <value>
+    /// A dictionary containing parameter names as keys and their current values as values.
+    /// Values can be of any type supported by the component (strings, numbers, arrays, objects).
+    /// Used to configure the component's properties and maintain state synchronization.
+    /// </value>
     [Parameter]
     public IReadOnlyDictionary<string, object?>? Args { get; set; }
 
+    /// <summary>
+    /// Gets or sets the event callback that fires when component arguments change.
+    /// This enables two-way data binding between the preview frame and parent components.
+    /// </summary>
+    /// <value>
+    /// An event callback that receives the updated arguments dictionary when component properties change.
+    /// Critical for maintaining state synchronization and enabling interactive story controls.
+    /// </value>
+    [Parameter]
+    public EventCallback<IReadOnlyDictionary<string, object?>> ArgsChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the global configuration values that apply across all stories.
+    /// These settings control the overall presentation environment and addon behaviors.
+    /// </summary>
+    /// <value>
+    /// A dictionary containing global settings like theme, background, grid visibility, etc.
+    /// Applied to the iframe environment to control the story's presentation context.
+    /// </value>
     [Parameter]
     public IReadOnlyDictionary<string, object?>? Globals { get; set; }
+
+    /// <summary>
+    /// Gets or sets the event callback for handling component actions and events.
+    /// This callback receives all component events for logging, debugging, and external processing.
+    /// </summary>
+    /// <value>
+    /// An event callback that receives ComponentActionEventArgs containing event name and serialized arguments.
+    /// Used for event monitoring, debugging, and integration with external systems or addons.
+    /// </value>
+    [Parameter]
+    public EventCallback<ComponentActionEventArgs> OnComponentAction { get; set; }
 
     [Parameter]
     public EventCallback<int> OnFrameHeightChanged { get; set; }
 
+    /// <summary>
+    /// Gets the current URL being displayed in the preview iframe.
+    /// This URL includes all current parameters, globals, and story configuration.
+    /// </summary>
+    /// <value>
+    /// The complete iframe URL with encoded parameters, used for story rendering and navigation.
+    /// Updates automatically when story arguments or global settings change.
+    /// </value>
+    public string CurrentPreviewFrameUrl => this._CurrentPreviewFrameUrl;
+
+    /// <summary>
+    /// Gets or sets the dependency injection service provider.
+    /// Provides access to registered services like BlazingStoryOptions for configuration.
+    /// </summary>
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
 
     /// <summary>
-    /// Gets the initial preview frame URL.
+    /// Gets or sets the JavaScript runtime for interop operations.
+    /// Used for iframe manipulation, event subscription, and DOM interactions.
     /// </summary>
-    public string CurrentPreviewFrameUrl => this._PreviewFrameUrl;
-
-    private IntersectionView? _IntersectionView;
-
-    private ElementReference _IframeContainer => this._IntersectionView?.ElementReference ?? default;
-
-    private string _PreviewFrameUrl = "";
-
-    private readonly JSModule _JSModule;
+    [Inject]
+    private IJSRuntime? JSRuntime { get; set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PreviewFrame"/> class.
+    /// Unique identifier for the iframe element, ensuring no conflicts in multi-frame scenarios.
     /// </summary>
-    public PreviewFrame()
+    private readonly string _IframeElementId = "F" + Guid.NewGuid().ToString();
+
+    /// <summary>
+    /// Debounce delay for component events to prevent excessive updates during rapid user interactions.
+    /// Set to 50ms for responsive feel while avoiding performance issues.
+    /// </summary>
+    private readonly TimeSpan _DebounceDelay = TimeSpan.FromMilliseconds(50);
+
+    /// <summary>
+    /// JavaScript module wrapper for iframe and event management operations.
+    /// </summary>
+    private JSModule? _JSModule;
+
+    /// <summary>
+    /// Reference to the iframe element for direct JavaScript manipulation.
+    /// </summary>
+    private ElementReference _Iframe;
+
+    /// <summary>
+    /// The initial URL when the frame was first loaded.
+    /// </summary>
+    private string _InitialPreviewFrameUrl = string.Empty;
+
+    /// <summary>
+    /// The current URL being displayed in the iframe, updated as parameters change.
+    /// </summary>
+    private string _CurrentPreviewFrameUrl = string.Empty;
+
+    /// <summary>
+    /// Flag indicating whether the first render cycle has completed.
+    /// </summary>
+    private bool _AfterFirstRendered = false;
+
+    /// <summary>
+    /// .NET object reference for JavaScript callbacks to this component instance.
+    /// </summary>
+    private DotNetObjectReference<PreviewFrame>? _ThisRef;
+
+    /// <summary>
+    /// JavaScript object reference for the event monitoring subscription.
+    /// </summary>
+    private IJSObjectReference? _EventMonitorSubscriber;
+
+    /// <summary>
+    /// Cancellation token source for managing debounced operations.
+    /// </summary>
+    private CancellationTokenSource? _DebounceCts;
+
+    /// <summary>
+    /// Stores the most recent pending update during debounce periods.
+    /// </summary>
+    private (string Name, string ArgsJson)? _PendingUpdate;
+
+    /// <summary>
+    /// Initializes the component by setting up the JavaScript module and initial URL.
+    /// Called once when the component is first created.
+    /// </summary>
+    protected override void OnInitialized()
     {
-        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
+        // Initialize the JavaScript module for iframe operations
+        if (this.JSRuntime is not null)
+        {
+            this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Internals/Components/Preview/PreviewFrame.razor.js");
+        }
+
+        // Set both initial and current URLs to the same starting point
+        this._InitialPreviewFrameUrl = this._CurrentPreviewFrameUrl = this.GetPreviewFrameUrl();
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        this._PreviewFrameUrl = await this.GetPreviewFrameUrlAsync();
-    }
-
+    /// <summary>
+    /// Called whenever component parameters change, updates the iframe URL accordingly.
+    /// Ensures the preview stays synchronized with parameter changes from parent components.
+    /// </summary>
     protected override async Task OnParametersSetAsync()
     {
-        await base.OnParametersSetAsync();
-        this._PreviewFrameUrl = await this.GetPreviewFrameUrlAsync();
-    }
-
-    private async Task OnPreviewIFrameAttached()
-    {
-        try
-        {
-            var options = Services.GetRequiredService<BlazingStoryOptions>();
-            if (options.EnableHotReloading)
-            {
-                await EnsureDotnetWatchScriptInjected();
-            }
-
-            var frameHeight = await _JSModule.InvokeAsync<int>("getFrameHeight", this._IframeContainer);
-            await this.OnFrameHeightChanged.InvokeAsync(frameHeight);
-        }
-
-        // In some cases, such as when a user navigates away from the page during this async operation,
-        // the JSModule may be disposed before the async operation completes.
-        // Ignore the "ObjectDisposedException" exception in this case.
-        catch (ObjectDisposedException) { }
+        // Update the iframe URL to reflect any parameter changes
+        await this.UpdatePreviewFrameUrlAsync();
     }
 
     /// <summary>
-    /// Gets the URL for the preview frame, from the component parameters(args).
+    /// Handles post-render operations, particularly setting up the component after first render.
+    /// The first render flag is used to avoid premature JavaScript operations.
     /// </summary>
-    private async ValueTask<string> GetPreviewFrameUrlAsync()
+    /// <param name="firstRender">True if this is the first time the component has been rendered</param>
+    protected override void OnAfterRender(bool firstRender)
     {
-        // "Stringify" the component args to encode them to the URL query string.
-        var args = new Dictionary<string, object?>();
-        foreach (var arg in this.Args?.AsEnumerable() ?? [])
-        {
-            args[arg.Key] = await this.ConvertParameterValueToStringAsync(arg.Key, arg.Value);
-        }
+        if (!firstRender) return;
 
+        // Trigger a state change to ensure proper initialization
+        this.StateHasChanged();
+
+        // Mark that the first render has completed, enabling JavaScript operations
+        this._AfterFirstRendered = true;
+    }
+
+    /// <summary>
+    /// Updates the iframe URL if it has changed, triggering a navigation to the new URL.
+    /// Only performs the update if the component has been rendered and the URL actually changed.
+    /// </summary>
+    private async ValueTask UpdatePreviewFrameUrlAsync()
+    {
+        // Skip if JavaScript module isn't available or component hasn't finished first render
+        if (this._JSModule is null || !this._AfterFirstRendered) return;
+
+        // Generate the new URL based on current parameters
+        var nextPreviewFrameUrl = this.GetPreviewFrameUrl();
+
+        // Skip navigation if URL hasn't actually changed (performance optimization)
+        if (this._CurrentPreviewFrameUrl == nextPreviewFrameUrl) return;
+
+        // Update our tracking variable and navigate the iframe to the new URL
+        this._CurrentPreviewFrameUrl = nextPreviewFrameUrl;
+        await this._JSModule.InvokeVoidAsync("navigatePreviewFrameTo", this._Iframe, nextPreviewFrameUrl);
+    }
+
+    /// <summary>
+    /// Handles the iframe load event by setting up event monitoring and hot reloading.
+    /// This is called whenever the iframe finishes loading a new page.
+    /// </summary>
+    /// <param name="obj">Progress event arguments (unused but required by event signature)</param>
+    private async Task OnPreviewIFrameLoaded(ProgressEventArgs obj)
+    {
+        if (this._JSModule is null) return;
+        try
+        {
+            // Set up hot reloading if enabled in configuration
+            var options = this.Services.GetRequiredService<BlazingStoryOptions>();
+            if (options.EnableHotReloading)
+            {
+                await this.EnsureDotnetWatchScriptInjected();
+            }
+
+            // Create a .NET object reference for JavaScript callbacks
+            this._ThisRef = DotNetObjectReference.Create(this);
+
+            // Subscribe to component action events from the iframe
+            this._EventMonitorSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentActionEvent",
+this._Iframe, this._ThisRef, nameof(ComponentActionEventCallback));
+
+            var frameHeight = await this._JSModule.InvokeAsync<int>("getFrameHeightFromIFrame", this._Iframe);
+            await this.OnFrameHeightChanged.InvokeAsync(frameHeight);
+        }
+        // Handle the case where the user navigates away during async operations
+        // The JSModule may be disposed before the operation completes, which is expected
+        catch (ObjectDisposedException)
+        {
+            // Safe to ignore - this happens during normal navigation scenarios
+        }
+    }
+
+    /// <summary>
+    /// Constructs the complete iframe URL with all current parameters and global settings.
+    /// This URL determines what content is displayed in the preview iframe.
+    /// </summary>
+    /// <returns>A complete URL string for the iframe src attribute</returns>
+    private string GetPreviewFrameUrl()
+    {
+        // Default to basic iframe page if no story is available
+        if (this.Story is null) return "./iframe.html";
+
+        // CRITICAL: Filter out EventCallbacks - they should NEVER be serialized to URLs
+        // EventCallbacks are .NET objects that cannot be represented in URLs
+        var args = this.Args?
+            .Where(x => x.Value == null || !x.Value.GetType().Name.StartsWith("EventCallback"))
+            .ToDictionary(
+                keySelector: x => x.Key,
+                elementSelector: x => (object?)this.Story.Context.ConvertParameterValueToString(x.Key, x.Value)
+            );
+
+        // Encode and compress the arguments for URL transmission
+        var encodeArgs = UriParameterKit.EncodeKeyValues(args);
+        var encodeGlobals = UriParameterKit.EncodeKeyValues(this.Globals);
+        var compressedArgs = UrlParameterShortener.CompressAndEncode(encodeArgs);
+
+        // Build the complete iframe URL with all necessary parameters
         return UriParameterKit.GetUri(
             uri: "./iframe.html",
             parameters: new Dictionary<string, object?>
             {
-                ["viewMode"] = this.ViewMode,
-                ["id"] = this.Id,
-                ["args"] = UriParameterKit.EncodeKeyValues(args),
-                ["globals"] = UriParameterKit.EncodeKeyValues(this.Globals)
+                ["viewMode"] = this.ViewMode, // Controls the display mode (story, docs, etc.)
+                ["id"] = this.Id, // Story identifier for routing
+                ["args"] = compressedArgs, // Component parameters (compressed for efficiency)
+                ["globals"] = encodeGlobals, // Global settings (theme, background, etc.)
+                ["frameId"] = this._IframeElementId // Unique frame identifier for event routing
             });
     }
 
-    [UnconditionalSuppressMessage("Trimming", "IL2060")]
-    private async ValueTask<string> ConvertParameterValueToStringAsync(string name, object? value)
-    {
-        static string ToFormattedString(object? obj) => obj switch
-        {
-            null => "(null)",
-            IFormattable f => f.ToString(format: null, formatProvider: CultureInfo.InvariantCulture),
-            _ => obj.ToString() ?? ""
-        };
-
-        static string EscapeCollectionItemString(string str) => str.Replace("%", "%25").Replace(",", "%2c");
-
-        return await RenderFragmentKit.TryToMarkupStringAsync(value, fallback: _ =>
-        {
-            if (this.Story.Context.Parameters.TryGetByName(name, out var param))
-            {
-                if (param.TypeStructure.IsNullable && value == null) return ToFormattedString(value);
-
-                // If the type of the parameter is compatible with IEnumerable, render the value as a list of items.
-                if (param.TypeStructure.PrimaryType.IsAssignableTo(typeof(IEnumerable)))
-                {
-                    var enumerable = value as IEnumerable;
-                    if (enumerable == null) return ToFormattedString(value);
-                    var items = new List<string>();
-                    foreach (var item in enumerable)
-                    {
-                        items.Add(EscapeCollectionItemString(ToFormattedString(item)));
-                    }
-                    return string.Join(",", items);
-                }
-            }
-            return ToFormattedString(value);
-        });
-    }
-
+    /// <summary>
+    /// Reloads the preview iframe, forcing a fresh render of the current story.
+    /// Useful for recovering from errors or applying configuration changes.
+    /// </summary>
     internal async ValueTask ReloadAsync()
     {
-        await this._JSModule.InvokeVoidAsync("reloadPreviewFrame", this._IframeContainer);
-    }
-
-    internal async ValueTask ZoomInAsync()
-    {
-        await this._JSModule.InvokeVoidAsync("zoomInPreviewFrame", this._IframeContainer);
-    }
-
-    internal async ValueTask ZoomOutAsync()
-    {
-        await this._JSModule.InvokeVoidAsync("zoomOutPreviewFrame", this._IframeContainer);
-    }
-
-    internal async ValueTask ResetZoomAsync()
-    {
-        await this._JSModule.InvokeVoidAsync("resetZoomPreviewFrame", this._IframeContainer);
-    }
-
-    private async ValueTask EnsureDotnetWatchScriptInjected()
-    {
-        await this._JSModule.InvokeVoidAsync("ensureDotnetWatchScriptInjected", this._IframeContainer);
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("reloadPreviewFrame", this._Iframe);
+        }
     }
 
     /// <summary>
-    /// Invoked when the frame height changes.
+    /// Increases the zoom level of the preview iframe content.
+    /// Allows users to get a closer look at component details.
     /// </summary>
-    private async Task FrameHeightChangeEventCallback(FrameHeightChangeEventArgs args)
+    internal async ValueTask ZoomInAsync()
     {
-        await this.OnFrameHeightChanged.InvokeAsync(args.Height);
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("zoomInPreviewFrame", this._Iframe);
+        }
     }
 
+    /// <summary>
+    /// Decreases the zoom level of the preview iframe content.
+    /// Allows users to see more of the component in the available space.
+    /// </summary>
+    internal async ValueTask ZoomOutAsync()
+    {
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("zoomOutPreviewFrame", this._Iframe);
+        }
+    }
+
+    /// <summary>
+    /// Resets the zoom level of the preview iframe to 100% (default).
+    /// Returns the component to its natural display size.
+    /// </summary>
+    internal async ValueTask ResetZoomAsync()
+    {
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("resetZoomPreviewFrame", this._Iframe);
+        }
+    }
+
+    /// <summary>
+    /// Ensures that the .NET hot reload script is injected into the iframe for development scenarios.
+    /// This enables live reloading when code changes are made during development.
+    /// </summary>
+    private async ValueTask EnsureDotnetWatchScriptInjected()
+    {
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.InvokeVoidAsync("ensureDotnetWatchScriptInjected", this._Iframe);
+        }
+    }
+
+    /// <summary>
+    /// JavaScript-invokable callback for handling component action events from the iframe.
+    /// This method processes all component events, with special handling for two-way binding events.
+    /// Implements debouncing to prevent excessive updates during rapid user interactions.
+    /// </summary>
+    /// <param name="name">The name of the event (e.g., "ValueChanged", "ItemsChanged")</param>
+    /// <param name="argsJson">JSON-serialized event arguments containing the new values</param>
+    [JSInvokable(nameof(ComponentActionEventCallback))]
+    public async Task ComponentActionEventCallback(string name, string argsJson)
+    {
+        // Early exit if dependencies are not available
+        if (this._JSModule is null || this.Story is null) return;
+
+        var storyId = this.Story?.NavigationPath ?? "Unknown";
+
+        // Always fire the component action event for monitoring/logging purposes
+        await this.OnComponentAction.InvokeAsync(new ComponentActionEventArgs { Name = name, ArgsJson = argsJson });
+
+        // Special processing for two-way binding events (events ending with "Changed")
+        if (name.EndsWith("Changed") && !string.IsNullOrEmpty(argsJson))
+        {
+            // Validate that this event follows proper two-way binding patterns
+            if (!EventArgumentsProcessor.ValidateTwoWayBindingPattern(name, this.Story, $"PreviewFrame[{storyId}]"))
+            {
+                return; // Skip processing if validation fails
+            }
+
+            // Store the latest event for debounced processing (overwriting any previous pending update)
+            this._PendingUpdate = (name, argsJson);
+
+            // Cancel any existing debounce timer to restart the delay period
+            if (this._DebounceCts != null)
+                await this._DebounceCts.CancelAsync();
+            this._DebounceCts = new CancellationTokenSource();
+
+            try
+            {
+                // Wait for the debounce delay period to batch rapid events together
+                await Task.Delay(this._DebounceDelay, this._DebounceCts.Token);
+
+                // Process the latest pending update (use _PendingUpdate to get most recent data)
+                if (this._PendingUpdate.HasValue && this._PendingUpdate.Value.Name == name)
+                {
+                    var latestArgsJson = this._PendingUpdate.Value.ArgsJson;
+
+                    try
+                    {
+                        // Deserialize the JSON event arguments into a workable dictionary
+                        var updatedArgs = JsonSerializer.Deserialize<Dictionary<string, object?>>(latestArgsJson);
+                        if (updatedArgs != null)
+                        {
+                            // Map the event name to the corresponding parameter name (remove "Changed" suffix)
+                            var paramName = EventArgumentsProcessor.MapEventNameToParameterName(name);
+                            var parameter = EventArgumentsProcessor.FindParameter(paramName, this.Story);
+                            if (parameter == null) return; // Skip if parameter doesn't exist
+
+                            // Extract and convert the parameter value to the expected type
+                            var expectedType = parameter.TypeStructure.PrimaryType;
+                            var value = EventArgumentsProcessor.ExtractParameterValue(updatedArgs, paramName, expectedType);
+
+                            // Performance optimization: skip updates if the value hasn't actually changed
+                            if (this.Args != null && this.Args.TryGetValue(paramName, out var currentValue))
+                            {
+                                if (TypeConversionHelper.AreValuesEqual(currentValue, value))
+                                {
+                                    return; // No change detected, skip the update
+                                }
+                            }
+
+                            // Merge the new argument with existing arguments (preserving other parameters)
+                            var mergedArgs = new Dictionary<string, object?>(this.Args ?? new Dictionary<string, object?>());
+                            mergedArgs[paramName] = value;
+
+                            // Update the local Args property
+                            this.Args = mergedArgs;
+
+                            // Notify parent components of the change (send only the changed parameter)
+                            var changedArg = new Dictionary<string, object?> { { paramName, value } };
+                            await this.ArgsChanged.InvokeAsync(changedArg);
+
+                            // Update the iframe URL to reflect the new parameter values
+                            await this.UpdatePreviewFrameUrlAsync();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // KEEP this log - it's critical for debugging production errors
+                        Console.WriteLine($"PreviewFrame[{storyId}]: Error processing debounced ComponentActionEventCallback: {ex.Message}");
+                    }
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // Debounce was cancelled by a new event; this is expected behavior, ignore silently
+            }
+            finally
+            {
+                // Clean up the cancellation token source
+                this._DebounceCts?.Dispose();
+                this._DebounceCts = null;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Asynchronously disposes of all resources used by the PreviewFrame component.
+    /// This includes cancelling any pending operations, disposing JavaScript objects, and cleaning up references.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
-        await _JSModule.DisposeAsync();
+        // Cancel and dispose any pending debounce operations
+        if (this._DebounceCts != null)
+        {
+            await this._DebounceCts.CancelAsync();
+            this._DebounceCts.Dispose();
+        }
+
+        // Dispose the JavaScript event monitor subscription
+        if (this._EventMonitorSubscriber is not null)
+        {
+            await this._EventMonitorSubscriber.DisposeIfConnectedAsync("dispose");
+        }
+
+        // Dispose the JavaScript module wrapper
+        if (this._JSModule is not null)
+        {
+            await this._JSModule.DisposeAsync();
+        }
+
+        // Dispose the .NET object reference used for JavaScript callbacks
+        this._ThisRef?.Dispose();
     }
 }

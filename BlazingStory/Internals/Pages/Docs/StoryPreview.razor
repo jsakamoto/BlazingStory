@@ -1,3 +1,5 @@
+@implements IDisposable
+
 @if (this.Story != null)
 {
     <div class="story-preview">
@@ -14,12 +16,8 @@
             }
 
             <div class="preview-frame-viewport" style="@this.StyleString">
-                <PreviewFrame @ref="_PreviewFrame"
-                              Story="this.Story"
-                              ViewMode="story"
-                              Id="@this.Story.NavigationPath"
-                              Args="this.Story.Context.Args"
-                              Globals="this.Globals"
+                <PreviewFrame @ref="_PreviewFrame" Story="this.Story" ViewMode="story" Id="@this.Story.NavigationPath"
+                              Args="this.Story.Context.Args" ArgsChanged="OnArgsChanged" Globals="this.Globals"
                               OnFrameHeightChanged="OnFrameHeightChanged" />
             </div>
 
@@ -65,6 +63,25 @@
         _FrameHeight = height;
     }
 
+    protected override void OnInitialized()
+    {
+        this.Story.Context.ArgumentChanged += this.Context_ArgumentChanged;
+    }
+
+    private ValueTask Context_ArgumentChanged()
+    {
+        this.StateHasChanged();
+        return ValueTask.CompletedTask;
+    }
+
+    private async Task OnArgsChanged(IReadOnlyDictionary<string, object?> newArgs)
+    {
+        foreach (var (key, value) in newArgs)
+        {
+            await this.Story.Context.AddOrUpdateArgumentAsync(key, value);
+        }
+    }
+
     private async void OnClickZoomIn()
     {
         if (this._PreviewFrame != null) await this._PreviewFrame.ZoomInAsync();
@@ -78,5 +95,10 @@
     private async void OnClickResetZoom()
     {
         if (this._PreviewFrame != null) await this._PreviewFrame.ResetZoomAsync();
+    }
+
+    public void Dispose()
+    {
+        this.Story.Context.ArgumentChanged -= this.Context_ArgumentChanged;
     }
 }

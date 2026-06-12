@@ -7,10 +7,8 @@
 
 <div class="fill stack vertical addon-pane-@(this.AddonPanelVisible ? "visible" : "hidden")">
 
-    <SplitContainer Class="canvas-page-container fill"
-                    Orientation="this._AddonPanelLayout.SplitterOrientation"
-                    UnitOfPaneSize="UnitOfPaneSize.Percent"
-                    @bind-SecondPaneSize="_AddonPanelSize"
+    <SplitContainer Class="canvas-page-container fill" Orientation="this._AddonPanelLayout.SplitterOrientation"
+                    UnitOfPaneSize="UnitOfPaneSize.Percent" @bind-SecondPaneSize="_AddonPanelSize"
                     @bind-SecondPaneSize:after="OnAddonPanelSizeChanged">
 
         <FirstPane>
@@ -20,7 +18,8 @@
                 <ToolBar Visible="this._ToolbarVisibleCommand?.Flag == true">
                     @if (this._Commands[CommandType.SideBarVisible]?.Flag == false)
                     {
-                        <IconCommandButton Icon="SvgIconType.Sidebar" Command="this._Commands[CommandType.SideBarVisible]" />
+                        <IconCommandButton Icon="SvgIconType.Sidebar"
+                                           Command="this._Commands[CommandType.SideBarVisible]" />
                         <Separator />
                     }
 
@@ -48,29 +47,29 @@
 
                     @if (this._AddonPanelVisibleCommand?.Flag != true)
                     {
-                        <IconCommandButton Icon="this.ToggleOrientationButtonIcon" Command="this._AddonPanelVisibleCommand" />
+                        <IconCommandButton Icon="this.ToggleOrientationButtonIcon"
+                                           Command="this._AddonPanelVisibleCommand" />
                     }
                     @if ((this._GoFullscreenCommand?.Flag ?? true) == true)
                     {
-                        <IconCommandButton Icon="SvgIconType.CircleClose" Command="this._GoFullscreenCommand" Title="Exit full screen [{0}]" />
+                        <IconCommandButton Icon="SvgIconType.CircleClose" Command="this._GoFullscreenCommand"
+                                           Title="Exit full screen [{0}]" />
                     }
                     else
                     {
                         <IconCommandButton Icon="SvgIconType.FullScreen" Command="this._GoFullscreenCommand" />
                     }
 
-                    <IconButton Icon="SvgIconType.OpenNewTab" Href="@this._PreviewFrame?.CurrentPreviewFrameUrl" Target="_blank" Title="Open canvas in new tab" />
+                    <IconButton Icon="SvgIconType.OpenNewTab" Href="@this._PreviewFrame?.CurrentPreviewFrameUrl"
+                                Target="_blank" Title="Open canvas in new tab" />
                     <IconButton Icon="SvgIconType.Link" Title="Copy canvas link" OnClick="this.OnClickCopyCanvasLink" />
                 </ToolBar>
 
                 @* -- IFrame -- *@
                 <div class="canvas-frame-viewport fill">
-                    <PreviewFrame @ref="_PreviewFrame"
-                                  Story="this._CurrentStory"
-                                  ViewMode="story"
-                                  Id="@this.RouteData.Parameter"
-                                  Args="this._CurrentStory?.Context.Args"
-                                  Globals="this.GetGlobalArguments()" />
+                    <PreviewFrame @ref="_PreviewFrame" Story="this._CurrentStory" ViewMode="story"
+                                  Id="@this.RouteData.Parameter" Args="this._CurrentStory?.Context.Args"
+                                  ArgsChanged="OnArgsChanged" Globals="this.GetGlobalArguments()" />
                 </div>
             </div>
         </FirstPane>
@@ -80,7 +79,8 @@
             @* -- Addons -- *@
             <CascadingValue Value="this._CanvasPageContext">
                 <div class="add-on-container fill stack vertical">
-                    <AddOnPanel Story="this._CurrentStory" SplitterOrientation="this._AddonPanelLayout.SplitterOrientation">
+                    <AddOnPanel Story="this._CurrentStory"
+                                SplitterOrientation="this._AddonPanelLayout.SplitterOrientation">
                     </AddOnPanel>
                 </div>
             </CascadingValue>
@@ -120,7 +120,8 @@
 
     private readonly Subscriptions _Subscriptions = new();
 
-    private bool AddonPanelVisible => (this._AddonPanelVisibleCommand?.Flag ?? true) && !(this._GoFullscreenCommand?.Flag ?? false);
+    private bool AddonPanelVisible => (this._AddonPanelVisibleCommand?.Flag ?? true) && !(this._GoFullscreenCommand?.Flag ??
+false);
 
     private double _AddonPanelSize = 50;
 
@@ -170,7 +171,8 @@
     {
         if (!firstRender) return;
 
-        this._AddonPanelLayout = await this.JSRuntime.LoadObjectFromLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
+        this._AddonPanelLayout = await this.JSRuntime.LoadObjectFromLocalStorageAsync(this.AddonPanelLayoutKeyName,
+this._AddonPanelLayout);
         this.UpdateAddonPanelSize(this._AddonPanelLayout.SplitterOrientation);
         this.StateHasChanged();
     }
@@ -216,6 +218,16 @@
     {
         this.StateHasChanged();
         return ValueTask.CompletedTask;
+    }
+
+    private async Task OnArgsChanged(IReadOnlyDictionary<string, object?> newArgs)
+    {
+        if (this._CurrentStory == null) return;
+
+        foreach (var (key, value) in newArgs)
+        {
+            await this._CurrentStory.Context.AddOrUpdateArgumentAsync(key, value);
+        }
     }
 
     private async Task OnAddonPanelSizeChanged()

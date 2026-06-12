@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using BlazingStory.Abstractions;
 using BlazingStory.Internals.Models;
+using BlazingStory.ToolKit.Utils;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Types;
@@ -77,6 +78,35 @@ internal class StoryContext : IStoryContext
         await this.ArgumentChanged.InvokeAsync();
     }
 
+    internal async ValueTask UpdateArgumentsAsync(IReadOnlyDictionary<string, object?> newArgs)
+    {
+        var changed = false;
+
+        foreach (var kvp in newArgs)
+        {
+            if (this._Args.TryGetValue(kvp.Key, out var value))
+            {
+                if ((value == null && kvp.Value == null) || (value != null && value.Equals(kvp.Value)))
+                {
+                    continue;
+                }
+
+                this._Args[kvp.Key] = kvp.Value;
+                changed = true;
+            }
+            else
+            {
+                this._Args.Add(kvp.Key, kvp.Value);
+                changed = true;
+            }
+        }
+
+        if (changed)
+        {
+            await this.ArgumentChanged.InvokeAsync();
+        }
+    }
+
     /// <summary>
     /// This method is used to notify the story that it should re-render.
     /// </summary>
@@ -86,5 +116,35 @@ internal class StoryContext : IStoryContext
     }
 
     [Obsolete("This method is no longer used and will be removed in a future version."), EditorBrowsable(EditorBrowsableState.Never)]
-    public string ConvertParameterValueToString(string name, object? value) => throw new NotImplementedException();
+    public string ConvertParameterValueToString(string name, object? value)
+    {
+        if (value != null && value.GetType().Name.StartsWith("EventCallback"))
+        {
+            return value.ToString() ?? string.Empty;
+        }
+
+        if (RenderFragmentKit.TryToString(value, out var str))
+        {
+            return str;
+        }
+
+        var parameter = this.Parameters.FirstOrDefault(p => p.Name == name);
+        if (parameter?.TypeStructure.IsNullable == true && value == null)
+        {
+            return "(null)";
+        }
+
+        if (value != null && (value.GetType().IsArray || (value.GetType().IsClass && value.GetType() != typeof(string))))
+        {
+            try
+            {
+                return System.Text.Json.JsonSerializer.Serialize(value);
+            }
+            catch
+            {
+            }
+        }
+
+        return value?.ToString() ?? string.Empty;
+    }
 }
