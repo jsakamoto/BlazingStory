@@ -1,0 +1,31 @@
+<section class="enum-control-probe">
+    <h4 class="enum-control-probe__title">@this.Title</h4>
+    <ul class="enum-control-probe__list">
+        <li>ModeSelect (ControlType.Select): @Format(this.ModeSelect)</li>
+        <li>ModeRadio (ControlType.Radio): @Format(this.ModeRadio)</li>
+    </ul>
+</section>
+
+@code
+{
+    [Parameter]
+    public string Title { get; set; } = "Enum Control Probe";
+
+    [Parameter]
+    public ProbeMode? ModeSelect { get; set; }
+
+    [Parameter]
+    public ProbeMode? ModeRadio { get; set; }
+
+    private static string Format<T>(T value)
+    {
+        return value is null ? "null" : value.ToString() ?? string.Empty;
+    }
+
+    public enum ProbeMode
+    {
+        Basic,
+        Advanced,
+        Expert
+    }
+}

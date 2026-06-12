@@ -1,3 +1,8 @@
+v.1.0.0-preview.86
+- Feature: Expanded the MyBlazorWasmApp1 sample with API-focused stories and overview pages covering args, controls, array inputs, RenderFragment inputs, layout overrides, and callback patterns.
+- Fix: Updated the sample preview frame host to load BlazingStory theme CSS so --bs-* CSS variables resolve correctly inside iframe-based previews.
+- Fix: Improved the ArrayParameterController to render number inputs for numeric arrays and added focused test coverage.
+
 v.1.0.0-preview.85
 - Fix: Resolved an issue where `null` values for non-nullable reference-type story arguments were displayed as the literal string `"(null)"` on initial load. (Issue #119, PR #120 contributed by @warnaa)
 

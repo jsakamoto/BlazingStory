@@ -1,0 +1,52 @@
+.playground-card {
+    border: 1px solid var(--playground-card-accent, var(--bs-border-color));
+    border-radius: 1rem;
+    padding: 1rem;
+    background: var(--bs-add-on-panel-back-color);
+    color: var(--bs-text-color);
+    box-shadow: var(--bs-layout-border-shadow);
+}
+
+.playground-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.playground-card__header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.playground-card__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    background: var(--playground-card-accent, var(--bs-accent-color));
+    color: var(--bs-white);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.playground-card__actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.playground-card__actions button {
+    min-width: 2rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: var(--bs-inputs-background);
+    color: var(--bs-text-color);
+    box-shadow: var(--bs-border-color) 0 0 0 1px inset;
+}
+
+.playground-card__content {
+    margin-top: 1rem;
+}

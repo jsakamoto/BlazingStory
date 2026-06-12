@@ -1,0 +1,65 @@
+@attribute [Stories("Example/API/Args/Nullable Args")]
+
+<Stories TComponent="NullableArgsProbe" Layout="typeof(CenteredLayout)">
+    <ArgType For="_ => _.NullableColor" Control="ControlType.Color" DefaultValue='"#22c55e"' />
+    <ArgType For="_ => _.NullableMode" Control="ControlType.Select" />
+    <ArgType For="_ => _.NonNullableText" Control="ControlType.Default" />
+
+    <Story Name="All Nullable Args Are Null">
+        <Description>
+            Demonstrates default null values for nullable parameters when no args are provided.
+        </Description>
+        <Template>
+            <NullableArgsProbe @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Explicit Non-Null Values">
+        <Description>
+            Demonstrates binding nullable bool/int/enum/string and a non-nullable string through args.
+        </Description>
+        <Arguments>
+            <Arg For="_ => _.NullableBool" Value="true" />
+            <Arg For="_ => _.NullableCount" Value="42" />
+            <Arg For="_ => _.NullableMode" Value="NullableArgsProbe.ProbeMode.Advanced" />
+            <Arg For="_ => _.NullableColor" Value="_AccentColor" />
+            <Arg For="_ => _.NonNullableText" Value="_ConfiguredText" />
+        </Arguments>
+        <Template>
+            <NullableArgsProbe @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Reset To Null With Typed Variables">
+        <Description>
+            Demonstrates passing typed null values explicitly via story code variables.
+        </Description>
+        <Arguments>
+            <Arg For="_ => _.NullableBool" Value="_NullBool" />
+            <Arg For="_ => _.NullableCount" Value="_NullCount" />
+            <Arg For="_ => _.NullableMode" Value="_NullMode" />
+            <Arg For="_ => _.NullableColor" Value="_NullColor" />
+            <Arg For="_ => _.NonNullableText" Value="_ResetText" />
+        </Arguments>
+        <Template>
+            <NullableArgsProbe @attributes="context.Args" />
+        </Template>
+    </Story>
+</Stories>
+
+@code
+{
+    private string _AccentColor = "#f97316";
+
+    private string _ConfiguredText = "configured";
+
+    private bool? _NullBool = null;
+
+    private int? _NullCount = null;
+
+    private NullableArgsProbe.ProbeMode? _NullMode = null;
+
+    private string? _NullColor = null;
+
+    private string _ResetText = "reset";
+}

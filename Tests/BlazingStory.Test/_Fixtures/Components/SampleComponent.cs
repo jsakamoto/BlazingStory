@@ -29,6 +29,9 @@ internal class SampleComponent
     public SampleEnum? Enum2 { get; set; }
 
     [Parameter]
+    public int[]? Numbers { get; set; }
+
+    [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
     [Parameter]

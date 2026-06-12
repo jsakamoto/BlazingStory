@@ -1,0 +1,102 @@
+﻿@attribute [Stories("Example/Button")]
+
+<Stories TComponent="Button" Layout="typeof(CenteredLayout)">
+    <ArgType For="_=>_.BackgroundColor" Control="ControlType.Color" />
+    <ArgType For="_=>_.Size" Control="ControlType.Radio" />
+
+    <Story Name="Primary">
+        <Description>
+            Shows the primary action style and demonstrates setting bool and render-fragment args.
+        </Description>
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_ButtonContent" />
+            <Arg For="_ => _.Primary" Value="true" />
+        </Arguments>
+        <Template>
+            <Button @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Secondary">
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_ButtonContent" />
+            <Arg For="_ => _.Primary" Value="false" />
+        </Arguments>
+        <Template>
+            <Button @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Large">
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_ButtonContent" />
+            <Arg For="_ => _.Size" Value="ButtonSize.Large" />
+        </Arguments>
+        <Template>
+            <Button @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Small">
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_ButtonContent" />
+            <Arg For="_ => _.Size" Value="ButtonSize.Small" />
+        </Arguments>
+        <Template>
+            <Button @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="With Custom Background">
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_ButtonContent" />
+            <Arg For="_ => _.BackgroundColor" Value="_CustomBackgroundColor" />
+        </Arguments>
+        <Template>
+            <Button @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Disabled State">
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_ButtonContent" />
+            <Arg For="_ => _.Attributes" Value="_DisabledAttributes" />
+        </Arguments>
+        <Template>
+            <Button @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Click Callback">
+        <Description>
+            Demonstrates EventCallback support by tracking click events in the story template.
+        </Description>
+        <Arguments>
+            <Arg For="_ => _.ChildContent" Value="_ButtonContent" />
+        </Arguments>
+        <Template>
+            <Button OnClick="OnButtonClick" @attributes="context.Args" />
+            <p style="margin-top: 12px;"><b>Click count:</b> @_ClickCount</p>
+        </Template>
+    </Story>
+
+</Stories>
+
+@code
+{
+    private RenderFragment _ButtonContent = @<text>Button</text>;
+
+    private string _CustomBackgroundColor = "#1ea7fd";
+
+    private Dictionary<string, object> _DisabledAttributes = new()
+    {
+        ["disabled"] = true
+    };
+
+    private int _ClickCount;
+
+    private void OnButtonClick(MouseEventArgs _)
+    {
+        this._ClickCount++;
+    }
+}
