@@ -1,3 +1,7 @@
+v.1.0.0-preview.86
+- Feature: Added two-way argument binding between preview events and story args, keeping canvas and docs previews synchronized.
+- Test: Added focused coverage for story argument updates, binding validation, and type conversion helpers.
+
 v.1.0.0-preview.85
 - Fix: Resolved an issue where `null` values for non-nullable reference-type story arguments were displayed as the literal string `"(null)"` on initial load. (Issue #119, PR #120 contributed by @warnaa)
 
