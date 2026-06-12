@@ -1,0 +1,42 @@
+<section class="controller-input-types-probe">
+    <h4 class="controller-input-types-probe__title">Controller input types probe</h4>
+    <ul class="controller-input-types-probe__list">
+        <li>Tags: @FormatArray(this.Tags)</li>
+        <li>Numbers: @FormatArray(this.Numbers)</li>
+        <li>Flags: @FormatArray(this.Flags)</li>
+        <li>Levels: @FormatArray(this.Levels)</li>
+    </ul>
+    <div class="controller-input-types-probe__template">
+        @this.Template
+    </div>
+</section>
+
+@code
+{
+    [Parameter]
+    public string[]? Tags { get; set; }
+
+    [Parameter]
+    public int[]? Numbers { get; set; }
+
+    [Parameter]
+    public bool[]? Flags { get; set; }
+
+    [Parameter]
+    public Level[]? Levels { get; set; }
+
+    [Parameter]
+    public RenderFragment? Template { get; set; }
+
+    private static string FormatArray<T>(IEnumerable<T>? values)
+    {
+        return values is null ? "null" : string.Join(", ", values);
+    }
+
+    public enum Level
+    {
+        Low,
+        Medium,
+        High
+    }
+}

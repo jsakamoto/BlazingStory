@@ -1,0 +1,47 @@
+@attribute [Stories("Example/API/Controls/Enum Controls")]
+
+<Stories TComponent="EnumControlProbe" Layout="typeof(CenteredLayout)">
+    <ArgType For="_ => _.ModeSelect" Control="ControlType.Select" />
+    <ArgType For="_ => _.ModeRadio" Control="ControlType.Radio" />
+
+    <Story Name="Both Nullable Enum Args Are Null">
+        <Description>
+            Side-by-side comparison of Select and Radio enum controls when both nullable args are null.
+        </Description>
+        <Arguments>
+            <Arg For="_ => _.ModeSelect" Value="_NullMode" />
+            <Arg For="_ => _.ModeRadio" Value="_NullMode" />
+        </Arguments>
+        <Template>
+            <EnumControlProbe @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Different Explicit Values">
+        <Description>
+            Demonstrates independent enum selection for Select and Radio controls.
+        </Description>
+        <Arguments>
+            <Arg For="_ => _.ModeSelect" Value="EnumControlProbe.ProbeMode.Advanced" />
+            <Arg For="_ => _.ModeRadio" Value="EnumControlProbe.ProbeMode.Expert" />
+        </Arguments>
+        <Template>
+            <EnumControlProbe @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Same Explicit Value">
+        <Arguments>
+            <Arg For="_ => _.ModeSelect" Value="EnumControlProbe.ProbeMode.Basic" />
+            <Arg For="_ => _.ModeRadio" Value="EnumControlProbe.ProbeMode.Basic" />
+        </Arguments>
+        <Template>
+            <EnumControlProbe @attributes="context.Args" />
+        </Template>
+    </Story>
+</Stories>
+
+@code
+{
+    private EnumControlProbe.ProbeMode? _NullMode = null;
+}

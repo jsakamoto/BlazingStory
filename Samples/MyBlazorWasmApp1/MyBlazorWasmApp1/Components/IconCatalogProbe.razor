@@ -1,0 +1,52 @@
+<section class="icon-catalog-probe">
+    <h4 class="icon-catalog-probe__title">Long enum probe</h4>
+    <ul class="icon-catalog-probe__list">
+        <li>IconSelect: @this.IconSelect</li>
+        <li>IconRadio: @this.IconRadio</li>
+    </ul>
+</section>
+
+@code
+{
+    [Parameter]
+    public IconToken IconSelect { get; set; } = IconToken.Home;
+
+    [Parameter]
+    public IconToken IconRadio { get; set; } = IconToken.Home;
+
+    public enum IconToken
+    {
+        Home,
+        Search,
+        Settings,
+        User,
+        Users,
+        Bell,
+        Heart,
+        Star,
+        Calendar,
+        Clock,
+        Camera,
+        Chat,
+        Mail,
+        Download,
+        Upload,
+        Lock,
+        Unlock,
+        Edit,
+        Trash,
+        Save,
+        Play,
+        Pause,
+        Stop,
+        Refresh,
+        Filter,
+        Plus,
+        Minus,
+        Check,
+        Close,
+        Warning,
+        Info,
+        Help
+    }
+}
