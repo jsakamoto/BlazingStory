@@ -53,7 +53,12 @@ public static class TypeConversionHelper
 
         // Collection type handling - critical for component properties that expect arrays or lists
         // This covers scenarios like selectedItems: string[], openIndexes: number[], etc.
-        if (expectedType.IsArray || (expectedType.IsGenericType && expectedType.GetGenericTypeDefinition() == typeof(IList<>)))
+        if (expectedType.IsArray ||
+            (expectedType.IsGenericType &&
+             (expectedType.GetGenericTypeDefinition() == typeof(IList<>) ||
+              expectedType.GetGenericTypeDefinition() == typeof(ICollection<>) ||
+              expectedType.GetGenericTypeDefinition() == typeof(IEnumerable<>) ||
+              expectedType.GetGenericTypeDefinition() == typeof(List<>))))
         {
             return ConvertToArrayOrList(value, expectedType);
         }
