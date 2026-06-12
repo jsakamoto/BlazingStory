@@ -1,0 +1,27 @@
+﻿<div style="background-color: #FFFFFF;">
+    <span>Enum Value: @this.TestEnum</span> <br/>
+    <span>Enum Integer: @this.TestInt</span>
+</div>
+
+@code {
+
+    /// <summary>
+    /// Test Enum Flag value
+    /// </summary>
+    [Parameter]
+    public Demo1Enum1 TestEnum { get; set; }
+
+    /// <summary>
+    /// Return the value as an integer
+    /// </summary>
+    public int TestInt { get
+        {
+            return (int)TestEnum;
+        }
+    }
+
+    /// <summary>
+    /// Initialize a new instance of <see cref="Demo1Comp"/> class.
+    /// </summary>
+    public Demo1Comp() { }
+}

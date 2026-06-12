@@ -33,11 +33,13 @@
     <Project Path="Tests/Fixtures/EmptyBlazorWasmApp1/EmptyBlazorWasmApp1.csproj" />
     <Project Path="Tests/Fixtures/RazorClassLib1/RazorClassLib1.csproj" />
     <Project Path="Tests/Fixtures/RazorClassLib2/RazorClassLib2.csproj" />
+    <Project Path="Tests/Fixtures/UserControllerStory1/UserControllerStory1.csproj" />
   </Folder>
   <Folder Name="/Tests/Fixtures/ToDoApp/">
     <Project Path="Tests/Fixtures/BlazorToDoApp/BlazorToDoApp.Stories/BlazorToDoApp.Stories.csproj" />
     <Project Path="Tests/Fixtures/BlazorToDoApp/BlazorToDoApp/BlazorToDoApp.csproj" />
   </Folder>
+  <Folder Name="/Tests/Fixtures/UserController/" />
   <Project Path="BlazingStory.Abstractions/BlazingStory.Abstractions.csproj" Id="bf01594c-3fe0-41db-a7c2-0366fb918fb8" />
   <Project Path="BlazingStory.Addons.BuiltIns/BlazingStory.Addons.BuiltIns.csproj" />
   <Project Path="BlazingStory.Addons/BlazingStory.Addons.csproj" />

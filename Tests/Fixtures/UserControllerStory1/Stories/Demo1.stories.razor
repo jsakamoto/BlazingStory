@@ -1,0 +1,16 @@
+﻿@attribute [Stories("Examples/UserControl1")]
+
+<Stories TComponent="Demo1Comp">
+    <ArgType For="_ => _.TestEnum">
+        <Demo1Controller />
+    </ArgType>
+    <Story Name="Default">
+        <Arguments>
+            <Arg For="_ => _.TestEnum" Value="Demo1Enum1.TestValue1 | Demo1Enum1.TestValue3" />
+        </Arguments>
+        <Template>
+            <Demo1Comp @attributes="context.Args">
+            </Demo1Comp>
+        </Template>
+    </Story>
+</Stories>
