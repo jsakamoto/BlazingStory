@@ -73,21 +73,24 @@ export const initializeCanvasFrame = () => {
         }, location.origin);
     });
     if (htmlElement) {
-        const resizeObserver = new ResizeObserver((entries) => {
-            for (const entry of entries) {
-                const height = Math.ceil(entry.target.getBoundingClientRect().height);
-                const iframeElement = getParentFrame();
-                if (iframeElement) {
-                    const event = new CustomEvent('frameheightchange', {
-                        cancelable: false,
-                        bubbles: true,
-                        detail: { height }
-                    });
-                    iframeElement.dispatchEvent(event);
-                }
+        const measureHeight = () => {
+            const style = wnd.getComputedStyle(body);
+            const marginTop = parseFloat(style.marginTop) || 0;
+            const marginBottom = parseFloat(style.marginBottom) || 0;
+            return Math.ceil(body.scrollHeight + marginTop + marginBottom);
+        };
+        const resizeObserver = new ResizeObserver(() => {
+            const iframeElement = getParentFrame();
+            if (iframeElement) {
+                const event = new CustomEvent('frameheightchange', {
+                    cancelable: false,
+                    bubbles: true,
+                    detail: { height: measureHeight() }
+                });
+                iframeElement.dispatchEvent(event);
             }
         });
-        resizeObserver.observe(htmlElement);
+        resizeObserver.observe(body);
     }
     wnd.BlazingStory = wnd.BlazingStory || {};
     wnd.BlazingStory.canvasFrameInitialized = true;
