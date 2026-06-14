@@ -77,7 +77,8 @@ export const initializeCanvasFrame = () => {
             const style = wnd.getComputedStyle(body);
             const marginTop = parseFloat(style.marginTop) || 0;
             const marginBottom = parseFloat(style.marginBottom) || 0;
-            return Math.ceil(body.scrollHeight + marginTop + marginBottom);
+            const zoom = parseFloat(style.getPropertyValue('--bs-zoom')) || 1;
+            return Math.ceil((body.scrollHeight + marginTop + marginBottom) * zoom);
         };
         const resizeObserver = new ResizeObserver(() => {
             const iframeElement = getParentFrame();
