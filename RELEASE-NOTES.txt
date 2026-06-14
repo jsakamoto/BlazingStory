@@ -1,3 +1,6 @@
+v.1.0.0-preview.86
+- Fix: Resolved an issue where the preview frame's height would shrink or jump unexpectedly when a story applied a scroll-lock (e.g., `position: fixed`) to the document body. (PR #121 contributed by @warnaa)
+
 v.1.0.0-preview.85
 - Fix: Resolved an issue where `null` values for non-nullable reference-type story arguments were displayed as the literal string `"(null)"` on initial load. (Issue #119, PR #120 contributed by @warnaa)
 
