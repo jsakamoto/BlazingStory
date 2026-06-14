@@ -1,8 +1,15 @@
 @using BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers
+@using BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.UserControllers
 @{
     var primaryType = this.Parameter.TypeStructure.PrimaryType;
 }
-@if (primaryType == typeof(string))
+@if (this.Parameter.UserControllerFragment != null) {
+    var ctx = new UserControllerContext(@Key, @Parameter, @Value, @OnInput);
+    <CascadingValue Name="Context" Value="@ctx">
+        @this.Parameter.UserControllerFragment
+    </CascadingValue>
+}
+else if (primaryType == typeof(string))
 {
     <TextParameterController Key="@Key" Parameter="Parameter" Value="Value" OnInput="OnInput" />
 }

@@ -32,6 +32,8 @@ internal class ComponentParameter : IComponentParameter
 
     public object? DefaultValue { get; set; }
 
+    public RenderFragment? UserControllerFragment { get; set; }
+
     internal ComponentParameter(Type componentType, PropertyInfo propertyInfo, IXmlDocComment xmlDocComment)
     {
         this._ComponentType = componentType;
