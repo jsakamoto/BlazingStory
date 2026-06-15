@@ -6,7 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <MD2RazorDefaultBaseClass>global::BlazingStory.Internals.Pages.MarkdownPageBase</MD2RazorDefaultBaseClass>
   </PropertyGroup>
 
   <ItemGroup>
