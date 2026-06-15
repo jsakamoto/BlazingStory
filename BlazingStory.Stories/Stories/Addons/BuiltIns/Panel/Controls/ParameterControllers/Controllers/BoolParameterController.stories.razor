@@ -1,16 +1,14 @@
-@attribute [Stories("Internals/Pages/Canvas/Controls/ParameterControllers/Controllers/BoolParameterController")]
+@using BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers
+@attribute [Stories("Addons/BuiltIns/Panel/Controls/ParameterControllers/Controllers/BoolParameterController")]
 
 <Stories TComponent="BoolParameterController">
 
     <Story Name="Nullable - No Value">
         <Template>
             <Stack>
-                <BoolParameterController Key="key"
-                                           Parameter="NullableBool"
-                                           Value="_V1"
-                                           OnInput="arg => _V1 = arg.Value">
-                </BoolParameterController>
-
+                <CascadingValue Value="@(new ParameterControllerContext("key", NullableBool, _V1, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V1 = arg.Value)))">
+                    <BoolParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V1 = Unknown.Value" />
             </Stack>
             <p>@(_V1?.ToString() ?? "(null)")</p>
@@ -20,11 +18,9 @@
     <Story Name="Nullable - Initial Value">
         <Template>
             <Stack>
-                <BoolParameterController Key="key"
-                                           Parameter="NullableBool"
-                                           Value="_V2"
-                                           OnInput="arg => _V2 = arg.Value">
-                </BoolParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", NullableBool, _V2, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V2 = arg.Value)))">
+                    <BoolParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V2 = 123" />
             </Stack>
             <p>@(_V2?.ToString() ?? "(null)")</p>
@@ -34,11 +30,9 @@
     <Story Name="Nullable - Null Value">
         <Template>
             <Stack>
-                <BoolParameterController Key="key"
-                                           Parameter="NullableBool"
-                                           Value="_V3"
-                                           OnInput="arg => _V3 = arg.Value">
-                </BoolParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", NullableBool, _V3, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V3 = arg.Value)))">
+                    <BoolParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V3 = null" />
             </Stack>
             <p>@(_V3?.ToString() ?? "(null)")</p>
@@ -48,11 +42,9 @@
     <Story Name="Non Nullable - No Value">
         <Template>
             <Stack>
-                <BoolParameterController Key="key"
-                                           Parameter="Bool"
-                                           Value="_V1"
-                                           OnInput="arg => _V1 = arg.Value">
-                </BoolParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", Bool, _V1, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V1 = arg.Value)))">
+                    <BoolParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V1 = Unknown.Value" />
             </Stack>
             <p>@(_V1?.ToString() ?? "(null)")</p>
@@ -62,11 +54,9 @@
     <Story Name="Non Nullable - Initial Value">
         <Template>
             <Stack>
-                <BoolParameterController Key="key"
-                                           Parameter="Bool"
-                                           Value="_V2"
-                                           OnInput="arg => _V2 = arg.Value">
-                </BoolParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", Bool, _V2, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V2 = arg.Value)))">
+                    <BoolParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V2 = 123" />
             </Stack>
             <p>@(_V2?.ToString() ?? "(null)")</p>
@@ -76,11 +66,9 @@
     <Story Name="Non Nullable - Null Value">
         <Template>
             <Stack>
-                <BoolParameterController Key="key"
-                                           Parameter="Bool"
-                                           Value="_V3"
-                                           OnInput="arg => _V3 = arg.Value">
-                </BoolParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", Bool, _V3, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V3 = arg.Value)))">
+                    <BoolParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V3 = null" />
             </Stack>
             <p>@(_V3?.ToString() ?? "(null)")</p>

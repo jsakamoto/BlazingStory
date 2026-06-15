@@ -1,4 +1,5 @@
-@attribute [Stories("Internals/Pages/Canvas/Controls/ParameterControllers/Controllers/NumberParameterController")]
+@using BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers
+@attribute [Stories("Addons/BuiltIns/Panel/Controls/ParameterControllers/Controllers/NumberParameterController")]
 
 <Stories TComponent="NumberParameterController">
 
@@ -7,12 +8,9 @@
     <Story Name="Nullable Int32 - No Value">
         <Template>
             <Stack>
-                <NumberParameterController Key="key"
-                                           Parameter="NullableInt32"
-                                           Value="_V1Unknown"
-                                           OnInput="arg => _V1Unknown = arg.Value">
-                </NumberParameterController>
-
+                <CascadingValue Value="@(new ParameterControllerContext("key", NullableInt32, _V1Unknown, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V1Unknown = arg.Value)))">
+                    <NumberParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V1Unknown = Unknown.Value" />
             </Stack>
             @ValueDisplay(_V1Unknown)
@@ -22,11 +20,9 @@
     <Story Name="Nullable Int32 - Initial Value">
         <Template>
             <Stack>
-                <NumberParameterController Key="key"
-                                           Parameter="NullableInt32"
-                                           Value="_V2Int32"
-                                           OnInput="arg => _V2Int32 = arg.Value">
-                </NumberParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", NullableInt32, _V2Int32, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V2Int32 = arg.Value)))">
+                    <NumberParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V2Int32 = 123" />
             </Stack>
             @ValueDisplay(_V2Int32)
@@ -36,11 +32,9 @@
     <Story Name="Nullable Int32 - Null Value">
         <Template>
             <Stack>
-                <NumberParameterController Key="key"
-                                           Parameter="NullableInt32"
-                                           Value="_V3Null"
-                                           OnInput="arg => _V3Null = arg.Value">
-                </NumberParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", NullableInt32, _V3Null, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V3Null = arg.Value)))">
+                    <NumberParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V3Null = null" />
             </Stack>
             @ValueDisplay(_V3Null)
@@ -52,11 +46,9 @@
     <Story Name="Non Nullable Int32 - No Value">
         <Template>
             <Stack>
-                <NumberParameterController Key="key"
-                                           Parameter="Int32"
-                                           Value="_V1Unknown"
-                                           OnInput="arg => _V1Unknown = arg.Value">
-                </NumberParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", Int32, _V1Unknown, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V1Unknown = arg.Value)))">
+                    <NumberParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V1Unknown = Unknown.Value" />
             </Stack>
             @ValueDisplay(_V1Unknown)
@@ -66,12 +58,9 @@
     <Story Name="Non Nullable Int32 - Initial Value">
         <Template>
             <Stack>
-
-                <NumberParameterController Key="key"
-                                           Parameter="Int32"
-                                           Value="_V2Int32"
-                                           OnInput="arg => _V2Int32 = arg.Value">
-                </NumberParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", Int32, _V2Int32, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V2Int32 = arg.Value)))">
+                    <NumberParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V2Int32 = 123" />
             </Stack>
             @ValueDisplay(_V2Int32)
@@ -81,12 +70,9 @@
     <Story Name="Non Nullable Int32 - Null Value">
         <Template>
             <Stack>
-
-                <NumberParameterController Key="key"
-                                           Parameter="Int32"
-                                           Value="_V3Null"
-                                           OnInput="arg => _V3Null = arg.Value">
-                </NumberParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", Int32, _V3Null, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V3Null = arg.Value)))">
+                    <NumberParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V3Null = null" />
             </Stack>
             @ValueDisplay(_V3Null)
@@ -98,12 +84,9 @@
     <Story Name="Nullable Decimal - No Value">
         <Template>
             <Stack>
-                <NumberParameterController Key="key"
-                                           Parameter="NullableDecimal"
-                                           Value="_V1Unknown"
-                                           OnInput="arg => _V1Unknown = arg.Value">
-                </NumberParameterController>
-
+                <CascadingValue Value="@(new ParameterControllerContext("key", NullableDecimal, _V1Unknown, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V1Unknown = arg.Value)))">
+                    <NumberParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V1Unknown = Unknown.Value" />
             </Stack>
             @ValueDisplay(_V1Unknown)
@@ -113,11 +96,9 @@
     <Story Name="Nullable Decimal - Initial Value">
         <Template>
             <Stack>
-                <NumberParameterController Key="key"
-                                           Parameter="NullableDecimal"
-                                           Value="_V2Decimal"
-                                           OnInput="arg => _V2Decimal = arg.Value">
-                </NumberParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", NullableDecimal, _V2Decimal, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V2Decimal = arg.Value)))">
+                    <NumberParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V2Decimal = 123.45m" />
             </Stack>
             @ValueDisplay(_V2Decimal)
@@ -127,11 +108,9 @@
     <Story Name="Nullable Decimal - Null Value">
         <Template>
             <Stack>
-                <NumberParameterController Key="key"
-                                           Parameter="NullableDecimal"
-                                           Value="_V3Null"
-                                           OnInput="arg => _V3Null = arg.Value">
-                </NumberParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", NullableDecimal, _V3Null, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V3Null = arg.Value)))">
+                    <NumberParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V3Null = null" />
             </Stack>
             @ValueDisplay(_V3Null)
@@ -143,11 +122,9 @@
     <Story Name="Non Nullable Decimal - No Value">
         <Template>
             <Stack>
-                <NumberParameterController Key="key"
-                                           Parameter="Decimal"
-                                           Value="_V1Unknown"
-                                           OnInput="arg => _V1Unknown = arg.Value">
-                </NumberParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", Decimal, _V1Unknown, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V1Unknown = arg.Value)))">
+                    <NumberParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V1Unknown = Unknown.Value" />
             </Stack>
             @ValueDisplay(_V1Unknown)
@@ -157,12 +134,9 @@
     <Story Name="Non Nullable Decimal - Initial Value">
         <Template>
             <Stack>
-
-                <NumberParameterController Key="key"
-                                           Parameter="Decimal"
-                                           Value="_V2Decimal"
-                                           OnInput="arg => _V2Decimal = arg.Value">
-                </NumberParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", Decimal, _V2Decimal, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V2Decimal = arg.Value)))">
+                    <NumberParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V2Decimal = 123.45m" />
             </Stack>
             @ValueDisplay(_V2Decimal)
@@ -172,12 +146,9 @@
     <Story Name="Non Nullable Decimal - Null Value">
         <Template>
             <Stack>
-
-                <NumberParameterController Key="key"
-                                           Parameter="Decimal"
-                                           Value="_V3Null"
-                                           OnInput="arg => _V3Null = arg.Value">
-                </NumberParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", Decimal, _V3Null, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _V3Null = arg.Value)))">
+                    <NumberParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _V3Null = null" />
             </Stack>
             @ValueDisplay(_V3Null)
