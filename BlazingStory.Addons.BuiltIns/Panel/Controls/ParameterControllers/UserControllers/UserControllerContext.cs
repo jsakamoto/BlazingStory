@@ -9,27 +9,27 @@ namespace BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.UserC
 public class UserControllerContext
 {
     /// <summary>
-    /// Gets or sets the unique key used to identify this controller instance.
+    /// Gets the unique key used to identify this controller instance.
     /// </summary>
-    public string Key { get; set; }
+    public string Key { get; }
 
     /// <summary>
-    /// Gets or sets the component parameter metadata this controller is bound to.
+    /// Gets the component parameter metadata this controller is bound to.
     /// </summary>
-    public IComponentParameter Parameter { get; set; }
+    public IComponentParameter Parameter { get; }
 
     /// <summary>
-    /// Gets or sets the current value of the parameter.
+    /// Gets the current value of the parameter.
     /// </summary>
-    public object? Value { get; set; }
+    public object? Value { get; }
 
     /// <summary>
-    /// Gets or sets the callback invoked when the user changes the parameter value.
+    /// Gets the callback invoked when the user changes the parameter value.
     /// </summary>
-    public EventCallback<ParameterInputEventArgs> OnInput { get; set; }
+    public EventCallback<ParameterInputEventArgs> OnInput { get; }
 
     /// <summary>
-    /// Default Constructor.
+    /// Initializes a new instance of the <see cref="UserControllerContext"/> class.
     /// </summary>
     public UserControllerContext(string key, IComponentParameter param, object? value, EventCallback<ParameterInputEventArgs> oninput)
     {

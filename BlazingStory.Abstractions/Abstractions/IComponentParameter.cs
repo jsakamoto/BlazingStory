@@ -47,7 +47,7 @@ public interface IComponentParameter
     object? DefaultValue { get; set; }
 
     /// <summary>
-    /// Gets or sets the user controllers if defined.
+    /// Gets or sets the user-provided parameter controller fragment, if specified for this parameter.
     /// </summary>
     RenderFragment? UserControllerFragment { get; set; }
 

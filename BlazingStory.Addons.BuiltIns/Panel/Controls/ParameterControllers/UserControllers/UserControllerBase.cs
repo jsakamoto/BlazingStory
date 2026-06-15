@@ -19,8 +19,8 @@ public class UserControllerBase : ComponentBase
     /// <param name="value">The new value to report.</param>
     protected async Task OnInputAsync(object? value)
     {
-        if (this.Context.Parameter == null) throw new NullReferenceException("Parameter is null.");
+        if (this.Context is null || this.Context.Parameter is null)
+            throw new InvalidOperationException("UserControllerContext is not initialized (missing or invalid cascading context).");
         await this.Context.OnInput.InvokeAsync(new ParameterInputEventArgs(value, this.Context.Parameter));
     }
-
 }
