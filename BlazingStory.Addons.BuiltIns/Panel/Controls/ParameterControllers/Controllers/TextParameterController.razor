@@ -1,11 +1,11 @@
 @inherits ParameterControllerBase
 
-@if (Parameter?.Control is ControlType.Color)
+@if (this.Context.Parameter?.Control is ControlType.Color)
 {
-    var colorValue = (Value ?? Parameter.DefaultValue) as string;
+    var colorValue = (this.Context.Value ?? this.Context.Parameter.DefaultValue) as string;
     <ColorInput Value="@colorValue" PlaceHolder="Choose color..." OnInput="@((args) => OnInputAsync(args.Value))" />
 }
 else
 {
-    <TextArea PlaceHolder="Edit string..." Value="@(Value as string)" OnInput="@((args) => OnInputAsync(args.Value))" />
+    <TextArea PlaceHolder="Edit string..." Value="@(this.Context.Value as string)" OnInput="@((args) => OnInputAsync(args.Value))" />
 }

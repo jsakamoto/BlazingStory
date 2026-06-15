@@ -26,10 +26,7 @@
         {
             parameter.Control = this.Control;
             parameter.DefaultValue = this.DefaultValue;
-            if (ChildContent != null)
-            {
-                parameter.UserControllerFragment = ChildContent;
-            }
+            parameter.UserControllerFragment = this.ChildContent;
         }
     }
 }

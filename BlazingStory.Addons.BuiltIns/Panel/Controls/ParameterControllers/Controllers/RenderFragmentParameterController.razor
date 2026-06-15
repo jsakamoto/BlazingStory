@@ -14,7 +14,7 @@
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        var markupString = await RenderFragmentKit.TryToMarkupStringAsync(this.Value);
+        var markupString = await RenderFragmentKit.TryToMarkupStringAsync(this.Context.Value);
         this.StringValue = WebUtility.HtmlDecode(markupString);
     }
 

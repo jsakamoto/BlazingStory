@@ -2,7 +2,7 @@
 @using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
 @inherits ParameterControllerBase
 
-@if (this.Value is Unknown)
+@if (this.Context.Value is Unknown)
 {
     <SquareButton OnClick="InitializeEmpty">Set array</SquareButton>
 }
@@ -65,7 +65,7 @@ else if (this._elementType is not null)
 }
 else
 {
-    <span>@(Value?.ToString() ?? "-")</span>
+    <span>@(this.Context.Value?.ToString() ?? "-")</span>
 }
 
 @code {
@@ -81,7 +81,7 @@ else
 
     private void InitializeArrayItems()
     {
-        var primaryType = this.Parameter.TypeStructure.PrimaryType;
+        var primaryType = this.Context.Parameter.TypeStructure.PrimaryType;
 
         // Determine element type
 #pragma warning disable IL2077 // The return value of GetElementType/GetGenericArguments does not have matching annotations.
@@ -98,7 +98,7 @@ else
 
         // Initialize items from current value
         this._arrayItems.Clear();
-        if (this.Value is IEnumerable enumerable and not string)
+        if (this.Context.Value is IEnumerable enumerable and not string)
         {
             foreach (var item in enumerable)
             {
@@ -178,7 +178,7 @@ else
     {
         if (this._elementType == null) return;
 
-        var primaryType = this.Parameter.TypeStructure.PrimaryType;
+        var primaryType = this.Context.Parameter.TypeStructure.PrimaryType;
         object? arrayValue = null;
 
         if (primaryType.IsArray)
