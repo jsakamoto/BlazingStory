@@ -1,44 +1,26 @@
-using BlazingStory.Abstractions;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers;
 
 /// <summary>
-/// Base class for all parameter controller components, providing common parameters and an input notification helper.
+/// Base class for all parameter controller components, providing a cascading parameter for the controller context and an input notification helper.
 /// </summary>
 public class ParameterControllerBase : ComponentBase
 {
     /// <summary>
-    /// Gets or sets the unique key used to identify this controller instance.
+    /// Gets or sets the context for the parameter controller.
     /// </summary>
-    [Parameter, EditorRequired]
-    public required string Key { get; set; }
+    [CascadingParameter]
+    public required ParameterControllerContext Context { get; set; }
 
     /// <summary>
-    /// Gets or sets the component parameter metadata this controller is bound to.
-    /// </summary>
-    [Parameter, EditorRequired]
-    public required IComponentParameter Parameter { get; set; }
-
-    /// <summary>
-    /// Gets or sets the current value of the parameter.
-    /// </summary>
-    [Parameter, EditorRequired]
-    public object? Value { get; set; }
-
-    /// <summary>
-    /// Gets or sets the callback invoked when the user changes the parameter value.
-    /// </summary>
-    [Parameter]
-    public EventCallback<ParameterInputEventArgs> OnInput { get; set; }
-
-    /// <summary>
-    /// Invokes the <see cref="OnInput"/> callback with the supplied value wrapped in a <see cref="ParameterInputEventArgs"/>.
+    /// Invokes the <see cref="ParameterControllerContext.OnInput"/> callback with the supplied value wrapped in a <see cref="ParameterInputEventArgs"/>.
     /// </summary>
     /// <param name="value">The new value to report.</param>
     protected async Task OnInputAsync(object? value)
     {
-        if (this.Parameter == null) throw new NullReferenceException("Parameter is null.");
-        await this.OnInput.InvokeAsync(new ParameterInputEventArgs(value, this.Parameter));
+        if (this.Context is null || this.Context.Parameter is null)
+            throw new InvalidOperationException("ParameterControllerContext is not initialized (missing or invalid cascading context).");
+        await this.Context.OnInput.InvokeAsync(new(value, this.Context.Parameter));
     }
 }

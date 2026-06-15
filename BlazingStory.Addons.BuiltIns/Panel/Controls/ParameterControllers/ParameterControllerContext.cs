@@ -1,12 +1,12 @@
 ﻿using BlazingStory.Abstractions;
 using Microsoft.AspNetCore.Components;
 
-namespace BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.UserControllers;
+namespace BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers;
 
 /// <summary>
-/// Context for passing to user controllers.
+/// Context for passing to parameter controllers.
 /// </summary>
-public class UserControllerContext
+public class ParameterControllerContext
 {
     /// <summary>
     /// Gets the unique key used to identify this controller instance.
@@ -29,9 +29,9 @@ public class UserControllerContext
     public EventCallback<ParameterInputEventArgs> OnInput { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="UserControllerContext"/> class.
+    /// Initializes a new instance of the <see cref="ParameterControllerContext"/> class.
     /// </summary>
-    public UserControllerContext(string key, IComponentParameter param, object? value, EventCallback<ParameterInputEventArgs> oninput)
+    public ParameterControllerContext(string key, IComponentParameter param, object? value, EventCallback<ParameterInputEventArgs> oninput)
     {
         this.Key = key;
         this.Parameter = param;

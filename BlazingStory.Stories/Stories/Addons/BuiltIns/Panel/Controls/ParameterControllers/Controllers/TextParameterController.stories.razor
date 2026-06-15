@@ -1,18 +1,16 @@
-@attribute [Stories("Internals/Pages/Canvas/Controls/ParameterControllers/Controllers/TextParameterController")]
+@using BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers
+@attribute [Stories("Addons/BuiltIns/Panel/Controls/ParameterControllers/Controllers/TextParameterController")]
 
 <Stories TComponent="TextParameterController">
 
     <Story Name="Text - No Value">
         <Template>
             <Stack>
-                <div style="flex:1">
-                    <TextParameterController Key="key"
-                                             Parameter="String"
-                                             Value="_Text1"
-                                             OnInput="arg => _Text1 = arg.Value">
-                    </TextParameterController>
-                </div>
-
+                <CascadingValue Value="@(new ParameterControllerContext("key", String, _Text1, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _Text1 = arg.Value)))">
+                    <div style="flex:1">
+                        <TextParameterController />
+                    </div>
+                </CascadingValue>
                 <ResetButton OnClick="() => _Text1 = Unknown.Value" />
             </Stack>
             <p>@(_Text1?.ToString() ?? "(null)")</p>
@@ -22,13 +20,11 @@
     <Story Name="Text - Initial Value">
         <Template>
             <Stack>
-                <div style="flex:1">
-                    <TextParameterController Key="key"
-                                             Parameter="String"
-                                             Value="_Text2"
-                                             OnInput="arg => _Text2 = arg.Value">
-                    </TextParameterController>
-                </div>
+                <CascadingValue Value="@(new ParameterControllerContext("key", String, _Text2, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _Text2 = arg.Value)))">
+                    <div style="flex:1">
+                        <TextParameterController />
+                    </div>
+                </CascadingValue>
                 <ResetButton OnClick="@(() => _Text2 = "Hello, World.")" />
             </Stack>
             <p>@(_Text2?.ToString() ?? "(null)")</p>
@@ -38,13 +34,11 @@
     <Story Name="Text - Null Value">
         <Template>
             <Stack>
-                <div style="flex:1">
-                    <TextParameterController Key="key"
-                                             Parameter="String"
-                                             Value="_Text3"
-                                             OnInput="arg => _Text3 = arg.Value">
-                    </TextParameterController>
-                </div>
+                <CascadingValue Value="@(new ParameterControllerContext("key", String, _Text3, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _Text3 = arg.Value)))">
+                    <div style="flex:1">
+                        <TextParameterController />
+                    </div>
+                </CascadingValue>
                 <ResetButton OnClick="() => _Text3 = null" />
             </Stack>
             <p>@(_Text3?.ToString() ?? "(null)")</p>
@@ -55,11 +49,9 @@
     <Story Name="Color - No Value">
         <Template>
             <Stack>
-                <TextParameterController Key="key"
-                                         Parameter="Color"
-                                         Value="_Color1"
-                                         OnInput="arg => _Color1 = arg.Value">
-                </TextParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", Color, _Color1, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _Color1 = arg.Value)))">
+                    <TextParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _Color1 = Unknown.Value" />
             </Stack>
             <p>@(_Color1?.ToString() ?? "(null)")</p>
@@ -69,11 +61,9 @@
     <Story Name="Color - Initial Value">
         <Template>
             <Stack>
-                <TextParameterController Key="key"
-                                         Parameter="Color"
-                                         Value="_Color2"
-                                         OnInput="arg => _Color2 = arg.Value">
-                </TextParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", Color, _Color2, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _Color2 = arg.Value)))">
+                    <TextParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="@(() => _Color2 = "royalblue")" />
             </Stack>
             <p>@(_Color2?.ToString() ?? "(null)")</p>
@@ -83,11 +73,9 @@
     <Story Name="Color - Null Value">
         <Template>
             <Stack>
-                <TextParameterController Key="key"
-                                         Parameter="Color"
-                                         Value="_Color3"
-                                         OnInput="arg => _Color3 = arg.Value">
-                </TextParameterController>
+                <CascadingValue Value="@(new ParameterControllerContext("key", Color, _Color3, EventCallback.Factory.Create<ParameterInputEventArgs>(this, arg => _Color3 = arg.Value)))">
+                    <TextParameterController />
+                </CascadingValue>
                 <ResetButton OnClick="() => _Color3 = null" />
             </Stack>
             <p>@(_Color3?.ToString() ?? "(null)")</p>
