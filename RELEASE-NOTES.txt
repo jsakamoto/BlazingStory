@@ -1,3 +1,6 @@
+v.1.0.0-preview.87
+- Feature: Added support for user-defined custom parameter controllers, enabling story authors to build tailored parameter editing UIs beyond the built-in controls. (PR #123 contributed by @Hecatron)
+
 v.1.0.0-preview.86
 - Fix: Resolved an issue where the preview frame's height would shrink or jump unexpectedly when a story applied a scroll-lock (e.g., `position: fixed`) to the document body. (PR #121 contributed by @warnaa)
 
