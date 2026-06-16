@@ -1,5 +1,4 @@
-<button type="button" class="@this.GetCssClasses()" style="@this.GetStyles()" @attributes="this.Attributes"
-        @onclick="OnClick">
+<button type="button" class="@this.GetCssClasses()" style="@this.GetStyles()" @attributes="this.Attributes" @onclick="OnClick">
     @this.ChildContent
 </button>
 
@@ -21,7 +20,7 @@
     /// How large should the button be?
     /// </summary>
     [Parameter]
-    public ButtonSize Size { get; set; } = ButtonSize.Medium;
+	public ButtonSize Size { get; set; } = ButtonSize.Medium;
 
     /// <summary>
     /// Button contents
@@ -46,11 +45,6 @@
 
     private string GetStyles()
     {
-        var backgroundColor = string.IsNullOrWhiteSpace(this.BackgroundColor) ? (this.Primary ? "var(--bs-accent-color)" :
-"var(--bs-inputs-background)") : this.BackgroundColor;
-        var textColor = this.Primary ? "var(--bs-white)" : "var(--bs-text-color)";
-        var boxShadow = this.Primary ? "none" : "var(--bs-border-color) 0 0 0 1px inset";
-
-        return $"background-color: {backgroundColor}; color: {textColor}; box-shadow: {boxShadow}";
+        return string.IsNullOrEmpty(this.BackgroundColor) ? "" : $"background-color: {this.BackgroundColor}";
     }
 }

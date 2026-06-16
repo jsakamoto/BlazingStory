@@ -9,14 +9,14 @@
 }
 
 .blazingstory-button--primary {
-    background-color: var(--bs-accent-color);
-    color: var(--bs-white);
+    background-color: #555ab9;
+    color: white;
 }
 
 .blazingstory-button--secondary {
-    box-shadow: var(--bs-border-color) 0px 0px 0px 1px inset;
-    background-color: var(--bs-inputs-background);
-    color: var(--bs-text-color);
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px inset;
+    background-color: white;
+    color: #333;
 }
 
 .blazingstory-button--small {

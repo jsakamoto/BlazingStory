@@ -1,4 +1,4 @@
-<span class="rating">
+<span style="display: flex;">
     <span style="color: @(this.Color ?? _DefaultColor)">
         @for (var i = 0; i < Math.Min(this.Value, this.Max); i++)
         {
@@ -8,7 +8,7 @@
     <span>
         @for (var i = 0; i < Math.Max(0, this.Max - this.Value); i++)
         {
-            <span @key="@("nostar-" + i)">☆</span>
+            <span @key="@("nostar-"+i)">☆</span>
         }
     </span>
 </span>
@@ -27,7 +27,7 @@
     [Parameter]
     public int Max { get; set; } = 5;
 
-    private const string _DefaultColor = "var(--bs-accent-color)";
+    private const string _DefaultColor = "goldenrod";
 
     /// <summary>
     /// Gets or sets the color of the rating mark.
