@@ -1,7 +1,6 @@
 using BlazingStory.Abstractions;
 using BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers;
 using BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers;
-using BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.UserControllers;
 using BlazingStory.Types;
 using Bunit;
 using Microsoft.AspNetCore.Components;
@@ -24,11 +23,13 @@ public class ParameterControllerTest
         using var ctx = new BunitContext();
 
         var customFragmentRendered = false;
-        RenderFragment customFragment = (builder) =>
+        var customFragment = (RenderFragment)(builder =>
         {
             customFragmentRendered = true;
-            builder.AddContent(0, "Custom Fragment");
-        };
+            builder.OpenElement(0, "div");
+            builder.AddContent(1, "Custom Fragment");
+            builder.CloseElement();
+        });
 
         var parameter = CreateMockParameter(userControllerFragment: customFragment);
 
@@ -39,46 +40,43 @@ public class ParameterControllerTest
             .Add(c => c.Value, "test-value"));
 
         // Then
-        customFragmentRendered.Is(true, "Custom fragment should be rendered when UserControllerFragment is set");
-        cut.Markup.Contains("Custom Fragment").Is(true, "Custom fragment content should be visible in markup");
+        customFragmentRendered.IsTrue("Custom fragment should be rendered when UserControllerFragment is set");
+        cut.Markup.Normalize().Is("<div>Custom Fragment</div>", "Custom fragment content should be visible in markup");
     }
 
     /// <summary>
-    /// Verifies that UserControllerContext is properly cascaded to the custom fragment.
+    /// Verifies that ParameterControllerContext is properly cascaded to the custom fragment.
     /// </summary>
     [Test]
-    public void ParameterController_CascadeUserControllerContext_WhenCustomFragmentIsRendered()
+    public void ParameterController_CascadeParameterControllerContext_WhenCustomFragmentIsRendered()
     {
         // Given
         using var ctx = new BunitContext();
 
         var testKey = "test-param-key";
         var testValue = "test-param-value";
-        UserControllerContext? capturedContext = null;
+        var capturedContext = default(ParameterControllerContext?);
 
-        // Use a dummy object as the component instance
-        var componentInstance = new object();
-
-        RenderFragment customFragment = (builder) =>
+        var customFragment = (RenderFragment)(builder =>
         {
-            // This render fragment captures the cascading UserControllerContext
+            // This render fragment captures the cascading ParameterControllerContext
             builder.OpenComponent<CascadingParameterCapture>(0);
-            var onContextCaptured = 
-                EventCallback.Factory.Create<UserControllerContext?>(componentInstance, (userCtx) => capturedContext = userCtx);
+            var onContextCaptured =
+                EventCallback.Factory.Create<ParameterControllerContext?>(new(), (userCtx) => capturedContext = userCtx);
             builder.AddAttribute(1, "OnContextCaptured", onContextCaptured);
             builder.CloseComponent();
-        };
+        });
 
         var parameter = CreateMockParameter(userControllerFragment: customFragment);
 
         // When
-        var cut = ctx.Render<ParameterController>(builder => builder
+        ctx.Render<ParameterController>(builder => builder
             .Add(c => c.Key, testKey)
             .Add(c => c.Parameter, parameter)
             .Add(c => c.Value, testValue));
 
         // Then
-        capturedContext.IsNotNull("UserControllerContext should be cascaded to child components");
+        capturedContext.IsNotNull("ParameterControllerContext should be cascaded to child components");
         capturedContext.Key.Is(testKey, "Context key should match the passed key");
         capturedContext.Value.Is(testValue, "Context value should match the passed value");
     }
@@ -103,7 +101,8 @@ public class ParameterControllerTest
         // Then
         // TextParameterController should be rendered for string type, which renders a TextArea component
         // Look for the component signature that indicates it was rendered
-        cut.Markup.Contains("textarea").Is(true, "TextArea component should be rendered for string type when custom fragment is null");
+        var textarea = cut.Find("textarea").IsNotNull("TextArea component should be rendered for string type when custom fragment is null");
+        textarea.GetAttribute("value").Is("test-value", "TextArea should have the correct value");
     }
 
     /// <summary>
@@ -115,11 +114,12 @@ public class ParameterControllerTest
         // Given
         using var ctx = new BunitContext();
 
-        var customFragmentContent = "Custom Boolean Controller";
-        RenderFragment customFragment = (builder) =>
+        var customFragment = (RenderFragment)(builder =>
         {
-            builder.AddContent(0, customFragmentContent);
-        };
+            builder.OpenElement(0, "div");
+            builder.AddContent(1, "Custom Boolean Controller");
+            builder.CloseElement();
+        });
 
         // Create a bool parameter with a custom fragment
         var parameter = CreateMockParameter(primaryType: typeof(bool), userControllerFragment: customFragment);
@@ -131,7 +131,7 @@ public class ParameterControllerTest
             .Add(c => c.Value, true));
 
         // Then
-        cut.Markup.Contains(customFragmentContent).Is(true,
+        cut.Markup.Normalize().Is("<div>Custom Boolean Controller</div>",
             "Custom fragment should take precedence over built-in BoolParameterController");
         cut.FindComponents<BoolParameterController>().Count.Is(0,
             "Built-in BoolParameterController should not be rendered when custom fragment is present");
@@ -148,22 +148,22 @@ public class ParameterControllerTest
 
         var testKey = "param-1";
         var testValue = 42;
-        UserControllerContext? capturedContext = null;
+        var capturedContext = default(ParameterControllerContext?);
 
         var componentInstance = new object();
-        RenderFragment customFragment = (builder) =>
+        var customFragment = (RenderFragment)(builder =>
         {
             builder.OpenComponent<CascadingParameterCapture>(0);
-            var onContextCaptured = 
-                EventCallback.Factory.Create<UserControllerContext?>(componentInstance, (userCtx) => capturedContext = userCtx);
+            var onContextCaptured =
+                EventCallback.Factory.Create<ParameterControllerContext?>(componentInstance, (userCtx) => capturedContext = userCtx);
             builder.AddAttribute(1, "OnContextCaptured", onContextCaptured);
             builder.CloseComponent();
-        };
+        });
 
         var parameter = CreateMockParameter(userControllerFragment: customFragment);
 
         // When
-        var cut = ctx.Render<ParameterController>(builder => builder
+        ctx.Render<ParameterController>(builder => builder
             .Add(c => c.Key, testKey)
             .Add(c => c.Parameter, parameter)
             .Add(c => c.Value, testValue));
@@ -172,7 +172,7 @@ public class ParameterControllerTest
         // Verify the context is available and contains all required properties
         capturedContext.IsNotNull("Context should be available");
         capturedContext.Key.Is(testKey, "Context key should be set");
-        capturedContext.Value?.Equals(testValue).Is(true, "Context value should be set");
+        capturedContext.Value?.Equals(testValue).IsTrue("Context value should be set");
         capturedContext.Parameter.IsNotNull("Context parameter should be set");
         // The OnInput callback is set by ParameterController, even if empty
         capturedContext.OnInput.IsNotNull("Context OnInput callback should be set");
@@ -202,15 +202,15 @@ public class ParameterControllerTest
 }
 
 /// <summary>
-/// Helper component that captures the cascading UserControllerContext for testing purposes.
+/// Helper component that captures the cascading ParameterControllerContext for testing purposes.
 /// </summary>
 internal class CascadingParameterCapture : ComponentBase
 {
-    [CascadingParameter(Name = "Context")]
-    public UserControllerContext? Context { get; set; }
+    [CascadingParameter]
+    public ParameterControllerContext? Context { get; set; }
 
     [Parameter]
-    public EventCallback<UserControllerContext?> OnContextCaptured { get; set; }
+    public EventCallback<ParameterControllerContext?> OnContextCaptured { get; set; }
 
     protected override Task OnInitializedAsync()
     {
