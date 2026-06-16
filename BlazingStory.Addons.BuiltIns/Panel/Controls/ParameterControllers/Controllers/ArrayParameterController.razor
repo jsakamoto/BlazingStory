@@ -37,13 +37,13 @@ else if (this._elementType is not null)
                             }
                             else if (_elementType == typeof(bool))
                             {
-                                <ToggleButton Value="@(_arrayItems[index] is true)"
+                                <ToggleButton Value="@(_arrayItems[index] is true)" 
                                               OnChange="@(value => UpdateItem(index, value))" />
                             }
                             else if (this._elementType is not null && TypeUtility.IsNumericType(this._elementType))
                             {
                                 <NumberInput Value="@(_arrayItems[index]?.ToString() ?? "")" PlaceHolder="Enter number..."
-                                             AllowDecimalPoint="@TypeUtility.IsDecimalPointType(this._elementType)""
+                                             AllowDecimalPoint="@TypeUtility.IsDecimalPointType(this._elementType)"
                                              OnInput="@(e => UpdateItem(index, e.Value?.ToString()))" />
                             }
                             else if (_elementType?.IsEnum == true)
@@ -85,9 +85,9 @@ else
 
         // Determine element type
 #pragma warning disable IL2077 // The return value of GetElementType/GetGenericArguments does not have matching annotations.
-        this._elementType = 
-            primaryType.IsArray ? primaryType.GetElementType() : 
-            primaryType.IsGenericType ? primaryType.GetGenericArguments().FirstOrDefault() : 
+        this._elementType =
+            primaryType.IsArray ? primaryType.GetElementType() :
+            primaryType.IsGenericType ? primaryType.GetGenericArguments().FirstOrDefault() :
             null;
 #pragma warning restore IL2077
 
@@ -164,11 +164,11 @@ else
         if (this._elementType == null || value == null) return null;
 #pragma warning disable IL2077 // _elementType may not satisfy DynamicallyAccessedMembers for TypeStructure ctor.
         var typeStructure = new BlazingStory.Abstractions.TypeStructure(
-            isNullable: false, 
-            isGeneric: false, 
-            primaryType: this._elementType, 
+            isNullable: false,
+            isGeneric: false,
+            primaryType: this._elementType,
             secondaryTypes: []);
-#pragma warning restore IL2077            
+#pragma warning restore IL2077
         return TypeUtility.TryConvertType(typeStructure, value.ToString() ?? "", out var converted)
             ? converted
             : this.GetDefaultValue();

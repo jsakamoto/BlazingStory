@@ -1,3 +1,8 @@
+v.1.0.0-preview.88
+- Feature: Expanded the MyBlazorWasmApp1 sample with API-focused stories and overview pages covering args, controls, array inputs, RenderFragment inputs, layout overrides, and callback patterns.
+- Fix: Updated the sample preview frame host to load BlazingStory theme CSS so --bs-* CSS variables resolve correctly inside iframe-based previews.
+- Fix: Improved the ArrayParameterController to render number inputs for numeric arrays and added focused test coverage.
+
 v.1.0.0-preview.87
 - Feature: Added support for user-defined custom parameter controllers, enabling story authors to build tailored parameter editing UIs beyond the built-in controls. (PR #123 contributed by @Hecatron)
 
