@@ -1,6 +1,6 @@
 ﻿using BlazingStory.Internals.Services;
-using BlazingStory.Test._Fixtures;
-using BlazingStory.Test._Fixtures.Components;
+using BlazingStory.Test.Shared._Fixtures;
+using BlazingStory.Test.Shared._Fixtures.Components;
 using BlazingStory.Types;
 
 namespace BlazingStory.Test.Types;

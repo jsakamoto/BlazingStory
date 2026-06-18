@@ -24,3 +24,7 @@ jobs:
       # Invoke tests
       - name: Invoke tests
         run: dotnet test --project ./Tests/BlazingStory.Test/BlazingStory.Test.csproj --output detailed
+
+      # Invoke tests for the built-in addons
+      - name: Invoke built-in addons tests
+        run: dotnet test --project ./Tests/BlazingStory.Addons.BuiltIns.Test/BlazingStory.Addons.BuiltIns.Test.csproj --output detailed

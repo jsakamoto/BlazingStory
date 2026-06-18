@@ -1,15 +1,15 @@
 using BlazingStory.Internals.Services.XmlDocComment;
 using NSubstitute;
 
-namespace BlazingStory.Test._Fixtures;
+namespace BlazingStory.Test.Shared._Fixtures;
 
 /// <summary>
 /// Helper class for mocking <see cref="IXmlDocComment"/>.
 /// </summary>
-internal static class XmlDocComment
+public static class XmlDocComment
 {
     /// <summary>
     /// Dummy instance of <see cref="IXmlDocComment"/>.
     /// </summary>
-    internal static IXmlDocComment Dummy => Substitute.For<IXmlDocComment>();
+    public static IXmlDocComment Dummy => Substitute.For<IXmlDocComment>();
 }

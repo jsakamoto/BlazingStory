@@ -3,6 +3,7 @@ using BlazingStory.Internals.Models;
 using BlazingStory.Internals.Services.Docs;
 using BlazingStory.Test._Fixtures;
 using BlazingStory.Test._Fixtures.Components;
+using BlazingStory.Test.Shared._Fixtures.Components;
 using BlazingStory.Types;
 using BlazingStoryApp1.Stories;
 using Castle.Core.Internal;
@@ -217,11 +218,11 @@ internal class StoriesRazorSourceTest
     {
         // Given
         var sourceText =
-            "<BlazingStory.Test._Fixtures.Components.SampleComponent @attributes='context.Args'>\n" +
+            "<BlazingStory.Test.Shared._Fixtures.Components.SampleComponent @attributes='context.Args'>\n" +
             "    <div>\n" +
             "        In doglores facilizes accuses\n" +
             "    </div>\n" +
-            "</BlazingStory.Test._Fixtures.Components.SampleComponent>\n";
+            "</BlazingStory.Test.Shared._Fixtures.Components.SampleComponent>\n";
         var story = TestHelper.CreateStory<SampleComponent>();
         await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.ChildContent), "Kasdan sed et");
         await story.Context.AddOrUpdateArgumentAsync(nameof(SampleComponent.Template1), "Diam rivière magna");
@@ -231,11 +232,11 @@ internal class StoriesRazorSourceTest
 
         // Then
         codeText.Is(
-            "<BlazingStory.Test._Fixtures.Components.SampleComponent>\n" +
+            "<BlazingStory.Test.Shared._Fixtures.Components.SampleComponent>\n" +
             "    <div>\n" +
             "        In doglores facilizes accuses\n" +
             "    </div>\n" +
-            "</BlazingStory.Test._Fixtures.Components.SampleComponent>\n");
+            "</BlazingStory.Test.Shared._Fixtures.Components.SampleComponent>\n");
     }
 
     [Test]

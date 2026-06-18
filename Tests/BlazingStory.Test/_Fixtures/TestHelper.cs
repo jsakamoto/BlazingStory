@@ -1,6 +1,7 @@
 using BlazingStory.Abstractions;
 using BlazingStory.Internals.Models;
 using BlazingStory.Internals.Services;
+using BlazingStory.Test.Shared._Fixtures;
 using BlazingStoryApp1.Stories;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
