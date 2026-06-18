@@ -3,7 +3,7 @@ using BlazingStory.Addons.BuiltIns.Panel.Actions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace BlazingStory.Test.Internals.Utils;
+namespace BlazingStory.Addons.BuiltIns.Test.Panel.Actions;
 
 public class JsonFallbackSerializerTest
 {

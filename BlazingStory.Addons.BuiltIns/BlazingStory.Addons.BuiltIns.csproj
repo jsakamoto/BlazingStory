@@ -36,6 +36,7 @@
     <SupportedPlatform Include="browser" />
     <InternalsVisibleTo Include="BlazingStory" />
     <InternalsVisibleTo Include="BlazingStory.Test" />
+    <InternalsVisibleTo Include="BlazingStory.Addons.BuiltIns.Test" />
     <InternalsVisibleTo Include="BlazingStory.Stories" />
   </ItemGroup>
 

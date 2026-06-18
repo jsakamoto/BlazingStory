@@ -21,6 +21,7 @@
     <File Path="build/WriteLinesToFileLF.targets" />
   </Folder>
   <Folder Name="/Tests/">
+    <Project Path="Tests/BlazingStory.Addons.BuiltIns.Test/BlazingStory.Addons.BuiltIns.Test.csproj" />
     <Project Path="Tests/BlazingStory.Build.Test/BlazingStory.Build.Test.csproj" />
     <Project Path="Tests/BlazingStory.Test/BlazingStory.Test.csproj" />
   </Folder>

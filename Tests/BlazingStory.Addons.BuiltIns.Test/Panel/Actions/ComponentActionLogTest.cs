@@ -1,7 +1,7 @@
 using System.Text.Json;
 using BlazingStory.Addons.BuiltIns.Panel.Actions;
 
-namespace BlazingStory.Test.Internals.Models;
+namespace BlazingStory.Addons.BuiltIns.Test.Panel.Actions;
 
 public class ComponentActionLogTest
 {

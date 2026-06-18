@@ -6,7 +6,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using NSubstitute;
 
-namespace BlazingStory.Test.Panel.Controls.ParameterControllers;
+namespace BlazingStory.Addons.BuiltIns.Test.Panel.Controls.ParameterControllers;
 
 /// <summary>
 /// Tests for ParameterController component to verify custom fragment routing and context cascading.

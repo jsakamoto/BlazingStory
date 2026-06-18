@@ -1,10 +1,10 @@
 using BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers;
 using BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers;
-using BlazingStory.Test._Fixtures.Components;
+using BlazingStory.Addons.BuiltIns.Test._Fixtures.Components;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 
-namespace BlazingStory.Test.Internals.Components.ParameterControllers;
+namespace BlazingStory.Addons.BuiltIns.Test.Panel.Controls.ParameterControllers.Controllers;
 
 public class ArrayParameterControllerTest
 {
