@@ -1,4 +1,4 @@
-﻿using BlazingStory.Test._Fixtures.Components;
+﻿using BlazingStory.Test.Shared._Fixtures.Components;
 
 namespace BlazingStory.Test.Internals.Models;
 

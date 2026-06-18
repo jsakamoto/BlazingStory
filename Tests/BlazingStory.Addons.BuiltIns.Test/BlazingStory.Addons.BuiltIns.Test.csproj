@@ -42,6 +42,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\BlazingStory.Addons.BuiltIns\BlazingStory.Addons.BuiltIns.csproj" />
     <ProjectReference Include="..\..\BlazingStory\BlazingStory.csproj" />
+    <ProjectReference Include="..\BlazingStory.Test.Shared\BlazingStory.Test.Shared.csproj" />
   </ItemGroup>
 
   <Target Name="_ResolveCopyLocalNuGetPackageXmls" AfterTargets="ResolveReferences">

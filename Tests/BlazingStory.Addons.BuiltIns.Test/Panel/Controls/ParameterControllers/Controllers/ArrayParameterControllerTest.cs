@@ -1,6 +1,6 @@
 using BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers;
 using BlazingStory.Addons.BuiltIns.Panel.Controls.ParameterControllers.Controllers;
-using BlazingStory.Addons.BuiltIns.Test._Fixtures.Components;
+using BlazingStory.Test.Shared._Fixtures.Components;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 

@@ -1,7 +1,7 @@
 using BlazingStory.Internals.Services.XmlDocComment;
 using NSubstitute;
 
-namespace BlazingStory.Addons.BuiltIns.Test._Fixtures;
+namespace BlazingStory.Test.Shared._Fixtures;
 
 /// <summary>
 /// Helper class for mocking <see cref="IXmlDocComment"/>.

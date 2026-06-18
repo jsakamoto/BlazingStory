@@ -1,7 +1,7 @@
 ﻿using BlazingStory.Internals.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace BlazingStory.Test._Fixtures.Components;
+namespace BlazingStory.Test.Shared._Fixtures.Components;
 
 internal enum SampleEnum
 {
@@ -45,4 +45,3 @@ internal class SampleComponent
             XmlDocComment.Dummy);
     }
 }
-
