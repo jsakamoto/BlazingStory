@@ -1,15 +1,16 @@
-﻿using BlazingStory.Internals.Models;
+﻿using BlazingStory.Abstractions;
+using BlazingStory.Internals.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazingStory.Test.Shared._Fixtures.Components;
 
-internal enum SampleEnum
+public enum SampleEnum
 {
     Lorem,
     Ipsum
 }
 
-internal class SampleComponent
+public class SampleComponent
 {
     [Parameter]
     public int Number1 { get; set; }
@@ -37,7 +38,7 @@ internal class SampleComponent
     [Parameter]
     public RenderFragment<SampleComponent>? Template1 { get; set; }
 
-    internal static ComponentParameter CreateComponentParameter(string propertyName)
+    public static IComponentParameter CreateComponentParameter(string propertyName)
     {
         return new ComponentParameter(
             typeof(SampleComponent),

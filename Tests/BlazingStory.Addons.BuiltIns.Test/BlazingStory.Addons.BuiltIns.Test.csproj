@@ -40,15 +40,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\BlazingStory.Addons.BuiltIns\BlazingStory.Addons.BuiltIns.csproj" />
-    <ProjectReference Include="..\..\BlazingStory\BlazingStory.csproj" />
     <ProjectReference Include="..\BlazingStory.Test.Shared\BlazingStory.Test.Shared.csproj" />
+    <ProjectReference Include="..\..\BlazingStory.Addons.BuiltIns\BlazingStory.Addons.BuiltIns.csproj" />
   </ItemGroup>
-
-  <Target Name="_ResolveCopyLocalNuGetPackageXmls" AfterTargets="ResolveReferences">
-    <ItemGroup>
-      <ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).xml')" Condition=" '%(ReferenceCopyLocalPaths.NuGetPackageId)' != '' AND Exists('%(RootDir)%(Directory)%(Filename).xml') AND !$([System.String]::Copy('%(Filename)').StartsWith('Microsoft.')) AND !$([System.String]::Copy('%(Filename)').StartsWith('System.')) " />
-    </ItemGroup>
-  </Target>
 
 </Project>
