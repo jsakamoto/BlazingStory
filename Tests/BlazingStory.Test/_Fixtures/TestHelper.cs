@@ -40,4 +40,14 @@ internal static class TestHelper
             CreateStory<Button>(title: "Examples/Select", name: "Select"),
         }}
     ];
+
+    internal static StoriesStore GetExampleStoriesStore1(IServiceProvider services)
+    {
+        var store = new StoriesStore();
+        foreach (var container in GetExampleStories1(services))
+        {
+            store.RegisterStoryContainer(container);
+        }
+        return store;
+    }
 }
