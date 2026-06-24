@@ -85,6 +85,19 @@ dotnet run --project ./MyBlazorApp1.Stories
 
 For advanced topics — story structure, args, controls, decorators, addons, and more — see the [Blazing Story Documentation Site](https://blazingstory.github.io/docs/).
 
+### Accessibility Report
+
+Blazing Story includes an optional Accessibility Report panel that scans the current story with axe-core. See the [dedicated guide](docs/accessibility-report.md) for setup and customization details.
+
+Enable it by setting `EnableAccessibilityReport="true"` on `<BlazingStoryApp>`:
+
+```razor
+<BlazingStoryApp Assemblies="[typeof(App).Assembly]" EnableAccessibilityReport="true" OnInitialize="OnInitialize">
+</BlazingStoryApp>
+```
+
+If you want custom accessibility rules, create your own addon and preview decorator. The built-in report currently uses axe-core rules configured in the preview decorator, so custom rule sets are best provided by a custom addon registered during `OnInitialize`.
+
 ## 🤖 AI Agent Skills
 
 Agent skills are published to help AI coding assistants implement stories and custom addons for Blazing Story:

@@ -11,7 +11,7 @@ public class NodeResult
     public string Html
     {
         get => this._html;
-        init => this._html = Regex.Replace(value, "[\\s]*<!--!-->[\\s]*", "");
+        init => this._html = Regex.Replace(value ?? string.Empty, "[\\s]*<!--!-->[\\s]*", "");
     }
 
     public string? Impact { get; init; } // type ImpactValue = 'minor' | 'moderate' | 'serious' | 'critical' | null;

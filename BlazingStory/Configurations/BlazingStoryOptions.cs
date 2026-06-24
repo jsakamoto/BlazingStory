@@ -13,6 +13,11 @@ public class BlazingStoryOptions
     public bool EnableHotReloading { get; set; }
 
     /// <summary>
+    /// Gets or sets whether to enable the Accessibility Report panel in the control panel. (default: false)
+    /// </summary>
+    public bool EnableAccessibilityReport { get; set; }
+
+    /// <summary>
     /// Specifies a custom order for items in the sidebar navigation tree.
     /// </summary>
     /// <remarks>
