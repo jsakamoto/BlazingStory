@@ -1,5 +1,9 @@
 @using System.Text.RegularExpressions
 @using BlazingStory.Addons.Internals
+@using BlazingStory.Configurations
+@using BlazingStory.Internals.Pages.TableOfContents
+@using BlazingStory.Internals.Utils
+@using BlazingStory.Types
 @implements IDisposable
 
 <PageTitle>@_PageTitle</PageTitle>
@@ -10,13 +14,15 @@
         <ToolBar Visible="this._Commands.ToolbarVisible?.Flag == true">
             @if (this._Commands.ShowSidebar?.Flag == false)
             {
-                <IconCommandButton Icon="SvgIconType.Sidebar" Command="this._Commands.ShowSidebar" />
+                <IconCommandButton Icon="SvgIconType.Sidebar" 
+                                   Command="this._Commands.ShowSidebar" />
                 <Separator />
             }
 
             @* -- Render Add-On's Toolbar Contents -- *@
             @{
 #pragma warning disable IL2111
+
             }
             @foreach (var toolbarContent in this.GetToolbarContents())
             {
@@ -26,29 +32,60 @@
             }
             @{
 #pragma warning restore IL2111
+
             }
 
             <Spacer />
 
             @if ((this._Commands.Fullscreen?.Flag ?? true) == true)
             {
-                <IconCommandButton Icon="SvgIconType.CircleClose" Command="this._Commands.Fullscreen" Title="Exit full screen [{0}]" />
+                <IconCommandButton Icon="SvgIconType.CircleClose" 
+                                   Command="this._Commands.Fullscreen"
+                                   Title="Exit full screen [{0}]" />
             }
             else
             {
-                <IconCommandButton Icon="SvgIconType.FullScreen" Command="this._Commands.Fullscreen" />
+                <IconCommandButton Icon="SvgIconType.FullScreen" 
+                                   Command="this._Commands.Fullscreen" />
             }
         </ToolBar>
-        <div class="custom-page-main fill">
-            <div class="custom-page-contents">
-                @{
-                #pragma warning disable IL2111
+        <div class="@this.GetCustomPageMainClass()" @key="this._CurrentNavigationPath">
+            @if (this.ShouldRenderLeftSidebarToc)
+            {
+                <nav class="custom-page-toc sidebar left toc-sidebar" aria-label="Table of contents">
+                    @this.RenderTableOfContentsBody()
+                </nav>
+            }
+
+            <div class="custom-page-contents-region">
+                @if (this.ShouldRenderTopToc)
+                {
+                    <nav class="custom-page-toc top toc-sidebar" aria-label="Table of contents">
+                        @this.RenderTableOfContentsBody()
+                    </nav>
                 }
-                <DynamicComponent Type="this._CustomPage.CustomPageRazorDescriptor.TypeOfCustomPageRazor" />
-                @{
-                #pragma warning restore IL2111
-                }
+
+                <div class="custom-page-contents">
+                    <CascadingValue Value="this.TableOfContentsState" IsFixed="true">
+                        @{
+#pragma warning disable IL2111
+
+                        }
+                        <DynamicComponent Type="this._CustomPage.CustomPageRazorDescriptor.TypeOfCustomPageRazor" />
+                        @{
+#pragma warning restore IL2111
+
+                        }
+                    </CascadingValue>
+                </div>
             </div>
+
+            @if (this.ShouldRenderRightSidebarToc)
+            {
+                <nav class="custom-page-toc sidebar right toc-sidebar" aria-label="Table of contents">
+                    @this.RenderTableOfContentsBody()
+                </nav>
+            }
         </div>
     </div>
 }
@@ -60,6 +97,12 @@
     [CascadingParameter]
     protected IServiceProvider Services { get; init; } = default!;
 
+    [Inject]
+    protected IJSRuntime JSRuntime { get; init; } = default!;
+
+    [Inject]
+    protected NavigationManager NavigationManager { get; init; } = default!;
+
     [CascadingParameter]
     protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
 
@@ -68,20 +111,71 @@
 
     private AddonManager AddonManager => this.Services.GetRequiredService<AddonManager>();
 
+    private BlazingStoryOptions BlazingStoryOptions => this.Services.GetRequiredService<BlazingStoryOptions>();
+
+    private readonly CustomPageTableOfContentsState _TableOfContentsState = new();
+
+    private CustomPageTableOfContentsState TableOfContentsState => this._TableOfContentsState;
+
     private readonly Subscriptions _Subscriptions = new();
 
     private (Command? ToolbarVisible, Command? ShowSidebar, Command? Fullscreen) _Commands = default;
+
+    private readonly JSModule _JSModule;
 
     private string _PageTitle = "";
 
     private CustomPageContainer? _CustomPage;
 
+    private string? _CurrentNavigationPath;
+
+    private TableOfContentsPlacement _TableOfContentsPlacement = TableOfContentsPlacement.None;
+
+    private int _TableOfContentsMinHeadingLevel = TableOfContentsDefaults.MinHeadingLevel;
+
+    private int _TableOfContentsMaxHeadingLevel = TableOfContentsDefaults.MaxHeadingLevel;
+
+    private bool IsMarkdownCustomPage =>
+this._CustomPage?.CustomPageRazorDescriptor.TypeOfCustomPageRazor.IsAssignableTo(typeof(MarkdownPageBase)) == true;
+
+    private bool HasTableOfContentsItems => this.TableOfContentsState.Items.Any();
+
+    private TableOfContentsLayoutState TableOfContentsLayoutState =>
+        TableOfContentsLayoutEvaluator.Evaluate(
+            placement: this._TableOfContentsPlacement,
+            isMarkdownCustomPage: this.IsMarkdownCustomPage,
+            hasItems: this.HasTableOfContentsItems);
+
+    private bool ShouldRenderTopToc => this.TableOfContentsLayoutState.RenderTop;
+
+    private bool ShouldRenderLeftSidebarToc => this.TableOfContentsLayoutState.RenderLeftSidebar;
+
+    private bool ShouldRenderRightSidebarToc => this.TableOfContentsLayoutState.RenderRightSidebar;
+
+    public CustomPage()
+    {
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "js/markdown-page.js");
+    }
+
     protected override void OnParametersSet()
     {
         var navigationPath = Regex.Replace(this.RouteData.Parameter, "--custom$", "");
         if (!this.CustomPageStore.TryGetCustomPageContainerByPath(navigationPath, out var customPage)) return;
+
         this._PageTitle = string.Join(" / ", customPage.Title.Split('/')) + " - " + this.BlazingStoryApp.Title;
         this._CustomPage = customPage;
+        this._TableOfContentsPlacement = customPage.ResolveTableOfContentsPlacement(this.BlazingStoryOptions.CustomPageTableOfContentsPlacement);
+        this._TableOfContentsMinHeadingLevel = customPage.ResolveTableOfContentsMinHeadingLevel(this.BlazingStoryOptions.CustomPageTableOfContentsMinHeadingLevel);
+        this._TableOfContentsMaxHeadingLevel = customPage.ResolveTableOfContentsMaxHeadingLevel(this.BlazingStoryOptions.CustomPageTableOfContentsMaxHeadingLevel);
+
+        this.TableOfContentsState.SetHeadingLevelRange(this._TableOfContentsMinHeadingLevel, this._TableOfContentsMaxHeadingLevel);
+
+        // Reset TOC items only when navigating to another custom page.
+        if (!string.Equals(this._CurrentNavigationPath, navigationPath, StringComparison.Ordinal))
+        {
+            this._CurrentNavigationPath = navigationPath;
+            this.TableOfContentsState.SetItems([]);
+        }
     }
 
     protected override void OnInitialized()
@@ -94,6 +188,7 @@
         this._Subscriptions.Add(this._Commands.ToolbarVisible!.Subscribe(this.OnToggleToolbarVisible));
 
         this.AddonManager.GlobalArgumentsChanged += OnGlobalArgumentsChanged;
+        this.TableOfContentsState.Changed += this.OnTableOfContentsChanged;
     }
 
     private IEnumerable<ToolbarContentDescriptor> GetToolbarContents()
@@ -113,15 +208,145 @@
         this.StateHasChanged();
     }
 
+    private void OnTableOfContentsChanged(object? sender, EventArgs args)
+    {
+        _ = this.InvokeAsync(async () =>
+        {
+            this.StateHasChanged();
+            await this.UpdateTableOfContentsScrollSpyAsync();
+        });
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        await this.UpdateTableOfContentsScrollSpyAsync();
+    }
+
     private async ValueTask OnToggleToolbarVisible()
     {
         this._Commands.ToolbarVisible?.ToggleFlag();
         await ValueTask.CompletedTask;
     }
 
+    private IEnumerable<TableOfContentsItem> EnumerateTableOfContentsItems()
+    {
+        return this.TableOfContentsState.Items.SelectMany(EnumerateTableOfContentsItems);
+
+        static IEnumerable<TableOfContentsItem> EnumerateTableOfContentsItems(TableOfContentsItem item)
+        {
+            yield return item;
+            foreach (var child in item.Children.SelectMany(EnumerateTableOfContentsItems))
+            {
+                yield return child;
+            }
+        }
+    }
+
+    private string GetTocLinkClass(TableOfContentsItem item)
+    {
+        var level = Math.Clamp(item.Level, 1, 6);
+        return $"toc-link toc-h{level}";
+    }
+
+    private string GetTocSubtitle()
+    {
+        return this._CustomPage?.Title.Split('/').LastOrDefault() ?? "Contents";
+    }
+
+    private RenderFragment RenderTableOfContentsBody()
+    {
+        return builder =>
+        {
+            var seq = 0;
+
+            builder.OpenElement(seq++, "div");
+            builder.AddAttribute(seq++, "class", "toc-header");
+
+            builder.OpenElement(seq++, "h2");
+            builder.AddAttribute(seq++, "class", "toc-title");
+            builder.AddContent(seq++, "Table of Contents");
+            builder.CloseElement();
+
+            builder.OpenElement(seq++, "span");
+            builder.AddAttribute(seq++, "class", "toc-subtitle");
+            builder.AddContent(seq++, this.GetTocSubtitle());
+            builder.CloseElement();
+
+            builder.CloseElement();
+
+            builder.OpenElement(seq++, "div");
+            builder.AddAttribute(seq++, "class", "toc-content");
+
+            foreach (var item in this.EnumerateTableOfContentsItems())
+            {
+                builder.OpenElement(seq++, "div");
+                builder.AddAttribute(seq++, "class", "toc-item");
+
+                builder.OpenElement(seq++, "a");
+                builder.AddAttribute(seq++, "class", this.GetTocLinkClass(item));
+                builder.AddAttribute(seq++, "href", this.GetTableOfContentsHref(item.Id));
+                builder.AddAttribute(seq++, "data-heading-id", item.Id);
+                builder.AddContent(seq++, item.Text);
+                builder.CloseElement();
+
+                builder.CloseElement();
+            }
+
+            builder.CloseElement();
+        };
+    }
+
+    private string GetCustomPageMainClass()
+    {
+        var withSidebar = this.IsMarkdownCustomPage && (this._TableOfContentsPlacement == TableOfContentsPlacement.LeftSidebar || this._TableOfContentsPlacement == TableOfContentsPlacement.RightSidebar);
+        if (!withSidebar) return "custom-page-main fill";
+
+        var sideClass = this._TableOfContentsPlacement == TableOfContentsPlacement.LeftSidebar
+            ? "with-left-sidebar"
+            : "with-right-sidebar";
+        return $"custom-page-main fill with-sidebar {sideClass}";
+    }
+
+    private string GetTableOfContentsHref(string headingId)
+    {
+        var uriWithoutHash = this.NavigationManager.Uri.Split('#')[0];
+        return $"{uriWithoutHash}#{headingId}";
+    }
+
+    private async ValueTask UpdateTableOfContentsScrollSpyAsync()
+    {
+        if (this.TableOfContentsLayoutState.EnableScrollSpy)
+        {
+            var headingSelector = this.GetTableOfContentsHeadingSelector();
+            await this._JSModule.InvokeVoidAsync(
+                "enableTableOfContentsScrollSpy",
+                ".custom-page-main",
+                ".custom-page-toc.sidebar",
+                headingSelector);
+            return;
+        }
+
+        await this._JSModule.InvokeVoidAsync("disableTableOfContentsScrollSpy");
+    }
+
+    private string GetTableOfContentsHeadingSelector()
+    {
+        var (min, max) = TableOfContentsDefaults.NormalizeHeadingLevelRange(
+            this._TableOfContentsMinHeadingLevel,
+            this._TableOfContentsMaxHeadingLevel);
+
+        return string.Join(
+            ", ",
+            Enumerable.Range(min, max - min + 1).Select(level => $".custom-page-contents h{level}"));
+    }
+
     public void Dispose()
     {
         this.AddonManager.GlobalArgumentsChanged -= OnGlobalArgumentsChanged;
+        this.TableOfContentsState.Changed -= this.OnTableOfContentsChanged;
+        _ = this._JSModule.InvokeVoidIfConnectedAsync("disableTableOfContentsScrollSpy");
+        _ = this._JSModule.DisposeAsync();
         this._Subscriptions.Dispose();
     }
 }
