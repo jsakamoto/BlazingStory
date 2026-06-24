@@ -2,7 +2,7 @@
 
 <div class="@CssClass("axe-result-view", new { expanded = Expanded })">
 
-    <div class="header" @onclick="OnClickHeader">
+    <button type="button" class="header" aria-expanded="@(Expanded ? "true" : "false")" @onclick="OnClickHeader">
         <span class="title">
             @Capitalize(this.Result.Id)
         </span>
@@ -18,7 +18,7 @@
         </span>
         <SvgIcon Type="SvgIconType.Chevron" Class="expansion-indicator">
         </SvgIcon>
-    </div>
+    </button>
 
     <div class="details">
         <div class="details-inner">
@@ -26,7 +26,7 @@
 
                 <div class="description">
                     <span class="text">@Result.Description</span>
-                    <a class="help-link" href="@Result.HelpUrl" target="_blank">
+                    <a class="help-link" href="@Result.HelpUrl" target="_blank" rel="noopener noreferrer">
                         Learn how to resolve this violation &gt;
                     </a>
                 </div>
