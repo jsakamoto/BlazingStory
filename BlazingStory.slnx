@@ -2,6 +2,7 @@
   <Folder Name="/js/" />
   <Folder Name="/js/types/">
     <File Path="js/types/axe.d.ts" />
+    <File Path="js/types/blazing-story-api.d.ts" />
     <File Path="js/types/blazor.d.ts" />
     <File Path="js/types/browser-dom.d.ts" />
     <File Path="js/types/custom-events.d.ts" />
@@ -23,8 +24,8 @@
   <Folder Name="/Tests/">
     <Project Path="Tests/BlazingStory.Addons.BuiltIns.Test/BlazingStory.Addons.BuiltIns.Test.csproj" />
     <Project Path="Tests/BlazingStory.Build.Test/BlazingStory.Build.Test.csproj" />
-    <Project Path="Tests/BlazingStory.Test/BlazingStory.Test.csproj" />
     <Project Path="Tests/BlazingStory.Test.Shared/BlazingStory.Test.Shared.csproj" />
+    <Project Path="Tests/BlazingStory.Test/BlazingStory.Test.csproj" />
   </Folder>
   <Folder Name="/Tests/Fixtures/">
     <Project Path="Tests/Fixtures/BlazingStoryApp1/BlazingStoryApp1.csproj" />

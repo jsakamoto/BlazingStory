@@ -93,7 +93,7 @@ export const initializeCanvasFrame = () => {
         });
         resizeObserver.observe(body);
     }
-    wnd.BlazingStory = wnd.BlazingStory || {};
-    wnd.BlazingStory.canvasFrameInitialized = true;
+    if (wnd.BlazingStory)
+        wnd.BlazingStory.canvasFrameInitialized = true;
     setTimeout(() => htmlElement?.classList.add("_blazing_story_ready_for_visible"), 300);
 };
