@@ -2,6 +2,7 @@ using BlazingStory.Abstractions;
 using BlazingStory.Internals.Models;
 using BlazingStory.Internals.Services;
 using BlazingStory.Test.Shared._Fixtures;
+using BlazingStory.Types;
 using BlazingStoryApp1.Stories;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -41,13 +42,8 @@ internal static class TestHelper
         }}
     ];
 
-    internal static StoriesStore GetExampleStoriesStore1(IServiceProvider services)
-    {
-        var store = new StoriesStore();
-        foreach (var container in GetExampleStories1(services))
-        {
-            store.RegisterStoryContainer(container);
-        }
-        return store;
-    }
+    internal static IEnumerable<CustomPageContainer> GetExampleCustomPages1(IServiceProvider services) => [
+        new(new(typeof(object), new CustomPageAttribute("Welcome"))),
+        new(new(typeof(object), new CustomPageAttribute("Examples/Getting Started"))),
+    ];
 }

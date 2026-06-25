@@ -1,10 +1,9 @@
 @using System.Diagnostics.CodeAnalysis
 @using System.Reflection
-@using System.Runtime.InteropServices
 @using BlazingStory.Addons
 @using BlazingStory.Addons.Internals
+@using BlazingStory.Internals.JavaScriptAPI
 @using BlazingStory.Internals.Services.XmlDocComment;
-@using BlazingStory.Internals.Types
 @using Toolbelt.Blazor.Extensions.DependencyInjection
 @using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
 
@@ -188,6 +187,8 @@
 
     private readonly BlazingStoryOptions _Options = new();
 
+    private DotNetObjectReference<BlazingStoryAPI>? _BlazingStoryAPIRef;
+
     public BlazingStoryApp()
     {
         this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Components/BlazingStoryApp.razor.js");
@@ -280,6 +281,10 @@
         if (!firstRender) return;
         this._firstRendered = true;
 
+        if (this._ServiceScope is null) throw new InvalidOperationException("The service provider is not initialized.");
+        this._BlazingStoryAPIRef = DotNetObjectReference.Create(new BlazingStoryAPI(this._ServiceScope.Value.ServiceProvider));
+        this.JSRuntime.InvokeVoidAsync("BlazingStory._attachAPIRef", this._BlazingStoryAPIRef).AndLogException(this.Logger);
+
         await this.UpdatePreferesColorSchemeAsync();
 
         this._PreferesColorSchemeChangeSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribePreferesColorSchemeChanged", this._RefThis, nameof(OnPreferesColorSchemeChanged));
@@ -342,5 +347,6 @@
         this._RefThis.Dispose();
         await this._JSModule.DisposeAsync();
         if (this._ServiceScope.HasValue) await _ServiceScope.Value.DisposeAsync();
+        if (this._BlazingStoryAPIRef is not null) this._BlazingStoryAPIRef.Dispose();
     }
 }
