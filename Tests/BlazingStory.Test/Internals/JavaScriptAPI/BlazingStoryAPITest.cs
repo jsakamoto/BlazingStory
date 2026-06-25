@@ -20,7 +20,7 @@ internal class BlazingStoryAPITest
         var blazingStoryApi = new BlazingStoryAPI(host.Services);
 
         // When
-        var storyIndex = blazingStoryApi.GetStoryIndex();
+        var storyIndex = await blazingStoryApi.GetStoryIndexAsync();
 
         // Then
         storyIndex.V.Is(1);

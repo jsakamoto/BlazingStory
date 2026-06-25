@@ -15,10 +15,14 @@ internal class NavigationService
 
     private readonly NavigationHistory _NavigationHistory;
 
+    private readonly TaskCompletionSource<NavigationTreeItem> _RootCompletionSource = new();
+
     /// <summary>
     /// Gets the root item of the currently built navigation tree.
     /// </summary>
-    internal NavigationTreeItem Root { get; private set; } = new();
+    public Task<NavigationTreeItem> GetRootAsync() => this._RootCompletionSource.Task;
+
+    private NavigationTreeItem _Root = new();
 
     private NavigationTreeItem? _LastNavigated = null;
 
@@ -33,7 +37,7 @@ internal class NavigationService
     }
 
     /// <summary>
-    /// Builds the navigation tree from story containers and custom page containers and stores it in <see cref="Root"/>.
+    /// Builds the navigation tree from story containers and custom page containers and stores it in <see cref="_Root"/>.
     /// </summary>
     /// <param name="storyContainers">Story containers to include in the navigation tree.</param>
     /// <param name="customPageContainers">Custom page containers to include in the navigation tree.</param>
@@ -41,8 +45,9 @@ internal class NavigationService
     /// <param name="expandedNavigationPath">Navigation path of the item that should be expanded, or <c>null</c> to expand none.</param>
     internal NavigationTreeItem BuildNavigationTree(IEnumerable<StoryContainer> storyContainers, IEnumerable<CustomPageContainer> customPageContainers, IList<NavigationTreeOrderEntry>? customOrderings, string? expandedNavigationPath)
     {
-        this.Root = new NavigationTreeBuilder().Build(storyContainers, customPageContainers, customOrderings, expandedNavigationPath);
-        return this.Root;
+        this._Root = new NavigationTreeBuilder().Build(storyContainers, customPageContainers, customOrderings, expandedNavigationPath);
+        this._RootCompletionSource.TrySetResult(this._Root);
+        return this._Root;
     }
 
     /// <summary>
@@ -71,7 +76,7 @@ internal class NavigationService
         var firstStory = storyItems.FirstOrDefault();
         if (firstStory == null) return;
 
-        this.Root.EnsureExpandedTo(firstStory);
+        this._Root.EnsureExpandedTo(firstStory);
         this.NavigateTo(firstStory);
     }
 
@@ -84,7 +89,7 @@ internal class NavigationService
     internal bool TryGetActiveNavigationItem(QueryRouteData? routeData, [NotNullWhen(true)] out NavigationTreeItem? activeItem, out IEnumerable<NavigationTreeItem> navigatableItems)
     {
         activeItem = null;
-        navigatableItems = this.Root.EnumAll()
+        navigatableItems = this._Root.EnumAll()
             .Where(item => item.Type is NavigationItemType.Story or NavigationItemType.Docs or NavigationItemType.CustomPage)
             .ToArray();
 
@@ -105,7 +110,7 @@ internal class NavigationService
     internal void NavigateToNextComponentItem(QueryRouteData? routeData, bool navigateToNext)
     {
         if (!this.TryGetActiveNavigationItem(routeData, out var activeItem, out var _)) return;
-        var allComponents = this.Root.EnumAll().Where(item => item.Type is NavigationItemType.Component).ToList();
+        var allComponents = this._Root.EnumAll().Where(item => item.Type is NavigationItemType.Component).ToList();
         var ativeComponentIndex = allComponents.FindIndex(item => item.EnumAll().Contains(activeItem));
         var nextComponentIndex = ativeComponentIndex + (navigateToNext ? +1 : -1);
         if (nextComponentIndex < 0 || allComponents.Count <= nextComponentIndex) return;
@@ -123,7 +128,7 @@ internal class NavigationService
     internal void NavigateToNextDocsOrStory(QueryRouteData? routeData, bool navigateToNext)
     {
         if (!this.TryGetActiveNavigationItem(routeData, out var activeItem, out var _)) return;
-        var allItems = this.Root.EnumAll().Where(item => item.Type is NavigationItemType.Docs or NavigationItemType.Story or NavigationItemType.CustomPage).ToList();
+        var allItems = this._Root.EnumAll().Where(item => item.Type is NavigationItemType.Docs or NavigationItemType.Story or NavigationItemType.CustomPage).ToList();
         var ativeIndex = allItems.FindIndex(item => item == activeItem);
         var nextIndex = ativeIndex + (navigateToNext ? +1 : -1);
         if (nextIndex < 0 || allItems.Count <= nextIndex) return;
@@ -172,7 +177,7 @@ internal class NavigationService
     internal async ValueTask AddHistoryAsync(NavigationTreeItem active)
     {
         this._LastNavigated = active;
-        await this._NavigationHistory.AddAsync(this.Root, active);
+        await this._NavigationHistory.AddAsync(this._Root, active);
     }
 
     /// <summary>
@@ -191,7 +196,7 @@ internal class NavigationService
     {
         if (keywords == null || keywords.Where(word => !string.IsNullOrEmpty(word)).Any() == false) return Enumerable.Empty<NavigationListItem>();
         var results = new List<NavigationListItem>();
-        this.SearchCore(this.Root, keywords, results);
+        this.SearchCore(this._Root, keywords, results);
         return results;
     }
 

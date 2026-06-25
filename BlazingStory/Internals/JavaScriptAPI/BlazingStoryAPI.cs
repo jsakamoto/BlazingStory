@@ -26,16 +26,17 @@ internal class BlazingStoryAPI
     /// <summary>
     /// Returns a Storybook-compatible Story Index built from the current navigation tree, cached after the first call.
     /// </summary>
-    [JSInvokable(nameof(GetStoryIndex))]
-    public StoryIndex GetStoryIndex()
+    [JSInvokable(nameof(GetStoryIndexAsync))]
+    public async Task<StoryIndex> GetStoryIndexAsync()
     {
-        this._StoryIndex ??= this.ConvertToIndex();
+        this._StoryIndex ??= await this.ConvertToIndexAsync();
         return this._StoryIndex;
     }
 
-    private StoryIndex ConvertToIndex()
+    private async Task<StoryIndex> ConvertToIndexAsync()
     {
-        var entries = this._NavigationService.Root.EnumAll()
+        var navigationRoot = await this._NavigationService.GetRootAsync();
+        var entries = navigationRoot.EnumAll()
             .Where(item => item.Type is NavigationItemType.Story or NavigationItemType.Docs or NavigationItemType.CustomPage)
             .Select(ToStoryIndexEntry)
             .ToDictionary(entry => entry.Id, entry => entry);
