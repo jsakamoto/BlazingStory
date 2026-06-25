@@ -19,7 +19,7 @@ else
         <LayoutView Layout="@(this._Story.StoriesLayout ?? typeof(NullLayout))">
             <LayoutView Layout="@(this._Story.StoryLayout ?? typeof(NullLayout))">
 
-                <div class="preview-story-area" style="display: contents;">
+                <div class="preview-story-area">
                     @this._Story.RenderFragment(this._Story.Context)
                 </div>
 

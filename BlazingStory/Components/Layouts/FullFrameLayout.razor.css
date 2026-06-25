@@ -1,21 +1,20 @@
-.bs-layouts-fullframe-outer {
+.bs-layouts-fullframe {
     box-sizing: border-box;
     position: relative;
     margin: calc(-1 * var(--bs-preview-body-margin, 16px));
     padding: var(--bs-preview-body-margin, 16px);
-    display: flex;
-    flex-direction: column;
+    --min-height: calc(100vh / var(--bs-zoom, 1));
+    min-height: var(--min-height);
 }
 
-.bs-layouts-fullframe-inner {
+body[data-bs-parent-frame="docs"] .bs-layouts-fullframe {
+    --min-height: 95px;
+}
+
+.bs-layouts-fullframe ::deep .preview-story-area {
     position: relative;
-    flex: 1;
-}
-
-body[data-bs-parent-frame="docs"] .bs-layouts-fullframe-outer {
-    min-height: 95px;
-}
-
-body[data-bs-parent-frame="story"] .bs-layouts-fullframe-outer {
-    min-height: calc(100vh / var(--bs-zoom, 1));
+    margin: 0;
+    padding: 0;
+    min-height: calc(var(--min-height) - 2 * var(--bs-preview-body-margin, 16px));
+    border: solid 1px #ccc;
 }
