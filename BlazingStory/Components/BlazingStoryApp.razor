@@ -1,10 +1,9 @@
 @using System.Diagnostics.CodeAnalysis
 @using System.Reflection
-@using System.Runtime.InteropServices
 @using BlazingStory.Addons
 @using BlazingStory.Addons.Internals
+@using BlazingStory.Internals.JavaScriptAPI
 @using BlazingStory.Internals.Services.XmlDocComment;
-@using BlazingStory.Internals.Types
 @using Toolbelt.Blazor.Extensions.DependencyInjection
 @using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
 
@@ -13,13 +12,26 @@
 @inject IServiceProvider GlobalServices
 @inject IJSRuntime JSRuntime
 @inject ILoggerFactory LoggerFactory
+@inject ILogger<BlazingStoryApp> Logger
 @inject NavigationManager NavigationManager
 
 <style>
+    html:not(._blazing_story_ready_for_visible) {
+        /*
+        By default, the html element is unscrollable.
+        This is required to make annoying scroll bars invisible while adjusting the preview frame size to fit iframe contents on "Docs" pages.
+        After adjustment, the "_blazing_story_ready_for_visible" CSS class is added, and then the preview frame contents are scrollable.
+        (See also: BlazingStory/Internals/Pages/IFrame.razor.ts)
+        */
+        overflow: hidden;
+    }
+
     .default-background {
         position: fixed;
         inset: 0;
+        z-index: 1;
         background-color: #f6f9fc;
+        transition: opacity 0.2s linear;
     }
 
     @@media (prefers-color-scheme: dark) {
@@ -28,30 +40,35 @@
         }
     }
 
-    .default-background.init-level-3 {
-        display: none;
+    .default-background.init-level-0 {
+        opacity: 1;
     }
+
+    .default-background.init-level-1 {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .color-scheme-container {
+        display: contents;
+    }
+
+        .color-scheme-container.init-level-0 {
+            visibility: hidden;
+        }
+
+        .color-scheme-container.init-level-1 {
+            visibility: visible;
+        }
 </style>
 
-@*
-    By default, the html element is unscrollable.
-    This is required to make annoying scroll bars invisible while adjusting the preview frame size to fit iframe contents on "Docs" pages.
-    After adjustment, the "_blazing_story_ready_for_visible" CSS class is added, and then the preview frame contents are scrollable.
-    (See also: BlazingStory/Internals/Pages/IFrame.razor.ts)
-*@
-<style>
-    html:not(._blazing_story_ready_for_visible) {
-        overflow: hidden;
-    }
-</style>
-
-<div class="default-background init-level-@(this._InitLevel)"></div>
+<div class="default-background init-level-@(this._InitLevel)" @ontransitionend="OnDefaultBackgroundTransitionEnd"></div>
 
 <CascadingValue TValue="IServiceProvider" Value="this._ServiceScope?.ServiceProvider">
 
     <StoriesRazorDetector Assemblies="this.Assemblies" StoriesStore="this._StoriesStore" />
 
-    <div class="color-scheme-container preferes-color-scheme-@this._PreferesColorScheme" style="transition: opacity 0.2s linear; opacity: @(this._InitLevel >= 2 ? 1 : 0); visibility: @(this._InitLevel >= 1 ? "visible" : "hidden");">
+    <div class="color-scheme-container preferes-color-scheme-@(this._PreferesColorScheme) init-level-@(this._InitLevel)">
         <CascadingValue Value="this._StoriesStore">
             <CascadingValue Value="this._CustomPageStore">
                 <CascadingValue Value="this">
@@ -188,6 +205,8 @@
 
     private readonly BlazingStoryOptions _Options = new();
 
+    private DotNetObjectReference<BlazingStoryAPI>? _BlazingStoryAPIRef;
+
     public BlazingStoryApp()
     {
         this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Components/BlazingStoryApp.razor.js");
@@ -280,29 +299,23 @@
         if (!firstRender) return;
         this._firstRendered = true;
 
+        if (this._ServiceScope is null) throw new InvalidOperationException("The service provider is not initialized.");
+        this._BlazingStoryAPIRef = DotNetObjectReference.Create(new BlazingStoryAPI(this._ServiceScope.Value.ServiceProvider));
+        this.JSRuntime.InvokeVoidAsync("BlazingStory._attachAPIRef", this._BlazingStoryAPIRef).AndLogException(this.Logger);
+
         await this.UpdatePreferesColorSchemeAsync();
 
         this._PreferesColorSchemeChangeSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribePreferesColorSchemeChanged", this._RefThis, nameof(OnPreferesColorSchemeChanged));
 
-        // Init Level 0 -> Default Background is visible & Color Scheme Container is hidden and transparent.
-
         await this._JSModule.InvokeVoidAsync("ensureAllFontsAndStylesAreLoaded");
 
-        // Init Level 1 -> The Default Background is still visible & Color Scheme Container is becoming to be VISIBLE but still transparent.
         this._InitLevel++;
         this.StateHasChanged();
+    }
 
-        await Task.Delay(50);
-
-        // Init Level 2 -> The Default Background is still visible & Color Scheme Container transitions to OPAQUE in 0.2sec.
-        this._InitLevel++;
-        this.StateHasChanged();
-
-        await Task.Delay(200);
-
-        // Init Level 3 -> After the Color Scheme Container transitioned to opaque, The Default Background transitions to INVISIBLE.
-        this._InitLevel++;
-        this.StateHasChanged();
+    private async Task OnDefaultBackgroundTransitionEnd()
+    {
+        await this.JSRuntime.InvokeVoidAsync("BlazingStory._setReadyView");
     }
 
     private async ValueTask UpdatePreferesColorSchemeAsync()
@@ -342,5 +355,6 @@
         this._RefThis.Dispose();
         await this._JSModule.DisposeAsync();
         if (this._ServiceScope.HasValue) await _ServiceScope.Value.DisposeAsync();
+        if (this._BlazingStoryAPIRef is not null) this._BlazingStoryAPIRef.Dispose();
     }
 }

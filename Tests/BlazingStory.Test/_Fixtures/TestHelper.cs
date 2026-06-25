@@ -2,6 +2,7 @@ using BlazingStory.Abstractions;
 using BlazingStory.Internals.Models;
 using BlazingStory.Internals.Services;
 using BlazingStory.Test.Shared._Fixtures;
+using BlazingStory.Types;
 using BlazingStoryApp1.Stories;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -39,5 +40,10 @@ internal static class TestHelper
         new(typeof(Select), null, new(typeof(Select_stories), new("Examples/Select")), services) { Stories = {
             CreateStory<Button>(title: "Examples/Select", name: "Select"),
         }}
+    ];
+
+    internal static IEnumerable<CustomPageContainer> GetExampleCustomPages1(IServiceProvider services) => [
+        new(new(typeof(object), new CustomPageAttribute("Welcome"))),
+        new(new(typeof(object), new CustomPageAttribute("Examples/Getting Started"))),
     ];
 }
