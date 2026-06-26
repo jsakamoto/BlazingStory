@@ -1,4 +1,3 @@
-import type { } from "@blazingstory/types/browser-dom";
 import type { MessageArgument } from "@blazingstory/types/custom-messages";
 
 const keydown = "keydown";
@@ -131,8 +130,7 @@ export const initializeCanvasFrame = () => {
         resizeObserver.observe(body);
     }
 
-    wnd.BlazingStory = wnd.BlazingStory || {};
-    wnd.BlazingStory.canvasFrameInitialized = true;
+    if (wnd.BlazingStory) wnd.BlazingStory.canvasFrameInitialized = true;
 
     // After initialization, add a class to the html element to make the frame scrollable.
     // (The html element without the "_blazing_story_ready_for_visible" CSS class is applied "overflow:none")

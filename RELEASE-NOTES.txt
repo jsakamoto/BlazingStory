@@ -1,3 +1,8 @@
+v.1.0.0-preview.88
+- Feature: Introduced support for Playwright-based visual regression testing (VRT). A Storybook-compatible Story Index API is now available at `window.BlazingStory.getStoryIndex()`, allowing Playwright test scripts to enumerate all stories programmatically.
+- Fix: Resolved incorrect preview area sizing that caused VRT screenshots to capture unexpected bounds.
+- Fix: Resolved a timing issue where VRT screenshots could be captured before the initial render completed.
+
 v.1.0.0-preview.87
 - Feature: Added support for user-defined custom parameter controllers, enabling story authors to build tailored parameter editing UIs beyond the built-in controls. (PR #123 contributed by @Hecatron)
 
