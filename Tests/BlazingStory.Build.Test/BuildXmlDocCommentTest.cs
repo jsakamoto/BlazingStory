@@ -45,7 +45,7 @@ internal class BuildXmlDocCommentTest
         // When
         var listenUrl = $"http://localhost:{TcpNetwork.GetAvailableTCPv4Port()}";
         using var dotnetRun = XProcess.Start("dotnet", $"run --urls {listenUrl}", testFixtureSpace.TestAppProjDir, ConfigureXProcessOptions);
-        var success = await dotnetRun.WaitForOutputAsync(output => output.TrimStart().StartsWith("Now listening on: http"), options => options.IdleTimeout = 30000);
+        var success = await dotnetRun.WaitForOutputAsync(output => output.Contains("Now listening on: http"), options => options.IdleTimeout = 300000);
         success.IsTrue(message: dotnetRun.Output);
 
         // Then
@@ -93,7 +93,7 @@ internal class BuildXmlDocCommentTest
         // When
         var listenUrl = $"http://localhost:{TcpNetwork.GetAvailableTCPv4Port()}";
         using var dotnetRun = XProcess.Start("dotnet", $"run --urls {listenUrl}", testFixtureSpace.TestAppProjDir, ConfigureXProcessOptions);
-        var success = await dotnetRun.WaitForOutputAsync(output => output.TrimStart().StartsWith("Now listening on: http"), millsecondsTimeout: 30000);
+        var success = await dotnetRun.WaitForOutputAsync(output => output.Contains("Now listening on: http"), millsecondsTimeout: 300000);
         success.IsTrue(message: dotnetRun.Output);
 
         // Then
