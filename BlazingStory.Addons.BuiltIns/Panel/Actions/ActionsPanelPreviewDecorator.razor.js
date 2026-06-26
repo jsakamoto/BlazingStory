@@ -1,9 +1,16 @@
 export const dispatchComponentActionEvent = (name, argsJson) => {
-    const event = new CustomEvent('componentaction', {
+    const event = new CustomEvent("componentaction", {
         cancelable: false,
         bubbles: true,
-        detail: { name, argsJson }
+        detail: { name, argsJson },
     });
-    const target = [...window.parent?.document.querySelectorAll('iframe')].find(f => f.contentWindow === window);
-    target?.dispatchEvent(event);
+    const parentDocument = globalThis.parent?.document;
+    const target = parentDocument
+        ? [...parentDocument.querySelectorAll("iframe")].find((f) => f.contentWindow === globalThis.window)
+        : null;
+    if (target) {
+        target.dispatchEvent(event);
+        return;
+    }
+    globalThis.document.dispatchEvent(event);
 };

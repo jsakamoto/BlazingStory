@@ -3,6 +3,7 @@
 @using BlazingStory.Addons
 @using BlazingStory.Addons.Internals
 @using BlazingStory.Internals.JavaScriptAPI
+@using BlazingStory.Services
 @using BlazingStory.Internals.Services.XmlDocComment;
 @using Toolbelt.Blazor.Extensions.DependencyInjection
 @using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
@@ -272,6 +273,7 @@
             .AddScoped<NavigationService>()
             .AddScoped<BlazingStoryOptions>(_ => this._Options)
             .AddScoped<WebAssets>()
+            .AddScoped<IBlazingStoryActionLogger, BlazingStoryActionLogger>()
             .AddScoped<AddonManager>();
 
         if (OperatingSystem.IsBrowser())
