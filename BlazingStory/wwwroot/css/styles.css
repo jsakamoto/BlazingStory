@@ -324,10 +324,6 @@ body *:hover {
   scrollbar-color: var(--bs-scrollbar-thumb-color) var(--bs-scrollbar-back-color);
 }
 
-.color-scheme-container {
-  display: contents;
-}
-
 .brand-logo {
   padding-left: 26px;
   background-size: inherit;
@@ -928,6 +924,11 @@ a.menu-item.command-menu-item {
 .add-on-container {
   overflow: hidden;
   background-color: var(--bs-add-on-panel-back-color);
+}
+
+.preview-story-area {
+  margin: calc(-1 * var(--bs-preview-body-margin, 16px));
+  padding: var(--bs-preview-body-margin, 16px);
 }
 
 .add-on-panel {
