@@ -1,13 +1,11 @@
-.bs-layouts-nomargin {
+.bs-layouts-nomargin ::deep .preview-story-area {
     box-sizing: border-box;
     position: relative;
     margin: calc(-1 * var(--bs-preview-body-margin, 16px));
-}
-
-body[data-bs-parent-frame="docs"] .bs-layouts-nomargin {
-    min-height: 95px;
-}
-
-body[data-bs-parent-frame="story"] .bs-layouts-nomargin {
+    padding: 0;
     min-height: calc(100vh / var(--bs-zoom, 1));
+}
+
+body[data-bs-parent-frame="docs"] .bs-layouts-nomargin ::deep .preview-story-area {
+    min-height: 95px;
 }
