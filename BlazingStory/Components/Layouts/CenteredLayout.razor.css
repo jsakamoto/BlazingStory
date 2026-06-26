@@ -7,12 +7,14 @@
     display: flex;
     justify-content: safe center;
     align-items: center;
+    min-height: calc(100vh / var(--bs-zoom, 1));
 }
 
 body[data-bs-parent-frame="docs"] .bs-layouts-centered {
     min-height: 95px;
 }
 
-body[data-bs-parent-frame="story"] .bs-layouts-centered {
-    min-height: calc(100vh / var(--bs-zoom, 1));
+.bs-layouts-centered ::deep .preview-story-area {
+    margin: 0;
+    padding: var(--bs-preview-body-margin, 16px);
 }
