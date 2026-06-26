@@ -10,6 +10,8 @@ node_modules/
 
 # Local Copilot instructions
 .github/copilot-instructions.md
-.github/instructions/*.instructions.md
+.github/instructions/*.md
 
 .vscode/settings.json
+
+*.log

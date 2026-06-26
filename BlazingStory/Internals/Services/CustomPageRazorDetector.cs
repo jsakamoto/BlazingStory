@@ -14,6 +14,7 @@ internal static class CustomPageRazorDetector
     /// Gets a type of Stories custom component and its <see cref="CustomPageAttribute"/> from assemblies.
     /// </summary>
     /// <param name="assemblies">Assemblies to detect types of custom Razor component.</param>
+    /// <returns>Detected custom page razor descriptors.</returns>
     [UnconditionalSuppressMessage("Trimming", "IL2026")]
     internal static IEnumerable<CustomPageRazorDescriptor> Detect(IEnumerable<Assembly>? assemblies)
     {
@@ -28,8 +29,8 @@ internal static class CustomPageRazorDetector
     /// <summary>
     /// Detects types of custom page Razor component and its <see cref="CustomPageAttribute"/> from assemblies and register them to the provided store.
     /// </summary>
-    /// <param name="assemblies"></param>
-    /// <param name="store"></param>
+    /// <param name="assemblies">Assemblies to inspect.</param>
+    /// <param name="store">The destination custom page store.</param>
     public static void DetectAndRegisterToStore(IEnumerable<Assembly>? assemblies, CustomPageStore store)
     {
         var descriptors = Detect(assemblies);

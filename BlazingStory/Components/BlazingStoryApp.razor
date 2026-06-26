@@ -3,6 +3,7 @@
 @using BlazingStory.Addons
 @using BlazingStory.Addons.Internals
 @using BlazingStory.Internals.JavaScriptAPI
+@using BlazingStory.Internals.Pages.TableOfContents
 @using BlazingStory.Internals.Services.XmlDocComment;
 @using Toolbelt.Blazor.Extensions.DependencyInjection
 @using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
@@ -178,6 +179,28 @@
     public bool EnableHotReloading { get; set; }
 
     /// <summary>
+    /// Gets or sets the global default table of contents (TOC) placement for markdown-based custom pages. (default: <see cref="TableOfContentsPlacement.None"/>)
+    /// </summary>
+    /// <remarks>
+    /// A per-page override via <see cref="CustomPageAttribute.TableOfContentsPlacement"/> takes precedence over this value.
+    /// When set to <see langword="null"/>, the built-in default value is used.
+    /// </remarks>
+    [Parameter]
+    public TableOfContentsPlacement? CustomPageTableOfContentsPlacement { get; set; } = TableOfContentsPlacement.None;
+
+    /// <summary>
+    /// Gets or sets the global default minimum heading level included in TOC for markdown-based custom pages. (default: 1)
+    /// </summary>
+    [Parameter]
+    public int? CustomPageTableOfContentsMinHeadingLevel { get; set; }
+
+    /// <summary>
+    /// Gets or sets the global default maximum heading level included in TOC for markdown-based custom pages. (default: 4)
+    /// </summary>
+    [Parameter]
+    public int? CustomPageTableOfContentsMaxHeadingLevel { get; set; }
+
+    /// <summary>
     /// An optional callback to initialize the Blazing Story. This is invoked during the component's initialization phase, allowing you to configure services, addons, or other settings before the app fully initializes.
     /// </summary>
     [Parameter]
@@ -286,6 +309,12 @@
 
         this._Options.EnableHotReloading = this.EnableHotReloading;
         this._Options.NavigationTreeOrder = this.NavigationTreeOrder ?? this._Options.NavigationTreeOrder;
+        this._Options.CustomPageTableOfContentsPlacement =
+            this.CustomPageTableOfContentsPlacement ?? this._Options.CustomPageTableOfContentsPlacement;
+        this._Options.CustomPageTableOfContentsMinHeadingLevel =
+            this.CustomPageTableOfContentsMinHeadingLevel ?? this._Options.CustomPageTableOfContentsMinHeadingLevel;
+        this._Options.CustomPageTableOfContentsMaxHeadingLevel =
+            this.CustomPageTableOfContentsMaxHeadingLevel ?? this._Options.CustomPageTableOfContentsMaxHeadingLevel;
 
         if (this.AvailableColorSchemes != this._PrevAvailableColorSchemes)
         {

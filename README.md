@@ -85,6 +85,75 @@ dotnet run --project ./MyBlazorApp1.Stories
 
 For advanced topics — story structure, args, controls, decorators, addons, and more — see the [Blazing Story Documentation Site](https://blazingstory.github.io/docs/).
 
+## 📑 Table Of Contents For Markdown Custom Pages
+
+Markdown-based custom pages can render an auto-generated table of contents (TOC) from page headings.
+
+### Global TOC placement
+
+Set a default TOC placement at app level through `BlazingStoryApp`:
+
+```razor
+@using BlazingStory.Types
+
+<BlazingStoryApp Title="My Story"
+                 Assemblies="[typeof(App).Assembly]"
+                 CustomPageTableOfContentsPlacement="TableOfContentsPlacement.LeftSidebar" />
+```
+
+Available values:
+
+- `TableOfContentsPlacement.None`
+- `TableOfContentsPlacement.Top`
+- `TableOfContentsPlacement.LeftSidebar`
+- `TableOfContentsPlacement.RightSidebar`
+
+### Global TOC heading range
+
+Set the default heading range included in TOC through `BlazingStoryApp`:
+
+```razor
+<BlazingStoryApp Title="My Story"
+                 Assemblies="[typeof(App).Assembly]"
+                 CustomPageTableOfContentsMinHeadingLevel="1"
+                 CustomPageTableOfContentsMaxHeadingLevel="4" />
+```
+
+Notes:
+
+- Allowed levels are `1` to `6`.
+- The default is `1` to `4` (H1 to H4).
+- You can include all headings by setting `1` to `6`.
+
+### Per-page override
+
+Override the global setting on an individual custom page:
+
+```razor
+@using BlazingStory.Types
+@attribute [CustomPage("Guides/Getting Started",
+    TableOfContentsPlacement = TableOfContentsPlacement.LeftSidebar,
+    TableOfContentsMinHeadingLevel = 2,
+    TableOfContentsMaxHeadingLevel = 6)]
+```
+
+Use `TableOfContentsPlacement.Inherit` (default) to follow the global placement setting.
+
+For heading range, `null` (default) means: use the global default values.
+
+If you specify heading levels outside `1` to `6`, Blazing Story normalizes them into the valid range (clamps them), so no exception is thrown.
+For TOC placement, `Inherit` uses the global default, and invalid enum values are normalized to `None`.
+
+### Behavior notes
+
+- TOC entries are generated from markdown headings and navigate to anchor ids.
+- Sidebar placements (`LeftSidebar`, `RightSidebar`) enable scroll-spy active-section tracking.
+- Top placement renders the TOC above content and does not enable scroll-spy.
+
+### Current limitations
+
+- Scroll-spy is intentionally limited to sidebar layouts.
+
 ## 🤖 AI Agent Skills
 
 Agent skills are published to help AI coding assistants implement stories and custom addons for Blazing Story:
