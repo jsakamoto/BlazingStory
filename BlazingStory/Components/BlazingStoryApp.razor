@@ -3,6 +3,7 @@
 @using System.Runtime.InteropServices
 @using BlazingStory.Addons
 @using BlazingStory.Addons.Internals
+@using BlazingStory.Services
 @using BlazingStory.Internals.Services.XmlDocComment;
 @using BlazingStory.Internals.Types
 @using Toolbelt.Blazor.Extensions.DependencyInjection
@@ -253,6 +254,7 @@
             .AddScoped<NavigationService>()
             .AddScoped<BlazingStoryOptions>(_ => this._Options)
             .AddScoped<WebAssets>()
+            .AddScoped<IBlazingStoryActionLogger, BlazingStoryActionLogger>()
             .AddScoped<AddonManager>();
 
         if (OperatingSystem.IsBrowser())
