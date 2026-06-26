@@ -11,17 +11,23 @@
 <div class="docs-page stack vertical">
 
     <ToolBar Visible="this._Commands.ToolbarVisible?.Flag == true">
+        @{
+            var uiToolbarContents = this.GetUiToolbarContents().ToArray();
+            var previewToolbarContents = this.GetPreviewToolbarContents().ToArray();
+        }
+
         @if (this._Commands.ShowSidebar?.Flag == false)
         {
             <IconCommandButton Icon="SvgIconType.Sidebar" Command="this._Commands.ShowSidebar" />
             <Separator />
         }
 
-        @* -- Render Add-On's Toolbar Contents -- *@
+        @* -- UI changes -- *@
         @{
 #pragma warning disable IL2111
+
         }
-        @foreach (var toolbarContent in this.GetToolbarContents())
+        @foreach (var toolbarContent in uiToolbarContents)
         {
             <CascadingValue @key="toolbarContent.Id" Value="toolbarContent.Globals">
                 <DynamicComponent Type="toolbarContent.ComponentType" />
@@ -29,17 +35,43 @@
         }
         @{
 #pragma warning restore IL2111
+
         }
 
+        @if (uiToolbarContents.Length > 0 && previewToolbarContents.Length > 0)
+        {
+            <Separator />
+        }
+
+        @* -- Preview changes -- *@
+        @{
+#pragma warning disable IL2111
+
+        }
+        @foreach (var toolbarContent in previewToolbarContents)
+        {
+            <CascadingValue @key="toolbarContent.Id" Value="toolbarContent.Globals">
+                <DynamicComponent Type="toolbarContent.ComponentType" />
+            </CascadingValue>
+        }
+        @{
+#pragma warning restore IL2111
+
+        }
+
+        @* -- Other -- *@
         <Spacer />
 
         @if ((this._Commands.Fullscreen?.Flag ?? true) == true)
         {
-            <IconCommandButton Icon="SvgIconType.CircleClose" Command="this._Commands.Fullscreen" Title="Exit full screen [{0}]" />
+            <IconCommandButton Icon="SvgIconType.CircleClose" 
+                               Command="this._Commands.Fullscreen"
+                               Title="Exit full screen [{0}]" />
         }
         else
         {
-            <IconCommandButton Icon="SvgIconType.FullScreen" Command="this._Commands.Fullscreen" />
+            <IconCommandButton Icon="SvgIconType.FullScreen" 
+                               Command="this._Commands.Fullscreen" />
         }
 
     </ToolBar>
@@ -65,6 +97,7 @@
 
                         @{
 #pragma warning disable IL2111
+
                         }
                         @foreach (var panel in this.GetPanels())
                         {
@@ -78,6 +111,7 @@
                         }
                         @{
 #pragma warning restore IL2111
+
                         }
                     </div>
                 }
@@ -168,6 +202,16 @@
     private IEnumerable<ToolbarContentDescriptor> GetToolbarContents()
     {
         return this.AddonManager.GetToolbarContents(ViewMode.Docs);
+    }
+
+    private IEnumerable<ToolbarContentDescriptor> GetUiToolbarContents()
+    {
+        return this.GetToolbarContents().Where(toolbarContent => toolbarContent.Order < 100);
+    }
+
+    private IEnumerable<ToolbarContentDescriptor> GetPreviewToolbarContents()
+    {
+        return this.GetToolbarContents().Where(toolbarContent => toolbarContent.Order >= 100 && toolbarContent.Order < 700);
     }
 
     private IEnumerable<PanelDescriptor> GetPanels()
