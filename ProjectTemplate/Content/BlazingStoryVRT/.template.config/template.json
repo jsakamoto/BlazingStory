@@ -1,0 +1,158 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "J.Sakamoto",
+  "classifications": [
+    "Web",
+    "Blazor",
+    "Test"
+  ],
+  "groupIdentity": "BlazingStory.VRT",
+  "identity": "BlazingStory.VRT.CSharp.1.0",
+  "precedence": "7000",
+  "name": "Blazing Story Visual Regression Test",
+  "shortName": "blazingstoryvrt",
+  "description": "A project template for creating a Visual Regression Test project for a Blazing Story app.",
+  "thirdPartyNotices": "https://github.com/jsakamoto/BlazingStory/blob/main/THIRD-PARTY-NOTICES.txt",
+  "defaultName": "BlazorApp.Stories.VRT",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "TypeScript",
+    "type": "project"
+  },
+  "symbols": {
+    "HostIdentifier": {
+      "type": "bind",
+      "binding": "HostIdentifier"
+    },
+    "SnapshotsStorage": {
+      "type": "parameter",
+      "description": "A storage service for UI snapshots to store and share images.",
+      "datatype": "choice",
+      "defaultValue": "none",
+      "choices": [
+        {
+          "choice": "aws",
+          "description": "Amazon Web Service S3"
+        },
+        {
+          "choice": "azure",
+          "description": "Microsoft Azure Blob Storage"
+        },
+        {
+          "choice": "gcp",
+          "description": "Google Cloud Storage"
+        },
+        {
+          "choice": "custom",
+          "description": "Implement an adapter for your own custom storage"
+        },
+        {
+          "choice": "none",
+          "description": "Do not store in any storage services"
+        }
+      ]
+    }
+  },
+  "sourceName": "StoryVRT",
+  "sources": [
+    {
+      "source": "./",
+      "target": "./",
+      "exclude": [
+        ".template.config/**"
+      ],
+      "copyOnly": [],
+      "modifiers": [
+        {
+          "condition": "SnapshotsStorage == \"aws\"",
+          "exclude": [
+            "README.azure.md",
+            "README.gcp.md",
+            "README.custom.md",
+            "README.local.md",
+            "scripts/snapshot-storage.azure.ts",
+            "scripts/snapshot-storage.gcp.ts",
+            "scripts/snapshot-storage.custom.ts",
+            "scripts/snapshot-storage.local.ts"
+          ],
+          "rename": {
+            "README.aws.md": "README.md",
+            "scripts/snapshot-storage.aws.ts": "scripts/snapshot-storage.ts"
+          }
+        },
+        {
+          "condition": "SnapshotsStorage == \"azure\"",
+          "exclude": [
+            "README.aws.md",
+            "README.gcp.md",
+            "README.custom.md",
+            "README.local.md",
+            "scripts/snapshot-storage.aws.ts",
+            "scripts/snapshot-storage.gcp.ts",
+            "scripts/snapshot-storage.custom.ts",
+            "scripts/snapshot-storage.local.ts"
+          ],
+          "rename": {
+            "README.azure.md": "README.md",
+            "scripts/snapshot-storage.azure.ts": "scripts/snapshot-storage.ts"
+          }
+        },
+        {
+          "condition": "SnapshotsStorage == \"gcp\"",
+          "exclude": [
+            "README.aws.md",
+            "README.azure.md",
+            "README.custom.md",
+            "README.local.md",
+            "scripts/snapshot-storage.aws.ts",
+            "scripts/snapshot-storage.azure.ts",
+            "scripts/snapshot-storage.custom.ts",
+            "scripts/snapshot-storage.local.ts"
+          ],
+          "rename": {
+            "README.gcp.md": "README.md",
+            "scripts/snapshot-storage.gcp.ts": "scripts/snapshot-storage.ts"
+          }
+        },
+        {
+          "condition": "SnapshotsStorage == \"custom\"",
+          "exclude": [
+            "README.aws.md",
+            "README.azure.md",
+            "README.gcp.md",
+            "README.local.md",
+            "scripts/snapshot-storage.aws.ts",
+            "scripts/snapshot-storage.azure.ts",
+            "scripts/snapshot-storage.gcp.ts",
+            "scripts/snapshot-storage.local.ts"
+          ],
+          "rename": {
+            "README.custom.md": "README.md",
+            "scripts/snapshot-storage.custom.ts": "scripts/snapshot-storage.ts"
+          }
+        },
+        {
+          "condition": "SnapshotsStorage == \"none\"",
+          "exclude": [
+            "README.aws.md",
+            "README.azure.md",
+            "README.gcp.md",
+            "README.custom.md",
+            "scripts/snapshot-storage.aws.ts",
+            "scripts/snapshot-storage.azure.ts",
+            "scripts/snapshot-storage.gcp.ts",
+            "scripts/snapshot-storage.custom.ts",
+            "scripts/snapshot-sync.ts",
+            "scripts/snapshots-push.ts",
+            "scripts/snapshots-pull.ts"
+          ],
+          "rename": {
+            "README.local.md": "README.md"
+          }
+        }
+      ]
+    }
+  ],
+  "primaryOutputs": [],
+  "postActions": []
+}

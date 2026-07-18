@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json.schemastore.org/vs-2017.3.host",
+  "order": 900,
+  "icon": "icon-32x32.png",
+  "symbolInfo": [
+    {
+      "id": "SnapshotsStorage",
+      "name": {
+        "text": "A storage service for UI snapshots to store and share images."
+      },
+      "isVisible": true,
+      "choices": [
+        {
+          "id": "aws",
+          "name": { "text": "AWS S3" }
+        },
+        {
+          "id": "azure",
+          "name": { "text": "Azure Blob Storage" }
+        },
+        {
+          "id": "gcp",
+          "name": { "text": "Google Cloud Storage" }
+        },
+        {
+          "id": "custom",
+          "name": { "text": "Custom" }
+        },
+        {
+          "id": "none",
+          "name": { "text": "None" }
+        }
+      ],
+      "persistenceScope": "templateGroup"
+    }
+  ]
+}

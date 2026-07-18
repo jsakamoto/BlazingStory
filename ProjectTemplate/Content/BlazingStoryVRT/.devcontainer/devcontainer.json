@@ -1,0 +1,24 @@
+{
+  "name": "vrt-trial",
+  "image": "mcr.microsoft.com/playwright:v1.61.0-noble",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "username": "vscode",
+      "userUid": "automatic",
+      "userGid": "automatic"
+    }
+  },
+  "remoteUser": "vscode",
+  "mounts": [
+    "source=${localEnv:USERPROFILE}/.claude,target=/home/vscode/.claude,type=bind"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-playwright.playwright",
+        "anthropic.claude-code"
+      ]
+    }
+  },
+  "postCreateCommand": "npm install",
+}

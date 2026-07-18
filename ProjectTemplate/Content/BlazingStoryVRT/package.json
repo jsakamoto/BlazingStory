@@ -1,0 +1,29 @@
+{
+  "name": "storybook-vrt",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    //#if (SnapshotsStorage != "none")
+    "snapshots:pull": "node scripts/snapshots-pull.ts",
+    "snapshots:push": "node scripts/snapshots-push.ts",
+    //#endif
+    "stories:gen": "playwright test -g wont-match-anything --pass-with-no-tests"
+  },
+  "devDependencies": {
+    //#if (SnapshotsStorage == "aws")
+    "@aws-sdk/client-s3": "^3.1089.0",
+    //#endif
+    //#if (SnapshotsStorage == "azure")
+    "@azure/identity": "^4.13.1",
+    "@azure/storage-blob": "^12.33.0",
+    //#endif
+    //#if (SnapshotsStorage == "gcp")
+    "@google-cloud/storage": "^7.21.0",
+    //#endif
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^26.0.0",
+    "typescript": "^5.8.0"
+  }
+}
