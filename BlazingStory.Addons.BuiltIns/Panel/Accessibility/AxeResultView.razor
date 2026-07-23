@@ -2,7 +2,7 @@
 
 <div class="@CssClass("axe-result-view", new { expanded = Expanded })">
 
-    <div class="header" @onclick="OnClickHeader">
+    <button type="button" class="header" aria-expanded="@Expanded" @onclick="OnClickHeader">
         <span class="title">
             @Capitalize(this.Result.Id)
         </span>
@@ -18,17 +18,35 @@
         </span>
         <SvgIcon Type="SvgIconType.Chevron" Class="expansion-indicator">
         </SvgIcon>
-    </div>
+    </button>
 
     <div class="details">
         <div class="details-inner">
             <div class="details-content">
 
-                <div class="description">
-                    <span class="text">@Result.Description</span>
-                    <a class="help-link" href="@Result.HelpUrl" target="_blank">
-                        Learn how to resolve this violation &gt;
-                    </a>
+                <div class="guidance">
+                    <section class="guidance-section what-this-means">
+                        <div class="guidance-caption">What this means</div>
+                        <p class="guidance-text">@Result.Description</p>
+                    </section>
+
+                    <section class="guidance-section how-to-fix">
+                        <div class="guidance-caption">How to fix</div>
+                        <p class="guidance-text">@Result.Help</p>
+                        <a class="help-link" href="@Result.HelpUrl" target="_blank" rel="noopener noreferrer">
+                            Open step-by-step fix guide &gt;
+                        </a>
+                    </section>
+
+                    @if (Result.Tags.Any(tag => !string.IsNullOrWhiteSpace(tag)))
+                    {
+                        <div class="tags" aria-label="Accessibility categories">
+                            @foreach (var tag in Result.Tags.Where(tag => !string.IsNullOrWhiteSpace(tag)))
+                            {
+                                <span class="tag">@tag</span>
+                            }
+                        </div>
+                    }
                 </div>
 
                 <AxeNodesView Nodes="Result.Nodes" />

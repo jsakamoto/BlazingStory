@@ -4,7 +4,7 @@
 @inject IJSRuntime JSRuntime
 
 <PanelTitle>
-    Accessibility
+    Accessibility Report
     @if ((this._AxeResults?.Violations?.Count() ?? 0) > 0)
     {
         <Badge Text="@this._AxeResults?.Violations.Count().ToString()" />
@@ -14,19 +14,69 @@
 <ImportStyleSheet Href="./_content/BlazingStory.Addons.BuiltIns/css/a11y-panel.min.css" />
 
 <div class="a11y-panel">
+    <div class="a11y-overview" role="status" aria-live="polite">
+        <div class="a11y-overview-title">Quick Accessibility Overview</div>
+        <div class="a11y-severity-legend" aria-label="Severity legend">
+            <button type="button" class="@GetLegendItemClass(SeverityFilter.All)"
+                    @onclick="() => SetSeverityFilter(SeverityFilter.All)">All severities</button>
+            <button type="button" class="@GetLegendItemClass(SeverityFilter.Critical)"
+                    @onclick="() => SetSeverityFilter(SeverityFilter.Critical)">Critical</button>
+            <button type="button" class="@GetLegendItemClass(SeverityFilter.Serious)"
+                    @onclick="() => SetSeverityFilter(SeverityFilter.Serious)">Serious</button>
+            <button type="button" class="@GetLegendItemClass(SeverityFilter.Moderate)"
+                    @onclick="() => SetSeverityFilter(SeverityFilter.Moderate)">Moderate</button>
+            <button type="button" class="@GetLegendItemClass(SeverityFilter.Minor)"
+                    @onclick="() => SetSeverityFilter(SeverityFilter.Minor)">Minor</button>
+        </div>
+
+        @if (this._WaitingForReady)
+        {
+            <div class="a11y-overview-message">Preparing the preview so we can run the accessibility scan.</div>
+        }
+        else if (this._IsRunningScan)
+        {
+            <div class="a11y-overview-message">Scanning the current story now. Results will appear in a few seconds.</div>
+        }
+        else if (this._AxeResults is null)
+        {
+            <div class="a11y-overview-message">No report yet. Open a story to trigger the first scan, or click "Run scan".
+            </div>
+        }
+        else
+        {
+            <div class="a11y-overview-message">@GetOverviewMessage()</div>
+
+            <div class="a11y-overview-stats">
+                <button type="button" class="a11y-stat-button" @onclick="() => _currentView = View.Violations">
+                    Needs fixing
+                    <Badge Text="@GetViolationsCount().ToString()" />
+                </button>
+                <button type="button" class="a11y-stat-button" @onclick="() => _currentView = View.Inconclusive">
+                    Needs review
+                    <Badge Text="@GetInconclusiveCount().ToString()" />
+                </button>
+                <button type="button" class="a11y-stat-button" @onclick="() => _currentView = View.Passes">
+                    Passed
+                    <Badge Text="@GetPassesCount().ToString()" />
+                </button>
+            </div>
+        }
+    </div>
+
     <ToolBar>
         <TabButtonGroup>
             <TabButton Active="@(_currentView == View.Violations)" OnClick="@(() => _currentView = View.Violations)">
-                Violations
-                <Badge Text="@(this._AxeResults?.Violations.Count().ToString() ?? "0")" />
+                Needs fixing
+                <Badge Text="@GetFilteredViolationsCount().ToString()" />
             </TabButton>
             <TabButton Active="@(_currentView == View.Passes)" OnClick="@(() => _currentView = View.Passes)">
-                Passes
-                <Badge Text="@(this._AxeResults?.Passes.Count().ToString() ?? "0")" />
+                Passed
+                <Badge Text="@GetFilteredPassesCount().ToString()" />
             </TabButton>
-            <TabButton Active="@(_currentView == View.Inconclusive)" OnClick="@(() => _currentView = View.Inconclusive)">
-                Inconclusive
-                <Badge Text="@(this._AxeResults?.Incomplete.Count().ToString() ?? "0")" />
+            <TabButton Active="@(_currentView == View.Inconclusive)"
+                       OnClick="@(() => _currentView = View.Inconclusive)">
+                Needs review
+                <Badge Text="@GetFilteredInconclusiveCount().ToString()" />
             </TabButton>
         </TabButtonGroup>
 
@@ -34,32 +84,38 @@
 
         @if (GetCurrentExpansionStateRef() == ExpansionState.ExpandedAll)
         {
-            <IconButton Icon="SvgIconType.CollapseAll"
-                        Title="Collapse all results"
-                        OnClick="() => SetCurrentExpansionState(ExpansionState.CollapsedAll)"></IconButton>
+            <button type="button" class="a11y-toolbar-button" title="Collapse all results"
+                    @onclick="() => SetCurrentExpansionState(ExpansionState.CollapsedAll)">
+                Collapse all
+            </button>
         }
         else
         {
-            <IconButton Icon="SvgIconType.ExpandAll"
-                        Title="Expand all results"
-                        OnClick="() => SetCurrentExpansionState(ExpansionState.ExpandedAll)"></IconButton>
+            <button type="button" class="a11y-toolbar-button" title="Expand all results"
+                    @onclick="() => SetCurrentExpansionState(ExpansionState.ExpandedAll)">
+                Expand all
+            </button>
         }
 
-        <IconButton Icon="SvgIconType.Reload" Title="Rerun accessibility scan" OnClick="() => RequestAxeRunAsync(force: true)"></IconButton>
+        <button type="button" class="a11y-toolbar-button" title="Rerun accessibility scan"
+                @onclick="() => RequestAxeRunAsync(force: true)">
+            Run scan
+        </button>
     </ToolBar>
 
     <div class="axe-results-views-container">
-        <AxeResultsView Results="this._AxeResults?.Violations"
-                        Visible="(_currentView == View.Violations)"
-                        @bind-ExpansionState="_ViolationsExpansionState"
+        @if (this._AxeResults is not null && GetCurrentFilteredResultsCount() == 0)
+        {
+            <div class="a11y-empty-state">@GetEmptyStateMessage()</div>
+        }
+
+        <AxeResultsView Results="GetFilteredResults(this._AxeResults?.Violations)"
+                        Visible="(_currentView == View.Violations)" @bind-ExpansionState="_ViolationsExpansionState"
                         @bind-ExpansionState:after="OnExpansionStateChanged" />
-        <AxeResultsView Results="this._AxeResults?.Passes"
-                        Visible="(_currentView == View.Passes)"
-                        @bind-ExpansionState="_PassesExpansionState"
-                        @bind-ExpansionState:after="OnExpansionStateChanged" />
-        <AxeResultsView Results="this._AxeResults?.Incomplete"
-                        Visible="(_currentView == View.Inconclusive)"
-                        @bind-ExpansionState="_InconclusiveExpansionState"
+        <AxeResultsView Results="GetFilteredResults(this._AxeResults?.Passes)" Visible="(_currentView == View.Passes)"
+                        @bind-ExpansionState="_PassesExpansionState" @bind-ExpansionState:after="OnExpansionStateChanged" />
+        <AxeResultsView Results="GetFilteredResults(this._AxeResults?.Incomplete)"
+                        Visible="(_currentView == View.Inconclusive)" @bind-ExpansionState="_InconclusiveExpansionState"
                         @bind-ExpansionState:after="OnExpansionStateChanged" />
     </div>
 </div>
@@ -73,6 +129,8 @@
     protected IServiceProvider Services { get; init; } = default!;
 
     private enum View { Violations, Passes, Inconclusive }
+
+    private enum SeverityFilter { All, Critical, Serious, Moderate, Minor }
 
     private View _currentView = View.Violations;
 
@@ -92,6 +150,10 @@
 
     private bool _WaitingForReady = false;
 
+    private bool _IsRunningScan = false;
+
+    private SeverityFilter _severityFilter = SeverityFilter.All;
+
     protected override void OnInitialized()
     {
         this._Window = this.Services.GetRequiredService<Window>();
@@ -107,7 +169,8 @@
         // When the story changes, we need to ask the preview frame if it's ready to run Axe against the new story.
         if (this._PrevStory != this.Story && this._Window is not null)
         {
-            if (this._WaitingForReady) return; // Prevent recursive calls to this method while waiting for the preview frame to be ready.
+            // Prevent recursive calls to this method while waiting for the preview frame to be ready.
+            if (this._WaitingForReady) return;
 
             this._WaitingForReady = true;
             this._AxeResults = null;
@@ -144,16 +207,23 @@
     {
         if (!force && this._PrevStory == this.Story) return;
         this._PrevStory = this.Story;
+        this._IsRunningScan = true;
         this._AxeResults = null;
         this._ViolationsExpansionState = ExpansionState.CollapsedAll;
         this._PassesExpansionState = ExpansionState.CollapsedAll;
         this._InconclusiveExpansionState = ExpansionState.CollapsedAll;
-        if (this._Window is not null) await this._Window.PostMessageAsync(".preview-frame iframe", AccessibilityPanelAddon.Message.RunAxe);
+        this.StateHasChanged();
+        if (this._Window is not null)
+        {
+            await this._Window.PostMessageAsync(".preview-frame iframe", AccessibilityPanelAddon.Message.RunAxe);
+        }
     }
 
     [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "AxeResults and all referenced types are preserved via [DynamicallyAccessedMembers(All)].")]
     private async Task OnReceiveAxeResultAsync(string resultObjectUrl)
     {
+        if (string.IsNullOrWhiteSpace(resultObjectUrl)) return;
+
         try
         {
             // The Axe results are expected to be a JSON string, but we fetch it as a blob from the object URL
@@ -162,15 +232,124 @@
             await using var response = await JSRuntime.InvokeAsync<IJSObjectReference>("fetch", resultObjectUrl);
             await using var blob = await response.InvokeAsync<IJSStreamReference>("blob");
             using var stream = await blob.OpenReadStreamAsync();
-            this._AxeResults = await JsonSerializer.DeserializeAsync<AxeResults>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            this._AxeResults = await JsonSerializer.DeserializeAsync<AxeResults>(stream, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
         }
         catch (JSDisconnectedException) { }
         finally
         {
+            this._IsRunningScan = false;
             this.StateHasChanged();
             try { await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", resultObjectUrl); }
             catch (JSDisconnectedException) { }
         }
+    }
+
+    private int GetViolationsCount() => this._AxeResults?.Violations.Count() ?? 0;
+
+    private int GetPassesCount() => this._AxeResults?.Passes.Count() ?? 0;
+
+    private int GetInconclusiveCount() => this._AxeResults?.Incomplete.Count() ?? 0;
+
+    private string GetCurrentViewLabel() => this._currentView switch
+    {
+        View.Violations => "Needs fixing",
+        View.Passes => "Passed",
+        View.Inconclusive => "Needs review",
+        _ => throw new InvalidOperationException()
+    };
+
+    private int GetCurrentResultsCount() => this._currentView switch
+    {
+        View.Violations => GetViolationsCount(),
+        View.Passes => GetPassesCount(),
+        View.Inconclusive => GetInconclusiveCount(),
+        _ => throw new InvalidOperationException()
+    };
+
+    private int GetCurrentFilteredResultsCount() => this._currentView switch
+    {
+        View.Violations => GetFilteredViolationsCount(),
+        View.Passes => GetFilteredPassesCount(),
+        View.Inconclusive => GetFilteredInconclusiveCount(),
+        _ => throw new InvalidOperationException()
+    };
+
+    private int GetFilteredViolationsCount() => GetFilteredResults(this._AxeResults?.Violations).Count();
+
+    private int GetFilteredPassesCount() => GetFilteredResults(this._AxeResults?.Passes).Count();
+
+    private int GetFilteredInconclusiveCount() => GetFilteredResults(this._AxeResults?.Incomplete).Count();
+
+    private IEnumerable<Result> GetFilteredResults(IEnumerable<Result>? results)
+    {
+        var source = results ?? [];
+        if (this._severityFilter == SeverityFilter.All) return source;
+
+        var impact = this._severityFilter switch
+        {
+            SeverityFilter.Critical => "critical",
+            SeverityFilter.Serious => "serious",
+            SeverityFilter.Moderate => "moderate",
+            SeverityFilter.Minor => "minor",
+            _ => throw new InvalidOperationException()
+        };
+
+        return source.Where(result => string.Equals(result.Impact, impact, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private void SetSeverityFilter(SeverityFilter severityFilter)
+    {
+        this._severityFilter = severityFilter;
+        this.SetCurrentExpansionState(ExpansionState.CollapsedAll);
+    }
+
+    private string GetLegendItemClass(SeverityFilter severityFilter)
+    {
+        var cssClass = "legend-item";
+        if (severityFilter == SeverityFilter.Critical) cssClass += " severity-critical";
+        if (severityFilter == SeverityFilter.Serious) cssClass += " severity-serious";
+        if (severityFilter == SeverityFilter.Moderate) cssClass += " severity-moderate";
+        if (severityFilter == SeverityFilter.Minor) cssClass += " severity-minor";
+        if (this._severityFilter == severityFilter) cssClass += " active";
+        return cssClass;
+    }
+
+    private string GetSeverityFilterLabel() => this._severityFilter switch
+    {
+        SeverityFilter.All => "All severities",
+        SeverityFilter.Critical => "Critical",
+        SeverityFilter.Serious => "Serious",
+        SeverityFilter.Moderate => "Moderate",
+        SeverityFilter.Minor => "Minor",
+        _ => throw new InvalidOperationException()
+    };
+
+    private string GetEmptyStateMessage()
+    {
+        var viewLabel = GetCurrentViewLabel();
+        if (this._severityFilter == SeverityFilter.All)
+        {
+            return $"No items in \"{viewLabel}\". Try another tab for more details.";
+        }
+
+        return $"No {GetSeverityFilterLabel().ToLowerInvariant()} items in \"{viewLabel}\". Try another severity or tab.";
+    }
+
+    private string GetOverviewMessage()
+    {
+        var violations = GetViolationsCount();
+        var review = GetInconclusiveCount();
+        var passed = GetPassesCount();
+
+        if (violations == 0 && review == 0)
+        {
+            return $"Great job. This story passed {passed} automated accessibility checks.";
+        }
+
+        return $"Found {violations} issues to fix and {review} items to review manually. Start with \"Needs fixing\" for highest impact.";
     }
 
     private void OnExpansionStateChanged()
@@ -193,9 +372,9 @@
     {
         var currentResults = this._currentView switch
         {
-            View.Violations => this._AxeResults?.Violations,
-            View.Passes => this._AxeResults?.Passes,
-            View.Inconclusive => this._AxeResults?.Incomplete,
+            View.Violations => GetFilteredResults(this._AxeResults?.Violations),
+            View.Passes => GetFilteredResults(this._AxeResults?.Passes),
+            View.Inconclusive => GetFilteredResults(this._AxeResults?.Incomplete),
             _ => throw new InvalidOperationException()
         };
 

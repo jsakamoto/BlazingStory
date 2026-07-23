@@ -3,11 +3,12 @@
 
 <SvgIcons />
 
-<BlazingStoryApp Assemblies="[typeof(App).Assembly]"
-                 OnInitialize="OnInitialize">
+@* This sample enables the built-in Accessibility Report so the UI is visible out of the box.
+    Add custom accessibility rules in a custom addon registered from OnInitialize if needed. *@
+<BlazingStoryApp Assemblies="[typeof(App).Assembly]" EnableAccessibilityReport="true" OnInitialize="OnInitialize">
 </BlazingStoryApp>
 
-@code 
+@code
 {
     private void OnInitialize(IBlazingStoryBuilder builder)
     {
