@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "playwright test",
+    "test:open": "playwright test & start  \"\" \"playwright-report/index.html\"",
     //#if (SnapshotsStorage != "none")
     "snapshots:pull": "node scripts/snapshots-pull.ts",
     "snapshots:push": "node scripts/snapshots-push.ts",

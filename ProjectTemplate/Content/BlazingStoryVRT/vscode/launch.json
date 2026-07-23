@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Update Snapshots",
+      "type": "node",
+      "request": "launch",
+      "skipFiles": [ "<node_internals>/**" ],
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [ "test", "--", "--update-snapshots" ],
+      "cwd": "${workspaceFolder}",
+      "outputCapture": "std"
+    },
+    {
+      "name": "Run Tests",
+      "type": "node",
+      "request": "launch",
+      "skipFiles": [ "<node_internals>/**" ],
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [ "run", "test:open" ],
+      "cwd": "${workspaceFolder}",
+      "outputCapture": "std"
+    }
+  ]
+}

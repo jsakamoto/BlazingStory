@@ -149,10 +149,19 @@
           "rename": {
             "README.local.md": "README.md"
           }
+        },
+        {
+          "rename": {
+            "vscode": ".vscode"
+          }
         }
       ]
     }
   ],
-  "primaryOutputs": [],
+  "primaryOutputs": [
+    {
+      "path": "StoryVRT.esproj"
+    }
+  ],
   "postActions": []
 }
