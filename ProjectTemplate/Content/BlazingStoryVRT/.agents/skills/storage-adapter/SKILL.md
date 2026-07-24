@@ -1,6 +1,6 @@
 ---
 name: storage-adapter
-description: Implement a snapshot-storage adapter so a new storage service (Dropbox, MinIO, WebDAV, any S3-compatible, …) can hold the VRT baselines. Use when the user asks to support / implement / カスタムストレージアダプタを実装 a new snapshot storage backend, or to switch the sync to a service that has no scripts/snapshot-storage.<provider>.ts yet.
+description: Implement a snapshot-storage adapter so a new storage service (Dropbox, MinIO, WebDAV, any S3-compatible, …) can hold the VRT baselines. Use when the user asks to support / implement / a new snapshot storage backend, or to switch the sync to a service that has no scripts/snapshot-storage.<provider>.ts yet.
 ---
 
 # Implementing a storage adapter

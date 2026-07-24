@@ -41,39 +41,62 @@
       "persistenceScope": "templateGroup"
     },
     {
-      "id":"AwsS3RegionName",
-      "name":{
+      "id": "AwsS3RegionName",
+      "name": {
         "text": "AWS S3 Region",
         "description": "AWS S3 Region name holding the shared VRT baseline screenshots"
       }
     },
     {
-      "id":"AwsS3BucketName",
-      "name":{
+      "id": "AwsS3BucketName",
+      "name": {
         "text": "AWS S3 Bucket",
         "description": "AWS S3 Bucket name holding the shared VRT baseline screenshots"
       }
     },
     {
-      "id":"AzureStorageAccouontName",
-      "name":{
+      "id": "AzureStorageAccouontName",
+      "name": {
         "text": "Azure Storage Account",
         "description": "Azure Storage Account name holding the shared VRT baseline screenshots"
       }
     },
     {
-      "id":"AzureStorageContainerName",
-      "name":{
+      "id": "AzureStorageContainerName",
+      "name": {
         "text": "Azure Storage Container",
         "description": "Azure Storage Container name holding the shared VRT baseline screenshots"
       }
     },
     {
-      "id":"GoogleCloudStorageBucketName",
-      "name":{
+      "id": "GoogleCloudStorageBucketName",
+      "name": {
         "text": "Google Clound Storage Bucket",
         "description": "Google Clound Storage Bucket name holding the shared VRT baseline screenshots"
       }
+    },
+    {
+      "id": "AIAgentToImplementCustomStorage",
+      "name": {
+        "text": "AI agent to implement a custom storage adapter",
+        "description": "Skills for implementing custom storage adapters will be stored in the appropriate folder for your chosen agent."
+      },
+      "isVisible": true,
+      "choices": [
+        {
+          "id": "claude",
+          "name": { "text": "Claude Code" }
+        },
+        {
+          "id": "generic",
+          "name": { "text": "GitHub Copilot, OpenAI Codex, Cursor, etc." }
+        },
+        {
+          "id": "none",
+          "name": { "text": "No AI agent" }
+        }
+      ],
+      "persistenceScope": "templateGroup"
     }
   ]
 }

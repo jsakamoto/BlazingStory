@@ -12,6 +12,8 @@ Visual Regression Testing (VRT) for a [Blazing Story](https://github.com/jsakamo
 
 `scripts/snapshot-storage.ts` ships as an empty template. Implement its members (each one is described by a comment in the file) so the sync can list, download, upload, and delete the baseline files on your storage service. Putting the connection values in `vrt.config.ts` rather than hardcoding them in the adapter is recommended, because it keeps everything a user of this project has to edit in one file.
 
+If you picked an AI coding agent when you created this project, you don't have to write this by hand. A **storage-adapter skill** was installed for that agent, under `.claude/skills/` for Claude Code, or `.agents/skills/` for GitHub Copilot, OpenAI Codex, Cursor, and other agents. Just tell your agent which service you want to use (Dropbox, MinIO, WebDAV, any S3-compatible storage, and so on) and ask it to implement the storage adapter; it will follow the skill to fill in `scripts/snapshot-storage.ts` and add the matching connection values to `vrt.config.ts` (step 2).
+
 ### 2. Configure `vrt.config.ts`
 
 Set the URL of the Blazing Story app under test and the storage connection values:

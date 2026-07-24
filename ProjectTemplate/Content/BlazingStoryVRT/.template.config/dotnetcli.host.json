@@ -28,6 +28,10 @@
     "GoogleCloudStorageBucketName": {
       "longName": "gcp-bucket",
       "shortName": ""
+    },
+    "AIAgentToImplementCustomStorage": {
+      "longName": "ai-agent",
+      "shortName": "ai"
     }
   }
 }

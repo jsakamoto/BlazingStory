@@ -3,17 +3,21 @@
   "strings": {
     "name": "Blazing Story ビジュアルリグレッションテスト",
     "description": "Blazing Story アプリ用のビジュアルリグレッションテストプロジェクトを作成するためのプロジェクト テンプレート。",
-    "parameter.SnapshotsStorage.name": "UI スナップショットの画像を保存および共有するストレージサービス",
     "parameter.baseURL.name": "テスト対象の Blazing Story アプリケーションが稼働しているベース URL",
-    "parameter.AwsS3RegionName.name.text": "AWS S3 リージョン",
-    "parameter.AwsS3RegionName.name.description": "共有 VRT ベースラインスクリーンショットを保持している AWS S3 リージョン名",
-    "parameter.AwsS3BucketName.name.text": "AWS S3 バケット",
-    "parameter.AwsS3BucketName.name.description": "共有 VRT ベースラインスクリーンショットを保持している AWS S3 バケット名",
-    "parameter.AzureStorageAccouontName.name.text": "Azure ストレージ アカウント",
-    "parameter.AzureStorageAccouontName.name.description": "共有 VRT ベースラインスクリーンショットを保持している Azure ストレージ アカウント名",
-    "parameter.AzureStorageContainerName.name.text": "Azure ストレージ コンテナ",
-    "parameter.AzureStorageContainerName.name.description": "共有 VRT ベースラインスクリーンショットを保持している Azure ストレージ コンテナ名",
-    "parameter.GoogleCloudStorageBucketName.name.text": "Google クラウドストレージ バケット",
-    "parameter.GoogleCloudStorageBucketName.name.description": "共有 VRT ベースラインスクリーンショットを保持している Google クラウドストレージ バケット名"
+    "parameter.baseURL.description": "テスト対象の Blazing Story アプリケーションが稼働しているベース URL",
+    "parameter.SnapshotsStorage.name": "UI スナップショットの画像を保存および共有するストレージサービス",
+    "parameter.SnapshotsStorage.description": "UI スナップショットの画像を保存および共有するストレージサービス",
+    "parameter.AwsS3RegionName.name": "AWS S3 リージョン",
+    "parameter.AwsS3RegionName.description": "共有 VRT ベースラインスクリーンショットを保持している AWS S3 リージョン名",
+    "parameter.AwsS3BucketName.name": "AWS S3 バケット",
+    "parameter.AwsS3BucketName.description": "共有 VRT ベースラインスクリーンショットを保持している AWS S3 バケット名",
+    "parameter.AzureStorageAccouontName.name": "Azure ストレージ アカウント",
+    "parameter.AzureStorageAccouontName.description": "共有 VRT ベースラインスクリーンショットを保持している Azure ストレージ アカウント名",
+    "parameter.AzureStorageContainerName.name": "Azure ストレージ コンテナ",
+    "parameter.AzureStorageContainerName.description": "共有 VRT ベースラインスクリーンショットを保持している Azure ストレージ コンテナ名",
+    "parameter.GoogleCloudStorageBucketName.name": "Google クラウドストレージ バケット",
+    "parameter.GoogleCloudStorageBucketName.description": "共有 VRT ベースラインスクリーンショットを保持している Google クラウドストレージ バケット名",
+    "parameter.AIAgentToImplementCustomStorage.name": "カスタムストレージ アダプターを実装する AI エージェント",
+    "parameter.AIAgentToImplementCustomStorage.description": "カスタムストレージ アダプターを実装するためのスキルが、選択したエージェントに応じた適切なフォルダーに保存されます。"
   }
 }

@@ -98,6 +98,27 @@
       "isEnabled": "SnapshotsStorage == \"gcp\"",
       "isRequired": true,
       "replaces": "GOOGLE_CLOUD_STORAGE_BUCKET_NAME"
+    },
+    "AIAgentToImplementCustomStorage":{
+      "type": "parameter",
+      "description": "AI agent to implement a custom storage adapter. Skills for implementing custom storage adapters will be stored in the appropriate folder for your chosen agent.",
+      "datatype": "choice",
+      "isEnabled": "SnapshotsStorage == \"custom\"",
+      "defaultValue": "none",
+      "choices": [
+        {
+          "choice": "claude",
+          "description": "Claude Code"
+        },
+        {
+          "choice": "generic",
+          "description": "GitHub Copilot, OpenAI Codex, Cursor, etc."
+        },
+        {
+          "choice": "none",
+          "description": "No AI agent"
+        }
+      ]
     }
   },
   "sourceName": "StoryVRT",
@@ -200,6 +221,16 @@
         {
           "rename": {
             "vscode": ".vscode"
+          }
+        },
+        {
+          "condition": "(SnapshotsStorage != \"custom\") || (AIAgentToImplementCustomStorage == \"none\")",
+          "exclude": [".agents/**"]
+        },
+        {
+          "condition": "(SnapshotsStorage == \"custom\") && (AIAgentToImplementCustomStorage == \"claude\")",
+          "rename": {
+            ".agents": ".claude"
           }
         }
       ]
