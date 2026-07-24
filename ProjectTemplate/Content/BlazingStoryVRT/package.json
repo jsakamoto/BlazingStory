@@ -6,6 +6,7 @@
   "scripts": {
     "test": "playwright test",
     "test:open": "playwright test & start  \"\" \"playwright-report/index.html\"",
+    "snapshots:update": "playwright test --update-snapshots",
     //#if (SnapshotsStorage != "none")
     "snapshots:pull": "node scripts/snapshots-pull.ts",
     "snapshots:push": "node scripts/snapshots-push.ts",

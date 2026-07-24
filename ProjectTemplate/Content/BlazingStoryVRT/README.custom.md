@@ -36,7 +36,7 @@ The Blazing Story app must be running at the configured URL whenever the tests r
 On the first run no baseline exists yet, so capture the baselines:
 
 ```sh
-npm test -- --update-snapshots
+npm run snapshots:update
 ```
 
 Once the baselines look good, share them through the cloud storage:
@@ -54,8 +54,8 @@ npm test
 ## How it works
 
 - Every test run reads the story index from the running app and generates one test per story. The story list is materialized into `tests/stories.json`; to refresh it without running any tests (e.g. after adding stories), run `npm run stories:gen`.
-- Baselines missing locally are downloaded from the cloud storage automatically before every test run, which is convenient on CI or a fresh clone. You can also download them explicitly with `npm run snapshots:pull`.
-- After updating baselines (`npm test -- --update-snapshots`), upload them again with `npm run snapshots:push`.
+- Baselines missing locally are downloaded from the storage automatically before every test run, which is convenient on CI or a fresh clone. You can also download them explicitly with `npm run snapshots:pull`.
+- After updating baselines (`npm run snapshots:update`), upload them again with `npm run snapshots:push`.
 
 ## Tuning
 

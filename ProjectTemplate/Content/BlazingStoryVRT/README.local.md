@@ -34,7 +34,7 @@ The Blazing Story app must be running at the configured URL whenever the tests r
 On the first run no baseline exists yet, so capture the baselines:
 
 ```sh
-npm test -- --update-snapshots
+npm run snapshots:update
 ```
 
 From then on, a plain run compares the current screenshots against the baselines:
@@ -46,7 +46,7 @@ npm test
 ## How it works
 
 - Every test run reads the story index from the running app and generates one test per story. The story list is materialized into `tests/stories.json`; to refresh it without running any tests (e.g. after adding stories), run `npm run stories:gen`.
-- The baselines live in `tests/vrt.spec.ts-snapshots/` on this machine only. To accept an intentional UI change as the new baseline, run `npm test -- --update-snapshots` again.
+- The baselines live in `tests/vrt.spec.ts-snapshots/` on this machine only. To accept an intentional UI change as the new baseline, run `npm run snapshots:update` again.
 
 ## Tuning
 
