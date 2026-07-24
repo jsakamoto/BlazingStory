@@ -1,7 +1,16 @@
 {
-  "name": "vrt-trial",
+  "name": "storyvrt",
   "image": "mcr.microsoft.com/playwright:v1.61.0-noble",
   "features": {
+    //#if (SnapshotsStorage == "aws")
+    "ghcr.io/devcontainers/features/aws-cli:1": {},
+    //#endif
+    //#if (SnapshotsStorage == "azure")
+    "ghcr.io/devcontainers/features/azure-cli:1": {},
+    //#endif
+    //#if (SnapshotsStorage == "gcp")
+    "ghcr.io/dhoeric/features/google-cloud-cli:1": {},
+    //#endif
     "ghcr.io/devcontainers/features/common-utils:2": {
       "username": "vscode",
       "userUid": "automatic",
@@ -9,16 +18,12 @@
     }
   },
   "remoteUser": "vscode",
-  "mounts": [
-    "source=${localEnv:USERPROFILE}/.claude,target=/home/vscode/.claude,type=bind"
-  ],
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-playwright.playwright",
-        "anthropic.claude-code"
+        "ms-playwright.playwright"
       ]
     }
   },
-  "postCreateCommand": "npm install",
+  "postCreateCommand": "npm install"
 }
