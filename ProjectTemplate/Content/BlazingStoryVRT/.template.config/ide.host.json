@@ -4,6 +4,13 @@
   "icon": "icon-32x32.png",
   "symbolInfo": [
     {
+      "id": "baseURL",
+      "name": {
+        "text": "A base URL where the Blazing Story app under test is running."
+      },
+      "isVisible": true
+    },
+    {
       "id": "SnapshotsStorage",
       "name": {
         "text": "A storage service for UI snapshots to store and share images."
@@ -32,6 +39,41 @@
         }
       ],
       "persistenceScope": "templateGroup"
+    },
+    {
+      "id":"AwsS3RegionName",
+      "name":{
+        "text": "AWS S3 Region",
+        "description": "AWS S3 Region name holding the shared VRT baseline screenshots"
+      }
+    },
+    {
+      "id":"AwsS3BucketName",
+      "name":{
+        "text": "AWS S3 Bucket",
+        "description": "AWS S3 Bucket name holding the shared VRT baseline screenshots"
+      }
+    },
+    {
+      "id":"AzureStorageAccouontName",
+      "name":{
+        "text": "Azure Storage Account",
+        "description": "Azure Storage Account name holding the shared VRT baseline screenshots"
+      }
+    },
+    {
+      "id":"AzureStorageContainerName",
+      "name":{
+        "text": "Azure Storage Container",
+        "description": "Azure Storage Container name holding the shared VRT baseline screenshots"
+      }
+    },
+    {
+      "id":"GoogleCloudStorageBucketName",
+      "name":{
+        "text": "Google Clound Storage Bucket",
+        "description": "Google Clound Storage Bucket name holding the shared VRT baseline screenshots"
+      }
     }
   ]
 }

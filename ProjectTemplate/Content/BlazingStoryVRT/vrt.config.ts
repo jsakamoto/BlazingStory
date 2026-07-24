@@ -10,27 +10,27 @@ export const vrtConfig = {
   // AWS S3 bucket holding the shared VRT baseline screenshots.
   // Not secrets: authentication happens through the AWS CLI credentials
   // (`aws configure`).
-  storageBucket: process.env.VRT_STORAGE_BUCKET ?? "{AWS S3 Bucket Name}",
-  storageRegion: process.env.VRT_STORAGE_REGION ?? "{AWS S3 Region Name}",
+  storageRegion: process.env.VRT_STORAGE_REGION ?? "AWS_S3_REGION_NAME",
+  storageBucket: process.env.VRT_STORAGE_BUCKET ?? "AWS_S3_BUCKET_NAME",
 
   //#endif
   //#if (SnapshotsStorage == "azure")
   // Azure Blob Storage holding the shared VRT baseline screenshots.
   // Not secrets: authentication happens through the Azure CLI login
   // (`az login` + the "Storage Blob Data Contributor" role).
-  storageAccount: process.env.VRT_STORAGE_ACCOUNT ?? "{Azure Storage Account Name}",
-  storageContainer: process.env.VRT_STORAGE_CONTAINER ?? "{Azure Storage Container Name}",
+  storageAccount: process.env.VRT_STORAGE_ACCOUNT ?? "AZURE_STORAGE_ACCOUNT_NAME",
+  storageContainer: process.env.VRT_STORAGE_CONTAINER ?? "AZURE_STORAGE_CONTAINER_NAME",
 
   //#endif
   //#if (SnapshotsStorage == "gcp")
   // Google Cloud Storage bucket holding the shared VRT baseline screenshots.
   // Not a secret: authentication happens through Application Default
   // Credentials (`gcloud auth application-default login`)
-  storageBucket: process.env.VRT_STORAGE_BUCKET ?? "{Google Cloud Storage Bucket Name}",
+  storageBucket: process.env.VRT_STORAGE_BUCKET ?? "GOOGLE_CLOUD_STORAGE_BUCKET_NAME",
 
   //#endif
   // Where the Blazing Story app under test is running. This is the plain
   // value as seen from the host; rewriting the hostname when the tests run
   // inside a container is playwright.config.ts's responsibility.
-  baseURL: "https://localhost:7117",
+  baseURL: "BASE_URL",
 };

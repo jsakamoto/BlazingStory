@@ -24,6 +24,13 @@
       "type": "bind",
       "binding": "HostIdentifier"
     },
+    "baseURL":{
+      "type": "parameter",
+      "description": "A base URL where the Blazing Story app under test is running.",
+      "datatype": "text",
+      "isRequired": true,
+      "replaces": "BASE_URL"
+    },
     "SnapshotsStorage": {
       "type": "parameter",
       "description": "A storage service for UI snapshots to store and share images.",
@@ -51,6 +58,46 @@
           "description": "Do not store in any storage services"
         }
       ]
+    },
+    "AwsS3RegionName":{
+      "type": "parameter",
+      "description": "AWS S3 region name holding the shared VRT baseline screenshots",
+      "datatype": "text",
+      "isEnabled": "SnapshotsStorage == \"aws\"",
+      "isRequired": true,
+      "replaces": "AWS_S3_REGION_NAME"
+    },
+    "AwsS3BucketName":{
+      "type": "parameter",
+      "description": "AWS S3 bucket name holding the shared VRT baseline screenshots",
+      "datatype": "text",
+      "isEnabled": "SnapshotsStorage == \"aws\"",
+      "isRequired": true,
+      "replaces": "AWS_S3_BUCKET_NAME"
+    },
+    "AzureStorageAccouontName":{
+      "type": "parameter",
+      "description": "Azure Storage Account name holding the shared VRT baseline screenshots",
+      "datatype": "text",
+      "isEnabled": "SnapshotsStorage == \"azure\"",
+      "isRequired": true,
+      "replaces": "AZURE_STORAGE_ACCOUNT_NAME"
+    },
+    "AzureStorageContainerName":{
+      "type": "parameter",
+      "description": "Azure Storage Container name holding the shared VRT baseline screenshots",
+      "datatype": "text",
+      "isEnabled": "SnapshotsStorage == \"azure\"",
+      "isRequired": true,
+      "replaces": "AZURE_STORAGE_CONTAINER_NAME"
+    },
+    "GoogleCloudStorageBucketName":{
+      "type": "parameter",
+      "description": "Google Cloud Storage Bucket name holding the shared VRT baseline screenshots",
+      "datatype": "text",
+      "isEnabled": "SnapshotsStorage == \"gcp\"",
+      "isRequired": true,
+      "replaces": "GOOGLE_CLOUD_STORAGE_BUCKET_NAME"
     }
   },
   "sourceName": "StoryVRT",
