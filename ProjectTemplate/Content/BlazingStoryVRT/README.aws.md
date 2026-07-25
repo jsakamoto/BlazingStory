@@ -11,27 +11,31 @@ Screenshots can vary slightly between machines and operating systems, so for sta
 - Node.js 24 or later
 - AWS CLI (`aws`) installed and configured (`aws configure`). The identity needs `s3:ListBucket` / `s3:GetObject` / `s3:PutObject` / `s3:DeleteObject` on the bucket. Use a bucket with the default SSE-S3 encryption, because SSE-KMS breaks the sync's change detection
 
-## Getting started
+## Configuration (`vrt.config.ts`)
 
-### 1. Configure `vrt.config.ts`
-
-Set the URL of the Blazing Story app under test and the storage connection values:
+`vrt.config.ts` collects everything you may need to edit: the URL of the Blazing Story app under test, and the storage connection values.
 
 ```typescript
 export const vrtConfig = {
   storageBucket: process.env.VRT_STORAGE_BUCKET ?? "<bucket name>",
   storageRegion: process.env.VRT_STORAGE_REGION ?? "<region, e.g. ap-northeast-1>",
-  baseURL: "https://localhost:7117",
+  baseURL: "<app URL, e.g. https://localhost:7117>",
 };
 ```
 
-### 2. Install dependencies
+These are required options when this project is created, so the file is already filled in with the values you gave, and the VRT is ready to run as-is. Edit this one file whenever any of them is wrong (for example, if you typed a placeholder at creation time) or changes later.
+
+The `VRT_STORAGE_BUCKET` and `VRT_STORAGE_REGION` environment variables, when set, take precedence over the values written in the file, which is handy on CI.
+
+## Getting started
+
+### 1. Install dependencies
 
 ```sh
 npm install
 ```
 
-### 3. Run the VRT
+### 2. Run the VRT
 
 The Blazing Story app must be running at the configured URL whenever the tests run.
 

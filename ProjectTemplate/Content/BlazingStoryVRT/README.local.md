@@ -13,25 +13,27 @@ Screenshots can vary slightly between machines and operating systems, so for sta
 
 - Node.js 24 or later
 
-## Getting started
+## Configuration (`vrt.config.ts`)
 
-### 1. Configure `vrt.config.ts`
-
-Set the URL of the Blazing Story app under test:
+`vrt.config.ts` collects everything you may need to edit: the URL of the Blazing Story app under test.
 
 ```typescript
 export const vrtConfig = {
-  baseURL: "https://localhost:7117",
+  baseURL: "<app URL, e.g. https://localhost:7117>",
 };
 ```
 
-### 2. Install dependencies
+This is a required option when this project is created, so the file is already filled in with the value you gave, and the VRT is ready to run as-is. Edit this one file whenever it is wrong (for example, if you typed a placeholder at creation time) or changes later.
+
+## Getting started
+
+### 1. Install dependencies
 
 ```sh
 npm install
 ```
 
-### 3. Run the VRT
+### 2. Run the VRT
 
 The Blazing Story app must be running at the configured URL whenever the tests run.
 

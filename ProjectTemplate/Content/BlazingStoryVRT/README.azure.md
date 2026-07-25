@@ -11,27 +11,31 @@ Screenshots can vary slightly between machines and operating systems, so for sta
 - Node.js 24 or later
 - Azure CLI (`az`) installed and logged in (`az login`). The signed-in user needs the **"Storage Blob Data Contributor"** role on the storage account (subscription Owner/Contributor alone is not enough)
 
-## Getting started
+## Configuration (`vrt.config.ts`)
 
-### 1. Configure `vrt.config.ts`
-
-Set the URL of the Blazing Story app under test and the storage connection values:
+`vrt.config.ts` collects everything you may need to edit: the URL of the Blazing Story app under test, and the storage connection values.
 
 ```typescript
 export const vrtConfig = {
   storageAccount: process.env.VRT_STORAGE_ACCOUNT ?? "<storage account name>",
   storageContainer: process.env.VRT_STORAGE_CONTAINER ?? "<blob container name>",
-  baseURL: "https://localhost:7117",
+  baseURL: "<app URL, e.g. https://localhost:7117>",
 };
 ```
 
-### 2. Install dependencies
+These are required options when this project is created, so the file is already filled in with the values you gave, and the VRT is ready to run as-is. Edit this one file whenever any of them is wrong (for example, if you typed a placeholder at creation time) or changes later.
+
+The `VRT_STORAGE_ACCOUNT` and `VRT_STORAGE_CONTAINER` environment variables, when set, take precedence over the values written in the file, which is handy on CI.
+
+## Getting started
+
+### 1. Install dependencies
 
 ```sh
 npm install
 ```
 
-### 3. Run the VRT
+### 2. Run the VRT
 
 The Blazing Story app must be running at the configured URL whenever the tests run.
 

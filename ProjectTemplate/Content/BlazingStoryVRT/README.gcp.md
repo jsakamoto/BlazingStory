@@ -11,26 +11,30 @@ Screenshots can vary slightly between machines and operating systems, so for sta
 - Node.js 24 or later
 - Google Cloud CLI (`gcloud`) installed and authenticated. Run **both** `gcloud auth login` and `gcloud auth application-default login` (the latter sets up the Application Default Credentials the sync actually uses), and set your project with `gcloud config set project <project-id>`
 
-## Getting started
+## Configuration (`vrt.config.ts`)
 
-### 1. Configure `vrt.config.ts`
-
-Set the URL of the Blazing Story app under test and the storage connection values:
+`vrt.config.ts` collects everything you may need to edit: the URL of the Blazing Story app under test, and the storage connection values.
 
 ```typescript
 export const vrtConfig = {
   storageBucket: process.env.VRT_STORAGE_BUCKET ?? "<bucket name>",
-  baseURL: "https://localhost:7117",
+  baseURL: "<app URL, e.g. https://localhost:7117>",
 };
 ```
 
-### 2. Install dependencies
+These are required options when this project is created, so the file is already filled in with the values you gave, and the VRT is ready to run as-is. Edit this one file whenever any of them is wrong (for example, if you typed a placeholder at creation time) or changes later.
+
+The `VRT_STORAGE_BUCKET` environment variable, when set, takes precedence over the value written in the file, which is handy on CI.
+
+## Getting started
+
+### 1. Install dependencies
 
 ```sh
 npm install
 ```
 
-### 3. Run the VRT
+### 2. Run the VRT
 
 The Blazing Story app must be running at the configured URL whenever the tests run.
 

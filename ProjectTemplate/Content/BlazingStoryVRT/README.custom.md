@@ -10,32 +10,34 @@ Screenshots can vary slightly between machines and operating systems, so for sta
 
 - Node.js 24 or later
 
+## Configuration (`vrt.config.ts`)
+
+`vrt.config.ts` collects everything you may need to edit: the URL of the Blazing Story app under test, and the storage connection values.
+
+```typescript
+export const vrtConfig = {
+  // ... whatever connection values your storage adapter reads (see step 1 below)
+  baseURL: "<app URL, e.g. https://localhost:7117>",
+};
+```
+
+The app URL is a required option when this project is created, so it is already filled in with the value you gave. Edit this one file whenever it is wrong (for example, if you typed a placeholder at creation time) or changes later. The connection values are up to your storage adapter, so they are the part you add yourself in step 1.
+
 ## Getting started
 
 ### 1. Implement the storage adapter
 
 `scripts/snapshot-storage.ts` ships as an empty template. Implement its members (each one is described by a comment in the file) so the sync can list, download, upload, and delete the baseline files on your storage service. Putting the connection values in `vrt.config.ts` rather than hardcoding them in the adapter is recommended, because it keeps everything a user of this project has to edit in one file.
 
-If you picked an AI coding agent when you created this project, you don't have to write this by hand. A **storage-adapter skill** was installed for that agent, under `.claude/skills/` for Claude Code, or `.agents/skills/` for GitHub Copilot, OpenAI Codex, Cursor, and other agents. Just tell your agent which service you want to use (Dropbox, MinIO, WebDAV, any S3-compatible storage, and so on) and ask it to implement the storage adapter; it will follow the skill to fill in `scripts/snapshot-storage.ts` and add the matching connection values to `vrt.config.ts` (step 2).
+If you picked an AI coding agent when you created this project, you don't have to write this by hand. A **storage-adapter skill** was installed for that agent, under `.claude/skills/` for Claude Code, or `.agents/skills/` for GitHub Copilot, OpenAI Codex, Cursor, and other agents. Just tell your agent which service you want to use (Dropbox, MinIO, WebDAV, any S3-compatible storage, and so on) and ask it to implement the storage adapter; it will follow the skill to fill in `scripts/snapshot-storage.ts` and add the matching connection values to `vrt.config.ts`.
 
-### 2. Configure `vrt.config.ts`
-
-Set the URL of the Blazing Story app under test and the storage connection values:
-
-```typescript
-export const vrtConfig = {
-  // ... whatever connection values your storage adapter reads (see step 1)
-  baseURL: "https://localhost:7117",
-};
-```
-
-### 3. Install dependencies
+### 2. Install dependencies
 
 ```sh
 npm install
 ```
 
-### 4. Run the VRT
+### 3. Run the VRT
 
 The Blazing Story app must be running at the configured URL whenever the tests run.
 
