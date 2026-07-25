@@ -2,16 +2,15 @@
 // listing / Test Explorer discovery).
 //#if (SnapshotsStorage != "none")
 //
-//   1. Download baselines missing locally from a storage service
-//      (current platform only, never deletes or overwrites). Kept as a
-//      missing-only sync that runs every time — an "only when the folder is
-//      empty" check would let a partially-populated folder slip through, and
-//      Playwright would then silently create a fresh local baseline for any
-//      story whose team baseline was never downloaded.
+//   1. Download the baselines missing locally (current platform only, never
+//      deletes or overwrites). It runs every time instead of only when the
+//      folder is empty, because a partially populated folder would slip
+//      through such a check and Playwright would then silently create a fresh
+//      local baseline for any story whose team baseline was never downloaded.
 //      Skip with VRT_SKIP_CLOUD=1 (e.g. for offline work).
 //   2. Regenerate tests/stories.json from the running app (gen-stories.ts).
 //#else
-// This setup regenerates tests/stories.json from the running app (gen-stories.ts).
+// It regenerates tests/stories.json from the running app (gen-stories.ts).
 //#endif
 
 import type { FullConfig } from "@playwright/test";
@@ -24,7 +23,7 @@ import { storageAdapter } from "./snapshot-storage.ts";
 export default async function globalSetup(config: FullConfig): Promise<void> {
 //#if (SnapshotsStorage != "none")
   if (process.env.VRT_SKIP_CLOUD === "1") {
-    console.log("[vrt-cloud] VRT_SKIP_CLOUD=1 — skipping baseline download");
+    console.log("[vrt-cloud] VRT_SKIP_CLOUD=1, skipping baseline download");
   } else {
     try {
       await pullMissingBaselines(storageAdapter);

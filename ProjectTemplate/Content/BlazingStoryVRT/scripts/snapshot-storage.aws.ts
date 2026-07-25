@@ -4,16 +4,13 @@
 //   - AWS credentials available through the default provider chain
 //     (`aws configure`, `aws sso login`, env vars, …) with s3:ListBucket,
 //     s3:GetObject, s3:PutObject and s3:DeleteObject on the bucket
-//   - vrt.config.ts declares (replacing the Azure fields):
-//       storageBucket: process.env.VRT_STORAGE_BUCKET ?? "<bucket name>",
-//       storageRegion: process.env.VRT_STORAGE_REGION ?? "<region, e.g. ap-northeast-1>",
+//   - storageBucket and storageRegion declared in vrt.config.ts
 //
-// Caveat — how the MD5 diff works on S3: the diff sync reads the object's
-// ETag from ListObjectsV2, which equals the content MD5 only for single-part
-// uploads without SSE-KMS encryption. Uploads made by this script are plain
-// single-part PutObject calls, so SSE-S3 (the default encryption) is fine,
-// but a bucket with SSE-KMS default encryption breaks the "changed" detection
-// (every file would always be considered changed). Use SSE-S3 buckets.
+// Caveat on the MD5 diff: the diff sync compares the ETag from ListObjectsV2,
+// which equals the content MD5 only for single-part uploads without SSE-KMS.
+// This script always uploads single-part, so SSE-S3 (the default encryption)
+// is fine, but a bucket defaulting to SSE-KMS makes every file look changed.
+// Use SSE-S3 buckets.
 
 import {
   DeleteObjectCommand,
@@ -48,9 +45,9 @@ export const storageAdapter: StorageAdapter = {
         // else that may have been dropped into the bucket.
         if (!name || !name.endsWith(".png") || name.includes("/")) continue;
         // The ETag is the content MD5 (hex, quoted) only for single-part
-        // non-KMS uploads — which is what this adapter's own pushes produce.
-        // Anything else (multipart "-", SSE-KMS) maps to undefined and is
-        // always treated as "changed".
+        // non-KMS uploads, which is what this adapter's own pushes produce.
+        // Anything else (multipart, SSE-KMS) maps to undefined and is always
+        // treated as "changed".
         const etag = object.ETag?.replaceAll('"', "");
         listing.set(name, etag && /^[0-9a-f]{32}$/.test(etag)
           ? Buffer.from(etag, "hex").toString("base64")
@@ -76,8 +73,8 @@ export const storageAdapter: StorageAdapter = {
         Key: name,
         Body: readFileSync(join(snapshotsDir, name)),
         ContentType: "image/png",
-        // Makes S3 verify the payload, and (single-part, non-KMS) yields an
-        // ETag equal to this MD5 — which is what the diff sync relies on.
+        // Makes S3 verify the payload, and (single-part, non-KMS) yields the
+        // ETag equal to this MD5 that the diff sync relies on.
         ContentMD5: local.get(name),
       }));
     });
@@ -94,13 +91,13 @@ export const storageAdapter: StorageAdapter = {
     const name = error instanceof Error ? error.name : "";
     const statusCode = (error as { $metadata?: { httpStatusCode?: number } })?.$metadata?.httpStatusCode;
     if (name === "CredentialsProviderError") {
-      return "Hint: no AWS credentials found — run `aws configure` or `aws sso login` first.";
+      return "Hint: no AWS credentials found. Run `aws configure` or `aws sso login` first.";
     }
     if (name === "AccessDenied" || statusCode === 403) {
       return `Hint: the AWS identity needs s3:ListBucket/GetObject/PutObject/DeleteObject on bucket "${bucket}".`;
     }
     if (name === "NoSuchBucket" || statusCode === 404) {
-      return `Hint: bucket "${bucket}" was not found (region "${vrtConfig.storageRegion}") — check vrt.config.ts.`;
+      return `Hint: bucket "${bucket}" was not found (region "${vrtConfig.storageRegion}"). Check vrt.config.ts.`;
     }
     return `Hint: check the storage settings in vrt.config.ts and your network connection. (${message})`;
   },

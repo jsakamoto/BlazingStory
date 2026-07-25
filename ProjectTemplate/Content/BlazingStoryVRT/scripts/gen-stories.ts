@@ -1,14 +1,11 @@
-// Story index generator.
-//
-// Drives a browser to read Blazing Story's story index
-// (window.BlazingStory.getStoryIndex()) and writes it to tests/stories.json.
-//
-// The VRT spec (tests/vrt.spec.ts) reads that JSON *synchronously* at
-// collection time so each story can be registered as its own test() and
-// therefore appears individually in the VS Code Test Explorer.
+// Story index generator: drives a browser to read Blazing Story's story index
+// (window.BlazingStory.getStoryIndex()) and writes tests/stories.json.
 //
 // Called from global-setup.ts (Playwright's globalSetup), so every test run
-// regenerates the index before test files are collected.
+// refreshes the index before test files are collected. The VRT spec
+// (tests/vrt.spec.ts) then reads that JSON *synchronously* at collection time
+// to register one test() per story, which is what lists the stories
+// individually in the VS Code Test Explorer.
 import { chromium, type FullConfig } from "@playwright/test";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";

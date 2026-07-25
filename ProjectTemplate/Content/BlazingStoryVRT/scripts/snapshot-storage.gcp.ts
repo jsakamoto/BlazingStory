@@ -4,11 +4,10 @@
 //   - Application Default Credentials available
 //     (`gcloud auth application-default login`) with the
 //     "Storage Object Admin" role (roles/storage.objectAdmin) on the bucket
-//   - vrt.config.ts declares (replacing the Azure fields):
-//       storageBucket: process.env.VRT_STORAGE_BUCKET ?? "<bucket name>",
+//   - storageBucket declared in vrt.config.ts
 //
-// GCS computes and stores each object's md5Hash server-side and returns it
-// in listings, so the MD5 diff sync works without any caveats.
+// GCS computes each object's md5Hash server-side and returns it in listings,
+// so the MD5 diff sync works without any caveats.
 
 import { Storage } from "@google-cloud/storage";
 import { join } from "node:path";
@@ -67,7 +66,7 @@ export const storageAdapter: StorageAdapter = {
       return `Hint: the signed-in account needs the "Storage Object Admin" role (roles/storage.objectAdmin) on bucket "${vrtConfig.storageBucket}".`;
     }
     if (statusCode === 404) {
-      return `Hint: bucket "${vrtConfig.storageBucket}" was not found — check vrt.config.ts.`;
+      return `Hint: bucket "${vrtConfig.storageBucket}" was not found. Check vrt.config.ts.`;
     }
     return `Hint: check the storage settings in vrt.config.ts and your network connection. (${message})`;
   },

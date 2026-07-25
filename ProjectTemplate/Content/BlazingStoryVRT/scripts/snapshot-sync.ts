@@ -1,10 +1,8 @@
 // Provider-agnostic core of the VRT baseline sync: local listing, MD5 diff
 // planning, name filtering, the transfer pool, and the CLI / globalSetup
-// entry points.
-//
-// This file is NOT swapped when switching cloud providers — only
-// scripts/snapshot-storage.ts (the StorageAdapter implementation) is.
-// See "Switching the cloud provider" in AGENTS.md.
+// entry points. Switching to another storage service means replacing only
+// scripts/snapshot-storage.ts (the StorageAdapter implementation), never
+// this file.
 
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync } from "node:fs";
@@ -14,10 +12,10 @@ import { parseArgs } from "node:util";
 
 export const snapshotsDir = join(import.meta.dirname, "..", "tests", "vrt.spec.ts-snapshots");
 
-// Playwright appends the platform to every snapshot file name
-// (e.g. "…--default-linux.png"), so one cloud container can hold baselines
-// for several platforms side by side. Most operations only act on the
-// current platform's set.
+// Playwright appends the platform to every snapshot file name (e.g.
+// "…--default-linux.png"), so one remote store can hold baselines for
+// several platforms side by side. Most operations act on the current
+// platform's set only.
 const platformSuffix = `-${process.platform}.png`;
 
 const TRANSFER_CONCURRENCY = 8;
@@ -59,8 +57,8 @@ export interface NameFilter {
   platformOnly?: boolean;
 }
 
-// Supports "*" and "?" wildcards. (path.matchesGlob is still experimental in
-// Node 24 and emits a warning on every use, hence this tiny substitute.)
+// Supports "*" and "?" wildcards. (A tiny substitute for path.matchesGlob,
+// which is still experimental in Node 24 and warns on every use.)
 function globToRegExp(glob: string): RegExp {
   const escaped = glob
     .replace(/[.+^${}()|[\]\\]/g, "\\$&")
@@ -82,7 +80,7 @@ export type SyncMode = "diff" | "force" | "missing";
 export interface SyncPlan {
   transfer: { name: string; reason: "missing" | "changed" | "forced" }[];
   upToDate: number;
-  // In pruneScope but not in source — deleted from the destination when
+  // In pruneScope but not in source; deleted from the destination when
   // --prune is given.
   orphans: string[];
 }
@@ -182,9 +180,9 @@ export async function runSyncCli(direction: "pull" | "push", adapter: StorageAda
     const local = listLocal();
 
     // Pull acts on the current platform's baselines unless --all-platforms;
-    // push offers everything that exists locally. Pruning is always scoped
-    // to the current platform so a push from e.g. linux can never delete
-    // the -win32/-darwin sets.
+    // push offers everything local. Pruning is always scoped to the current
+    // platform, so a push from e.g. linux can never delete the -win32 or
+    // -darwin sets.
     const sourceFilter: NameFilter = {
       glob: values.filter,
       platformOnly: direction === "pull" && !values["all-platforms"],

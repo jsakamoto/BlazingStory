@@ -3,8 +3,7 @@
 //
 // Put your connection values in vrt.config.ts (import { vrtConfig } from
 // "../vrt.config.ts"). Helpers in snapshot-sync.ts: runPool (parallel
-// transfers), snapshotsDir (the local baseline dir). Working examples:
-// snapshot-storage.{azure,aws,gcs}.ts.
+// transfers), snapshotsDir (the local baseline dir).
 
 import type { FileListing, StorageAdapter } from "./snapshot-sync.ts";
 

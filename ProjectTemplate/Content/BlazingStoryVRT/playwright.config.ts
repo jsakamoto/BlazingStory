@@ -6,11 +6,17 @@ const baseURL = vrtConfig.baseURL;
 
 export default defineConfig({
   testDir: "./tests",
-  // Before every test run: download baselines missing locally from Azure
-  // Blob Storage, then regenerate tests/stories.json from the running app,
-  // so the per-story test registration always reflects the current story
-  // set. (Not run for bare test listing / Test Explorer discovery — those
-  // read the previously generated file.)
+  //#if (SnapshotsStorage != "none")
+  // Before every test run: download the baselines missing locally, then
+  // regenerate tests/stories.json from the running app so the per-story test
+  // registration always reflects the current story set. (Bare test listing /
+  // Test Explorer discovery skips it and reads the existing file.)
+  //#else
+  // Before every test run: regenerate tests/stories.json from the running app
+  // so the per-story test registration always reflects the current story set.
+  // (Bare test listing / Test Explorer discovery skips it and reads the
+  // existing file.)
+  //#endif
   globalSetup: "./scripts/global-setup.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,

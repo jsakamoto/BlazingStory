@@ -4,9 +4,7 @@
 //   - Azure CLI installed and logged in (`az login`), and the signed-in user
 //     holds the "Storage Blob Data Contributor" role on the storage account
 //     (being subscription Owner/Contributor is not enough)
-//   - vrt.config.ts declares:
-//       storageAccount: process.env.VRT_STORAGE_ACCOUNT ?? "<account name>",
-//       storageContainer: process.env.VRT_STORAGE_CONTAINER ?? "<container name>",
+//   - storageAccount and storageContainer declared in vrt.config.ts
 
 import { AzureCliCredential } from "@azure/identity";
 import { BlobServiceClient } from "@azure/storage-blob";
@@ -74,7 +72,7 @@ export const storageAdapter: StorageAdapter = {
     }
     if (statusCode === 404) {
       return `Hint: container "${vrtConfig.storageContainer}" was not found on ` +
-        `storage account "${vrtConfig.storageAccount}" — check vrt.config.ts.`;
+        `storage account "${vrtConfig.storageAccount}". Check vrt.config.ts.`;
     }
     return `Hint: check the storage settings in vrt.config.ts and your network connection. (${message})`;
   },
