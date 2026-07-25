@@ -224,6 +224,11 @@
           }
         },
         {
+          "rename": {
+            "gitignore": ".gitignore"
+          }
+        },
+        {
           "condition": "(SnapshotsStorage != \"custom\") || (AIAgentToImplementCustomStorage == \"none\")",
           "exclude": [".agents/**"]
         },
