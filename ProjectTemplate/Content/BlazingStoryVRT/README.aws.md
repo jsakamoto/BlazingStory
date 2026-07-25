@@ -19,13 +19,13 @@ Screenshots can vary slightly between machines and operating systems, so for sta
 export const vrtConfig = {
   storageBucket: process.env.VRT_STORAGE_BUCKET ?? "<bucket name>",
   storageRegion: process.env.VRT_STORAGE_REGION ?? "<region, e.g. ap-northeast-1>",
-  baseURL: "<app URL, e.g. https://localhost:7117>",
+  baseURL: process.env.VRT_BASE_URL ?? "<app URL, e.g. http://localhost:5000>",
 };
 ```
 
 These are required options when this project is created, so the file is already filled in with the values you gave, and the VRT is ready to run as-is. Edit this one file whenever any of them is wrong (for example, if you typed a placeholder at creation time) or changes later.
 
-The `VRT_STORAGE_BUCKET` and `VRT_STORAGE_REGION` environment variables, when set, take precedence over the values written in the file, which is handy on CI.
+The `VRT_STORAGE_BUCKET`, `VRT_STORAGE_REGION`, and `VRT_BASE_URL` environment variables, when set, take precedence over the values written in the file, which is handy on CI and when one machine needs a different app URL. They can also be written into a `.env` file at the project root: `vrt.config.ts` loads it automatically, and `.gitignore` keeps it out of the repository. A variable already set in the shell still wins over `.env`.
 
 ## Getting started
 

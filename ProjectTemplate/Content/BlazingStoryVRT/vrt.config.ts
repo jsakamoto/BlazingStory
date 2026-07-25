@@ -2,6 +2,17 @@
 // the mechanism code (playwright.config.ts, scripts/) stays free of them.
 // Declarative only: no environment detection here, except resolving the
 // env-var overrides so that every consumer sees the same values.
+
+// Every entry point reaches this file, so loading the optional .env here is
+// what makes it apply to both `npm test` and the snapshots CLIs. Variables
+// already set in the shell win; .env only fills in what is missing. The file
+// is git-ignored, which is why secrets belong there and never in this file.
+try {
+  process.loadEnvFile();
+} catch {
+  // No .env file, which is the normal case.
+}
+
 export const vrtConfig = {
   //#if (SnapshotsStorage == "aws")
   // AWS S3 bucket holding the shared VRT baseline screenshots. Not secrets:
@@ -27,5 +38,5 @@ export const vrtConfig = {
   //#endif
   // Where the Blazing Story app under test is running, as seen from the host.
   // Rewriting the hostname for in-container runs is playwright.config.ts's job.
-  baseURL: "BASE_URL",
+  baseURL: process.env.VRT_BASE_URL ?? "BASE_URL",
 };

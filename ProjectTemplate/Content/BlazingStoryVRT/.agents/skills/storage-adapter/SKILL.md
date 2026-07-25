@@ -36,7 +36,10 @@ Read before writing code:
 
 1. Which service, and which SDK (prefer an official npm SDK; note its package name)
 2. The auth model. Prefer a CLI login or ambient credentials. Secrets must NOT go into
-   `vrt.config.ts` (it is committed); if unavoidable, read them from env vars only.
+   `vrt.config.ts` (it is committed); read them from env vars instead. `vrt.config.ts`
+   loads a `.env` file from the project root if one exists, and `.gitignore` already
+   excludes it, so `.env` is where a password or access key belongs. A variable set in
+   the shell wins over `.env`.
 
 ## Contract invariants (what the common code relies on)
 
@@ -72,9 +75,11 @@ Read before writing code:
   the exact `vrt.config.ts` fields the adapter reads, and any caveat such as the ETag
   one above.
 - Connection values live in `vrt.config.ts` and only the adapter reads them. Follow the
-  existing field pattern, env override first:
-  `storageBucket: process.env.VRT_STORAGE_BUCKET ?? "<bucket name>"`. Leave `baseURL`
-  alone; it belongs to the test run, not the storage.
+  pattern the existing `baseURL` field already shows, env override first:
+  `storageBucket: process.env.VRT_STORAGE_BUCKET ?? "<bucket name>"`. For a secret, drop
+  the literal fallback and let the value be `undefined` when unset, so a missing
+  credential fails loudly instead of silently trying a placeholder. Leave `baseURL`
+  itself alone; it belongs to the test run, not the storage.
 - Comments in English and short. Never use em dashes or en dashes anywhere in this
   project, comments and strings alike; it is the project owner's style preference.
   Restructure the sentence with a colon, parentheses, or a full stop instead.

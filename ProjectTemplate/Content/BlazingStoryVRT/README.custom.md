@@ -17,11 +17,13 @@ Screenshots can vary slightly between machines and operating systems, so for sta
 ```typescript
 export const vrtConfig = {
   // ... whatever connection values your storage adapter reads (see step 1 below)
-  baseURL: "<app URL, e.g. https://localhost:7117>",
+  baseURL: process.env.VRT_BASE_URL ?? "<app URL, e.g. http://localhost:5000>",
 };
 ```
 
 The app URL is a required option when this project is created, so it is already filled in with the value you gave. Edit this one file whenever it is wrong (for example, if you typed a placeholder at creation time) or changes later. The connection values are up to your storage adapter, so they are the part you add yourself in step 1.
+
+The app URL already shows the pattern to copy: read the environment variable first (`VRT_BASE_URL` here), and fall back to the literal in the file. Do the same for every connection value your adapter needs. Those variables can be written into a `.env` file at the project root: `vrt.config.ts` loads it automatically, and `.gitignore` keeps it out of the repository. A variable already set in the shell still wins over `.env`. Anything secret, such as a password or an access key, belongs in `.env` and must never be written into `vrt.config.ts`, which is committed.
 
 ## Getting started
 
