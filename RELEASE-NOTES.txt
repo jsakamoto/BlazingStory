@@ -1,3 +1,7 @@
+v.1.0.0-preview.89
+- Feature: Added a visual regression testing project template built on the Story Index API, which can be created with `dotnet new blazingstoryvrt`.
+- Fix: Resolved an issue where the scroll position was not reset when navigating between Docs pages.
+
 v.1.0.0-preview.88
 - Feature: Introduced support for Playwright-based visual regression testing (VRT). A Storybook-compatible Story Index API is now available at `window.BlazingStory.getStoryIndex()`, allowing Playwright test scripts to enumerate all stories programmatically.
 - Fix: Resolved incorrect preview area sizing that caused VRT screenshots to capture unexpected bounds.
