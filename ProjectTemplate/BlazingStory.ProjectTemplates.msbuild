@@ -22,7 +22,7 @@
     <Error Condition="'$(GhExitCode)' != '0'" Text="GitHub CLI (gh) is not installed or not in PATH. Please install it from https://github.com/cli/cli#installation" />
   </Target>
 
-  <Target Name="InstallAgentSkills" BeforeTargets="GenerateNuspec" DependsOnTargets="CheckGitHubCLI">
+  <Target Name="InstallAgentSkills" BeforeTargets="GenerateNuspec" DependsOnTargets="CheckGitHubCLI" Condition=" '$(SkipInstallAgentSkills)' != 'true' ">
     <PropertyGroup>
       <IntermediateSkillDir>$(IntermediateOutputPath).agents/skills</IntermediateSkillDir>
     </PropertyGroup>

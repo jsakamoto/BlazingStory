@@ -1,0 +1,10 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+blob-report/
+vrt.spec.ts-snapshots/
+tests/stories.json
+.env
+.env.*
+!.env.example

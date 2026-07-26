@@ -21,7 +21,7 @@
   </metadata>
   <files>
     <file src="..\assets\icon-128x128.png" target="nupkg-icon.png" />
-    <file src="Content\" target="Content" exclude="**\obj\**\*.*;**\bin\**\*.*;**\.vs\**\*.*;**\.vscode\**\*.*;**\*.suo;**\*.user" />
+    <file src="Content\" target="Content" exclude="**\node_modules\**\*.*;**\obj\**\*.*;**\bin\**\*.*;**\.vs\**\*.*;**\.vscode\**\*.*;**\*.suo;**\*.user" />
     <file src="..\README.md" target="README.md" />
   </files>
 </package>

@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json.schemastore.org/vs-2017.3.host",
+  "order": 900,
+  "icon": "icon-32x32.png",
+  "symbolInfo": [
+    {
+      "id": "baseURL",
+      "name": {
+        "text": "A base URL where the Blazing Story app under test is running."
+      },
+      "isVisible": true
+    },
+    {
+      "id": "SnapshotsStorage",
+      "name": {
+        "text": "A storage service for UI snapshots to store and share images."
+      },
+      "isVisible": true,
+      "choices": [
+        {
+          "id": "aws",
+          "name": { "text": "AWS S3" }
+        },
+        {
+          "id": "azure",
+          "name": { "text": "Azure Blob Storage" }
+        },
+        {
+          "id": "gcp",
+          "name": { "text": "Google Cloud Storage" }
+        },
+        {
+          "id": "custom",
+          "name": { "text": "Custom" }
+        },
+        {
+          "id": "none",
+          "name": { "text": "None" }
+        }
+      ],
+      "persistenceScope": "templateGroup"
+    },
+    {
+      "id": "AwsS3RegionName",
+      "name": {
+        "text": "AWS S3 Region",
+        "description": "AWS S3 Region name holding the shared VRT baseline screenshots"
+      }
+    },
+    {
+      "id": "AwsS3BucketName",
+      "name": {
+        "text": "AWS S3 Bucket",
+        "description": "AWS S3 Bucket name holding the shared VRT baseline screenshots"
+      }
+    },
+    {
+      "id": "AzureStorageAccouontName",
+      "name": {
+        "text": "Azure Storage Account",
+        "description": "Azure Storage Account name holding the shared VRT baseline screenshots"
+      }
+    },
+    {
+      "id": "AzureStorageContainerName",
+      "name": {
+        "text": "Azure Storage Container",
+        "description": "Azure Storage Container name holding the shared VRT baseline screenshots"
+      }
+    },
+    {
+      "id": "GoogleCloudStorageBucketName",
+      "name": {
+        "text": "Google Clound Storage Bucket",
+        "description": "Google Clound Storage Bucket name holding the shared VRT baseline screenshots"
+      }
+    },
+    {
+      "id": "AIAgentToImplementCustomStorage",
+      "name": {
+        "text": "AI agent to implement a custom storage adapter",
+        "description": "Skills for implementing custom storage adapters will be stored in the appropriate folder for your chosen agent."
+      },
+      "isVisible": true,
+      "choices": [
+        {
+          "id": "claude",
+          "name": { "text": "Claude Code" }
+        },
+        {
+          "id": "generic",
+          "name": { "text": "GitHub Copilot, OpenAI Codex, Cursor, etc." }
+        },
+        {
+          "id": "none",
+          "name": { "text": "No AI agent" }
+        }
+      ],
+      "persistenceScope": "templateGroup"
+    }
+  ]
+}
