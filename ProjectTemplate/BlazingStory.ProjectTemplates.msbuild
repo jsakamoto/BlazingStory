@@ -52,7 +52,7 @@
     <!-- CONFIGURE NUSPEC PROPERTIES -->
     <PropertyGroup>
       <RepositoryCommit></RepositoryCommit>
-      <NuspecProperties>version=$(PackageVersion)</NuspecProperties>
+      <NuspecProperties>version=$(PackageVersion).1</NuspecProperties>
       <NuspecProperties>copyright=$(Copyright);$(NuspecProperties)</NuspecProperties>
       <NuspecProperties>repositoryUrl=$(RepositoryUrl);$(NuspecProperties)</NuspecProperties>
       <NuspecProperties>releaseNotes=$(PackageReleaseNotes);$(NuspecProperties)</NuspecProperties>
