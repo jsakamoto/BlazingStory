@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.27" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.29" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +20,6 @@
     <ProjectReference Include="..\RazorClassLib2\RazorClassLib2.csproj" />
   </ItemGroup>
 
-  <Import Project="..\..\..\BlazingStory\Build\BlazingStory.targets"/>
+  <Import Project="..\..\..\BlazingStory\Build\BlazingStory.targets" />
 
 </Project>
