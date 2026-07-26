@@ -2,6 +2,10 @@
 
 Visual Regression Testing (VRT) for a [Blazing Story](https://github.com/jsakamoto/BlazingStory) application, built on Playwright's [`toHaveScreenshot()`](https://playwright.dev/docs/test-snapshots). Each story in the running app automatically becomes one test with one screenshot, and the baseline screenshots are kept on the local disk only.
 
+> [!TIP]
+> The full guide, from creating this project to running it on CI/CD, is at
+> <https://blazingstory.github.io/docs/visual-regression-testing>
+
 > [!NOTE]
 > In practice, team-level VRT usually stores the baseline screenshots in a shared cloud storage, so that every developer and every CI run compares against the same baselines. This local-only setup is an option for trying VRT out first.
 
@@ -54,7 +58,8 @@ npm test
 ## How it works
 
 - Every test run reads the story index from the running app and generates one test per story. The story list is materialized into `tests/stories.json`; to refresh it without running any tests (e.g. after adding stories), run `npm run stories:gen`.
-- The baselines live in `tests/vrt.spec.ts-snapshots/` on this machine only. To accept an intentional UI change as the new baseline, run `npm run snapshots:update` again.
+- The baselines live in `tests/vrt.spec.ts-snapshots/` on this machine only. To accept an intentional UI change as the new baseline, run `npm run snapshots:update` again. Each file is named `<story id>-<platform>.png`, so a screenshot is only ever compared against a baseline captured on the same platform.
+- Every run writes an HTML report to `playwright-report/index.html`. When pixels differ, open it in a browser to compare the baseline, the new screenshot, and the diff. `npm run test:open` runs the tests and opens it in one step.
 
 ## Tuning
 

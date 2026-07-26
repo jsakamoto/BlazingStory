@@ -2,6 +2,10 @@
 
 Visual Regression Testing (VRT) for a [Blazing Story](https://github.com/jsakamoto/BlazingStory) application, built on Playwright's [`toHaveScreenshot()`](https://playwright.dev/docs/test-snapshots). Each story in the running app automatically becomes one test with one screenshot, and the baseline screenshots are shared through a storage service of your own choice.
 
+> [!TIP]
+> The full guide, from creating this project to running it on CI/CD, is at
+> <https://blazingstory.github.io/docs/visual-regression-testing>
+
 ## Running in a Dev Container (recommended)
 
 Screenshots can vary slightly between machines and operating systems, so for stable, reproducible snapshots we recommend always running the VRT in the same container. For that purpose, this project ships a Dev Container configuration file (`.devcontainer/devcontainer.json`). If you use VS Code, just "Reopen in Container" for this folder, and you can run the VRT in a consistent container environment right away.
@@ -66,6 +70,8 @@ npm test
 - Every test run reads the story index from the running app and generates one test per story. The story list is materialized into `tests/stories.json`; to refresh it without running any tests (e.g. after adding stories), run `npm run stories:gen`.
 - Baselines missing locally are downloaded from the storage automatically before every test run, which is convenient on CI or a fresh clone. You can also download them explicitly with `npm run snapshots:pull`.
 - After updating baselines (`npm run snapshots:update`), upload them again with `npm run snapshots:push`.
+- The baselines live in `tests/vrt.spec.ts-snapshots/`: that is what `snapshots:pull` downloads into and what `snapshots:push` uploads from. Each file is named `<story id>-<platform>.png`, so a screenshot is only ever compared against a baseline captured on the same platform, and one remote store can hold the linux / win32 / darwin sets side by side.
+- Every run writes an HTML report to `playwright-report/index.html`. When pixels differ, open it in a browser to compare the baseline, the new screenshot, and the diff. `npm run test:open` runs the tests and opens it in one step.
 
 ## Tuning
 
