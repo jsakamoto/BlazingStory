@@ -25,7 +25,7 @@
       "description": "A base URL where the Blazing Story app under test is running.",
       "datatype": "text",
       "isRequired": true,
-      "replaces": "BASE_URL"
+      "replaces": "STORY_APP_BASE_URL"
     },
     "SnapshotsStorage": {
       "type": "parameter",

@@ -38,5 +38,5 @@ export const vrtConfig = {
   //#endif
   // Where the Blazing Story app under test is running, as seen from the host.
   // Rewriting the hostname for in-container runs is playwright.config.ts's job.
-  baseURL: process.env.VRT_BASE_URL ?? "BASE_URL",
+  baseURL: process.env.VRT_BASE_URL ?? "STORY_APP_BASE_URL",
 };
