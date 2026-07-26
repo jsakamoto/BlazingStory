@@ -195,7 +195,7 @@ public class ParameterControllerTest
         parameter.UserControllerFragment.Returns(userControllerFragment);
         parameter.Summary.Returns(new MarkupString("Test parameter summary"));
         parameter.Required.Returns(false);
-        parameter.DefaultValue.Returns(null);
+        parameter.DefaultValue.Returns(default(object));
 
         return parameter;
     }
