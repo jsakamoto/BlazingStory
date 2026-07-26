@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using BlazingStory.Internals.Utils;
 using BlazingStory.ToolKit.JSInterop;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
 
@@ -34,6 +35,8 @@ internal class HelperScript : IAsyncDisposable
     internal ValueTask CopyTextToClipboardAsync(string text) => this.InvokeVoidAsync("copyTextToClipboard", text);
 
     internal ValueTask SetupKeyDownReceiverAsync() => this.InvokeVoidAsync("setupMessageReceiverFromIFrame");
+
+    internal ValueTask ResetScrollTopAsync(ElementReference element) => this.InvokeVoidAsync("resetScrollTop", element);
 
     public async ValueTask DisposeAsync()
     {

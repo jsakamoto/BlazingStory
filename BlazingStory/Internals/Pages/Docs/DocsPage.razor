@@ -44,7 +44,7 @@
 
     </ToolBar>
 
-    <div class="docs-main fill">
+    <div class="docs-main fill" @ref="this._DocsMainElement">
         @if (this._StoryComponent != null)
         {
             var firstStory = this._StoryComponent.Stories.FirstOrDefault();
@@ -118,6 +118,10 @@
 
     private string? _CurrentNavigationPath;
 
+    private ElementReference _DocsMainElement;
+
+    private bool _ResetScrollTopRequired = false;
+
     private string _PageTitle = "";
 
     private StoryContainer? _StoryComponent;
@@ -134,6 +138,8 @@
 
         if (this._CurrentNavigationPath != this.RouteData.Parameter)
         {
+            this._ResetScrollTopRequired = true;
+
             if (this._StoryComponent != null)
             {
                 foreach (var story in this._StoryComponent.Stories) story.Context.ArgumentChanged -= this.Context_ArgumentChanged;
@@ -163,6 +169,17 @@
             ShowSidebar: commands[CommandType.SideBarVisible],
             Fullscreen: commands[CommandType.GoFullScreen]);
         this._Subscriptions.Add(this._Commands.ToolbarVisible!.Subscribe(this.OnToggleToolbarVisible));
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (this._ResetScrollTopRequired)
+        {
+            this._ResetScrollTopRequired = false;
+            await this.Services.GetRequiredService<HelperScript>().ResetScrollTopAsync(this._DocsMainElement);
+        }
     }
 
     private IEnumerable<ToolbarContentDescriptor> GetToolbarContents()

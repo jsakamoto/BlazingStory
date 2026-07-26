@@ -2,6 +2,7 @@ const doc = document;
 const lstorage = localStorage;
 export const copyTextToClipboard = (text) => navigator.clipboard.writeText(text);
 export const releaseFocus = () => { doc.activeElement?.blur(); };
+export const resetScrollTop = (element) => { if (element) element.scrollTop = 0; };
 const keydown = "keydown";
 const pointerdown = "pointerdown";
 export const setupMessageReceiverFromIFrame = () => {
