@@ -38,12 +38,12 @@ const getIFrame = async (container: HTMLElement | null) => {
     });
 }
 
-export const reloadPreviewFrame = async (container: HTMLElement): Promise<void> => {
+export const reloadPreviewFrame = async (container: HTMLElement | null): Promise<void> => {
     const result = await getIFrame(container);
     result?.contentWindow.postMessage({ action: "reload" } as MessageArgument);
 }
 
-const zoomPreviewFrame = async (container: HTMLElement, getNextZoomLevel: (zoomLevel: number) => number): Promise<void> => {
+const zoomPreviewFrame = async (container: HTMLElement | null, getNextZoomLevel: (zoomLevel: number) => number): Promise<void> => {
     const result = await getIFrame(container);
     const body = result?.contentDocument.body;
     if (!body) return;
@@ -53,13 +53,13 @@ const zoomPreviewFrame = async (container: HTMLElement, getNextZoomLevel: (zoomL
     result.contentWindow.postMessage({ action: "zoom", zoomLevel: nextZoomLevel } as MessageArgument);
 }
 
-export const zoomInPreviewFrame = (container: HTMLElement) => zoomPreviewFrame(container, zoom => zoom * 1.25);
+export const zoomInPreviewFrame = (container: HTMLElement | null) => zoomPreviewFrame(container, zoom => zoom * 1.25);
 
-export const zoomOutPreviewFrame = (container: HTMLElement) => zoomPreviewFrame(container, zoom => zoom / 1.25);
+export const zoomOutPreviewFrame = (container: HTMLElement | null) => zoomPreviewFrame(container, zoom => zoom / 1.25);
 
-export const resetZoomPreviewFrame = (container: HTMLElement) => zoomPreviewFrame(container, _ => 1);
+export const resetZoomPreviewFrame = (container: HTMLElement | null) => zoomPreviewFrame(container, _ => 1);
 
-export const getFrameHeight = async (container: HTMLElement): Promise<number> => {
+export const getFrameHeight = async (container: HTMLElement | null): Promise<number> => {
     const result = await getIFrame(container);
     return Math.ceil(result?.contentDocument.body.parentElement?.getBoundingClientRect().height || 0);
 }
@@ -72,7 +72,7 @@ const isDotnetWatchScriptInjected = (window: Window | null): boolean => {
     return window?.hasOwnProperty(scriptInjectedSentinel) ?? false;
 }
 
-export const ensureDotnetWatchScriptInjected = async (container: HTMLElement): Promise<void> => {
+export const ensureDotnetWatchScriptInjected = async (container: HTMLElement | null): Promise<void> => {
     const result = await getIFrame(container);
     if (!result) return;
     const { contentWindow, contentDocument } = result;
