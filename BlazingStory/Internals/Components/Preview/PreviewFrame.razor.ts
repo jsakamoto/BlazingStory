@@ -18,7 +18,13 @@ const waitFor = async <T>(arg: { predecate: () => false | T, maxRetryCount?: num
     }
 }
 
-const getIFrame = async (container: HTMLElement) => {
+const getIFrame = async (container: HTMLElement | null) => {
+    // The container is an element reference marshalled from .NET. A pooled preview frame can be
+    // recycled or unmounted before the call lands, in which case it arrives here as null and
+    // "container.querySelector" throws out of the retry loop, surfacing as an unhandled exception
+    // rendering PreviewFrame. Returning early is right rather than retrying: a container that is
+    // already gone is not going to come back, so waiting would only delay the same answer.
+    if (!container) return null;
     return await waitFor({
         predecate: () => {
             const iframe = container.querySelector('iframe');
