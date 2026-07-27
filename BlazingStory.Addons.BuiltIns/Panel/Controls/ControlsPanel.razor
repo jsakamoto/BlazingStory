@@ -30,7 +30,10 @@
                 var key = this.GetKey(parameter);
                 <tr @key="key">
 
-                    <td class="name">
+                    @* The Description column is rendered in the docs view only, where there is room
+                       for it. Exposing the same summary as a tooltip keeps it reachable in the
+                       canvas view, which is where the controls are actually manipulated. *@
+                    <td class="name" title="@parameter.Summary.Value">
                         <span>@parameter.Name</span>
                         @if (parameter.Required)
                         {
