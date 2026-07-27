@@ -14,6 +14,8 @@ const waitFor = async (arg) => {
     }
 };
 const getIFrame = async (container) => {
+    if (!container)
+        return null;
     return await waitFor({
         predecate: () => {
             const iframe = container.querySelector('iframe');
