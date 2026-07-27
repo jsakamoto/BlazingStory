@@ -8,8 +8,8 @@
     <NuspecFile>BlazingStory.ProjectTemplates.nuspec</NuspecFile>
     <PackageOutputPath>..\_dist\</PackageOutputPath>
   </PropertyGroup>
-  
-  <Import Project="../VersionInfo.props"/>
+
+  <Import Project="../VersionInfo.props" />
 
   <PropertyGroup>
     <PackageVersion>$(Version)</PackageVersion>
@@ -29,12 +29,12 @@
     <Exec Command="gh skill install BlazingStory/agent-skills blazing-story-story --agent claude-code --dir &quot;$(IntermediateSkillDir)&quot; --force" ConsoleToMsBuild="true" />
     <Exec Command="gh skill install BlazingStory/agent-skills blazing-story-addon --agent claude-code --dir &quot;$(IntermediateSkillDir)&quot; --force" ConsoleToMsBuild="true" />
     <ItemGroup>
-        <InstalledSkills Include="$(IntermediateSkillDir)\**\*" />
+      <InstalledSkills Include="$(IntermediateSkillDir)\**\*" />
     </ItemGroup>
     <Copy SourceFiles="@(InstalledSkills)" DestinationFolder="Content\BlazingStoryServer\.agents\skills\%(RecursiveDir)" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(InstalledSkills)" DestinationFolder="Content\BlazingStoryWasm\Client\.agents\skills\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
-  
+
   <Target Name="PreparePackageProperties" BeforeTargets="GenerateNuspec">
 
     <!-- READ "RELEASE-NOTES.txt" FILE AND CONFIGURE RELEASE NOTES TEXT -->
@@ -52,7 +52,7 @@
     <!-- CONFIGURE NUSPEC PROPERTIES -->
     <PropertyGroup>
       <RepositoryCommit></RepositoryCommit>
-      <NuspecProperties>version=$(PackageVersion).1</NuspecProperties>
+      <NuspecProperties>version=$(PackageVersion)</NuspecProperties>
       <NuspecProperties>copyright=$(Copyright);$(NuspecProperties)</NuspecProperties>
       <NuspecProperties>repositoryUrl=$(RepositoryUrl);$(NuspecProperties)</NuspecProperties>
       <NuspecProperties>releaseNotes=$(PackageReleaseNotes);$(NuspecProperties)</NuspecProperties>
