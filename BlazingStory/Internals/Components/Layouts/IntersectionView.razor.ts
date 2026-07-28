@@ -6,7 +6,8 @@ Blazor?.registerCustomEventType('intersectionchange', {
     createEventArgs: (e: IntersectionChangeEvent) => e.detail
 });
 
-export const observe = (element: HTMLElement): { dispose: () => void } => {
+export const observe = (element: HTMLElement | null): { dispose: () => void } => {
+    if (!element) return { dispose: () => { } };
 
     const callback = (entries: IntersectionObserverEntry[]) => {
         entries.forEach(entry => {
