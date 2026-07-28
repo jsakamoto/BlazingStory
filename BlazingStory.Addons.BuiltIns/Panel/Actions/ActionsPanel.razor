@@ -63,11 +63,14 @@
         this._PrevStory = this.Story;
     }
 
+    private Task<IJSObjectReference>? _ComponentActionSubscriberTask;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
         this._ThisRef = DotNetObjectReference.Create(this);
-        this._ComponentActionSubscriber = await this._JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentAction", this._ThisRef, nameof(OnComponentAction));
+        this._ComponentActionSubscriberTask = this._JSModule.InvokeAsync<IJSObjectReference>("subscribeComponentAction", this._ThisRef, nameof(OnComponentAction)).AsTask();
+        this._ComponentActionSubscriber = await this._ComponentActionSubscriberTask;
     }
 
     /// <summary>
@@ -90,6 +93,7 @@
 
     public async ValueTask DisposeAsync()
     {
+        if (this._ComponentActionSubscriberTask is not null) await this._ComponentActionSubscriberTask;
         await this._ComponentActionSubscriber.DisposeIfConnectedAsync("dispose");
         await this._JSModule.DisposeAsync();
         this._ThisRef?.Dispose();
