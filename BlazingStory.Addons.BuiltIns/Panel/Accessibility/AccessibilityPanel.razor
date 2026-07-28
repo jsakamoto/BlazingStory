@@ -99,13 +99,13 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && this._Window is not null)
+        if (firstRender)
         {
-            this._WindowMessageSubscription = await this._Window.SubscribeMessageAsync(OnMessageReceived);
+            if (this._Window is not null) this._WindowMessageSubscription = await this._Window.SubscribeMessageAsync(OnMessageReceived);
         }
 
         // When the story changes, we need to ask the preview frame if it's ready to run Axe against the new story.
-        if (this._PrevStory != this.Story && this._Window is not null)
+        if (this._PrevStory != this.Story)
         {
             if (this._WaitingForReady) return; // Prevent recursive calls to this method while waiting for the preview frame to be ready.
 
@@ -114,7 +114,7 @@
 
             try
             {
-                for (var millisecondsDelay = 100; millisecondsDelay <= 3600 && this._PrevStory != this.Story; millisecondsDelay *= 2)
+                for (var millisecondsDelay = 100; millisecondsDelay <= 3600 && this._PrevStory != this.Story && this._Window is not null; millisecondsDelay *= 2)
                 {
                     await this._Window.PostMessageAsync(".preview-frame iframe", AccessibilityPanelAddon.Message.AskReady);
                     await Task.Delay(millisecondsDelay);
