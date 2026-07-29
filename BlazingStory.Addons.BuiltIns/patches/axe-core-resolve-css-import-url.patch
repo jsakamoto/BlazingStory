@@ -1,0 +1,105 @@
+Fix axe-core resolving relative @import URLs against the document base URL
+==========================================================================
+
+Target: axe-core v4.11.3 (vendored at BlazingStory.Addons.BuiltIns/wwwroot/js/)
+Upstream status: not reported yet (as of 2026-07-29)
+
+PROBLEM
+-------
+When axe.run() preloads the CSSOM, axe-core walks every stylesheet and fetches
+the targets of its @import rules. It passes CSSImportRule.href straight to
+XMLHttpRequest.open():
+
+    lib/core/utils/parse-sameorigin-stylesheet.js
+      .map(rule => rule.href)
+      -> parseCrossOriginStylesheet(importUrl, ...)  ->  request.open('GET', url)
+
+Per the CSSOM spec, CSSImportRule.href returns the URL exactly as written in the
+stylesheet, which is usually relative. XMLHttpRequest resolves a relative URL
+against the *document* base URL, whereas CSS resolves it against the URL of the
+stylesheet that contains the @import. When those two differ, axe-core requests a
+URL that does not exist and the browser console fills up with 404s.
+
+Example seen in Samples/MyBlazorWasmApp1:
+
+    /_content/MyBlazorWasmApp1/css/app.css contains  @import url("fonts/fonts.css");
+    the browser correctly loads  /_content/MyBlazorWasmApp1/css/fonts/fonts.css
+    axe-core requests           /fonts/fonts.css                        -> 404
+
+The failure is swallowed by axe-core (it logs "Couldn't load preload assets" and
+carries on), so this is console noise plus a loss of preloaded CSSOM data rather
+than a broken accessibility check. It affects any consuming application whose
+stylesheets use relative @import, not just the sample app.
+
+FIX
+---
+Resolve the href against the containing stylesheet's own URL before handing it to
+the network layer, falling back to the document base URL for @import rules inside
+inline <style> elements (where sheet.href is null, and the document base URL is
+in fact the correct base).
+
+The `isCrossOriginRequest` regex test below the patched code is deliberately left
+untouched: it still runs against the resolved URL, and the resulting flag is only
+stored on the asset object and never read by any rule in 4.11.3.
+
+APPLYING TO A NEWER axe-core
+----------------------------
+1. Drop the new upstream axe.js / axe.min.js / axe.d.ts into wwwroot/js/.
+2. From the repository root, run:  git apply BlazingStory.Addons.BuiltIns/patches/axe-core-resolve-css-import-url.patch
+   The diff below covers axe.js only.
+3. axe.min.js has no usable line-based diff (the whole bundle is one line), so
+   apply it by hand. The minified identifiers change on every upstream release,
+   so re-locate the code rather than trusting these exact strings. In 4.11.3 the
+   enclosing function is `cf=function(e,n,a,o){...Array.from(e.cssRules)...}`,
+   where `e` is the stylesheet. Search for:
+
+       .filter(function(e){return e.href}).map(function(e){return e.href})
+
+   and replace it with:
+
+       .filter(function(e){return e.href}).map(function(s){try{return new URL(s.href,e.href||document.baseURI).href}catch(u){return s.href}})
+
+   The callback parameter must NOT be named `e`, because the replacement needs
+   `e` to keep referring to the enclosing stylesheet argument.
+4. Re-add the "NOTICE: This file has been modified" comment to the top of
+   axe.min.js as well (step 2 handles axe.js).
+5. Verify with `node --check` on both files, then load a story page and confirm
+   no unexpected 404 for an @import target appears in the preview iframe.
+
+LICENSE
+-------
+axe-core is licensed under MPL-2.0, the same license as Blazing Story, so this
+modified file stays under MPL-2.0 and its source form is published in this
+repository. The Deque Systems copyright notice at the top of the file must be
+kept. "axe" is a trademark of Deque Systems; this modified build is redistributed
+inside Blazing Story only and is not endorsed by Deque Systems.
+
+diff --git a/BlazingStory.Addons.BuiltIns/wwwroot/js/axe.js b/BlazingStory.Addons.BuiltIns/wwwroot/js/axe.js
+index 9ba3fa2..053b6ad 100644
+--- a/BlazingStory.Addons.BuiltIns/wwwroot/js/axe.js
++++ b/BlazingStory.Addons.BuiltIns/wwwroot/js/axe.js
+@@ -9,6 +9,11 @@
+  * distribute or in any file that contains substantial portions of this source
+  * code.
+  */
++/*
++ * NOTICE: This file has been modified by the Blazing Story project.
++ * See "BlazingStory.Addons.BuiltIns/patches/axe-core-resolve-css-import-url.patch"
++ * in the Blazing Story repository for the applied changes.
++ */
+ (function axeFunction(window) {
+   var global = window;
+   var document = window.document;
+@@ -19289,7 +19294,11 @@
+       var cssImportUrlsNotAlreadyImported = cssImportRules.filter(function(rule) {
+         return rule.href;
+       }).map(function(rule) {
+-        return rule.href;
++        try {
++          return new URL(rule.href, sheet.href || document.baseURI).href;
++        } catch (e) {
++          return rule.href;
++        }
+       }).filter(function(url) {
+         return !importedUrls.includes(url);
+       });

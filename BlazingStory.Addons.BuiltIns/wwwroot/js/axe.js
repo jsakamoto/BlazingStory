@@ -9,6 +9,11 @@
  * distribute or in any file that contains substantial portions of this source
  * code.
  */
+/*
+ * NOTICE: This file has been modified by the Blazing Story project.
+ * See "BlazingStory.Addons.BuiltIns/patches/axe-core-resolve-css-import-url.patch"
+ * in the Blazing Story repository for the applied changes.
+ */
 (function axeFunction(window) {
   var global = window;
   var document = window.document;
@@ -19289,7 +19294,11 @@
       var cssImportUrlsNotAlreadyImported = cssImportRules.filter(function(rule) {
         return rule.href;
       }).map(function(rule) {
-        return rule.href;
+        try {
+          return new URL(rule.href, sheet.href || document.baseURI).href;
+        } catch (e) {
+          return rule.href;
+        }
       }).filter(function(url) {
         return !importedUrls.includes(url);
       });

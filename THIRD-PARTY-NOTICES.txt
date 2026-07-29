@@ -9,7 +9,7 @@ The attached notices are provided for information only.
 4. Blazor HotKeys2 (https://github.com/jsakamoto/Toolbelt.Blazor.HotKeys2)
 5. CSS Class Inline Builder (https://github.com/jsakamoto/CssClassInlineBuilder)
 6. Blazor SplitContainer (https://github.com/jsakamoto/Toolbelt.Blazor.SplitContainer)
-7. axe-core (https://github.com/dequelabs/axe-core)
+7. axe-core (https://github.com/dequelabs/axe-core) - MODIFIED
 
 
 %% License notice for Storybook
@@ -941,6 +941,16 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
 
 %% License notice for axe-core
 =========================================
+NOTE: The copy of axe-core distributed with "Blazing Story" (as
+"_content/BlazingStory.Addons.BuiltIns/js/axe.js" and "axe.min.js") has been
+modified by the Blazing Story project. The modification makes axe-core resolve
+relative "@import" URLs against the stylesheet that contains them, instead of
+against the document base URL. The modified Source Code Form is published in the
+Blazing Story repository, and the applied patch is recorded there as
+"BlazingStory.Addons.BuiltIns/patches/axe-core-resolve-css-import-url.patch".
+"axe" is a trademark of Deque Systems, Inc.; this modified build is not endorsed
+by Deque Systems, Inc.
+
 Mozilla Public License, version 2.0
 
 1. Definitions
