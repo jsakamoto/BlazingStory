@@ -18,7 +18,7 @@
 
   <!--
   <ItemGroup>
-    <PackageReference Include="BlazingStory" Version="1.0.0-preview.90" />
+    <PackageReference Include="BlazingStory" Version="1.0.0-preview.91" />
   </ItemGroup>
   -->
   <ItemGroup>

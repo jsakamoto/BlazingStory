@@ -1,3 +1,8 @@
+v.1.0.0-preview.91
+- Fix: Resolved an intermittent preview rendering error when opening a story directly by URL. (PR #134 contributed by @Kebechet)
+- Fix: Resolved intermittent exceptions that could occur when navigating between Docs and Story pages.
+- Fix: Resolved unexpected HTTP 404 errors reported in the browser console while the accessibility panel checked a story whose stylesheets use relative `@import` URLs.
+
 v.1.0.0-preview.90
 - Improve: Parameter summaries are now shown as a tooltip on parameter names in the Controls panel, making them visible in the Canvas view without switching to the Docs view. (PR #133 contributed by @Kebechet)
 
