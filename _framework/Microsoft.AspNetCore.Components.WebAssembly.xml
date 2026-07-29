@@ -1,0 +1,833 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.AspNetCore.Components.WebAssembly</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.IWebAssemblyHostEnvironment">
+            <summary>
+            Provides information about the hosting environment an application is running in.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Hosting.IWebAssemblyHostEnvironment.Environment">
+            <summary>
+            Gets the name of the environment. This is configured to use the environment of the application hosting the Blazor WebAssembly application.
+            Configured to "Production" when not specified by the host.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Hosting.IWebAssemblyHostEnvironment.BaseAddress">
+            <summary>
+            Gets the base address for the application. This is typically derived from the <c>&gt;base href&lt;</c> value in the host page.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.RootComponentMapping">
+            <summary>
+            Defines a mapping between a root <see cref="T:Microsoft.AspNetCore.Components.IComponent"/> and a DOM element selector.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.RootComponentMapping.#ctor(System.Type,System.String)">
+            <summary>
+            Creates a new instance of <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.RootComponentMapping"/> with the provided <paramref name="componentType"/>
+            and <paramref name="selector"/>.
+            </summary>
+            <param name="componentType">The component type. Must implement <see cref="T:Microsoft.AspNetCore.Components.IComponent"/>.</param>
+            <param name="selector">The DOM element selector or component registration id for the component.</param>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.RootComponentMapping.#ctor(System.Type,System.String,Microsoft.AspNetCore.Components.ParameterView)">
+            <summary>
+            Creates a new instance of <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.RootComponentMapping"/> with the provided <paramref name="componentType"/>
+            and <paramref name="selector"/>.
+            </summary>
+            <param name="componentType">The component type. Must implement <see cref="T:Microsoft.AspNetCore.Components.IComponent"/>.</param>
+            <param name="selector">The DOM element selector or registration id for the component.</param>
+            <param name="parameters">The parameters to pass to the component.</param>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Hosting.RootComponentMapping.ComponentType">
+            <summary>
+            Gets the component type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Hosting.RootComponentMapping.Selector">
+            <summary>
+            Gets the DOM element selector.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Hosting.RootComponentMapping.Parameters">
+            <summary>
+            Gets the parameters to pass to the root component.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.RootComponentMappingCollection">
+            <summary>
+            Defines a collection of <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.RootComponentMapping"/> items.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Hosting.RootComponentMappingCollection.JSComponents">
+            <inheritdoc />
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.RootComponentMappingCollection.Add``1(System.String)">
+            <summary>
+            Adds a component mapping to the collection.
+            </summary>
+            <typeparam name="TComponent">The component type.</typeparam>
+            <param name="selector">The DOM element selector.</param>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.RootComponentMappingCollection.Add(System.Type,System.String)">
+            <summary>
+            Adds a component mapping to the collection.
+            </summary>
+            <param name="componentType">The component type. Must implement <see cref="T:Microsoft.AspNetCore.Components.IComponent"/>.</param>
+            <param name="selector">The DOM element selector.</param>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.RootComponentMappingCollection.Add(System.Type,System.String,Microsoft.AspNetCore.Components.ParameterView)">
+            <summary>
+            Adds a component mapping to the collection.
+            </summary>
+            <param name="componentType">The component type. Must implement <see cref="T:Microsoft.AspNetCore.Components.IComponent"/>.</param>
+            <param name="selector">The DOM element selector.</param>
+            <param name="parameters">The parameters to the root component.</param>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.RootComponentMappingCollection.AddRange(System.Collections.Generic.IEnumerable{Microsoft.AspNetCore.Components.WebAssembly.Hosting.RootComponentMapping})">
+            <summary>
+            Adds a collection of items to this collection.
+            </summary>
+            <param name="items">The items to add.</param>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyCallQueue.Schedule``1(``0,System.Action{``0})">
+             <summary>
+             Runs the supplied callback when possible. If the call queue is empty, the callback is executed
+             synchronously. If some call is already executing within the queue, the callback is added to the
+             back of the queue and will be executed in turn.
+             </summary>
+             <typeparam name="T">The type of a state parameter for the callback</typeparam>
+             <param name="state">A state parameter for the callback. If the callback is able to execute synchronously, this allows us to avoid any allocations for the closure.</param>
+             <param name="callback">The callback to run.</param>
+             <remarks>
+             In most cases this should only be used for callbacks that will not throw, because
+             [1] Unhandled exceptions will be fatal to the application, as the work queue will no longer process
+                 further items (just like unhandled hub exceptions in Blazor Server)
+             [2] The exception will be thrown at the point of the top-level caller, which is not necessarily the
+                 code that scheduled the callback, so you may not be able to observe it.
+            
+             We could change this to return a Task and do the necessary try/catch things to direct exceptions back
+             to the code that scheduled the callback, but it's not required for current use cases and would require
+             at least an extra allocation and layer of try/catch per call, plus more work to schedule continuations
+             at the call site.
+             </remarks>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost">
+            <summary>
+            A host object for Blazor running under WebAssembly. Use <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder"/>
+            to initialize a <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost.Configuration">
+            <summary>
+            Gets the application configuration.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost.Services">
+            <summary>
+            Gets the service provider associated with the application.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost.DisposeAsync">
+            <summary>
+            Disposes the host asynchronously.
+            </summary>
+            <returns>A <see cref="T:System.Threading.Tasks.ValueTask"/> which represents the completion of disposal.</returns>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost.RunAsync">
+            <summary>
+            Runs the application associated with this host.
+            </summary>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> which represents exit of the application.</returns>
+            <remarks>
+            At this time, it's not possible to shut down a Blazor WebAssembly application using imperative code.
+            The application only stops when the hosting page is reloaded or navigated to another page. As a result
+            the task returned from this method does not complete. This method is not suitable for use in unit-testing.
+            </remarks>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder">
+            <summary>
+            A builder for configuring and creating a <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder.CreateDefault(System.String[])">
+            <summary>
+            Creates an instance of <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder"/> using the most common
+            conventions and settings.
+            </summary>
+            <param name="args">The argument passed to the application's main method.</param>
+            <returns>A <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder"/>.</returns>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder.#ctor(Microsoft.AspNetCore.Components.WebAssembly.Services.IInternalJSImportMethods)">
+            <summary>
+            Creates an instance of <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder"/> with the minimal configuration.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder.Configuration">
+            <summary>
+            Gets an <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostConfiguration"/> that can be used to customize the application's
+            configuration sources and read configuration attributes.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder.RootComponents">
+            <summary>
+            Gets the collection of root component mappings configured for the application.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder.Services">
+            <summary>
+            Gets the service collection.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder.HostEnvironment">
+            <summary>
+            Gets information about the app's host environment.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder.Logging">
+            <summary>
+            Gets the logging builder for configuring logging services.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder.ConfigureContainer``1(Microsoft.Extensions.DependencyInjection.IServiceProviderFactory{``0},System.Action{``0})">
+            <summary>
+            Registers a <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceProviderFactory`1" /> instance to be used to create the <see cref="T:System.IServiceProvider" />.
+            </summary>
+            <param name="factory">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceProviderFactory`1" />.</param>
+            <param name="configure">
+            A delegate used to configure the <typeparamref T="TBuilder" />. This can be used to configure services using
+            APIS specific to the <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceProviderFactory`1" /> implementation.
+            </param>
+            <typeparam name="TBuilder">The type of builder provided by the <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceProviderFactory`1" />.</typeparam>
+            <remarks>
+            <para>
+            <see cref="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder.ConfigureContainer``1(Microsoft.Extensions.DependencyInjection.IServiceProviderFactory{``0},System.Action{``0})"/> is called by <see cref="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder.Build"/>
+            and so the delegate provided by <paramref name="configure"/> will run after all other services have been registered.
+            </para>
+            <para>
+            Multiple calls to <see cref="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder.ConfigureContainer``1(Microsoft.Extensions.DependencyInjection.IServiceProviderFactory{``0},System.Action{``0})"/> will replace
+            the previously stored <paramref name="factory"/> and <paramref name="configure"/> delegate.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder.UseServiceProviderOptions(Microsoft.Extensions.DependencyInjection.ServiceProviderOptions)">
+            <summary>
+            Configures the service provider options for this host builder.
+            </summary>
+            <param name="options">The service provider options to use.</param>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder.Build">
+            <summary>
+            Builds a <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost"/> instance based on the configuration of this builder.
+            </summary>
+            <returns>A <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost"/> object.</returns>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilderExtensions">
+            <summary>
+            Extension methods for configuring a <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilderExtensions.UseDefaultServiceProvider(Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder,System.Action{Microsoft.Extensions.DependencyInjection.ServiceProviderOptions})">
+            <summary>
+            Configures the default service provider for the WebAssembly host.
+            </summary>
+            <param name="builder">The <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder"/> to configure.</param>
+            <param name="configure">A callback used to configure the <see cref="T:Microsoft.Extensions.DependencyInjection.ServiceProviderOptions"/>.</param>
+            <returns>The <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder"/>.</returns>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilderExtensions.UseDefaultServiceProvider(Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder,System.Action{Microsoft.AspNetCore.Components.WebAssembly.Hosting.IWebAssemblyHostEnvironment,Microsoft.Extensions.DependencyInjection.ServiceProviderOptions})">
+            <summary>
+            Configures the default service provider for the WebAssembly host.
+            </summary>
+            <param name="builder">The <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder"/> to configure.</param>
+            <param name="configure">A callback used to configure the <see cref="T:Microsoft.Extensions.DependencyInjection.ServiceProviderOptions"/> with access to the host environment.</param>
+            <returns>The <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder"/>.</returns>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostConfiguration">
+            <summary>
+            WebAssemblyHostConfiguration is a class that implements the interface of an IConfiguration,
+            IConfigurationRoot, and IConfigurationBuilder. It can be used to simulatneously build
+            and read from a configuration object.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostConfiguration.Microsoft#Extensions#Configuration#IConfigurationBuilder#Sources">
+            <summary>
+            Gets the sources used to obtain configuration values.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostConfiguration.Microsoft#Extensions#Configuration#IConfigurationRoot#Providers">
+            <summary>
+            Gets the providers used to obtain configuration values.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostConfiguration.Microsoft#Extensions#Configuration#IConfigurationBuilder#Properties">
+            <summary>
+            Gets a key/value collection that can be used to share data between the <see cref="T:Microsoft.Extensions.Configuration.IConfigurationBuilder"/>
+            and the registered <see cref="T:Microsoft.Extensions.Configuration.IConfigurationProvider"/> instances.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostConfiguration.Item(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostConfiguration.GetSection(System.String)">
+            <summary>
+            Gets a configuration sub-section with the specified key.
+            </summary>
+            <param name="key">The key of the configuration section.</param>
+            <returns>The <see cref="T:Microsoft.Extensions.Configuration.IConfigurationSection"/>.</returns>
+            <remarks>
+                This method will never return <c>null</c>. If no matching sub-section is found with the specified key,
+                an empty <see cref="T:Microsoft.Extensions.Configuration.IConfigurationSection"/> will be returned.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostConfiguration.Microsoft#Extensions#Configuration#IConfiguration#GetChildren">
+            <summary>
+            Gets the immediate descendant configuration sub-sections.
+            </summary>
+            <returns>The configuration sub-sections.</returns>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostConfiguration.GetReloadToken">
+            <summary>
+            Returns a <see cref="T:Microsoft.Extensions.Primitives.IChangeToken"/> that can be used to observe when this configuration is reloaded.
+            </summary>
+            <returns>The <see cref="T:Microsoft.Extensions.Primitives.IChangeToken"/>.</returns>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostConfiguration.Reload">
+            <summary>
+            Force the configuration values to be reloaded from the underlying sources.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostConfiguration.Add(Microsoft.Extensions.Configuration.IConfigurationSource)">
+            <summary>
+            Adds a new configuration source, retrieves the provider for the source, and
+            adds a change listener that triggers a reload of the provider whenever a change
+            is detected.
+            </summary>
+            <param name="source">The configuration source to add.</param>
+            <returns>The same <see cref="T:Microsoft.Extensions.Configuration.IConfigurationBuilder"/>.</returns>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostConfiguration.Build">
+            <summary>
+            Builds an <see cref="T:Microsoft.Extensions.Configuration.IConfiguration"/> with keys and values from the set of providers registered in
+            <see cref="P:Microsoft.Extensions.Configuration.IConfigurationRoot.Providers"/>.
+            </summary>
+            <returns>An <see cref="T:Microsoft.Extensions.Configuration.IConfigurationRoot"/> with keys and values from the registered providers.</returns>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostConfiguration.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostEnvironmentExtensions">
+            <summary>
+            Static class that adds extension methods to <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.IWebAssemblyHostEnvironment"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostEnvironmentExtensions.IsDevelopment(Microsoft.AspNetCore.Components.WebAssembly.Hosting.IWebAssemblyHostEnvironment)">
+            <summary>
+            Checks if the current hosting environment name is <c>Development</c>.
+            </summary>
+            <param name="hostingEnvironment">An instance of <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.IWebAssemblyHostEnvironment"/>.</param>
+            <returns>True if the environment name is <c>Development</c>, otherwise false.</returns>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostEnvironmentExtensions.IsStaging(Microsoft.AspNetCore.Components.WebAssembly.Hosting.IWebAssemblyHostEnvironment)">
+            <summary>
+            Checks if the current hosting environment name is <c>Staging</c>.
+            </summary>
+            <param name="hostingEnvironment">An instance of <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.IWebAssemblyHostEnvironment"/>.</param>
+            <returns>True if the environment name is <c>Staging</c>, otherwise false.</returns>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostEnvironmentExtensions.IsProduction(Microsoft.AspNetCore.Components.WebAssembly.Hosting.IWebAssemblyHostEnvironment)">
+            <summary>
+            Checks if the current hosting environment name is <c>Production</c>.
+            </summary>
+            <param name="hostingEnvironment">An instance of <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.IWebAssemblyHostEnvironment"/>.</param>
+            <returns>True if the environment name is <c>Production</c>, otherwise false.</returns>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostEnvironmentExtensions.IsEnvironment(Microsoft.AspNetCore.Components.WebAssembly.Hosting.IWebAssemblyHostEnvironment,System.String)">
+            <summary>
+            Compares the current hosting environment name against the specified value.
+            </summary>
+            <param name="hostingEnvironment">An instance of <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Hosting.IWebAssemblyHostEnvironment"/>.</param>
+            <param name="environmentName">Environment name to validate against.</param>
+            <returns>True if the specified name is the same as the current environment, otherwise false.</returns>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestCache">
+            <summary>
+            The cache mode of the request. It controls how the request will interact with the browser's HTTP cache.
+            See <see href="https://developer.mozilla.org/en-US/docs/Web/API/Request/cache"/>.
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestCache.Default">
+            <summary>
+            The browser looks for a matching request in its HTTP cache.
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestCache.NoStore">
+            <summary>
+            The browser fetches the resource from the remote server without first looking in the cache,
+            and will not update the cache with the downloaded resource.
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestCache.Reload">
+            <summary>
+            The browser fetches the resource from the remote server without first looking in the cache,
+            but then will update the cache with the downloaded resource.
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestCache.NoCache">
+            <summary>
+            The browser looks for a matching request in its HTTP cache.
+            <para>
+            If there is a match, fresh or stale, the browser will make a conditional request to the remote server.
+            If the server indicates that the resource has not changed, it will be returned from the cache.
+            Otherwise the resource will be downloaded from the server and the cache will be updated.
+            </para>
+            <para>
+            If there is no match, the browser will make a normal request, and will update the cache with the downloaded resource.
+            </para>
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestCache.ForceCache">
+            <summary>
+            The browser looks for a matching request in its HTTP cache.
+            <para>
+            If there is a match, fresh or stale, it will be returned from the cache.
+            </para>
+            <para>
+            If there is no match, the browser will make a normal request, and will update the cache with the downloaded resource.
+            </para>
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestCache.OnlyIfCached">
+            <summary>
+            The browser looks for a matching request in its HTTP cache.
+            Mode can only be used if the request's mode is "same-origin"
+            <para>
+            If there is a match, fresh or stale, it will be returned from the cache.
+            </para>
+            <para>
+            If there is no match, the browser will respond with a 504 Gateway timeout status.
+            </para>
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestCredentials">
+            <summary>
+            Specifies a value for the 'credentials' option on outbound HTTP requests.
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestCredentials.Omit">
+            <summary>
+            Advises the browser never to send credentials (such as cookies or HTTP auth headers).
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestCredentials.SameOrigin">
+            <summary>
+            Advises the browser to send credentials (such as cookies or HTTP auth headers)
+            only if the target URL is on the same origin as the calling application.
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestCredentials.Include">
+            <summary>
+            Advises the browser to send credentials (such as cookies or HTTP auth headers)
+            even for cross-origin requests.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestMode">
+            <summary>
+            The mode of the request. This is used to determine if cross-origin requests lead to valid responses
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestMode.SameOrigin">
+            <summary>
+            If a request is made to another origin with this mode set, the result is simply an error
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestMode.NoCors">
+            <summary>
+            Prevents the method from being anything other than HEAD, GET or POST, and the headers from
+            being anything other than simple headers.
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestMode.Cors">
+            <summary>
+            Allows cross-origin requests, for example to access various APIs offered by 3rd party vendors.
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestMode.Navigate">
+            <summary>
+            A mode for supporting navigation.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Http.WebAssemblyHttpRequestMessageExtensions">
+            <summary>
+            Extension methods for configuring an instance of <see cref="T:System.Net.Http.HttpRequestMessage"/> with browser-specific options.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Http.WebAssemblyHttpRequestMessageExtensions.SetBrowserRequestCredentials(System.Net.Http.HttpRequestMessage,Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestCredentials)">
+            <summary>
+            Configures a value for the 'credentials' option for the HTTP request.
+            </summary>
+            <param name="requestMessage">The <see cref="T:System.Net.Http.HttpRequestMessage"/>.</param>
+            <param name="requestCredentials">The <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestCredentials"/> option.</param>
+            <returns>The <see cref="T:System.Net.Http.HttpRequestMessage"/>.</returns>
+            <remarks>
+            See <see href="https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials"/>.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Http.WebAssemblyHttpRequestMessageExtensions.SetBrowserRequestCache(System.Net.Http.HttpRequestMessage,Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestCache)">
+            <summary>
+            Configures a value for the 'cache' option for the HTTP request.
+            </summary>
+            <param name="requestMessage">The <see cref="T:System.Net.Http.HttpRequestMessage"/>.</param>
+            <param name="requestCache">The <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestCache"/> option.</param>
+            <returns>The <see cref="T:System.Net.Http.HttpRequestMessage"/>.</returns>\
+            <remarks>
+            See <see href="https://developer.mozilla.org/en-US/docs/Web/API/Request/cache"/>.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Http.WebAssemblyHttpRequestMessageExtensions.SetBrowserRequestMode(System.Net.Http.HttpRequestMessage,Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestMode)">
+            <summary>
+            Configures a value for the 'mode' option for the HTTP request.
+            </summary>
+            <param name="requestMessage">The <see cref="T:System.Net.Http.HttpRequestMessage"/>.</param>
+            <param name="requestMode">The <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Http.BrowserRequestMode"/>.</param>
+            <returns>The <see cref="T:System.Net.Http.HttpRequestMessage"/>.</returns>\
+            <remarks>
+            See <see href="https://developer.mozilla.org/en-US/docs/Web/API/Request/mode"/>.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Http.WebAssemblyHttpRequestMessageExtensions.SetBrowserRequestIntegrity(System.Net.Http.HttpRequestMessage,System.String)">
+            <summary>
+            Configures a value for the 'integrity' option for the HTTP request.
+            </summary>
+            <param name="requestMessage">The <see cref="T:System.Net.Http.HttpRequestMessage"/>.</param>
+            <param name="integrity">The subresource integrity descriptor.</param>
+            <returns>The <see cref="T:System.Net.Http.HttpRequestMessage"/>.</returns>
+            <remarks>
+            See <see href="https://developer.mozilla.org/en-US/docs/Web/API/Request/integrity"/>.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Http.WebAssemblyHttpRequestMessageExtensions.SetBrowserRequestOption(System.Net.Http.HttpRequestMessage,System.String,System.Object)">
+            <summary>
+            Configures a value for the HTTP request.
+            </summary>
+            <param name="requestMessage">The <see cref="T:System.Net.Http.HttpRequestMessage"/>.</param>
+            <param name="name">The name of the option, which should correspond to a key defined on <see href="https://fetch.spec.whatwg.org/#requestinit"/>.</param>
+            <param name="value">The value, which must be JSON-serializable.</param>
+            <returns>The <see cref="T:System.Net.Http.HttpRequestMessage"/>.</returns>
+            <remarks>
+            See <see href="https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch"/>.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Http.WebAssemblyHttpRequestMessageExtensions.SetBrowserRequestStreamingEnabled(System.Net.Http.HttpRequestMessage,System.Boolean)">
+            <summary>
+            Configures streaming request for the HTTP request.
+            </summary>
+            <param name="requestMessage">The <see cref="T:System.Net.Http.HttpRequestMessage"/>.</param>
+            <param name="streamingEnabled"><see langword="true"/> if streaming is enabled; otherwise <see langword="false"/>.</param>
+            <returns>The <see cref="T:System.Net.Http.HttpRequestMessage"/>.</returns>
+            <remarks>
+            This API is only effective when the browser HTTP Fetch supports request streaming.
+            Requires HTTP/2 or higher server support.
+            See <see href="https://developer.mozilla.org/en-US/docs/Web/API/Request"/>.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Http.WebAssemblyHttpRequestMessageExtensions.SetBrowserResponseStreamingEnabled(System.Net.Http.HttpRequestMessage,System.Boolean)">
+            <summary>
+            Configures streaming response for the HTTP request.
+            </summary>
+            <param name="requestMessage">The <see cref="T:System.Net.Http.HttpRequestMessage"/>.</param>
+            <param name="streamingEnabled"><see langword="true"/> if streaming is enabled; otherwise <see langword="false"/>.</param>
+            <returns>The <see cref="T:System.Net.Http.HttpRequestMessage"/>.</returns>
+            <remarks>
+            This API is only effective when the browser HTTP Fetch supports response streaming.
+            See <see href="https://developer.mozilla.org/en-US/docs/Web/API/Response"/>.
+            </remarks>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.JSInteropMethods">
+            <summary>
+            Contains methods called by interop. Intended for framework use only, not supported for use in application
+            code.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.JSInteropMethods.NotifyLocationChanged(System.String,System.Boolean)">
+            <summary>
+            For framework use only.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.JSInteropMethods.NotifyLocationChanged(System.String,System.String,System.Boolean)">
+            <summary>
+            For framework use only.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.JSInteropMethods.NotifyLocationChangingAsync(System.String,System.String,System.Boolean)">
+            <summary>
+            For framework use only.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.ComponentMarker">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.NullableComponentMarker">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.ComponentMarkerKey">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.NullableComponentMarkerKey">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.ComponentParameter">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.ComponentParameterArray">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.RootComponentOperation">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.RootComponentOperationArray">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.RootComponentOperationBatch">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.RootComponentOperationType">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.IListObject">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.JsonElement">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.Int32">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.NullableInt32">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.Int64">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.Object">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.String">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.Default">
+            <summary>
+            The default <see cref="T:System.Text.Json.Serialization.JsonSerializerContext"/> associated with a default <see cref="T:System.Text.Json.JsonSerializerOptions"/> instance.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.GeneratedSerializerOptions">
+            <summary>
+            The source-generated options associated with this context.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.#ctor">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.#ctor(System.Text.Json.JsonSerializerOptions)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Infrastructure.WebAssemblyJsonSerializerContext.GetTypeInfo(System.Type)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Rendering.WebAssemblyComponentState">
+            <summary>
+            Specialized ComponentState for WebAssembly rendering that supports ComponentMarkerKey for state persistence.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Rendering.WebAssemblyRenderer">
+            <summary>
+            Provides mechanisms for rendering <see cref="T:Microsoft.AspNetCore.Components.IComponent"/> instances in a
+            web browser, dispatching events to them, and refreshing the UI as required.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Rendering.WebAssemblyRenderer.Dispose(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Rendering.WebAssemblyRenderer.ProcessPendingRender">
+            <inheritdoc />
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Rendering.WebAssemblyRenderer.UpdateDisplayAsync(Microsoft.AspNetCore.Components.RenderTree.RenderBatch@)">
+            <inheritdoc />
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Rendering.WebAssemblyRenderer.HandleException(System.Exception)">
+            <inheritdoc />
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Services.DefaultWebAssemblyJSRuntime.ReadJSDataAsStreamAsync(Microsoft.JSInterop.IJSStreamReference,System.Int64,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Services.DefaultWebAssemblyJSRuntime.TransmitStreamAsync(System.Int64,Microsoft.JSInterop.DotNetStreamReference)">
+            <inheritdoc />
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Services.LazyAssemblyLoader">
+             <summary>
+             Provides a service for loading assemblies at runtime in a browser context.
+            
+             Supports finding pre-loaded assemblies in a server or pre-rendering context.
+             </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Services.LazyAssemblyLoader.#ctor(Microsoft.JSInterop.IJSRuntime)">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Services.LazyAssemblyLoader"/>.
+            </summary>
+            <param name="jsRuntime">The <see cref="T:Microsoft.JSInterop.IJSRuntime"/>.</param>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Services.LazyAssemblyLoader.LoadAssembliesAsync(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            In a browser context, calling this method will fetch the assemblies requested
+            via a network call and load them into the runtime. In a server or pre-rendered
+            context, this method will look for the assemblies already loaded in the runtime
+            and return them.
+            </summary>
+            <param name="assembliesToLoad">The names of the assemblies to load (e.g. "MyAssembly.dll")</param>
+            <returns>A list of the loaded <see cref="T:System.Reflection.Assembly"/></returns>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Services.WebAssemblyConsoleLoggerProvider">
+            <summary>
+            A provider of <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Services.WebAssemblyConsoleLogger`1"/> instances.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Services.WebAssemblyConsoleLoggerProvider.#ctor(Microsoft.JSInterop.WebAssembly.WebAssemblyJSRuntime)">
+            <summary>
+            Creates an instance of <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Services.WebAssemblyConsoleLoggerProvider"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Services.WebAssemblyConsoleLoggerProvider.CreateLogger(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Services.WebAssemblyConsoleLoggerProvider.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.WebAssembly.Services.WebAssemblyNavigationManager">
+            <summary>
+            Default client-side implementation of <see cref="T:Microsoft.AspNetCore.Components.NavigationManager"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.WebAssembly.Services.WebAssemblyNavigationManager.Instance">
+            <summary>
+            Gets the instance of <see cref="T:Microsoft.AspNetCore.Components.WebAssembly.Services.WebAssemblyNavigationManager"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Services.WebAssemblyNavigationManager.NavigateToCore(System.String,Microsoft.AspNetCore.Components.NavigationOptions)">
+            <inheritdoc />
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.WebAssembly.Services.WebAssemblyNavigationManager.Refresh(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.HotReload.HotReloadManager.IsSubscribedTo">
+            <summary>
+            Gets a value that determines if OnDeltaApplied is subscribed to.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.HotReload.HotReloadManager.UpdateApplication(System.Type[])">
+            <summary>
+            MetadataUpdateHandler event. This is invoked by the hot reload host via reflection.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.PullFromJSDataStream">
+            <Summary>
+            A stream that pulls each chunk on demand using JavaScript interop. This implementation is used for
+            WebAssembly and WebView applications.
+            </Summary>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.TransmitDataStreamToJS">
+            <Summary>
+            A stream that pulls each chunk on demand using JavaScript interop. This implementation is used for
+            WebAssembly and WebView applications.
+            </Summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.PrerenderComponentApplicationStoreSerializerContext.ByteArray">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.PrerenderComponentApplicationStoreSerializerContext.DictionaryStringByteArray">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.PrerenderComponentApplicationStoreSerializerContext.String">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.PrerenderComponentApplicationStoreSerializerContext.Default">
+            <summary>
+            The default <see cref="T:System.Text.Json.Serialization.JsonSerializerContext"/> associated with a default <see cref="T:System.Text.Json.JsonSerializerOptions"/> instance.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.PrerenderComponentApplicationStoreSerializerContext.GeneratedSerializerOptions">
+            <summary>
+            The source-generated options associated with this context.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.PrerenderComponentApplicationStoreSerializerContext.#ctor">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.PrerenderComponentApplicationStoreSerializerContext.#ctor(System.Text.Json.JsonSerializerOptions)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.PrerenderComponentApplicationStoreSerializerContext.GetTypeInfo(System.Type)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.Forms.DefaultAntiforgeryStateProvider.GetAntiforgeryToken">
+            <inheritdoc />
+        </member>
+        <member name="F:Microsoft.AspNetCore.Internal.LinkerFlags.JsonSerialized">
+            <summary>
+            Flags for a member that is JSON (de)serialized.
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNetCore.Internal.LinkerFlags.Component">
+            <summary>
+            Flags for a component
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNetCore.Internal.LinkerFlags.JSInvokable">
+            <summary>
+            Flags for a JSInvokable type.
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,63 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--bs-font-family);
+    font-size: 16px;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-overflow-scrolling: touch;
+    overflow: hidden;
+
+    .color-scheme-container {
+        color: var(--bs-text-color);
+        background: var(--bs-back-color);
+
+        a {
+            color: var(--bs-link-color);
+        }
+    }
+}
+
+button, input, textarea, select {
+    font-family: inherit;
+    font-size: inherit;
+    margin: 0;
+}
+
+button {
+    outline: 0;
+    border: none;
+    appearance: none;
+    background-color: transparent;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.stack {
+    display: flex;
+
+    &.gap {
+        gap: 16px;
+    }
+
+    &.horizontal {
+        flex-direction: row;
+    }
+
+    &.vertical {
+        flex-direction: column;
+    }
+
+    .fill {
+        flex: 1;
+    }
+}
