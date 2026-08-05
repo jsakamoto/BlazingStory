@@ -31,6 +31,7 @@
     <Project Path="Tests/Fixtures/BlazingStoryApp1/BlazingStoryApp1.csproj" />
     <Project Path="Tests/Fixtures/BlazingStoryApp2/BlazingStoryApp2.csproj" />
     <Project Path="Tests/Fixtures/BlazingStoryApp3/BlazingStoryApp3.csproj" />
+    <Project Path="Tests/Fixtures/BlazingStoryTocApp/BlazingStoryTocApp.csproj" />
     <Project Path="Tests/Fixtures/ComponentPack1/ComponentPack1.csproj" />
     <Project Path="Tests/Fixtures/EmptyBlazorServerApp1/EmptyBlazorServerApp1.csproj" />
     <Project Path="Tests/Fixtures/EmptyBlazorWasmApp1/EmptyBlazorWasmApp1.csproj" />

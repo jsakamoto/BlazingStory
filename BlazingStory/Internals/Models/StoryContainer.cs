@@ -13,13 +13,25 @@ namespace BlazingStory.Internals.Models;
 /// </summary>
 internal class StoryContainer
 {
+    /// <summary>
+    /// Gets the target component type for this story container.
+    /// </summary>
     [DynamicallyAccessedMembers(All)]
     internal readonly Type TargetComponentType;
 
+    /// <summary>
+    /// Gets the title of this story container.
+    /// </summary>
     internal readonly string Title;
 
+    /// <summary>
+    /// Gets the XML summary for the target component.
+    /// </summary>
     internal MarkupString Summary { get; private set; } = default;
 
+    /// <summary>
+    /// Gets the stories registered in this container.
+    /// </summary>
     internal readonly List<Story> Stories = new();
 
     /// <summary>
@@ -50,11 +62,20 @@ internal class StoryContainer
         this._StoriesRazorDescriptor = storiesRazorDescriptor ?? throw new ArgumentNullException(nameof(storiesRazorDescriptor));
         this.TargetComponentType = componentType;
         this.Layout = layout;
-        this.Title = this._StoriesRazorDescriptor.StoriesAttribute.Title ?? throw new ArgumentNullException(nameof(storiesRazorDescriptor)); ;
+        this.Title = this._StoriesRazorDescriptor.StoriesAttribute.Title ?? throw new ArgumentNullException(nameof(storiesRazorDescriptor));
         this.NavigationPath = Services.Navigation.NavigationPath.Create(this.Title);
         this._XmlDocComment = services.GetRequiredService<IXmlDocComment>();
     }
 
+    /// <summary>
+    /// Registers or replaces a story in this container.
+    /// </summary>
+    /// <param name="name">The story name.</param>
+    /// <param name="storyContext">The story context.</param>
+    /// <param name="storiesLayout">The optional stories-level layout.</param>
+    /// <param name="storyLayout">The optional story-level layout.</param>
+    /// <param name="renderFragment">The render fragment used to render the story.</param>
+    /// <param name="description">An optional story description fragment.</param>
     internal void RegisterStory(string name, IStoryContext storyContext, [DynamicallyAccessedMembers(All)] Type? storiesLayout, [DynamicallyAccessedMembers(All)] Type? storyLayout, RenderFragment<IStoryContext> renderFragment, RenderFragment? description)
     {
         var newStory = new Story(this._StoriesRazorDescriptor, this.TargetComponentType, name, storyContext, storiesLayout, storyLayout, renderFragment, description);
@@ -76,6 +97,7 @@ internal class StoryContainer
     /// <summary>
     /// Update summary property text of this parameter by reading a XML document comment file.
     /// </summary>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     internal async ValueTask UpdateSummaryFromXmlDocCommentAsync()
     {
         if (this.TargetComponentType == null) return;
