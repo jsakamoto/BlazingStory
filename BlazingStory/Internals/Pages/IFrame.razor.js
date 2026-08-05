@@ -73,12 +73,38 @@ export const initializeCanvasFrame = () => {
         }, location.origin);
     });
     if (htmlElement) {
+        const captureProperty = (element, property) => ({
+            value: element.style.getPropertyValue(property),
+            priority: element.style.getPropertyPriority(property)
+        });
+        const restoreProperty = (element, property, saved) => {
+            if (saved.value)
+                element.style.setProperty(property, saved.value, saved.priority);
+            else
+                element.style.removeProperty(property);
+        };
         const measureHeight = () => {
-            const style = wnd.getComputedStyle(body);
-            const marginTop = parseFloat(style.marginTop) || 0;
-            const marginBottom = parseFloat(style.marginBottom) || 0;
-            const zoom = parseFloat(style.getPropertyValue('--bs-zoom')) || 1;
-            return Math.ceil((body.scrollHeight + marginTop + marginBottom) * zoom);
+            const savedHtmlHeight = captureProperty(htmlElement, "height");
+            const savedHtmlMinHeight = captureProperty(htmlElement, "min-height");
+            const savedBodyHeight = captureProperty(body, "height");
+            const savedBodyMinHeight = captureProperty(body, "min-height");
+            htmlElement.style.setProperty("height", "auto", "important");
+            htmlElement.style.setProperty("min-height", "0", "important");
+            body.style.setProperty("height", "auto", "important");
+            body.style.setProperty("min-height", "0", "important");
+            try {
+                const style = wnd.getComputedStyle(body);
+                const marginTop = parseFloat(style.marginTop) || 0;
+                const marginBottom = parseFloat(style.marginBottom) || 0;
+                const zoom = parseFloat(style.getPropertyValue('--bs-zoom')) || 1;
+                return Math.ceil((body.scrollHeight + marginTop + marginBottom) * zoom);
+            }
+            finally {
+                restoreProperty(htmlElement, "height", savedHtmlHeight);
+                restoreProperty(htmlElement, "min-height", savedHtmlMinHeight);
+                restoreProperty(body, "height", savedBodyHeight);
+                restoreProperty(body, "min-height", savedBodyMinHeight);
+            }
         };
         const resizeObserver = new ResizeObserver(() => {
             const iframeElement = getParentFrame();
