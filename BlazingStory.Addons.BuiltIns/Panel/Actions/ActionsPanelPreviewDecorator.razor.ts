@@ -1,11 +1,22 @@
-import type { } from "@blazingstory/types/browser-dom";
-
-export const dispatchComponentActionEvent = (name: string, argsJson: string) => {
-    const event = new CustomEvent('componentaction', {
+export const dispatchComponentActionEvent = (
+    name: string,
+    argsJson: string,
+) => {
+    const event = new CustomEvent("componentaction", {
         cancelable: false,
         bubbles: true,
-        detail: { name, argsJson }
+        detail: { name, argsJson },
     });
-    const target = [...window.parent?.document.querySelectorAll('iframe')].find(f => f.contentWindow === window);
-    target?.dispatchEvent(event);
-}
+    const parentDocument = globalThis.parent?.document;
+    const target = parentDocument
+        ? [...parentDocument.querySelectorAll("iframe")].find(
+              (f) => f.contentWindow === globalThis.window,
+          )
+        : null;
+    if (target) {
+        target.dispatchEvent(event);
+        return;
+    }
+
+    globalThis.document.dispatchEvent(event);
+};

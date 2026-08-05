@@ -1,0 +1,25 @@
+@using BlazingStory.Services
+
+<div class="action-logger-sample">
+    <CornerButton OnClick="OnSaveAsync">Save Profile</CornerButton>
+    <p>Click the button to emit an action into the Actions panel.</p>
+</div>
+
+@code
+{
+    [Inject]
+    private IBlazingStoryActionLogger ActionLogger { get; set; } = default!;
+
+    private int _SaveCount;
+
+    private async Task OnSaveAsync()
+    {
+        this._SaveCount++;
+
+        await this.ActionLogger.LogAsync("profile/save-clicked", new
+        {
+            saveCount = this._SaveCount,
+            source = "Example/API/ActionLogger"
+        });
+    }
+}

@@ -85,6 +85,37 @@ dotnet run --project ./MyBlazorApp1.Stories
 
 For advanced topics — story structure, args, controls, decorators, addons, and more — see the [Blazing Story Documentation Site](https://blazingstory.github.io/docs/).
 
+## 🎬 Manual Action Logging
+
+You can emit custom Actions panel entries from stories by injecting `IBlazingStoryActionLogger` and calling `LogAsync` inside your callback handlers.
+
+```razor
+@using BlazingStory.Services
+@inject IBlazingStoryActionLogger ActionLogger
+
+<CornerButton OnClick="OnSaveAsync">Save Profile</CornerButton>
+
+@code {
+    private int _saveCount;
+
+    private async Task OnSaveAsync()
+    {
+        _saveCount++;
+        await ActionLogger.LogAsync("profile/save-clicked", new
+        {
+            saveCount = _saveCount,
+            source = "profile-editor"
+        });
+    }
+}
+```
+
+Recommended conventions:
+
+- Action name: use stable, domain-focused names (for example, `profile/save-clicked`, `cart/item-removed`).
+- Payload: pass JSON-serializable objects with concise, meaningful fields.
+- Null payload: if no payload is needed, pass `null`; it is shown as `void` in the Actions panel.
+
 ## 🤖 AI Agent Skills
 
 Agent skills are published to help AI coding assistants implement stories and custom addons for Blazing Story:
