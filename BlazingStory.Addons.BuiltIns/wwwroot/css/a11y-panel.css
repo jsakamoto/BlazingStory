@@ -3,10 +3,136 @@
   inset: 0;
   display: flex;
   flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+.a11y-panel .a11y-overview {
+  border: 1px solid var(--bs-border-color);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: var(--bs-popup-back-color);
+}
+.a11y-panel .a11y-overview-title {
+  font-weight: 700;
+  font-size: 14px;
+}
+.a11y-panel .a11y-overview-message {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--bs-dimmed-text-color);
+}
+.a11y-panel .a11y-severity-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.a11y-panel .legend-item {
+  appearance: none;
+  cursor: pointer;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 22px;
+  padding: 0 10px;
+  font-weight: 700;
+  border: 1px solid var(--legend-border-color, var(--bs-border-color));
+  background: var(--legend-bg-color, transparent);
+  color: var(--legend-text-color, var(--bs-dimmed-text-color));
+}
+.a11y-panel .legend-item:hover {
+  border-color: var(--bs-focused-color);
+}
+.a11y-panel .legend-item:focus-visible {
+  outline: 2px solid var(--bs-focused-color);
+  outline-offset: 1px;
+}
+.a11y-panel .legend-item.active {
+  box-shadow: 0 0 0 2px var(--bs-focused-half-color) inset;
+}
+.a11y-panel .severity-critical {
+  --legend-text-color: rgb(209, 56, 0);
+  --legend-bg-color: rgb(255, 240, 235);
+  --legend-border-color: rgb(255, 195, 173);
+}
+.a11y-panel .severity-serious {
+  --legend-text-color: rgb(194, 52, 0);
+  --legend-bg-color: rgb(255, 243, 235);
+  --legend-border-color: rgb(255, 202, 173);
+}
+.a11y-panel .severity-moderate {
+  --legend-text-color: rgb(122, 65, 0);
+  --legend-bg-color: rgb(255, 247, 235);
+  --legend-border-color: rgb(255, 214, 153);
+}
+.a11y-panel .severity-minor {
+  --legend-text-color: rgb(92, 101, 112);
+  --legend-bg-color: rgb(246, 249, 252);
+  --legend-border-color: rgba(92, 101, 112, 0.2);
+}
+.a11y-panel .a11y-overview-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.a11y-panel .a11y-stat-button,
+.a11y-panel .a11y-toolbar-button {
+  appearance: none;
+  border: 1px solid var(--bs-border-color);
+  background: transparent;
+  color: inherit;
+  border-radius: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  cursor: pointer;
+  transition: background-color linear 0.1s, border-color linear 0.1s, color linear 0.1s;
+}
+.a11y-panel .a11y-stat-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  text-align: left;
+  font-weight: 600;
+}
+.a11y-panel .a11y-stat-button:hover,
+.a11y-panel .a11y-toolbar-button:hover {
+  border-color: var(--bs-focused-color);
+  background-color: var(--bs-focused-quarter-color);
+}
+.a11y-panel .a11y-stat-button:focus-visible,
+.a11y-panel .a11y-toolbar-button:focus-visible {
+  outline: 2px solid var(--bs-focused-color);
+  outline-offset: 1px;
+}
+.a11y-panel .a11y-empty-state {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 20px;
+  color: var(--bs-dimmed-text-color);
+  font-size: 13px;
+  background-color: var(--bs-back-color);
+  z-index: 2;
+  pointer-events: none;
 }
 .a11y-panel .axe-results-views-container {
   flex: 1;
   position: relative;
+  min-height: 0;
+}
+.a11y-panel ::deep .toolbar {
+  border: 1px solid var(--bs-border-color);
+  border-radius: 8px;
+  padding: 6px;
+}
+@media (max-width: 900px) {
+  .a11y-panel .a11y-overview-stats {
+    grid-template-columns: 1fr;
+  }
 }
 
 .axe-results-view {
@@ -20,12 +146,25 @@
   font-size: 14px;
 }
 .axe-result-view .header {
+  appearance: none;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 40px;
-  padding: 6px 15px;
+  min-height: 48px;
+  padding: 8px 15px;
   cursor: pointer;
+  text-align: left;
+}
+.axe-result-view .header:hover {
+  background-color: var(--bs-popup-hover-back-color);
+}
+.axe-result-view .header:focus-visible {
+  outline: 2px solid var(--bs-focused-color);
+  outline-offset: -2px;
 }
 .axe-result-view .header .spacing {
   flex: 1;
@@ -41,17 +180,18 @@
   font-family: var(--bs-monospace-font-family);
   font-size: 12px;
   color: var(--bs-dimmed-text-color);
+  overflow-wrap: anywhere;
 }
 .axe-result-view .header .number-of-nodes {
   color: var(--bs-dimmed-text-color);
-  width: 28px;
+  min-width: 28px;
   text-align: center;
 }
 .axe-result-view .header .expansion-indicator {
   color: var(--bs-dimmed-text-color);
   transform: rotate(0deg);
   transition: transform linear 0.1s;
-  width: 28px;
+  min-width: 28px;
 }
 .axe-result-view .header .impact {
   color: var(--bs-axe-impact-color);
@@ -85,10 +225,52 @@
   gap: 20px;
   padding: 0 15px 20px 15px;
 }
+.axe-result-view .details-inner .details-content .guidance {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.axe-result-view .details-inner .details-content .guidance-section {
+  border-left: 3px solid var(--bs-border-color);
+  padding-left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.axe-result-view .details-inner .details-content .guidance-caption {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bs-dimmed-text-color);
+}
+.axe-result-view .details-inner .details-content .guidance-text {
+  margin: 0;
+  line-height: 1.45;
+}
+.axe-result-view .details-inner .details-content .how-to-fix {
+  border-left-color: var(--bs-focused-half-color);
+}
+.axe-result-view .details-inner .details-content .tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.axe-result-view .details-inner .details-content .tag {
+  border: 1px solid var(--bs-border-color);
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 20px;
+  padding: 0 8px;
+  color: var(--bs-dimmed-text-color);
+}
 .axe-result-view .details-inner .details-content .help-link {
   color: var(--bs-focused-color);
   text-decoration: none;
-  white-space: nowrap;
+  width: fit-content;
+}
+.axe-result-view .details-inner .details-content .help-link:hover {
+  text-decoration: underline;
 }
 
 .axe-result-view.expanded .header .expansion-indicator {
@@ -149,9 +331,14 @@
 }
 .axe-nodes-view .node-selector {
   flex: 0.5;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 .axe-nodes-view .node-selector .node-item {
   appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
   text-align: left;
   font-family: var(--bs-monospace-font-family);
   font-size: 12px;
@@ -164,15 +351,21 @@
   max-width: 100%;
   border-radius: 4px;
   padding: 0 12px;
-  transition: background-color linear 0.1s, color linear 0.1s;
+  transition: background-color linear 0.1s, color linear 0.1s, border-color linear 0.1s;
 }
 .axe-nodes-view .node-selector .node-item:hover {
   background-color: var(--bs-popup-hover-back-color);
   color: var(--bs-focused-color);
+  border-color: var(--bs-border-color);
+}
+.axe-nodes-view .node-selector .node-item:focus-visible {
+  outline: 2px solid var(--bs-focused-color);
+  outline-offset: 1px;
 }
 .axe-nodes-view .node-selector .node-item.active {
   background-color: var(--bs-focused-half-color);
   color: var(--bs-focused-color);
+  border-color: var(--bs-focused-color);
 }
 .axe-nodes-view .node-details {
   flex: 0.5;
@@ -185,14 +378,29 @@
   flex-direction: column;
   gap: 10px;
 }
+.axe-nodes-view .node-details .checkes .check-message {
+  border-left: 3px solid var(--bs-focused-half-color);
+  padding-left: 8px;
+  line-height: 1.45;
+}
 .axe-nodes-view .node-details .element .caption, .axe-nodes-view .node-details .selectors .caption {
-  font-family: var(--bs-monospace-font-family);
+  font-family: var(--bs-body-font-family);
   font-size: var(--bs-text-size);
   color: var(--bs-code-comment-color);
-  font-style: italic;
+  font-weight: 600;
+  margin-bottom: 6px;
 }
 .axe-nodes-view .node-details .element pre {
   white-space: normal;
+}
+@media (max-width: 900px) {
+  .axe-nodes-view {
+    flex-direction: column;
+  }
+  .axe-nodes-view .node-selector,
+  .axe-nodes-view .node-details {
+    flex: none;
+  }
 }
 
 .preferes-color-scheme-light .axe-nodes-view .node-details {

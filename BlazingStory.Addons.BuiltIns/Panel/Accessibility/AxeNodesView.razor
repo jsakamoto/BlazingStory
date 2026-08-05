@@ -6,7 +6,8 @@
     <div class="node-selector">
         @foreach (var node in (this.Nodes ?? []).Select((value, index) => (Value: value, Index: index)))
         {
-            <button @key="node.Index" class="@CssClass("node-item", new { active = _ActiveNodeIndex == node.Index })" @onclick="() => _ActiveNodeIndex = node.Index">
+            <button @key="node.Index" class="@CssClass("node-item", new { active = _ActiveNodeIndex == node.Index })"
+                    @onclick="() => _ActiveNodeIndex = node.Index">
                 <span>@(node.Index + 1).</span>
                 <span>@node.Value.Html</span>
             </button>
@@ -25,14 +26,14 @@
         </div>
 
         <div class="element">
-            <div class="caption">/* element */</div>
+            <div class="caption">Affected element</div>
             <div>
                 <CodeBlock Language="html" CodeText="@GetActiveNode()?.Html" />
             </div>
         </div>
 
         <div class="selectors">
-            <div class="caption">/* selector */</div>
+            <div class="caption">How to find it (CSS selector)</div>
             <div>
                 <pre class="code-block">
                     <code><span class="token selector">@string.Join(", ", GetActiveNode()?.Target ?? [])</span></code>

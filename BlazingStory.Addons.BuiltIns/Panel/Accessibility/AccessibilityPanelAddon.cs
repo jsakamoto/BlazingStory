@@ -19,6 +19,8 @@ internal class AccessibilityPanelAddon : IAddon
     /// <param name="builder">The addon builder used to register panels and decorators.</param>
     public void Initialize(IAddonBuilder builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.AddPanel<AccessibilityPanel>(order: 300, viewMode => viewMode is ViewMode.Story);
         builder.AddPreviewDecorator<AccessibilityPanelPreviewDecorator>();
     }

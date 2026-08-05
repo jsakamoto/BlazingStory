@@ -178,6 +178,12 @@
     public bool EnableHotReloading { get; set; }
 
     /// <summary>
+    /// Gets or sets whether to enable the Accessibility Report panel in the control panel. (default: false)
+    /// </summary>
+    [Parameter]
+    public bool EnableAccessibilityReport { get; set; }
+
+    /// <summary>
     /// An optional callback to initialize the Blazing Story. This is invoked during the component's initialization phase, allowing you to configure services, addons, or other settings before the app fully initializes.
     /// </summary>
     [Parameter]
@@ -217,6 +223,8 @@
 
     protected override void OnInitialized()
     {
+        this.UpdateOptionsFromParameters();
+
         var injectedStoriesStore = this.GlobalServices.GetService<StoriesStore>();
         if (injectedStoriesStore is not null) this._StoriesStore = injectedStoriesStore;
 
@@ -234,6 +242,8 @@
         var builder = new BlazingStoryBuilder(serviceCollection, addonStore, _Options);
         this.OnInitialize?.Invoke(builder);
 
+        this.ConfigureConditionalAddons(addonStore);
+
         var services = serviceCollection.BuildServiceProvider();
         var serviceScope = services.CreateAsyncScope();
         var addonManager = serviceScope.ServiceProvider.GetRequiredService<AddonManager>();
@@ -244,6 +254,8 @@
 
     private void ConfigureAddons(IAddonStore addons)
     {
+        ArgumentNullException.ThrowIfNull(addons);
+
         addons.Register<BlazingStory.Addons.BuiltIns.Toolbar.Grid.GridAddon>();
         addons.Register<BlazingStory.Addons.BuiltIns.Toolbar.Background.BackgroundAddon>();
         addons.Register<BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasureAddon>();
@@ -253,7 +265,23 @@
 
         addons.Register<BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanelAddon>();
         addons.Register<BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanelAddon>();
-        addons.Register<BlazingStory.Addons.BuiltIns.Panel.Accessibility.AccessibilityPanelAddon>();
+    }
+
+    private void ConfigureConditionalAddons(IAddonStore addons)
+    {
+        ArgumentNullException.ThrowIfNull(addons);
+
+        if (this._Options.EnableAccessibilityReport)
+        {
+            addons.Register<BlazingStory.Addons.BuiltIns.Panel.Accessibility.AccessibilityPanelAddon>();
+        }
+    }
+
+    private void UpdateOptionsFromParameters()
+    {
+        this._Options.EnableHotReloading = this.EnableHotReloading;
+        this._Options.EnableAccessibilityReport = this.EnableAccessibilityReport;
+        this._Options.NavigationTreeOrder = this.NavigationTreeOrder ?? this._Options.NavigationTreeOrder;
     }
 
     private void ConfigureServices(IServiceCollection services)
@@ -284,8 +312,7 @@
     {
         await base.OnParametersSetAsync();
 
-        this._Options.EnableHotReloading = this.EnableHotReloading;
-        this._Options.NavigationTreeOrder = this.NavigationTreeOrder ?? this._Options.NavigationTreeOrder;
+        this.UpdateOptionsFromParameters();
 
         if (this.AvailableColorSchemes != this._PrevAvailableColorSchemes)
         {
