@@ -1,0 +1,92 @@
+@inject IJSRuntime JSRuntime
+
+@if (this.IsVisible)
+{
+    <PopupMenu MarginTop="6">
+        <Trigger>
+            <IconButton Icon="SvgIconType.Gear" Title="Change UI theme" Text="@this.CurrentThemeLabel"
+                        Active="@(this._CurrentThemePreference != ThemePreference.System)" />
+        </Trigger>
+        <MenuItems>
+            <MenuItem Active="@(this._CurrentThemePreference == ThemePreference.System)"
+                      OnClick="() => this.OnClickThemePreference(ThemePreference.System)">
+                System
+            </MenuItem>
+            <MenuItem Active="@(this._CurrentThemePreference == ThemePreference.Light)"
+                      OnClick="() => this.OnClickThemePreference(ThemePreference.Light)">
+                Light
+            </MenuItem>
+            <MenuItem Active="@(this._CurrentThemePreference == ThemePreference.Dark)"
+                      OnClick="() => this.OnClickThemePreference(ThemePreference.Dark)">
+                Dark
+            </MenuItem>
+        </MenuItems>
+    </PopupMenu>
+}
+
+@code
+{
+    [CascadingParameter(Name = "AvailableColorSchemes")]
+    public string AvailableColorSchemes { get; set; } = string.Empty;
+
+    [CascadingParameter(Name = "ApplyColorSchemePreference")]
+    public Func<string, ValueTask>? ApplyColorSchemePreference { get; set; }
+
+    private enum ThemePreference
+    {
+        System,
+        Light,
+        Dark
+    }
+
+    private static class StorageKeys
+    {
+        public const string ColorScheme = "ColorScheme";
+    }
+
+    private ThemePreference _CurrentThemePreference = ThemePreference.System;
+
+    private bool IsVisible => string.Equals(this.AvailableColorSchemes, "Both", StringComparison.Ordinal);
+
+    private string CurrentThemeLabel => this._CurrentThemePreference switch
+    {
+        ThemePreference.Light => "Light",
+        ThemePreference.Dark => "Dark",
+        _ => "System"
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        var colorScheme = await this.JSRuntime.GetLocalStorageItemAsync(StorageKeys.ColorScheme, defaultValue: "system");
+        this._CurrentThemePreference = colorScheme switch
+        {
+            "light" => ThemePreference.Light,
+            "dark" => ThemePreference.Dark,
+            _ => ThemePreference.System
+        };
+        this.StateHasChanged();
+    }
+
+    private async Task OnClickThemePreference(ThemePreference themePreference)
+    {
+        this._CurrentThemePreference = themePreference;
+
+        var colorScheme = themePreference switch
+        {
+            ThemePreference.Light => "light",
+            ThemePreference.Dark => "dark",
+            _ => "system"
+        };
+
+        if (this.ApplyColorSchemePreference is not null)
+        {
+            await this.ApplyColorSchemePreference(colorScheme);
+        }
+        else
+        {
+            await this.JSRuntime.SetLocalStorageItemAsync(StorageKeys.ColorScheme, colorScheme);
+        }
+    }
+}

@@ -7,9 +7,9 @@
 
 <div class="fill stack vertical addon-pane-@(this.AddonPanelVisible ? "visible" : "hidden")">
 
-    <SplitContainer Class="canvas-page-container fill"
+    <SplitContainer Class="canvas-page-container fill" 
                     Orientation="this._AddonPanelLayout.SplitterOrientation"
-                    UnitOfPaneSize="UnitOfPaneSize.Percent"
+                    UnitOfPaneSize="UnitOfPaneSize.Percent" 
                     @bind-SecondPaneSize="_AddonPanelSize"
                     @bind-SecondPaneSize:after="OnAddonPanelSizeChanged">
 
@@ -18,23 +18,24 @@
 
                 @* -- Toolbar -- *@
                 <ToolBar Visible="this._ToolbarVisibleCommand?.Flag == true">
+                    @{
+                        var uiToolbarContents = this.GetUiToolbarContents().ToArray();
+                        var previewToolbarContents = this.GetPreviewToolbarContents().ToArray();
+                    }
+
                     @if (this._Commands[CommandType.SideBarVisible]?.Flag == false)
                     {
-                        <IconCommandButton Icon="SvgIconType.Sidebar" Command="this._Commands[CommandType.SideBarVisible]" />
+                        <IconCommandButton Icon="SvgIconType.Sidebar"
+                                           Command="this._Commands[CommandType.SideBarVisible]" />
                         <Separator />
                     }
 
-                    <IconButton Icon="SvgIconType.Reload" OnClick="OnClickReload" Title="Reload the story" />
-                    <IconButton Icon="SvgIconType.ZoomIn" OnClick="OnClickZoomIn" Title="Zoom in" />
-                    <IconButton Icon="SvgIconType.ZoomOut" OnClick="OnClickZoomOut" Title="Zoom out" />
-                    <IconButton Icon="SvgIconType.ZoomReset" OnClick="OnClickResetZoom" Title="Reset zoom" />
-                    <Separator />
-
-                    @* -- Render Add-On's Toolbar Contents -- *@
+                    @* -- UI changes -- *@
                     @{
 #pragma warning disable IL2111
+
                     }
-                    @foreach (var toolbarContent in this.GetToolbarContents())
+                    @foreach (var toolbarContent in uiToolbarContents)
                     {
                         <CascadingValue @key="toolbarContent.Id" Value="toolbarContent.Globals">
                             <DynamicComponent Type="toolbarContent.ComponentType" />
@@ -42,33 +43,76 @@
                     }
                     @{
 #pragma warning restore IL2111
+
                     }
 
+                    @if (uiToolbarContents.Length > 0)
+                    {
+                        <Separator />
+                    }
+
+                    @* -- Preview changes -- *@
+                    <IconButton Icon="SvgIconType.Reload" OnClick="OnClickReload" Title="Reload the story" />
+                    <IconButton Icon="SvgIconType.ZoomIn" OnClick="OnClickZoomIn" Title="Zoom in" />
+                    <IconButton Icon="SvgIconType.ZoomOut" OnClick="OnClickZoomOut" Title="Zoom out" />
+                    <IconButton Icon="SvgIconType.ZoomReset" OnClick="OnClickResetZoom" Title="Reset zoom" />
+
+                    @if (previewToolbarContents.Length > 0)
+                    {
+                        <Separator />
+                    }
+
+                    @* -- Render Add-On's Toolbar Contents -- *@
+                    @{
+#pragma warning disable IL2111
+
+                    }
+                    @foreach (var toolbarContent in previewToolbarContents)
+                    {
+                        <CascadingValue @key="toolbarContent.Id" Value="toolbarContent.Globals">
+                            <DynamicComponent Type="toolbarContent.ComponentType" />
+                        </CascadingValue>
+                    }
+                    @{
+#pragma warning restore IL2111
+
+                    }
+
+                    @* -- Other -- *@
                     <Spacer />
 
                     @if (this._AddonPanelVisibleCommand?.Flag != true)
                     {
-                        <IconCommandButton Icon="this.ToggleOrientationButtonIcon" Command="this._AddonPanelVisibleCommand" />
+                        <IconCommandButton Icon="this.ToggleOrientationButtonIcon"
+                                           Command="this._AddonPanelVisibleCommand" />
                     }
                     @if ((this._GoFullscreenCommand?.Flag ?? true) == true)
                     {
-                        <IconCommandButton Icon="SvgIconType.CircleClose" Command="this._GoFullscreenCommand" Title="Exit full screen [{0}]" />
+                        <IconCommandButton Icon="SvgIconType.CircleClose" 
+                                           Command="this._GoFullscreenCommand"
+                                           Title="Exit full screen [{0}]" />
                     }
                     else
                     {
-                        <IconCommandButton Icon="SvgIconType.FullScreen" Command="this._GoFullscreenCommand" />
+                        <IconCommandButton Icon="SvgIconType.FullScreen" 
+                                           Command="this._GoFullscreenCommand" />
                     }
 
-                    <IconButton Icon="SvgIconType.OpenNewTab" Href="@this._PreviewFrame?.CurrentPreviewFrameUrl" Target="_blank" Title="Open canvas in new tab" />
-                    <IconButton Icon="SvgIconType.Link" Title="Copy canvas link" OnClick="this.OnClickCopyCanvasLink" />
+                    <IconButton Icon="SvgIconType.OpenNewTab" 
+                                Href="@this._PreviewFrame?.CurrentPreviewFrameUrl"
+                                Target="_blank" 
+                                Title="Open canvas in new tab" />
+                    <IconButton Icon="SvgIconType.Link" 
+                                Title="Copy canvas link" 
+                                OnClick="this.OnClickCopyCanvasLink" />
                 </ToolBar>
 
                 @* -- IFrame -- *@
                 <div class="canvas-frame-viewport fill">
-                    <PreviewFrame @ref="_PreviewFrame"
-                                  Story="this._CurrentStory"
+                    <PreviewFrame @ref="_PreviewFrame" 
+                                  Story="this._CurrentStory" 
                                   ViewMode="story"
-                                  Id="@this.RouteData.Parameter"
+                                  Id="@this.RouteData.Parameter" 
                                   Args="this._CurrentStory?.Context.Args"
                                   Globals="this.GetGlobalArguments()" />
                 </div>
@@ -80,7 +124,8 @@
             @* -- Addons -- *@
             <CascadingValue Value="this._CanvasPageContext">
                 <div class="add-on-container fill stack vertical">
-                    <AddOnPanel Story="this._CurrentStory" SplitterOrientation="this._AddonPanelLayout.SplitterOrientation">
+                    <AddOnPanel Story="this._CurrentStory"
+                                SplitterOrientation="this._AddonPanelLayout.SplitterOrientation">
                     </AddOnPanel>
                 </div>
             </CascadingValue>
@@ -120,7 +165,8 @@
 
     private readonly Subscriptions _Subscriptions = new();
 
-    private bool AddonPanelVisible => (this._AddonPanelVisibleCommand?.Flag ?? true) && !(this._GoFullscreenCommand?.Flag ?? false);
+    private bool AddonPanelVisible => (this._AddonPanelVisibleCommand?.Flag ?? true) && !(this._GoFullscreenCommand?.Flag ??
+false);
 
     private double _AddonPanelSize = 50;
 
@@ -170,7 +216,8 @@
     {
         if (!firstRender) return;
 
-        this._AddonPanelLayout = await this.JSRuntime.LoadObjectFromLocalStorageAsync(this.AddonPanelLayoutKeyName, this._AddonPanelLayout);
+        this._AddonPanelLayout = await this.JSRuntime.LoadObjectFromLocalStorageAsync(this.AddonPanelLayoutKeyName,
+this._AddonPanelLayout);
         this.UpdateAddonPanelSize(this._AddonPanelLayout.SplitterOrientation);
         this.StateHasChanged();
     }
@@ -198,6 +245,16 @@
     private IEnumerable<ToolbarContentDescriptor> GetToolbarContents()
     {
         return this.AddonManager?.GetToolbarContents(BlazingStory.Addons.ViewMode.Story) ?? [];
+    }
+
+    private IEnumerable<ToolbarContentDescriptor> GetUiToolbarContents()
+    {
+        return this.GetToolbarContents().Where(toolbarContent => toolbarContent.Order < 100);
+    }
+
+    private IEnumerable<ToolbarContentDescriptor> GetPreviewToolbarContents()
+    {
+        return this.GetToolbarContents().Where(toolbarContent => toolbarContent.Order >= 100 && toolbarContent.Order < 700);
     }
 
     private Dictionary<string, object?> GetGlobalArguments()
