@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <!-- This fixture is hosted in-process by the test project, so it has no entry point of its own. -->
+    <OutputType>Library</OutputType>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BlazingStory\BlazingStory.csproj" />
+    <ProjectReference Include="..\..\..\BlazingStory.McpServer\BlazingStory.McpServer.csproj" />
+  </ItemGroup>
+
+  <Import Project="..\..\..\BlazingStory\Build\BlazingStory.targets" />
+
+</Project>
