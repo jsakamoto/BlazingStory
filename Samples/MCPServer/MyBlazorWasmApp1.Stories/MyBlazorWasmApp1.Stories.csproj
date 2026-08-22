@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\BlazingStory\BlazingStory.csproj" />
-    <ProjectReference Include="..\..\..\BlazingStory.MCPServer\BlazingStory.McpServer.csproj" />
+    <ProjectReference Include="..\..\..\BlazingStory.McpServer\BlazingStory.McpServer.csproj" />
     <ProjectReference Include="..\MyBlazorWasmApp1\MyBlazorWasmApp1.csproj" />
   </ItemGroup>
 
