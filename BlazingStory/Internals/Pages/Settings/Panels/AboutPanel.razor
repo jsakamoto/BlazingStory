@@ -44,7 +44,7 @@
 
     @if (this._Contributors.Count > 0)
     {
-        <section class="contributors-section @(this._IsReady ? "is-ready" : "")">
+        <section class="contributors-section @(this._IsReady ? "is-ready" : "")" inert="@(!this._IsReady)">
             <h3>Contributors <span class="contributors-count">@this._Contributors.Count</span></h3>
             <div class="contributors-grid">
                 @foreach (var contributor in this._Contributors)
