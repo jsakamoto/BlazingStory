@@ -188,8 +188,7 @@ internal class AboutPanelTest
         await using var _ = host;
         using var __ = ctx;
 
-        cut.WaitForAssertion(
-            () => cut.Find(".contributors-section").ClassList.Contains("is-ready").IsTrue(),
-            TimeSpan.FromSeconds(1));
+        await Task.Delay(500);
+        cut.Find(".contributors-section").ClassList.Contains("is-ready").IsTrue();
     }
 }

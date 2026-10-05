@@ -76,7 +76,9 @@
 
     private int _FinishedImageCount;
 
-    private readonly CancellationTokenSource _Cts = new();
+    private System.Timers.Timer? _Timer;
+
+    private bool _Disposed;
 
     private record ContributorInfo(
         [property: JsonPropertyName("login")] string Login,
@@ -98,7 +100,7 @@
         if (_CachedContributors is not null && DateTime.UtcNow < _CacheExpiry)
         {
             this._Contributors = _CachedContributors;
-            this.StartLoadTimeout();
+            this.StartTimeoutTimer();
             return;
         }
 
@@ -121,44 +123,33 @@
             // Silently ignore errors - contributors section will simply not be displayed.
         }
 
-        this.StartLoadTimeout();
+        this.StartTimeoutTimer();
     }
 
-    private void StartLoadTimeout()
+    private void StartTimeoutTimer()
     {
-        if (this._Contributors.Count > 0) _ = this.ShowSectionAfterTimeoutAsync();
+        if (this._Disposed || this._Contributors.Count == 0) return;
+        this._Timer = new System.Timers.Timer(this.LoadTimeout) { AutoReset = false };
+        this._Timer.Elapsed += (_, _) => this.OnTimeout();
+        this._Timer.Start();
     }
 
-    private async Task ShowSectionAfterTimeoutAsync()
+    private void OnTimeout()
     {
-        try
-        {
-            await Task.Delay(this.LoadTimeout, this._Cts.Token);
-        }
-        catch (OperationCanceledException)
-        {
-            return;
-        }
-        this.ShowSection();
+        if (this._Disposed) return;
+        this._IsReady = true;
+        _ = this.InvokeAsync(() => { if (!this._Disposed) this.StateHasChanged(); });
     }
 
     private void OnImageFinished()
     {
-        this._FinishedImageCount++;
-        if (this._FinishedImageCount >= this._Contributors.Count) this.ShowSection();
-    }
-
-    private void ShowSection()
-    {
-        if (this._IsReady) return;
-        this._IsReady = true;
-        this._Cts.Cancel();
-        _ = this.InvokeAsync(this.StateHasChanged);
+        if (++this._FinishedImageCount >= this._Contributors.Count) this._IsReady = true;
     }
 
     public void Dispose()
     {
-        this._Cts.Cancel();
-        this._Cts.Dispose();
+        this._Disposed = true;
+        this._Timer?.Stop();
+        this._Timer?.Dispose();
     }
 }
