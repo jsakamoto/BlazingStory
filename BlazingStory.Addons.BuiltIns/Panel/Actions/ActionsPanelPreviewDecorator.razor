@@ -1,4 +1,3 @@
-@using System.Linq.Expressions
 @using System.Reflection
 @using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
 
@@ -46,15 +45,7 @@
             {
                 var typeOfArgs = parameter.Type.GenericTypeArguments.First();
 
-                var eventArgsParam = Expression.Parameter(typeOfArgs, "eventArgs");
-#pragma warning disable IL2060
-                var monitorHandler = _EventTArgMonitorHandlerMethod.Value.MakeGenericMethod(typeOfArgs);
-#pragma warning restore IL2060
-                var callBody = Expression.Call(Expression.Constant(this), monitorHandler, Expression.Constant(parameter.Name), eventArgsParam);
-
-                var monitorHandlerLambdaType = typeof(Func<,>).MakeGenericType(typeOfArgs, typeof(Task));
-                var monitorHandlerLambda = Expression.Lambda(monitorHandlerLambdaType, callBody, eventArgsParam);
-                var monitorHandlerDelegate = monitorHandlerLambda.Compile();
+                var monitorHandlerDelegate = this.CreateEventTArgMonitorHandlerDelegate(typeOfArgs, parameter.Name);
 
 #pragma warning disable IL2060
                 var eventCallbackCreate = _EventCallbackCreateMethod.Value.MakeGenericMethod(typeOfArgs) ?? throw new InvalidOperationException();
@@ -64,6 +55,29 @@
                 await this.Story.Context.AddOrUpdateArgumentAsync(parameter.Name, eventCallback);
             }
         }
+    }
+
+    /// <summary>
+    /// Creates a <c>Func&lt;TArgs, Task&gt;</c> delegate that reports an invocation of the event callback to the Actions panel.
+    /// </summary>
+    /// <remarks>
+    /// The delegate is made from a regular method, not from a compiled expression tree, on purpose.
+    /// The method of a compiled expression tree has a hidden leading "Closure" parameter on CoreCLR, and Blazor rejects such a method
+    /// as an event handler of a custom event (registered by "Blazor.registerCustomEventType"), because it has more than one parameter.
+    /// </remarks>
+    /// <param name="typeOfArgs">The type of the event arguments.</param>
+    /// <param name="name">The name of the event callback parameter.</param>
+    internal Delegate CreateEventTArgMonitorHandlerDelegate(Type typeOfArgs, string name)
+    {
+#pragma warning disable IL2060
+        var createMonitorHandler = _CreateEventTArgMonitorHandlerMethod.Value.MakeGenericMethod(typeOfArgs);
+#pragma warning restore IL2060
+        return (Delegate)(createMonitorHandler.Invoke(this, [name]) ?? throw new InvalidOperationException());
+    }
+
+    private Func<TArgs, Task> CreateEventTArgMonitorHandler<[DynamicallyAccessedMembers(PublicProperties)] TArgs>(string name)
+    {
+        return eventArgs => this.EventTArgMonitorHandler(name, eventArgs);
     }
 
     private async Task EventVoidMonitorHandler(string name)
@@ -82,7 +96,7 @@
         await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, json);
     }
 
-    private static readonly Lazy<MethodInfo> _EventTArgMonitorHandlerMethod = new(() => typeof(ActionsPanelPreviewDecorator).GetMethod(nameof(EventTArgMonitorHandler), BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new InvalidOperationException());
+    private static readonly Lazy<MethodInfo> _CreateEventTArgMonitorHandlerMethod = new(() => typeof(ActionsPanelPreviewDecorator).GetMethod(nameof(CreateEventTArgMonitorHandler), BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new InvalidOperationException());
 
     private static readonly Lazy<MethodInfo> _EventCallbackCreateMethod = new(() =>
         typeof(EventCallbackFactory).GetMethods(BindingFlags.Public | BindingFlags.Instance)
