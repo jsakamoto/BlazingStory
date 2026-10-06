@@ -1,0 +1,23 @@
+@using System.Net
+@using BlazingStory.ToolKit.Utils
+
+@inherits ParameterControllerBase
+
+<span>@this._ValueText</span>
+
+@code
+{
+    private string _ValueText = "-";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        this._ValueText = this.Context.Value switch
+        {
+            null or Unknown => "-",
+            var value when RenderFragmentKit.IsRenderFragment(value) => WebUtility.HtmlDecode(await RenderFragmentKit.TryToMarkupStringAsync(value)),
+            Delegate => "-",
+            var value => value.ToString() ?? "-"
+        };
+    }
+}
