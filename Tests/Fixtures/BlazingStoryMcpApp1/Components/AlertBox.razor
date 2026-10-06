@@ -1,0 +1,25 @@
+﻿<div class="alert-box alert-box--@this.Severity.ToString().ToLower()">
+    <span class="alert-box__title">@this.Title</span>
+    @this.ChildContent
+</div>
+
+@code
+{
+    /// <summary>
+    /// The headline text rendered at the top of the alert.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = "";
+
+    /// <summary>
+    /// How prominent the alert should be.
+    /// </summary>
+    [Parameter]
+    public AlertSeverity Severity { get; set; }
+
+    /// <summary>
+    /// The body content of the alert.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}
