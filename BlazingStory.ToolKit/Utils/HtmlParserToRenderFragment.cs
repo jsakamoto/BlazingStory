@@ -76,15 +76,12 @@ internal static class HtmlParserToRenderFragment
     [SuppressMessage("Trimming", "IL2072:Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.", Justification = "<Pending>")]
     private static void RenderElement(RenderTreeBuilder builder, HtmlElement element, ref int sequence)
     {
-        // If there's no tag name, just render the inner HTML or children
+        // If there's no tag name, it is a text node, so just render its text
         if (string.IsNullOrWhiteSpace(element.TagName))
         {
-            if (!string.IsNullOrWhiteSpace(element.Content) && element.Children is not null && element.Children.Any())
+            if (!string.IsNullOrEmpty(element.Content))
             {
-                foreach (var child in element.Children)
-                {
-                    RenderElement(builder, child, ref sequence);
-                }
+                builder.AddContent(sequence++, element.Content);
             }
 
             return;
