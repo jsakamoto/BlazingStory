@@ -39,6 +39,8 @@
     [return: DynamicallyAccessedMembers(PublicConstructors | PublicMethods | PublicProperties)]
     private Type GetParameterControllerType()
     {
+        if (this.Parameter.Control is ControlType.None) return typeof(NoneParameterController);
+
         switch (this.Parameter.TypeStructure.PrimaryType)
         {
             case Type t when t == typeof(string): return typeof(TextParameterController);
