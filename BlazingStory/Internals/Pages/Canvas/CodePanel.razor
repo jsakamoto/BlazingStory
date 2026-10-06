@@ -1,0 +1,20 @@
+@using BlazingStory.Addons
+@using BlazingStory.Internals.Pages.Docs
+
+<PanelTitle>
+    Code
+</PanelTitle>
+
+<div class="code-panel">
+    @if (this.Story is not null)
+    {
+        <CodeView @key="this.Story" Story="this.Story" Visible="true" />
+    }
+</div>
+
+@code
+{
+    /// <summary>Gets or sets the currently displayed story, whose source code is shown in the panel.</summary>
+    [CascadingParameter(Name = "Story")]
+    public IStory? Story { get; set; }
+}

@@ -951,6 +951,16 @@ a.menu-item.command-menu-item {
   display: block;
 }
 
+.code-panel {
+  position: absolute;
+  inset: 0;
+}
+.code-panel .code-view {
+  box-sizing: border-box;
+  height: 100%;
+  overflow: auto;
+}
+
 .code-view {
   overflow-x: auto;
   background-color: var(--bs-code-back-color);
