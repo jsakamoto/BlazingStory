@@ -1,24 +1,36 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+
 @if (_IsSearchable)
 {
     <div class="searchable-select bs-basic-inputs-holder" @onfocusout="_OnFocusOut">
-        <input class="bs-basic-inputs searchable-select-input"
+        <input @ref="_InputElement"
+               class="bs-basic-inputs searchable-select-input"
                type="text"
                value="@_FilterText"
                placeholder="@_InputPlaceholder"
+               role="combobox"
+               aria-autocomplete="list"
+               aria-expanded="@(_IsDropdownOpen ? "true" : "false")"
+               aria-controls="@_DropdownId"
+               aria-activedescendant="@(_IsDropdownOpen && _HighlightedIndex >= 0 ? _GetOptionId(_HighlightedIndex) : null)"
                @oninput="_OnFilterInput"
                @onfocus="_OnInputFocus"
                @onkeydown="_OnKeyDown"
                autocomplete="off" />
         @if (_IsDropdownOpen)
         {
-            <div class="searchable-select-dropdown">
+            <div @ref="_DropdownElement" id="@_DropdownId" class="searchable-select-dropdown" role="listbox">
                 @{ var filteredOptions = string.IsNullOrEmpty(_FilterText) ? _Options : _FilteredOptions.ToArray(); }
                 @if (filteredOptions.Any())
                 {
-                    @foreach (var option in filteredOptions)
+                    @foreach (var (option, index) in filteredOptions.Select((option, index) => (option, index)))
                     {
                         var capturedOption = option;
-                        <div class="searchable-select-option @(option.Selected ? "selected" : "")"
+                        <div id="@_GetOptionId(index)"
+                             class="searchable-select-option @(option.Selected ? "selected" : "") @(index == _HighlightedIndex ? "highlighted" : "")"
+                             role="option"
+                             aria-selected="@(option.Selected ? "true" : "false")"
                              @onmousedown="() => _SelectOption(capturedOption)">
                             @option.Text
                         </div>
@@ -84,12 +96,42 @@ else
 
     private bool _IsDropdownOpen = false;
 
+    /// <summary>
+    /// The index, in the filtered options, of the option highlighted by the keyboard. -1 means no option is highlighted.
+    /// </summary>
+    private int _HighlightedIndex = -1;
+
+    private bool _ScrollToHighlightedOptionRequired = false;
+
+    /// <summary>
+    /// Whether the text in the input element is a filter text typed by the user, not the text of the selected option.
+    /// </summary>
+    private bool _IsFiltering = false;
+
+    private readonly string _DropdownId = "bs-select-" + Guid.NewGuid().ToString("N");
+
+    private ElementReference _InputElement;
+
+    private ElementReference _DropdownElement;
+
+    private readonly JSModule _JSModule;
+
+    private IJSObjectReference? _KeyDownSubscription;
+
     private string? _InputPlaceholder => _Options.FirstOrDefault(x => x.Selected).Text ?? "Choose option...";
 
     private IEnumerable<(bool Selected, string? Text)> _FilteredOptions =>
         string.IsNullOrEmpty(_FilterText)
             ? _Options
             : _Options.Where(x => x.Text?.Contains(_FilterText, StringComparison.OrdinalIgnoreCase) == true);
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="Select"/>.
+    /// </summary>
+    public Select()
+    {
+        this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Inputs/Select.razor.js");
+    }
 
     protected override void OnParametersSet()
     {
@@ -102,22 +144,69 @@ else
         this._NoSelected = !this._Options.Any(item => item.Selected);
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            if (_IsSearchable && _KeyDownSubscription is null)
+            {
+                // Prevent the keys for the dropdown list navigation from moving the caret inside the input element.
+                _KeyDownSubscription = await _JSModule.InvokeAsync<IJSObjectReference>("preventDefaultOfNavigationKeys", _InputElement);
+            }
+            else if (!_IsSearchable && _KeyDownSubscription is not null)
+            {
+                await _KeyDownSubscription.DisposeIfConnectedAsync("dispose");
+                _KeyDownSubscription = null;
+            }
+
+            if (_ScrollToHighlightedOptionRequired)
+            {
+                _ScrollToHighlightedOptionRequired = false;
+                if (_IsDropdownOpen) await _JSModule.InvokeVoidAsync("scrollToHighlightedOption", _DropdownElement);
+            }
+        }
+        catch (JSDisconnectedException) { }
+    }
+
+    private string _GetOptionId(int index) => $"{_DropdownId}-{index}";
+
+    private void _OpenDropdown()
+    {
+        if (!_IsFiltering) _FilterText = "";
+        _IsDropdownOpen = true;
+        _HighlightedIndex = Array.FindIndex(_FilteredOptions.ToArray(), option => option.Selected);
+        _ScrollToHighlightedOptionRequired = _HighlightedIndex >= 0;
+    }
+
+    private void _MoveHighlight(int delta)
+    {
+        var count = _FilteredOptions.Count();
+        if (count == 0) return;
+        _HighlightedIndex = _HighlightedIndex < 0 ?
+            (delta > 0 ? 0 : count - 1) :
+            (_HighlightedIndex + delta + count) % count;
+        _ScrollToHighlightedOptionRequired = true;
+    }
+
     private void _OnInputFocus()
     {
-        _FilterText = "";
-        _IsDropdownOpen = true;
+        _IsFiltering = false;
+        _OpenDropdown();
     }
 
     private void _OnFilterInput(ChangeEventArgs args)
     {
         _FilterText = args.Value?.ToString() ?? "";
+        _IsFiltering = true;
         _IsDropdownOpen = true;
+        _HighlightedIndex = -1;
     }
 
     private async Task _SelectOption((bool Selected, string? Text) option)
     {
         _IsDropdownOpen = false;
         _FilterText = option.Text ?? "";
+        _IsFiltering = false;
         await OnChange.InvokeAsync(new ChangeEventArgs { Value = option.Text });
     }
 
@@ -126,6 +215,7 @@ else
         _IsDropdownOpen = false;
         var selectedText = _Options.FirstOrDefault(x => x.Selected).Text;
         _FilterText = selectedText ?? "";
+        _IsFiltering = false;
     }
 
     private async Task _OnKeyDown(KeyboardEventArgs args)
@@ -134,16 +224,41 @@ else
         {
             _IsDropdownOpen = false;
             _FilterText = "";
+            _IsFiltering = false;
+            return;
+        }
+
+        if (args.Key == "F4")
+        {
+            if (_IsDropdownOpen) _IsDropdownOpen = false; else _OpenDropdown();
+            return;
+        }
+
+        if (args.Key == "ArrowDown" || args.Key == "ArrowUp")
+        {
+            if (!_IsDropdownOpen) _OpenDropdown();
+            else if (args.AltKey) _IsDropdownOpen = args.Key == "ArrowDown";
+            else _MoveHighlight(args.Key == "ArrowDown" ? +1 : -1);
             return;
         }
 
         if (args.Key == "Enter")
         {
             var matches = _FilteredOptions.ToArray();
-            if (matches.Length == 1)
+            if (_IsDropdownOpen && _HighlightedIndex >= 0 && _HighlightedIndex < matches.Length)
+            {
+                await _SelectOption(matches[_HighlightedIndex]);
+            }
+            else if (matches.Length == 1)
             {
                 await _SelectOption(matches.First());
             }
         }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _KeyDownSubscription.DisposeIfConnectedAsync("dispose");
+        await _JSModule.DisposeAsync();
     }
 }

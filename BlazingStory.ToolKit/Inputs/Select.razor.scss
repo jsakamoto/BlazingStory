@@ -47,7 +47,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
 
-            &:hover {
+            &:hover, &.highlighted {
                 background: var(--bs-hover-back-color);
             }
 
