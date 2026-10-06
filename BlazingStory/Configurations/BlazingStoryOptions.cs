@@ -36,4 +36,31 @@ public class BlazingStoryOptions
     ///     NavigationTreeOrder="@N["Welcome", "Components", N["Layouts", N["Header", "Footer"], "Button"], "Templates"]" /&gt;
     /// </example>
     public IList<NavigationTreeOrderEntry>? NavigationTreeOrder { get; set; }
+
+    /// <summary>
+    /// Gets or sets the default table of contents (TOC) placement for markdown-based custom pages. (default: <see cref="TableOfContentsPlacement.None"/>)
+    /// </summary>
+    /// <remarks>
+    /// If a custom page sets <see cref="CustomPageAttribute.TableOfContentsPlacement"/>, that per-page value takes precedence over this global default.
+    /// When set to <see langword="null"/>, the built-in default value is used.
+    /// </remarks>
+    public TableOfContentsPlacement? CustomPageTableOfContentsPlacement { get; set; } = TableOfContentsPlacement.None;
+
+    /// <summary>
+    /// Gets or sets the default minimum heading level included in TOC for markdown-based custom pages. (default: 1)
+    /// </summary>
+    /// <remarks>
+    /// Allowed values are 1 through 6. If a custom page sets <see cref="CustomPageAttribute.TableOfContentsMinHeadingLevel"/>, that per-page value takes precedence over this global default.
+    /// When set to <see langword="null"/>, the built-in default value is used.
+    /// </remarks>
+    public int? CustomPageTableOfContentsMinHeadingLevel { get; set; } = 1;
+
+    /// <summary>
+    /// Gets or sets the default maximum heading level included in TOC for markdown-based custom pages. (default: 4)
+    /// </summary>
+    /// <remarks>
+    /// Allowed values are 1 through 6. If a custom page sets <see cref="CustomPageAttribute.TableOfContentsMaxHeadingLevel"/>, that per-page value takes precedence over this global default.
+    /// When set to <see langword="null"/>, the built-in default value is used.
+    /// </remarks>
+    public int? CustomPageTableOfContentsMaxHeadingLevel { get; set; } = 4;
 }

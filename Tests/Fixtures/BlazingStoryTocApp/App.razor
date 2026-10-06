@@ -1,0 +1,11 @@
+@using BlazingStory.Types
+
+<BlazingStoryApp Title="TOC Fixture" 
+                 Assemblies="[typeof(App).Assembly]" 
+                 DefaultLayout="typeof(DefaultLayout)"
+                 EnableHotReloading="true" 
+                 CustomPageTableOfContentsPlacement="_TocPlacement" />
+
+@code {
+    private const TableOfContentsPlacement _TocPlacement = TableOfContentsPlacement.None;
+}
