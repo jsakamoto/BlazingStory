@@ -280,7 +280,7 @@ svg.svg-icon {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.searchable-select .searchable-select-dropdown .searchable-select-option:hover {
+.searchable-select .searchable-select-dropdown .searchable-select-option:hover, .searchable-select .searchable-select-dropdown .searchable-select-option.highlighted {
   background: var(--bs-hover-back-color);
 }
 .searchable-select .searchable-select-dropdown .searchable-select-option.selected {
