@@ -1,0 +1,10 @@
+.code-panel {
+    position: absolute;
+    inset: 0;
+
+    .code-view {
+        box-sizing: border-box;
+        height: 100%;
+        overflow: auto;
+    }
+}

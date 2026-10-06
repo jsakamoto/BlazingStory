@@ -178,6 +178,12 @@
     public bool EnableHotReloading { get; set; }
 
     /// <summary>
+    /// Gets or sets whether to show the "Code" panel, which displays the source code of the current story, on the Canvas page. (default: false)
+    /// </summary>
+    [Parameter]
+    public bool EnableCodePanel { get; set; }
+
+    /// <summary>
     /// An optional callback to initialize the Blazing Story. This is invoked during the component's initialization phase, allowing you to configure services, addons, or other settings before the app fully initializes.
     /// </summary>
     [Parameter]
@@ -254,6 +260,7 @@
         addons.Register<BlazingStory.Addons.BuiltIns.Panel.Controls.ControlsPanelAddon>();
         addons.Register<BlazingStory.Addons.BuiltIns.Panel.Actions.ActionsPanelAddon>();
         addons.Register<BlazingStory.Addons.BuiltIns.Panel.Accessibility.AccessibilityPanelAddon>();
+        if (this.EnableCodePanel) addons.Register<BlazingStory.Internals.Pages.Canvas.CodePanelAddon>();
     }
 
     private void ConfigureServices(IServiceCollection services)
