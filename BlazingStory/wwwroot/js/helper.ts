@@ -7,6 +7,8 @@ export const copyTextToClipboard = (text: string): Promise<void> => navigator.cl
 
 export const releaseFocus = (): void => { (doc.activeElement as HTMLElement)?.blur(); };
 
+export const resetScrollTop = (element: HTMLElement | null): void => { if (element) element.scrollTop = 0; };
+
 const keydown = "keydown";
 const pointerdown = "pointerdown";
 
