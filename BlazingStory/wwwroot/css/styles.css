@@ -1223,6 +1223,18 @@ a.menu-item.command-menu-item {
   display: flex;
   gap: 12px;
 }
+.settings-about-panel .contributors-section {
+  opacity: 0;
+  transition: opacity 400ms ease-out;
+}
+.settings-about-panel .contributors-section.is-ready {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .settings-about-panel .contributors-section {
+    transition: none;
+  }
+}
 .settings-about-panel .contributors-section h3 {
   font-size: 16px;
   font-weight: 700;
