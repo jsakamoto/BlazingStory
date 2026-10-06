@@ -18,7 +18,7 @@
         <TabButtonGroup>
             <TabButton Active="@(_currentView == View.Violations)" OnClick="@(() => _currentView = View.Violations)">
                 Violations
-                <Badge Text="@(this._AxeResults?.Violations.Count().ToString() ?? "0")" />
+                <Badge Text="@(this._FilteredViolations?.Count().ToString() ?? "0")" />
             </TabButton>
             <TabButton Active="@(_currentView == View.Passes)" OnClick="@(() => _currentView = View.Passes)">
                 Passes
@@ -26,9 +26,24 @@
             </TabButton>
             <TabButton Active="@(_currentView == View.Inconclusive)" OnClick="@(() => _currentView = View.Inconclusive)">
                 Inconclusive
-                <Badge Text="@(this._AxeResults?.Incomplete.Count().ToString() ?? "0")" />
+                <Badge Text="@(this._FilteredIncomplete?.Count().ToString() ?? "0")" />
             </TabButton>
         </TabButtonGroup>
+
+        <Separator />
+
+        <div class="axe-impact-filter" role="group" aria-label="Filter results by impact">
+            @foreach (var impact in _Impacts)
+            {
+                <button type="button"
+                        class="@CssClass("impact", new { impact, active = _ImpactFilter == impact, inactive = _ImpactFilter is not null && _ImpactFilter != impact })"
+                        title="@($"Show only {impact} results")"
+                        aria-pressed="@(_ImpactFilter == impact ? "true" : "false")"
+                        @onclick="() => OnClickImpactFilter(impact)">
+                    @(char.ToUpper(impact[0]) + impact.Substring(1))
+                </button>
+            }
+        </div>
 
         <Spacer />
 
@@ -49,7 +64,7 @@
     </ToolBar>
 
     <div class="axe-results-views-container">
-        <AxeResultsView Results="this._AxeResults?.Violations"
+        <AxeResultsView Results="this._FilteredViolations"
                         Visible="(_currentView == View.Violations)"
                         @bind-ExpansionState="_ViolationsExpansionState"
                         @bind-ExpansionState:after="OnExpansionStateChanged" />
@@ -57,7 +72,7 @@
                         Visible="(_currentView == View.Passes)"
                         @bind-ExpansionState="_PassesExpansionState"
                         @bind-ExpansionState:after="OnExpansionStateChanged" />
-        <AxeResultsView Results="this._AxeResults?.Incomplete"
+        <AxeResultsView Results="this._FilteredIncomplete"
                         Visible="(_currentView == View.Inconclusive)"
                         @bind-ExpansionState="_InconclusiveExpansionState"
                         @bind-ExpansionState:after="OnExpansionStateChanged" />
@@ -83,6 +98,15 @@
     private IStory? _PrevStory;
 
     private AxeResults? _AxeResults;
+
+    private static readonly string[] _Impacts = ["critical", "serious", "moderate", "minor"];
+
+    private string? _ImpactFilter;
+
+    // The filtered results are kept in fields, because the AxeResultsView resets its expansion states whenever it receives a new collection instance.
+    private IEnumerable<Result>? _FilteredViolations;
+
+    private IEnumerable<Result>? _FilteredIncomplete;
 
     private ExpansionState _ViolationsExpansionState = ExpansionState.CollapsedAll;
 
@@ -111,6 +135,7 @@
 
             this._WaitingForReady = true;
             this._AxeResults = null;
+            this.UpdateFilteredResults();
 
             try
             {
@@ -145,6 +170,7 @@
         if (!force && this._PrevStory == this.Story) return;
         this._PrevStory = this.Story;
         this._AxeResults = null;
+        this.UpdateFilteredResults();
         this._ViolationsExpansionState = ExpansionState.CollapsedAll;
         this._PassesExpansionState = ExpansionState.CollapsedAll;
         this._InconclusiveExpansionState = ExpansionState.CollapsedAll;
@@ -167,10 +193,34 @@
         catch (JSDisconnectedException) { }
         finally
         {
+            this.UpdateFilteredResults();
             this.StateHasChanged();
             try { await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", resultObjectUrl); }
             catch (JSDisconnectedException) { }
         }
+    }
+
+    private void OnClickImpactFilter(string impact)
+    {
+        this._ImpactFilter = this._ImpactFilter == impact ? null : impact;
+        this._ViolationsExpansionState = ExpansionState.CollapsedAll;
+        this._InconclusiveExpansionState = ExpansionState.CollapsedAll;
+        this.UpdateFilteredResults();
+    }
+
+    /// <summary>
+    /// Applies the impact filter to the violations and the inconclusive results. The passes are not filtered, because axe-core doesn't report an impact for them.
+    /// </summary>
+    private void UpdateFilteredResults()
+    {
+        this._FilteredViolations = this.FilterByImpact(this._AxeResults?.Violations);
+        this._FilteredIncomplete = this.FilterByImpact(this._AxeResults?.Incomplete);
+    }
+
+    private IEnumerable<Result>? FilterByImpact(IEnumerable<Result>? results)
+    {
+        if (this._ImpactFilter is null) return results;
+        return results?.Where(result => result.Impact == this._ImpactFilter).ToArray();
     }
 
     private void OnExpansionStateChanged()
@@ -193,9 +243,9 @@
     {
         var currentResults = this._currentView switch
         {
-            View.Violations => this._AxeResults?.Violations,
+            View.Violations => this._FilteredViolations,
             View.Passes => this._AxeResults?.Passes,
-            View.Inconclusive => this._AxeResults?.Incomplete,
+            View.Inconclusive => this._FilteredIncomplete,
             _ => throw new InvalidOperationException()
         };
 
