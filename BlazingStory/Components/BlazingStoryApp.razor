@@ -4,6 +4,7 @@
 @using BlazingStory.Addons.Internals
 @using BlazingStory.Internals.JavaScriptAPI
 @using BlazingStory.Internals.Services.XmlDocComment;
+@using BlazingStory.Services
 @using Toolbelt.Blazor.Extensions.DependencyInjection
 @using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
 
@@ -72,6 +73,7 @@
         <CascadingValue Value="this._StoriesStore">
             <CascadingValue Value="this._CustomPageStore">
                 <CascadingValue Value="this">
+                    <CascadingValue TValue="IBlazingStoryActionLogger" Value="this._ActionLogger" IsFixed="true">
 
                     @{
 #pragma warning disable IL2111
@@ -97,6 +99,7 @@
 #pragma warning restore IL2111
                     }
 
+                    </CascadingValue>
                 </CascadingValue>
             </CascadingValue>
         </CascadingValue>
@@ -195,6 +198,8 @@
 
     private AsyncServiceScope? _ServiceScope;
 
+    private IBlazingStoryActionLogger? _ActionLogger;
+
     private readonly JSModule _JSModule;
 
     private DotNetObjectReference<BlazingStoryApp> _RefThis;
@@ -240,6 +245,7 @@
         addonManager.Initialize(addonStore);
 
         this._ServiceScope = serviceScope;
+        this._ActionLogger = serviceScope.ServiceProvider.GetRequiredService<IBlazingStoryActionLogger>();
     }
 
     private void ConfigureAddons(IAddonStore addons)
@@ -272,6 +278,7 @@
             .AddScoped<NavigationService>()
             .AddScoped<BlazingStoryOptions>(_ => this._Options)
             .AddScoped<WebAssets>()
+            .AddScoped<IBlazingStoryActionLogger, BlazingStoryActionLogger>()
             .AddScoped<AddonManager>();
 
         if (OperatingSystem.IsBrowser())
