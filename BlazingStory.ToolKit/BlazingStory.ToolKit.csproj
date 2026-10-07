@@ -32,7 +32,7 @@
   <ItemGroup>
     <None Include="..\assets\icon-128x128.png" Pack="true" Visible="false" PackagePath="" />
     <None Include="..\README.md" Visible="false" Pack="true" PackagePath="\" />
-    <Content Update="**\*.json" Pack="false" CopyToOutputDirectory="Never" />
+    <Content Update="**\*.json" Pack="false" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
   </ItemGroup>
 
   <ItemGroup>

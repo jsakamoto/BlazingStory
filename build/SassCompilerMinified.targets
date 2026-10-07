@@ -14,7 +14,7 @@
   </Target>
 
   <ItemGroup>
-    <Content Update="sasscompiler.min.json" Pack="false" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+    <Content Update="sasscompiler.json;sasscompiler.min.json" Pack="false" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
   </ItemGroup>
 
 </Project>
