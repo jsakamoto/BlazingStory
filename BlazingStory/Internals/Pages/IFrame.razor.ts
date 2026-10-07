@@ -108,12 +108,49 @@ export const initializeCanvasFrame = () => {
     if (htmlElement) {
         // Measure body.scrollHeight, not <html>'s box: scroll-lock implementations that set
         // body.position = 'fixed' collapse <html> to 0, but body.scrollHeight is unaffected.
+        //
+        // This frame's own "viewport" is the outer <iframe>, whose height is set by the host from
+        // the value this function returns (see PreviewFrame.razor.ts / StoryPreview.razor). A host
+        // stylesheet that ties <html> or <body> to that viewport - `height: 100%`, `min-height:
+        // 100vh`, etc., on either element, however it gets there - turns that into a feedback loop:
+        // each measurement includes the height just assigned by the *previous* one, so the reported
+        // height (plus the body margin added below) grows every cycle instead of settling.
+        // Chasing every such rule (inline or stylesheet, vh or %) is a losing game, so instead
+        // neutralize both elements for the instant of the measurement - a synchronous read with no
+        // intervening layout/paint, so there is no visible flicker - which makes scrollHeight reflect
+        // only the natural content height regardless of what the host's CSS ties to the viewport.
+        const captureProperty = (element: HTMLElement, property: string) => ({
+            value: element.style.getPropertyValue(property),
+            priority: element.style.getPropertyPriority(property)
+        });
+
+        const restoreProperty = (element: HTMLElement, property: string, saved: { value: string, priority: string }) => {
+            if (saved.value) element.style.setProperty(property, saved.value, saved.priority);
+            else element.style.removeProperty(property);
+        };
+
         const measureHeight = () => {
-            const style = wnd.getComputedStyle(body);
-            const marginTop = parseFloat(style.marginTop) || 0;
-            const marginBottom = parseFloat(style.marginBottom) || 0;
-            const zoom = parseFloat(style.getPropertyValue('--bs-zoom')) || 1;
-            return Math.ceil((body.scrollHeight + marginTop + marginBottom) * zoom);
+            const savedHtmlHeight = captureProperty(htmlElement, "height");
+            const savedHtmlMinHeight = captureProperty(htmlElement, "min-height");
+            const savedBodyHeight = captureProperty(body, "height");
+            const savedBodyMinHeight = captureProperty(body, "min-height");
+            htmlElement.style.setProperty("height", "auto", "important");
+            htmlElement.style.setProperty("min-height", "0", "important");
+            body.style.setProperty("height", "auto", "important");
+            body.style.setProperty("min-height", "0", "important");
+
+            try {
+                const style = wnd.getComputedStyle(body);
+                const marginTop = parseFloat(style.marginTop) || 0;
+                const marginBottom = parseFloat(style.marginBottom) || 0;
+                const zoom = parseFloat(style.getPropertyValue('--bs-zoom')) || 1;
+                return Math.ceil((body.scrollHeight + marginTop + marginBottom) * zoom);
+            } finally {
+                restoreProperty(htmlElement, "height", savedHtmlHeight);
+                restoreProperty(htmlElement, "min-height", savedHtmlMinHeight);
+                restoreProperty(body, "height", savedBodyHeight);
+                restoreProperty(body, "min-height", savedBodyMinHeight);
+            }
         };
 
         const resizeObserver = new ResizeObserver(() => {

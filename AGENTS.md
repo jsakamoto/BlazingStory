@@ -73,3 +73,15 @@ accessibility panel still works.
 Keep the Deque Systems copyright notice at the top of these files. axe-core is
 MPL-2.0, the same license as Blazing Story, so the modified files remain under
 MPL-2.0 and their source form is published in this repository.
+
+## Stylesheet Build
+
+`.scss` files are compiled to `.css` and `.min.css` at build time by the `BuildWebCompiler2022`
+package, driven by each project's `compilerconfig.json` (BlazingStory, BlazingStory.ToolKit, and
+BlazingStory.Addons.BuiltIns). The generated `.css` and `.min.css` files are committed, so commit
+them together with the `.scss` change. Do not edit them by hand.
+
+On first use the package extracts Node.js into `%TEMP%\WebCompiler<version>` by running a batch file
+that calls `7z.exe` by bare name. If the `NoDefaultCurrentDirectoryInExePath` environment variable
+is set, that step fails with "The system cannot find the path specified". Unset the variable and
+build again.
