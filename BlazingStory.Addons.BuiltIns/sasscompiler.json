@@ -1,0 +1,13 @@
+{
+  "Source": "wwwroot/css/actions-panel.scss",
+  "Target": "wwwroot/css/actions-panel.css",
+  "Arguments": "--style=expanded --no-source-map --silence-deprecation=import",
+  "GenerateScopedCss": false,
+  "Compilations": [
+    { "Source": "wwwroot/css/controls-panel.scss", "Target": "wwwroot/css/controls-panel.css" },
+    { "Source": "wwwroot/css/a11y-panel.scss", "Target": "wwwroot/css/a11y-panel.css" },
+    { "Source": "wwwroot/css/background-grid.scss", "Target": "wwwroot/css/background-grid.css" },
+    { "Source": "wwwroot/css/outline.scss", "Target": "wwwroot/css/outline.css" },
+    { "Source": "wwwroot/css/vision-filter-toolbar.scss", "Target": "wwwroot/css/vision-filter-toolbar.css" }
+  ]
+}

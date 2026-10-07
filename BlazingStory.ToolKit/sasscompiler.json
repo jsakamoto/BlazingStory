@@ -1,0 +1,6 @@
+{
+  "Source": "wwwroot/css/styles.scss",
+  "Target": "wwwroot/css/styles.css",
+  "Arguments": "--style=expanded --no-source-map --silence-deprecation=import",
+  "GenerateScopedCss": false
+}

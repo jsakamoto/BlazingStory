@@ -1,0 +1,20 @@
+<Project>
+
+  <!-- AspNetCore.SassCompiler takes one global style per run, so the minified pass is a second run of its own task. -->
+  <Target Name="_BS_CompileSassMinified"
+          AfterTargets="Compile Sass"
+          Condition="'$(DesignTimeBuild)' != 'true' AND '$(SassCompilerEnableBuildTask)' != 'false'">
+    <CompileSass AppsettingsFile="$(SassCompilerAppsettingsJson)"
+                 SassCompilerFile="$(MSBuildProjectDirectory)/sasscompiler.min.json"
+                 Command="$(SassCompilerBuildCommand)"
+                 Snapshot="$(SassCompilerBuildSnapshot)"
+                 Configuration="$(SassCompilerConfiguration)"
+                 TargetFramework="$(TargetFramework)"
+                 TargetFrameworks="$(TargetFrameworks)" />
+  </Target>
+
+  <ItemGroup>
+    <Content Update="sasscompiler.min.json" Pack="false" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+
+</Project>

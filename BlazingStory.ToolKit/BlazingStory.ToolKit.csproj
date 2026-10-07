@@ -9,11 +9,13 @@
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
     <IsTrimmable>true</IsTrimmable>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <SassCompilerEnableWatcher>false</SassCompilerEnableWatcher>
   </PropertyGroup>
 
   <Import Project="../VersionInfo.props" />
   <Import Project="../build/VersionInfo.targets" />
   <Import Project="../build/ReleaseNotes.targets" />
+  <Import Project="../build/SassCompilerMinified.targets" />
 
   <PropertyGroup>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
@@ -51,7 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BuildWebCompiler2022" Version="1.14.15" PrivateAssets="all" />
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.105.1" PrivateAssets="all" ExcludeAssets="compile;runtime" />
     <PackageReference Include="Toolbelt.Web.CssClassInlineBuilder" Version="3.1.0.1" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="6.1.0" />
     <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.9.3">
