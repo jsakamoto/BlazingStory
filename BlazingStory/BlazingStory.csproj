@@ -47,6 +47,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BuildWebCompiler2022" Version="1.14.15" PrivateAssets="all" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="6.1.0" />
     <PackageReference Include="Toolbelt.Web.CssClassInlineBuilder" Version="3.1.0.1" />
     <PackageReference Include="Toolbelt.Blazor.SplitContainer" Version="2.1.2" />
