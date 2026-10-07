@@ -128,4 +128,67 @@ internal class AboutPanelTest
         cut.Find("header").TextContent.Contains("Blazing Story").IsTrue();
         cut.FindAll(".contributors-section").Count.Is(0);
     }
+
+    private const string TwoContributorsJson = """
+    [
+        {"login":"user1","avatar_url":"https://example.com/avatar1.png","html_url":"https://github.com/user1"},
+        {"login":"user2","avatar_url":"https://example.com/avatar2.png","html_url":"https://github.com/user2"}
+    ]
+    """;
+
+    private static async Task<(TestHost Host, BunitContext Ctx, IRenderedComponent<AboutPanel> Cut)> RenderAsync(TimeSpan timeout)
+    {
+        var httpClient = new HttpClient(new FakeHttpMessageHandler(HttpStatusCode.OK, TwoContributorsJson))
+        {
+            BaseAddress = new Uri("http://localhost/")
+        };
+        var host = new TestHost(services => services.AddSingleton(httpClient));
+        var ctx = new BunitContext();
+        ctx.RenderTree.Add<CascadingValue<IServiceProvider>>(p => p.Add(p => p.Value, host.Services));
+        var cut = ctx.Render<AboutPanel>(p => p.Add(c => c.LoadTimeout, timeout));
+        await Task.CompletedTask;
+        return (host, ctx, cut);
+    }
+
+    [Test]
+    public async Task Render_WithContributors_IsNotReadyUntilImagesLoaded_Test()
+    {
+        var (host, ctx, cut) = await RenderAsync(TimeSpan.FromMinutes(1));
+        await using var _ = host;
+        using var __ = ctx;
+
+        cut.Find(".contributors-section").ClassList.Contains("is-ready").IsFalse();
+
+        var images = cut.FindAll(".contributors-grid img");
+        await images[0].TriggerEventAsync("onload", EventArgs.Empty);
+        cut.Find(".contributors-section").ClassList.Contains("is-ready").IsFalse();
+
+        await images[1].TriggerEventAsync("onload", EventArgs.Empty);
+        cut.Find(".contributors-section").ClassList.Contains("is-ready").IsTrue();
+    }
+
+    [Test]
+    public async Task Render_WithContributors_FailedImageCountsAsFinished_Test()
+    {
+        var (host, ctx, cut) = await RenderAsync(TimeSpan.FromMinutes(1));
+        await using var _ = host;
+        using var __ = ctx;
+
+        var images = cut.FindAll(".contributors-grid img");
+        await images[0].TriggerEventAsync("onload", EventArgs.Empty);
+        await images[1].TriggerEventAsync("onerror", EventArgs.Empty);
+
+        cut.Find(".contributors-section").ClassList.Contains("is-ready").IsTrue();
+    }
+
+    [Test]
+    public async Task Render_WithContributors_TimeoutMakesSectionReady_Test()
+    {
+        var (host, ctx, cut) = await RenderAsync(TimeSpan.FromMilliseconds(50));
+        await using var _ = host;
+        using var __ = ctx;
+
+        await Task.Delay(500);
+        cut.Find(".contributors-section").ClassList.Contains("is-ready").IsTrue();
+    }
 }

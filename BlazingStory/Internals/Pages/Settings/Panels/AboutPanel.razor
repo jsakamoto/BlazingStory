@@ -5,6 +5,7 @@
 @using System.Runtime.CompilerServices
 @using System.Runtime.Versioning
 @using System.Text.Json.Serialization
+@implements IDisposable
 
 <PageTitle>About - @this.BlazingStoryApp.Title</PageTitle>
 
@@ -43,13 +44,13 @@
 
     @if (this._Contributors.Count > 0)
     {
-        <section class="contributors-section">
+        <section class="contributors-section @(this._IsReady ? "is-ready" : "")" inert="@(!this._IsReady)">
             <h3>Contributors <span class="contributors-count">@this._Contributors.Count</span></h3>
             <div class="contributors-grid">
                 @foreach (var contributor in this._Contributors)
                 {
                     <a href="@contributor.HtmlUrl" target="_blank" rel="noopener noreferrer" title="@contributor.Login">
-                        <img src="@contributor.AvatarUrl" alt="@contributor.Login" width="40" height="40" loading="lazy" />
+                        <img src="@contributor.AvatarUrl" alt="@contributor.Login" width="40" height="40" @onload="this.OnImageFinished" @onerror="this.OnImageFinished" />
                     </a>
                 }
             </div>
@@ -66,7 +67,18 @@
     [CascadingParameter]
     protected BlazingStoryApp BlazingStoryApp { get; init; } = default!;
 
+    [Parameter]
+    public TimeSpan LoadTimeout { get; init; } = TimeSpan.FromSeconds(5);
+
     private IReadOnlyList<ContributorInfo> _Contributors = [];
+
+    private bool _IsReady;
+
+    private int _FinishedImageCount;
+
+    private System.Timers.Timer? _Timer;
+
+    private bool _Disposed;
 
     private record ContributorInfo(
         [property: JsonPropertyName("login")] string Login,
@@ -88,6 +100,7 @@
         if (_CachedContributors is not null && DateTime.UtcNow < _CacheExpiry)
         {
             this._Contributors = _CachedContributors;
+            this.StartTimeoutTimer();
             return;
         }
 
@@ -109,5 +122,34 @@
         {
             // Silently ignore errors - contributors section will simply not be displayed.
         }
+
+        this.StartTimeoutTimer();
+    }
+
+    private void StartTimeoutTimer()
+    {
+        if (this._Disposed || this._Contributors.Count == 0) return;
+        this._Timer = new System.Timers.Timer(this.LoadTimeout) { AutoReset = false };
+        this._Timer.Elapsed += (_, _) => this.OnTimeout();
+        this._Timer.Start();
+    }
+
+    private void OnTimeout()
+    {
+        if (this._Disposed) return;
+        this._IsReady = true;
+        _ = this.InvokeAsync(() => { if (!this._Disposed) this.StateHasChanged(); });
+    }
+
+    private void OnImageFinished()
+    {
+        if (++this._FinishedImageCount >= this._Contributors.Count) this._IsReady = true;
+    }
+
+    public void Dispose()
+    {
+        this._Disposed = true;
+        this._Timer?.Stop();
+        this._Timer?.Dispose();
     }
 }
