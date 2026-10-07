@@ -90,3 +90,8 @@ semicolon in minified output. An unmodified tree stays clean after a build.
 Compilation is incremental. Dart Sass `--update` skips an output that is newer than its source and
 all of the `@import`ed partials. To add a new output, add a `Source` and `Target` entry to both JSON
 files of the project.
+
+BuildWebCompiler2022 (Windows only, needs cmd.exe and Node) and Excubo.WebCompiler (slower, needs a 200 MB
+tool download, no musl support) were tried and rejected in October 2026 in favor of this package.
+The `@import` rules in the `.scss` files are removed in Dart Sass 3.0, so a major upgrade of the
+package needs a move to `@use`.
