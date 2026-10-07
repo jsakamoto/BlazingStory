@@ -1,3 +1,4 @@
+@using BlazingStory.Addons.Internals
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 
@@ -43,12 +44,6 @@
 
     private IEnumerable<Command> _commands = Enumerable.Empty<Command>();
 
-    private static readonly IEnumerable<CommandType> _excludeCommands = new[]
-    {
-        CommandType.AboutYourBlazingStory,
-        CommandType.ReleaseNotes,
-    };
-
     private ElementReference _commandListElementRef;
 
     private IJSObjectReference? _keyHandler;
@@ -56,8 +51,14 @@
     override protected void OnInitialized()
     {
         var commandService = this.ServiceProvider.GetRequiredService<CommandService>();
+        // Hide the settings page commands that have no hot key entry.
+        var excludeCommandKeys = this.ServiceProvider.GetRequiredService<AddonManager>()
+            .GetSettingsPages()
+            .Where(page => page.HotKeyEntryName is null)
+            .Select(page => page.CommandKey)
+            .ToHashSet();
         _commands = commandService.Commands
-            .Where(cmdSet => _excludeCommands.Contains(cmdSet.Type) is not true)
+            .Where(cmdSet => excludeCommandKeys.Contains(cmdSet.Key) is not true)
             .Select(cmdSet => cmdSet.Command)
             .Where(cmd => string.IsNullOrEmpty(cmd.HotKey?.Code) is not true)
             .ToArray();

@@ -2,9 +2,6 @@
 
 public enum CommandType
 {
-    AboutYourBlazingStory,
-    ReleaseNotes,
-    KeyboardShortcuts,
     SideBarVisible,
     ToolBarVisible,
     AddonPanelVisible,
