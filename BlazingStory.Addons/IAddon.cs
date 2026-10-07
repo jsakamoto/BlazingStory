@@ -1,7 +1,7 @@
 namespace BlazingStory.Addons;
 
 /// <summary>
-/// Represents an addon that can register toolbar content, panels, and preview decorators.
+/// Represents an addon that can register toolbar content, panels, preview decorators, and settings pages.
 /// </summary>
 public interface IAddon
 {
