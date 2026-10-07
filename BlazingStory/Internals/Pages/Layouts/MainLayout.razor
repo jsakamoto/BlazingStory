@@ -1,3 +1,4 @@
+@using BlazingStory.Addons.Internals
 @using BlazingStory.ToolKit.JSInterop
 @using Toolbelt.Blazor.HotKeys2
 @using static Toolbelt.Blazor.HotKeys2.ModCode
@@ -75,15 +76,16 @@
 	{
 		if (firstRender)
 		{
-			var commandService = await this.ConfigureCommandsAsync(this.Services);
+			var commandService = await ConfigureCommandsAsync(this.Services);
 
 			this._SideBarVisibleCommand = commandService[CommandType.SideBarVisible]!;
 			this._GoFullScreenCommand = commandService[CommandType.GoFullScreen]!;
 			this._Subscriptions.Add(this._SideBarVisibleCommand.Subscribe(this.OnToggleSideBarVisible));
 			this._Subscriptions.Add(this._GoFullScreenCommand.Subscribe(this.OnToggleFullscreen));
-			this._Subscriptions.Add(commandService.Subscribe(CommandType.AboutYourBlazingStory, () => { this.NavigationManager.NavigateTo("./?path=/settings/about"); return ValueTask.CompletedTask; }));
-			this._Subscriptions.Add(commandService.Subscribe(CommandType.ReleaseNotes, () => { this.NavigationManager.NavigateTo("./?path=/settings/release-notes"); return ValueTask.CompletedTask; }));
-			this._Subscriptions.Add(commandService.Subscribe(CommandType.KeyboardShortcuts, () => { this.NavigationManager.NavigateTo("./?path=/settings/shortcuts"); return ValueTask.CompletedTask; }));
+			foreach (var settingsPage in this.Services.GetRequiredService<AddonManager>().GetSettingsPages())
+			{
+				this._Subscriptions.Add(commandService.Commands.Subscribe(settingsPage.CommandKey, () => { this.NavigationManager.NavigateTo($"./?path=/settings/{settingsPage.Route}"); return ValueTask.CompletedTask; }));
+			}
 			this._SidBarVisibilityState = this.GetSidebarVisible() ? SidBarVisibilityStates.SidebarShown : SidBarVisibilityStates.SidebarHidden;
 
 			this._Ready = true;
@@ -110,30 +112,35 @@
 		}
 	}
 
-	private async ValueTask<CommandService> ConfigureCommandsAsync(IServiceProvider services)
+	internal static async ValueTask<CommandService> ConfigureCommandsAsync(IServiceProvider services)
 	{
 		var commandServce = services.GetRequiredService<CommandService>();
-		await commandServce.Commands.EnsureInitializedAsync(() => new (CommandType, Command)[]
-		{
-			(CommandType.AboutYourBlazingStory, new(default, "About your Blazing Story", icon: SvgIconType.CircleInfo)),
-			(CommandType.ReleaseNotes, new(default, "Release notes", icon: SvgIconType.ReleaseNotes)),
-			(CommandType.KeyboardShortcuts, new(new(Ctrl | Shift, Code.Comma), "Keyboard shortcuts", icon: SvgIconType.KeyboardShortcuts)),
+		var settingsPages = services.GetRequiredService<AddonManager>().GetSettingsPages();
+		await commandServce.Commands.EnsureInitializedAsync(() =>
+		[
+			.. settingsPages.Select(page => (page.CommandKey, new Command(GetDefaultHotKey(page), page.MenuCaption, icon: page.Icon))),
 
-			(CommandType.SideBarVisible,new(new(Alt, Code.S), "Show sidebar", flag: true)),
-			(CommandType.ToolBarVisible,new(new(Alt, Code.T), "Show toolbar", flag: true)),
-			(CommandType.AddonPanelVisible, new(new(Alt, Code.A), "Show addons panel", flag: true)),
-			(CommandType.AddonPanelOrientation, new(new(Alt, Code.D), "Change addons orientation")),
-			(CommandType.GoFullScreen, new(new(Alt, Code.F), "Go full screen", flag: false)),
-			(CommandType.GoSearch, new(new(Ctrl, Code.K), "Search")),
-			(CommandType.PreviousComponent, new(new(Alt, Code.ArrowUp), "Previous component")),
-			(CommandType.NextComponent, new(new(Alt, Code.ArrowDown), "Next component")),
-			(CommandType.PreviousStory, new(new(Alt, Code.ArrowLeft), "Previous story")),
-			(CommandType.NextStory, new(new(Alt, Code.ArrowRight), "Next story")),
-			(CommandType.CollapseAll, new(new(Ctrl | Shift, Code.ArrowUp), "Collapse all")),
+			(nameof(CommandType.SideBarVisible), new(new(Alt, Code.S), "Show sidebar", flag: true)),
+			(nameof(CommandType.ToolBarVisible), new(new(Alt, Code.T), "Show toolbar", flag: true)),
+			(nameof(CommandType.AddonPanelVisible), new(new(Alt, Code.A), "Show addons panel", flag: true)),
+			(nameof(CommandType.AddonPanelOrientation), new(new(Alt, Code.D), "Change addons orientation")),
+			(nameof(CommandType.GoFullScreen), new(new(Alt, Code.F), "Go full screen", flag: false)),
+			(nameof(CommandType.GoSearch), new(new(Ctrl, Code.K), "Search")),
+			(nameof(CommandType.PreviousComponent), new(new(Alt, Code.ArrowUp), "Previous component")),
+			(nameof(CommandType.NextComponent), new(new(Alt, Code.ArrowDown), "Next component")),
+			(nameof(CommandType.PreviousStory), new(new(Alt, Code.ArrowLeft), "Previous story")),
+			(nameof(CommandType.NextStory), new(new(Alt, Code.ArrowRight), "Next story")),
+			(nameof(CommandType.CollapseAll), new(new(Ctrl | Shift, Code.ArrowUp), "Collapse all")),
 
-			(CommandType.Documentation, new(default, "Documentation", linkUrl: "https://blazingstory.github.io/docs/", icon: SvgIconType.Document)),
-		});
+			(nameof(CommandType.Documentation), new(default, "Documentation", linkUrl: "https://blazingstory.github.io/docs/", icon: SvgIconType.Document)),
+		]);
 		return commandServce;
+	}
+
+	private static HotKeyCombo? GetDefaultHotKey(SettingsPageDescriptor settingsPage)
+	{
+		if (settingsPage.HotKeyEntryName is null || settingsPage.DefaultHotKeyCode is not Code code) return null;
+		return new(settingsPage.DefaultHotKeyModifiers, code);
 	}
 
 	private async Task OnSideBarSizeChanged()

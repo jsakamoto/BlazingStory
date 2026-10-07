@@ -11,26 +11,25 @@ internal class CommandService : IAsyncDisposable
 
     private string CommandStateKeyName => this.GetType().Name + "." + nameof(this.Commands);
 
-    internal readonly CommandSet<CommandType> Commands;
+    internal readonly CommandSet Commands;
 
     public CommandService(HotKeys hotKeys, IJSRuntime jsRuntime, ILogger<CommandService> logger)
     {
         this._Logger = logger;
-        this.Commands = new CommandSet<CommandType>(this.CommandStateKeyName, hotKeys, jsRuntime, logger);
+        this.Commands = new CommandSet(this.CommandStateKeyName, hotKeys, jsRuntime, logger);
     }
 
-    public Command? this[CommandType type] => this.Commands[type];
+    public Command? this[CommandType type] => this.Commands[type.ToString()];
 
     public async Task InvokeAsync(CommandType type)
     {
-        if (this.Commands[type] is not Command command) return;
+        if (this.Commands[type.ToString()] is not Command command) return;
         await command.InvokeAsync();
     }
 
     public IDisposable Subscribe(CommandType type, ValueTaskCallback callBack)
     {
-        if (this.Commands[type] is not Command command) throw new KeyNotFoundException();
-        return command.Subscribe(callBack);
+        return this.Commands.Subscribe(type.ToString(), callBack);
     }
 
     public async ValueTask DisposeAsync()

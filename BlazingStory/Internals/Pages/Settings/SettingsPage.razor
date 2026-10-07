@@ -1,12 +1,12 @@
-@using BlazingStory.Internals.Pages.Settings.Panels;
+@using BlazingStory.Addons.Internals
 @inject NavigationManager NavigationManager
 
 <ToolBar>
     <TabButtonGroup>
-        @foreach (var panel in _SettingsPanels)
+        @foreach (var settingsPage in this._SettingsPages)
         {
-            <TabButton @key="panel.Caption" OnClick="() => this.OnClickTabButton(panel.Route)" Active="this.IsActive(panel.Route)">
-                @panel.Caption
+            <TabButton @key="settingsPage.Route" OnClick="() => this.OnClickTabButton(settingsPage.Route)" Active="this.IsActive(settingsPage.Route)">
+                @settingsPage.TabCaption
             </TabButton>
         }
     </TabButtonGroup>
@@ -20,7 +20,7 @@
 <div class="settings-page-panel">
     <div class="viewport">
         <div>
-            <QueryRouteView Routes="_SettingsPanels.Select(r => r.Route)" />
+            <QueryRouteView Routes="this._Routes" />
         </div>
     </div>
 </div>
@@ -33,21 +33,25 @@
     [CascadingParameter]
     internal IServiceProvider Services { get; init; } = default!;
 
-    private static readonly (string Caption, QueryRoute Route)[] _SettingsPanels = new (string, QueryRoute)[]
-    {
-        ("About",              new("*", "about",         typeof(AboutPanel))),
-        ("Release notes",      new("*", "release-notes", typeof(ReleaseNotesPanel))),
-        ("Keyboard shortcuts", new("*", "shortcuts",     typeof(KeyboardShortcutsPanel))),
-    };
+    private IEnumerable<SettingsPageDescriptor> _SettingsPages = [];
 
-    private void OnClickTabButton(QueryRoute route)
+    private IEnumerable<QueryRoute> _Routes = [];
+
+    protected override void OnInitialized()
     {
-        this.NavigationManager.NavigateTo($"./?path=/settings/{route.Parameter}");
+        var addonManager = this.Services.GetRequiredService<AddonManager>();
+        this._SettingsPages = addonManager.GetSettingsPages().ToArray();
+        this._Routes = this._SettingsPages.Select(page => new QueryRoute("*", page.Route, page.ComponentType)).ToArray();
     }
 
-    private bool IsActive(QueryRoute route)
+    private void OnClickTabButton(string route)
     {
-        return route.Parameter == this.RouteData?.Parameter;
+        this.NavigationManager.NavigateTo($"./?path=/settings/{route}");
+    }
+
+    private bool IsActive(string route)
+    {
+        return route == this.RouteData?.Parameter;
     }
 
     private void OnClickCloseButton()
