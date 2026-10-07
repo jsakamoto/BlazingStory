@@ -76,12 +76,17 @@ MPL-2.0 and their source form is published in this repository.
 
 ## Stylesheet Build
 
-`.scss` files are compiled to `.css` and `.min.css` at build time by the `BuildWebCompiler2022`
-package, driven by each project's `compilerconfig.json` (BlazingStory, BlazingStory.ToolKit, and
-BlazingStory.Addons.BuiltIns). The generated `.css` and `.min.css` files are committed, so commit
-them together with the `.scss` change. Do not edit them by hand.
+`.scss` files are compiled to `.css` and `.min.css` at build time by the `AspNetCore.SassCompiler`
+package (Dart Sass, no Node.js, works on Windows, Linux and macOS). It is referenced from BlazingStory,
+BlazingStory.ToolKit, and BlazingStory.Addons.BuiltIns, and each project has two config files.
+`sasscompiler.json` lists the expanded `.css` outputs and `sasscompiler.min.json` lists the
+`.min.css` outputs. The package accepts only one `--style` per run, so `build/SassCompilerMinified.targets`
+runs the package's own task a second time for the minified pass.
 
-On first use the package extracts Node.js into `%TEMP%\WebCompiler<version>` by running a batch file
-that calls `7z.exe` by bare name. If the `NoDefaultCurrentDirectoryInExePath` environment variable
-is set, that step fails with "The system cannot find the path specified". Unset the variable and
-build again.
+The generated `.css` and `.min.css` files are committed, so commit them together with the `.scss`
+change. Do not edit them by hand. Dart Sass writes no BOM, always uses LF, and omits the trailing
+semicolon in minified output. An unmodified tree stays clean after a build.
+
+Compilation is incremental. Dart Sass `--update` skips an output that is newer than its source and
+all of the `@import`ed partials. To add a new output, add a `Source` and `Target` entry to both JSON
+files of the project.
