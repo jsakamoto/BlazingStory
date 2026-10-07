@@ -1,9 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
+﻿namespace BlazingStory.Addons.BuiltIns.Panel.Accessibility.Axe;
 
-namespace BlazingStory.Addons.BuiltIns.Panel.Accessibility.Axe;
-
-[DynamicallyAccessedMembers(All)]
 public class Result
 {
     public string Description { get; init; } = string.Empty;

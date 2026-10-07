@@ -1,4 +1,5 @@
 @using BlazingStory.Addons.BuiltIns.Panel.Accessibility.Axe
+@using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
 @using Microsoft.Extensions.DependencyInjection
 @implements IDisposable
 @inject IJSRuntime JSRuntime
@@ -151,7 +152,12 @@
         if (this._Window is not null) await this._Window.PostMessageAsync(".preview-frame iframe", AccessibilityPanelAddon.Message.RunAxe);
     }
 
-    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "AxeResults and all referenced types are preserved via [DynamicallyAccessedMembers(All)].")]
+    // These types are only ever created by the deserializer, so nothing else keeps their constructors and init setters.
+    [DynamicDependency(PublicConstructors | PublicProperties, typeof(AxeResults))]
+    [DynamicDependency(PublicConstructors | PublicProperties, typeof(Result))]
+    [DynamicDependency(PublicConstructors | PublicProperties, typeof(NodeResult))]
+    [DynamicDependency(PublicConstructors | PublicProperties, typeof(CheckResult))]
+    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "AxeResults and all referenced types are preserved via [DynamicDependency].")]
     private async Task OnReceiveAxeResultAsync(string resultObjectUrl)
     {
         try

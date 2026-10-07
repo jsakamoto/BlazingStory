@@ -1,9 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace BlazingStory.Addons.BuiltIns.Panel.Accessibility.Axe;
 
-[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
 public class NodeResult
 {
     private string _html = string.Empty;
