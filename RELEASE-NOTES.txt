@@ -1,3 +1,7 @@
+v.1.0.0-preview.93
+- Improve: The Contributors section on the About page now fades in once the contributor avatars have loaded, instead of showing the avatars popping in one by one.
+- Fix: Resolved an issue where the accessibility panel showed no results in Blazor WebAssembly apps published with `dotnet publish`.
+
 v.1.0.0-preview.92
 - Fix: Resolved an issue where story previews on Docs pages grew taller than their content when the app's stylesheet set the `html` or `body` height to fill the viewport, such as `height: 100%`. (PR #135 contributed by @Kebechet)
 
