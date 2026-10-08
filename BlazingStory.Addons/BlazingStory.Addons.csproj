@@ -35,6 +35,7 @@
     <SupportedPlatform Include="browser" />
     <InternalsVisibleTo Include="BlazingStory" />
     <InternalsVisibleTo Include="BlazingStory.Stories" />
+    <InternalsVisibleTo Include="BlazingStory.Test" />
   </ItemGroup>
 
   <ItemGroup Condition=" $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '8.0')) ">
@@ -47,6 +48,10 @@
 
   <ItemGroup Condition=" $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '10.0')) ">
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlazingStory.ToolKit\BlazingStory.ToolKit.csproj" />
   </ItemGroup>
 
 </Project>

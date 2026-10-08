@@ -9,8 +9,7 @@ using Toolbelt.Blazor.HotKeys2;
 
 namespace BlazingStory.Internals.Services.Command;
 
-internal class CommandSet<TKey> : IAsyncDisposable, IEnumerable<(TKey Type, Command Command)>
-    where TKey : struct, Enum
+internal class CommandSet : IAsyncDisposable, IEnumerable<(string Key, Command Command)>
 {
     private readonly string _StorageKey;
 
@@ -26,7 +25,7 @@ internal class CommandSet<TKey> : IAsyncDisposable, IEnumerable<(TKey Type, Comm
 
     private HotKeysContext? _HotKeysContext;
 
-    public Command? this[TKey type] => this._Commands[type] as Command;
+    public Command? this[string key] => this._Commands[key] as Command;
 
     internal CommandSet(string storageKey, HotKeys hotKeys, IJSRuntime jsRuntime, ILogger logger)
     {
@@ -36,38 +35,38 @@ internal class CommandSet<TKey> : IAsyncDisposable, IEnumerable<(TKey Type, Comm
         this._Logger = logger;
     }
 
-    internal async ValueTask EnsureInitializedAsync(Func<IEnumerable<(TKey Type, Command Command)>> getCommandEntries)
+    internal async ValueTask EnsureInitializedAsync(Func<IEnumerable<(string Key, Command Command)>> getCommandEntries)
     {
         if (this._Initialized) return;
         this._Initialized = true;
 
-        var commandStates = await this._JSRuntime.LoadObjectFromLocalStorageAsync(this._StorageKey, new Dictionary<TKey, CommandState>());
-        foreach (var (type, command) in getCommandEntries())
+        var commandStates = await this._JSRuntime.LoadObjectFromLocalStorageAsync(this._StorageKey, new Dictionary<string, CommandState>());
+        foreach (var (key, command) in getCommandEntries())
         {
-            if (commandStates.TryGetValue(type, out var state)) state.Apply(command);
+            if (commandStates.TryGetValue(key, out var state)) state.Apply(command);
             command.StateChanged += this.Command_StateChanged;
-            this._Commands.Add(type, command);
+            this._Commands.Add(key, command);
         }
 
         await this.ConfigureHotKeys();
     }
 
-    public IDisposable Subscribe(TKey type, ValueTaskCallback callBack)
+    public IDisposable Subscribe(string key, ValueTaskCallback callBack)
     {
-        if (this[type] is not Command command) throw new KeyNotFoundException();
+        if (this[key] is not Command command) throw new KeyNotFoundException();
         return command.Subscribe(callBack);
     }
 
-    public IDisposable Subscribe(TKey type, ValueTaskCallback<Command> callBack)
+    public IDisposable Subscribe(string key, ValueTaskCallback<Command> callBack)
     {
-        if (this[type] is not Command command) throw new KeyNotFoundException();
+        if (this[key] is not Command command) throw new KeyNotFoundException();
         return command.Subscribe(callBack);
     }
 
     private void Command_StateChanged(object? sender, EventArgs e)
     {
         var commandStates = this._Commands.Keys
-            .Cast<TKey>()
+            .Cast<string>()
             .ToDictionary(key => key, key => new CommandState(this[key]!));
         this._JSRuntime
             .SaveObjectToLocalStorageAsync(this._StorageKey, commandStates)
@@ -80,7 +79,7 @@ internal class CommandSet<TKey> : IAsyncDisposable, IEnumerable<(TKey Type, Comm
     {
         var previousHotKeysContext = this._HotKeysContext;
         this._HotKeysContext = this._HotKeys.CreateContext();
-        foreach (var (type, command) in this)
+        foreach (var (_, command) in this)
         {
             if (command.HotKey != null) this._HotKeysContext.Add(command.HotKey.Modifiers, command.HotKey.Code, command.InvokeAsync);
         }
@@ -89,9 +88,9 @@ internal class CommandSet<TKey> : IAsyncDisposable, IEnumerable<(TKey Type, Comm
 
     IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-    public IEnumerator<(TKey Type, Command Command)> GetEnumerator()
+    public IEnumerator<(string Key, Command Command)> GetEnumerator()
     {
-        return this._Commands.Keys.Cast<TKey>().Select(key => (key, this[key]!)).GetEnumerator();
+        return this._Commands.Keys.Cast<string>().Select(key => (key, this[key]!)).GetEnumerator();
     }
 
     public async ValueTask DisposeAsync()
