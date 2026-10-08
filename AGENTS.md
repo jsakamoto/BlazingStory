@@ -40,7 +40,16 @@ Tests/
   BlazingStory.Build.Test/     - Build-related test project
   Fixtures/                    - Test fixture projects
 build/                         - Custom MSBuild .targets files
+docs/                          - Detailed procedures for agents (see "Task Guides" below)
 ```
+
+## Task Guides
+
+Read the matching document before you start one of these tasks.
+
+| Task | Document |
+|---|---|
+| Preparing a new release (version number, package references, release notes, NuGet packages) | [docs/release-procedure.md](docs/release-procedure.md) |
 
 ## Vendored Third-Party Assets
 
