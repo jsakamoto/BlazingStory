@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Toolbelt.Web.CssClassInlineBuilder</name>
+    </assembly>
+    <members>
+        <member name="T:Toolbelt.Web.CssClassInlineBuilder">
+            <summary>
+            Build CSS class string for "class" attribute dynamically based on boolean switch values.
+            </summary>
+            <summary>
+            Build CSS class string for "class" attribute dynamically based on boolean switch values.
+            </summary>
+        </member>
+        <member name="M:Toolbelt.Web.CssClassInlineBuilder.CssClass(System.Object[])">
+            <summary>
+            Build CSS class string from boolean properties of objects in arguments, from strings in arguments.
+            </summary>
+        </member>
+        <member name="T:Toolbelt.Web.CssClassInlineBuilder.V2">
+            <summary>
+            Build CSS class string for "class" attribute dynamically based on boolean switch values.
+            </summary>
+        </member>
+        <member name="M:Toolbelt.Web.CssClassInlineBuilder.V2.CssClass``1(``0)">
+            <summary>
+            Build CSS class string from boolean properties of objects in arguments, from strings in arguments.
+            </summary>
+        </member>
+        <member name="M:Toolbelt.Web.CssClassInlineBuilder.V2.CssClass``2(``0,``1)">
+            <summary>
+            Build CSS class string from boolean properties of objects in arguments, from strings in arguments.
+            </summary>
+        </member>
+        <member name="M:Toolbelt.Web.CssClassInlineBuilder.V2.CssClass``3(``0,``1,``2)">
+            <summary>
+            Build CSS class string from boolean properties of objects in arguments, from strings in arguments.
+            </summary>
+        </member>
+        <member name="M:Toolbelt.Web.CssClassInlineBuilder.V2.CssClass``4(``0,``1,``2,``3)">
+            <summary>
+            Build CSS class string from boolean properties of objects in arguments, from strings in arguments.
+            </summary>
+        </member>
+    </members>
+</doc>
