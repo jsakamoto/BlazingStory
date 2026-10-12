@@ -16,7 +16,8 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: "10.0.x"
+          dotnet-version: "11.0.x"
+          dotnet-quality: preview
       - name: Install .NET WebAssembly Tools
         run: dotnet workload install wasm-tools
 
@@ -26,7 +27,7 @@ jobs:
 
       # Publish the site
       - name: Publish
-        run: dotnet publish Samples/MyBlazorWasmApp1/MyBlazorWasmApp1.Stories/MyBlazorWasmApp1.Stories.csproj -c Release -o public -p GHPages=true
+        run: dotnet publish Samples/MyBlazorWasmApp1/MyBlazorWasmApp1.Stories/MyBlazorWasmApp1.Stories.csproj -c Release -o public -p GHPages=true -p UseLocalBlazingStory=true
 
       # Deploy the site
       - name: Deploy

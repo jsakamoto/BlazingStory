@@ -13,6 +13,8 @@
 
   <PropertyGroup>
     <PackageVersion>$(Version)</PackageVersion>
+    <!-- SDK 11+ reads $version$ from the nuspec in _GetOutputItemsFromPack, before any GenerateNuspec hook runs. -->
+    <NuspecProperties>version=$(PackageVersion)</NuspecProperties>
   </PropertyGroup>
 
   <Target Name="CheckGitHubCLI">
@@ -52,7 +54,6 @@
     <!-- CONFIGURE NUSPEC PROPERTIES -->
     <PropertyGroup>
       <RepositoryCommit></RepositoryCommit>
-      <NuspecProperties>version=$(PackageVersion)</NuspecProperties>
       <NuspecProperties>copyright=$(Copyright);$(NuspecProperties)</NuspecProperties>
       <NuspecProperties>repositoryUrl=$(RepositoryUrl);$(NuspecProperties)</NuspecProperties>
       <NuspecProperties>releaseNotes=$(PackageReleaseNotes);$(NuspecProperties)</NuspecProperties>

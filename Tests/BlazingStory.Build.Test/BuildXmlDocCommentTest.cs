@@ -8,13 +8,18 @@ namespace BlazingStory.Build.Test;
 [Parallelizable(ParallelScope.Children)]
 internal class BuildXmlDocCommentTest
 {
+    // targetFramework, sdkVersion, allowPrerelease
     public static IEnumerable<object[]> TestCases { get; } = [
         [ 8,  8, false],
         [ 8,  9, false],
-        [ 8, 10, false],
         [ 9,  9, false],
+        [ 8, 10, false],
         [ 9, 10, false],
         [10, 10, false],
+        [ 8, 11, true],
+        [ 9, 11, true],
+        [10, 11, true],
+        [11, 11, true],
     ];
 
     // "dotnet test" can leak these to the test process, which pins child builds to the parent's SDK regardless of global.json.

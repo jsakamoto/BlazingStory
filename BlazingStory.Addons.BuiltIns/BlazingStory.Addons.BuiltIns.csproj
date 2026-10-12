@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;net10.0;net11.0</TargetFrameworks>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <WarningsAsErrors>$(WarningsAsErrors);nullable</WarningsAsErrors>
@@ -52,6 +52,10 @@
 
   <ItemGroup Condition=" $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '10.0')) ">
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '11.0')) ">
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="11.0.0-rc.1.*" />
   </ItemGroup>
 
   <ItemGroup>

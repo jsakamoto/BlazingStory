@@ -29,7 +29,7 @@ if (!app.Environment.IsDevelopment())
 #if (Framework == "net9.0")
 app.UseStatusCodePagesWithReExecute("/not-found");
 #endif
-#if (Framework == "net10.0")
+#if (Framework == "net10.0" || Framework == "net11.0")
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 #endif
 #if (!NoHttps)
