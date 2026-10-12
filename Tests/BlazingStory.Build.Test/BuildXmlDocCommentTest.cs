@@ -17,7 +17,16 @@ internal class BuildXmlDocCommentTest
         [10, 10, false],
     ];
 
-    private static void ConfigureXProcessOptions(XProcessOptions options) => options.WhenDisposing = XProcessTerminate.EntireProcessTree;
+    // "dotnet test" can leak these to the test process, which pins child builds to the parent's SDK regardless of global.json.
+    private static readonly string[] _VariablesToClear = ["MSBuildSDKsPath", "MSBuildExtensionsPath", "MSBUILD_EXE_PATH", "DOTNET_HOST_PATH"];
+
+    private static void ConfigureXProcessOptions(XProcessOptions options)
+    {
+        options.WhenDisposing = XProcessTerminate.EntireProcessTree;
+
+        // A null value removes the variable from the child process environment.
+        foreach (var name in _VariablesToClear) options.EnvironmentVariables[name] = null!;
+    }
 
     private static async ValueTask<TestFixtureSpace> CreateTestFixtureSpace(int targetFramework, int sdkVersion, bool allowPrerelease, string projectName)
     {
