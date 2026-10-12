@@ -5,6 +5,16 @@
   <Import Project="$(MSBuildThisFileDirectory)CustomTasks\_BS_FilterAndRebaseStaticWebAssetEndPoints.targets" />
   <Import Project="$(MSBuildThisFileDirectory)CustomTasks\_BS_FilterAppProjectItems.targets" />
 
+  <!--
+  *** FOR PUBLISH - Keep referenced projects out of the Wasm nested publish ***
+  * On Blazor WebAssembly projects
+    With .NET SDK 11, a referenced app project built with these properties fails with
+    error MSB4018: The "ApplyCompressionNegotiation" task failed unexpectedly. Endpoints not found for related asset: ...\webcil\*.wasm
+  -->
+  <PropertyGroup Condition=" '$(WasmBuildingForNestedPublish)' == 'true' ">
+    <_GlobalPropertiesToRemoveFromProjectReferences>$(_GlobalPropertiesToRemoveFromProjectReferences);WasmBuildingForNestedPublish;_WasmIsPublishing;_WasmInNestedPublish_UniqueProperty_XYZ</_GlobalPropertiesToRemoveFromProjectReferences>
+  </PropertyGroup>
+
   <!-- IDENTIFY APPLICATION PROJECTS REFERENCED FROM THIS PROJECT -->
   <Target Name="_BS_ResolveReferencedAppProject">
     <_BS_FilterAppProjectItems ReferencedProjects="@(_MSBuildProjectReferenceExistent)">
