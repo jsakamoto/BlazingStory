@@ -51,6 +51,26 @@ Read the matching document before you start one of these tasks.
 |---|---|
 | Preparing a new release (version number, package references, release notes, NuGet packages) | [docs/release-procedure.md](docs/release-procedure.md) |
 
+## Coding Guidelines
+
+### Keep the code small
+
+Blazing Story apps often run on Blazor WebAssembly. There, every line of library code adds to
+the download size of the first page load. Prefer a small change to the existing code over a new
+class or a general-purpose helper. For example, the fix for issue #138 is a few lines inside
+`XmlDocCommentBase.GetInnerText`, not a new class of over 100 lines.
+
+### IL trimming warnings on reflected types
+
+The libraries set `<IsTrimmable>true</IsTrimmable>`. Some `TypeUtility` methods, such as
+`GetTypeDisplayText`, have `[DynamicallyAccessedMembers]` on their `Type` parameter. If you pass
+a type that you get by reflection at run time (for example from `Type.BaseType` or
+`TypeUtility.GetOpenType`), the analyzer reports IL2072. It is fine to suppress it with
+`#pragma warning disable/restore IL2072`. The trimmer cannot track such a type, so the
+annotation keeps no extra members and does not make the app bigger. Just make sure the method
+does not need those members for the types you pass. For example, `GetTypeDisplayText` only reads
+names when you pass a generic type definition.
+
 ## Vendored Third-Party Assets
 
 Some third-party assets are committed directly into the repository instead of being
