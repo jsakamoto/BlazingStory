@@ -16,16 +16,7 @@ internal abstract class XmlDocCommentBase : IXmlDocComment
     /// <param name="propertyName">Name of the property.</param>
     public async ValueTask<MarkupString> GetSummaryOfPropertyAsync(Type ownerType, string propertyName)
     {
-        var xdocComment = await this.GetXmlDocCommentXDocAsync(ownerType);
-        if (xdocComment == null) return default;
-
-        var memberName = $"P:{ownerType.Namespace}.{ownerType.Name}.{propertyName}";
-        return xdocComment
-            .Descendants("member")
-            .Where(member => member.Attribute("name")?.Value == memberName)
-            .SelectMany(member => member.Descendants("summary"))
-            .Select(summary => GetInnerText(summary, ownerType))
-            .FirstOrDefault();
+        return await this.GetSummaryAsync(ownerType, $"P:{ownerType.Namespace}.{ownerType.Name}.{propertyName}");
     }
 
     /// <summary>
@@ -34,12 +25,15 @@ internal abstract class XmlDocCommentBase : IXmlDocComment
     /// <param name="componentType">Type for getting summary text.</param>
     public async ValueTask<MarkupString> GetSummaryOfTypeAsync(Type componentType)
     {
+        var componentOpenType = TypeUtility.GetOpenType(componentType);
+        return await this.GetSummaryAsync(componentType, $"T:{componentOpenType.FullName}");
+    }
+
+    private async ValueTask<MarkupString> GetSummaryAsync(Type componentType, string memberName)
+    {
         var xdocComment = await this.GetXmlDocCommentXDocAsync(componentType);
         if (xdocComment == null) return default;
 
-        var componentOpenType = TypeUtility.GetOpenType(componentType);
-
-        var memberName = $"T:{componentOpenType.FullName}";
         return xdocComment
             .Descendants("member")
             .Where(member => member.Attribute("name")?.Value == memberName)
