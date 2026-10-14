@@ -1,6 +1,5 @@
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
-using System.Xml;
 using System.Xml.Linq;
 using BlazingStory.ToolKit.Utils;
 using Microsoft.AspNetCore.Components;
@@ -62,7 +61,9 @@ internal abstract class XmlDocCommentBase : IXmlDocComment
                 for (var type = ownerType; type != null; type = type.BaseType)
                 {
                     var openType = TypeUtility.GetOpenType(type);
-                    if (openType.Name == m.Value) return $"{m.Groups[1]}<{string.Join(", ", openType.GetGenericArguments().Select(t => t.Name))}>";
+#pragma warning disable IL2072 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
+                    if (openType.Name == m.Value) return TypeUtility.GetTypeDisplayText(openType).First();
+#pragma warning restore IL2072 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
                 }
                 return m.Groups[1].Value;
             });
@@ -73,19 +74,15 @@ internal abstract class XmlDocCommentBase : IXmlDocComment
             .Nodes()
             .Select(node => node switch
             {
-                XElement e => e.NodeType switch
+                XElement e => e.Name.LocalName switch
                 {
-                    XmlNodeType.Element => e.Name.LocalName switch
-                    {
-                        "see" => e.Attribute("href") != null ?
-                            $"<a href=\"{e.Attribute("href")?.Value}\" target=\"_blank\">{e.Value}</a>" :
-                            e.Attribute("langword") is { } langword ? encode(langword.Value) :
-                            getAttrText(e, "cref"),
-                        "paramref" => getAttrText(e, "name"),
-                        "typeparamref" => getAttrText(e, "name"),
-                        _ => GetInnerText(e, ownerType).Value
-                    },
-                    _ => encode(e.Value)
+                    "see" => e.Attribute("href") != null ?
+                        $"<a href=\"{e.Attribute("href")?.Value}\" target=\"_blank\">{e.Value}</a>" :
+                        e.Attribute("langword") is { } langword ? encode(langword.Value) :
+                        getAttrText(e, "cref"),
+                    "paramref" => getAttrText(e, "name"),
+                    "typeparamref" => getAttrText(e, "name"),
+                    _ => GetInnerText(e, ownerType).Value
                 },
                 _ => encode(node.ToString())
             })
