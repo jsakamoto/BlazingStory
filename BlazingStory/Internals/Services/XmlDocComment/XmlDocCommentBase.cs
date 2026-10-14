@@ -24,7 +24,7 @@ internal abstract class XmlDocCommentBase : IXmlDocComment
             .Descendants("member")
             .Where(member => member.Attribute("name")?.Value == memberName)
             .SelectMany(member => member.Descendants("summary"))
-            .Select(summary => GetInnerText(summary))
+            .Select(summary => GetInnerText(summary, ownerType))
             .FirstOrDefault();
     }
 
@@ -44,7 +44,7 @@ internal abstract class XmlDocCommentBase : IXmlDocComment
             .Descendants("member")
             .Where(member => member.Attribute("name")?.Value == memberName)
             .SelectMany(member => member.Descendants("summary"))
-            .Select(summary => GetInnerText(summary))
+            .Select(summary => GetInnerText(summary, componentType))
             .FirstOrDefault();
     }
 
@@ -54,14 +54,25 @@ internal abstract class XmlDocCommentBase : IXmlDocComment
     /// Get inner text of a XML document comment element.<br/>
     /// (e.g. <c>See also &lt;see cref="F:Foo.Bar.Fizz.Buzz"/&gt;</c> =&gt; <c>See also "Fizz.Buzz".</c>))
     /// </summary>
-    private static MarkupString GetInnerText(XElement element)
+    private static MarkupString GetInnerText(XElement element, Type ownerType)
     {
         static string encode(string? text) => HtmlEncoder.Default.Encode(text ?? "");
 
-        static string getAttrText(XElement element, string attrName)
+        string getAttrText(XElement element, string attrName)
         {
             var attrValue = element.Attribute(attrName)?.Value ?? "";
-            return "\"" + encode(string.Join('.', attrValue.Split('.').TakeLast(2))) + "\"";
+            var text = string.Join('.', Regex.Replace(attrValue, "^.:|\\(.*", "").Split('.').TakeLast(attrValue.StartsWith("T:") ? 1 : 2));
+            // The XML file keeps only the arity of a generic type (e.g. "MySelect`2"), so names are known only for the owner type and its bases.
+            text = Regex.Replace(text, "(\\w+)`+\\d+", m =>
+            {
+                for (var type = ownerType; type != null; type = type.BaseType)
+                {
+                    var openType = TypeUtility.GetOpenType(type);
+                    if (openType.Name == m.Value) return $"{m.Groups[1]}<{string.Join(", ", openType.GetGenericArguments().Select(t => t.Name))}>";
+                }
+                return m.Groups[1].Value;
+            });
+            return "\"" + encode(text) + "\"";
         }
 
         var innerText = string.Concat(element
@@ -74,10 +85,11 @@ internal abstract class XmlDocCommentBase : IXmlDocComment
                     {
                         "see" => e.Attribute("href") != null ?
                             $"<a href=\"{e.Attribute("href")?.Value}\" target=\"_blank\">{e.Value}</a>" :
+                            e.Attribute("langword") is { } langword ? encode(langword.Value) :
                             getAttrText(e, "cref"),
                         "paramref" => getAttrText(e, "name"),
                         "typeparamref" => getAttrText(e, "name"),
-                        _ => encode(e.Value)
+                        _ => GetInnerText(e, ownerType).Value
                     },
                     _ => encode(e.Value)
                 },
