@@ -35,6 +35,10 @@ internal class XmlDocCommentForWasmTest
     [TestCase(nameof(MySelect<string, int>.Items), "The items to select from, keyed by \"Dictionary\".")]
     // An element nested inside another element, such as this "see" inside a "para", must not be dropped.
     [TestCase(nameof(MySelect<string, int>.Placeholder), "The placeholder text. Set null to hide it.")]
+    [TestCase(nameof(MySelect<string, int>.ReadOnly), "Ignored if \"MySelectBase&lt;TItem&gt;.Disabled\" is true.")]
+    [TestCase(nameof(MySelect<string, int>.Label), "A \"String\" shown above the \"MySelect&lt;TKey, TValue&gt;\".")]
+    [TestCase(nameof(MySelect<string, int>.SelectedKey), "Updated by \"MySelect&lt;TKey, TValue&gt;.Select\", \"MySelect&lt;TKey, TValue&gt;.Convert\" and \"MySelect&lt;TKey, TValue&gt;.op_Explicit\".")]
+    [TestCase(nameof(MySelect<string, int>.SortBy), "Sorted by \"NoSuchMember\" or \"Dictionary&lt;string, int&gt;\".")]
     public async Task GetSummaryOfProperty_OnGenericComponent_Test(string propertyName, string expected)
     {
         // Given
