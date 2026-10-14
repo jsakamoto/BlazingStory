@@ -49,8 +49,8 @@
   </ItemGroup>
 
   <ItemGroup Condition=" $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '11.0')) ">
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="11.0.0-rc.1.*" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="11.0.0-rc.1.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="11.0.0-rc.2.*" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="11.0.0-rc.2.*" />
   </ItemGroup>
 
   <ItemGroup>

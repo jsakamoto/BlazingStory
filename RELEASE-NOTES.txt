@@ -1,3 +1,8 @@
+v.1.0.0-preview.94
+- Feature: Added support for .NET 11 (Release Candidate). The project templates can now create projects that target .NET 11.
+- Fix: Resolved an issue where publishing a Blazing Story app for Blazor WebAssembly failed with the .NET 11 SDK.
+- Fix: Resolved an issue where component and parameter descriptions dropped keywords written with `<see langword="..."/>`, and showed references to generic types in an unreadable form instead of names such as `MySelect<TKey, TValue>`. (Issue #138, PR #139 contributed by @warnaa)
+
 v.1.0.0-preview.93
 - Improve: The Contributors section on the About page now fades in once the contributor avatars have loaded, instead of showing the avatars popping in one by one.
 - Fix: Resolved an issue where the accessibility panel showed no results in Blazor WebAssembly apps published with `dotnet publish`.
