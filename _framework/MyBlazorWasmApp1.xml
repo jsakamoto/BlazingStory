@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MyBlazorWasmApp1</name>
+    </assembly>
+    <members>
+        <member name="T:MyBlazorWasmApp1.Components.Button">
+            <summary>
+            This is basic button component.
+            </summary>
+        </member>
+        <member name="P:MyBlazorWasmApp1.Components.Button.Primary">
+            <summary>
+            Is this the principal call to action on the page?
+            </summary>
+        </member>
+        <member name="P:MyBlazorWasmApp1.Components.Button.BackgroundColor">
+            <summary>
+            What background color to use
+            </summary>
+        </member>
+        <member name="P:MyBlazorWasmApp1.Components.Button.Size">
+            <summary>
+            How large should the button be?
+            </summary>
+        </member>
+        <member name="P:MyBlazorWasmApp1.Components.Button.ChildContent">
+            <summary>
+            Button contents
+            </summary>
+        </member>
+        <member name="P:MyBlazorWasmApp1.Components.Button.OnClick">
+            <summary>
+            Optional click handler
+            </summary>
+        </member>
+        <member name="T:MyBlazorWasmApp1.Components.ButtonSize">
+            <summary>
+            Represents the size of a button.
+            </summary>
+        </member>
+        <member name="F:MyBlazorWasmApp1.Components.ButtonSize.Small">
+            <summary>
+            Small button size.
+            </summary>
+        </member>
+        <member name="F:MyBlazorWasmApp1.Components.ButtonSize.Medium">
+            <summary>
+            Medium button size.
+            </summary>
+        </member>
+        <member name="F:MyBlazorWasmApp1.Components.ButtonSize.Large">
+            <summary>
+            Large button size.
+            </summary>
+        </member>
+        <member name="T:MyBlazorWasmApp1.Components.Header">
+            <summary>
+            Renders the application header for the Acme UI, including the product logo, title,
+            and authentication actions (Log in, Log out, Sign up).
+            </summary>
+        </member>
+        <member name="T:MyBlazorWasmApp1.Components.Rating">
+            <summary>
+            The rating component helps gather user feedback on products/services.
+            </summary>
+        </member>
+        <member name="P:MyBlazorWasmApp1.Components.Rating.Value">
+            <summary>
+            Gets or sets the rating value.
+            </summary>
+        </member>
+        <member name="P:MyBlazorWasmApp1.Components.Rating.Max">
+            <summary>
+            Gets or sets the maximum rating value.
+            </summary>
+        </member>
+        <member name="P:MyBlazorWasmApp1.Components.Rating.Color">
+            <summary>
+            Gets or sets the color of the rating mark.
+            </summary>
+        </member>
+        <member name="T:MyBlazorWasmApp1.Models.IUser">
+            <summary>
+            Represents the minimal user contract exposed to Blazor components and services.
+            </summary>
+        </member>
+        <member name="P:MyBlazorWasmApp1.Models.IUser.Name">
+            <summary>
+            Gets or sets the display name of the user.
+            </summary>
+        </member>
+    </members>
+</doc>
