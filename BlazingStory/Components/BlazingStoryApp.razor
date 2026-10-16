@@ -72,6 +72,8 @@
         <CascadingValue Value="this._StoriesStore">
             <CascadingValue Value="this._CustomPageStore">
                 <CascadingValue Value="this">
+                    <CascadingValue Name="AvailableColorSchemes" Value="@this.AvailableColorSchemes.ToString()">
+                        <CascadingValue Name="ApplyColorSchemePreference" Value="(Func<string, ValueTask>)this.ApplyColorSchemePreferenceAsync">
 
                     @{
 #pragma warning disable IL2111
@@ -96,6 +98,8 @@
                     @{
 #pragma warning restore IL2111
                     }
+                        </CascadingValue>
+                    </CascadingValue>
 
                 </CascadingValue>
             </CascadingValue>
@@ -244,6 +248,7 @@
 
     private void ConfigureAddons(IAddonStore addons)
     {
+        addons.Register<BlazingStory.Addons.BuiltIns.Toolbar.Theme.ThemeAddon>();
         addons.Register<BlazingStory.Addons.BuiltIns.Toolbar.Grid.GridAddon>();
         addons.Register<BlazingStory.Addons.BuiltIns.Toolbar.Background.BackgroundAddon>();
         addons.Register<BlazingStory.Addons.BuiltIns.Toolbar.Measure.MeasureAddon>();
@@ -340,6 +345,16 @@
                 _ => throw new InvalidOperationException($"The {nameof(this.AvailableColorSchemes)} is invalid."),
             };
         }
+    }
+
+    private async ValueTask ApplyColorSchemePreferenceAsync(string colorScheme)
+    {
+        if (this.AvailableColorSchemes != AvailableColorSchemes.Both) return;
+        if (colorScheme is not ("system" or "light" or "dark")) return;
+
+        await JSRuntime.SetLocalStorageItemAsync("ColorScheme", colorScheme);
+        await this.UpdatePreferesColorSchemeAsync();
+        this.StateHasChanged();
     }
 
     [JSInvokable, EditorBrowsable(EditorBrowsableState.Never)]
