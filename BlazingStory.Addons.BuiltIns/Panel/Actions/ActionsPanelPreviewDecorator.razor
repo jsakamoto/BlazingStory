@@ -15,6 +15,16 @@
 
     private IStory? _PrevStory;
 
+    /// <summary>
+    /// Whether JavaScript interop is available. It becomes true at the first OnAfterRender, which is never invoked during server-side prerendering.
+    /// </summary>
+    private bool _JSInteropAvailable = false;
+
+    /// <summary>
+    /// The actions raised before JavaScript interop became available, to be dispatched at the first OnAfterRender.
+    /// </summary>
+    private readonly List<(string Name, string ArgsJson)> _PendingActions = [];
+
     public ActionsPanelPreviewDecorator()
     {
         this._JSModule = JSModuleFactory.Create(() => this.JSRuntime, "Panel/Actions/ActionsPanelPreviewDecorator.razor.js");
@@ -28,6 +38,19 @@
         this._PrevStory = this.Story;
         if (this.Story is not null) this.Story.Context.ArgumentsReset += WireUpEventMonitorsAsync;
         await this.WireUpEventMonitorsAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        this._JSInteropAvailable = true;
+        var pendingActions = this._PendingActions.ToArray();
+        this._PendingActions.Clear();
+        foreach (var (name, argsJson) in pendingActions)
+        {
+            await this.DispatchComponentActionEventAsync(name, argsJson);
+        }
     }
 
     private async ValueTask WireUpEventMonitorsAsync()
@@ -68,7 +91,21 @@
 
     private async Task EventVoidMonitorHandler(string name)
     {
-        await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, "void");
+        await this.DispatchComponentActionEventAsync(name, "void");
+    }
+
+    /// <summary>
+    /// Dispatches the action event to the Actions panel. If JavaScript interop is not available yet, for example when a component
+    /// raises an event callback during server-side prerendering, the action is kept and dispatched once it becomes available.
+    /// </summary>
+    private async ValueTask DispatchComponentActionEventAsync(string name, string argsJson)
+    {
+        if (!this._JSInteropAvailable)
+        {
+            this._PendingActions.Add((name, argsJson));
+            return;
+        }
+        await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, argsJson);
     }
 
     /// <summary>
@@ -79,7 +116,7 @@
     internal async Task EventTArgMonitorHandler<[DynamicallyAccessedMembers(PublicProperties)] TArgs>(string name, TArgs eventArgs)
     {
         var json = JsonFallbackSerializer.Serialize(eventArgs);
-        await _JSModule.InvokeVoidAsync("dispatchComponentActionEvent", name, json);
+        await this.DispatchComponentActionEventAsync(name, json);
     }
 
     private static readonly Lazy<MethodInfo> _EventTArgMonitorHandlerMethod = new(() => typeof(ActionsPanelPreviewDecorator).GetMethod(nameof(EventTArgMonitorHandler), BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new InvalidOperationException());
