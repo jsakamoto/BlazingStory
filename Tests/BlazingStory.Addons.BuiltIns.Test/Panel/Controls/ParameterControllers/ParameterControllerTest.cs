@@ -178,10 +178,52 @@ public class ParameterControllerTest
         capturedContext.OnInput.IsNotNull("Context OnInput callback should be set");
     }
 
+    /// <summary>
+    /// Verifies that a parameter whose control type is None shows its value as text, without any editing UI.
+    /// </summary>
+    [Test]
+    public void ParameterController_RenderValueAsTextWithoutEditor_WhenControlTypeIsNone()
+    {
+        // Given
+        using var ctx = new BunitContext();
+        var parameter = CreateMockParameter(primaryType: typeof(string), control: ControlType.None);
+
+        // When
+        var cut = ctx.Render<ParameterController>(builder => builder
+            .Add(c => c.Key, "test-key")
+            .Add(c => c.Parameter, parameter)
+            .Add(c => c.Value, "test-value"));
+
+        // Then
+        cut.Markup.Normalize().Is("<span>test-value</span>");
+        cut.FindAll("input, textarea, select").Count.Is(0);
+    }
+
+    /// <summary>
+    /// Verifies that a parameter whose control type is None shows a hyphen when it has no displayable value.
+    /// </summary>
+    [Test]
+    public void ParameterController_RenderHyphen_WhenControlTypeIsNoneAndValueIsNull()
+    {
+        // Given
+        using var ctx = new BunitContext();
+        var parameter = CreateMockParameter(primaryType: typeof(string), control: ControlType.None);
+
+        // When
+        var cut = ctx.Render<ParameterController>(builder => builder
+            .Add(c => c.Key, "test-key")
+            .Add(c => c.Parameter, parameter)
+            .Add(c => c.Value, null));
+
+        // Then
+        cut.Markup.Normalize().Is("<span>-</span>");
+    }
+
     // Helper method to create a mock IComponentParameter
     private static IComponentParameter CreateMockParameter(
         Type? primaryType = null,
-        RenderFragment? userControllerFragment = null)
+        RenderFragment? userControllerFragment = null,
+        ControlType control = ControlType.Default)
     {
         primaryType ??= typeof(string);
 
@@ -191,7 +233,7 @@ public class ParameterControllerTest
         parameter.Name.Returns("TestParameter");
         parameter.Type.Returns(primaryType);
         parameter.TypeStructure.Returns(typeStructure);
-        parameter.Control.Returns(ControlType.Default);
+        parameter.Control.Returns(control);
         parameter.UserControllerFragment.Returns(userControllerFragment);
         parameter.Summary.Returns(new MarkupString("Test parameter summary"));
         parameter.Required.Returns(false);
