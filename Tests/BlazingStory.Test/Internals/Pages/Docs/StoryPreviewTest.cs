@@ -30,7 +30,7 @@ internal class StoryPreviewTest
     {
         // Given
         using var ctx = CreateContext();
-        var story = TestHelper.CreateStory<Button>();
+        var story = TestHelper.CreateStory<Button>(title: "Examples/Button", name: "Primary");
 
         // When
         var cut = ctx.Render<StoryPreview>(parameters => parameters
@@ -38,7 +38,10 @@ internal class StoryPreviewTest
             .Add(p => p.EnableZoom, true));
 
         // Then
-        cut.FindAll("[title='Open canvas in new tab']").Count.Is(1);
+        // BasicButton renders a <button>, not an <a>, when its Href is empty.
+        var link = cut.Find("a[title='Open canvas in new tab']");
+        link.GetAttribute("href").Is("./iframe.html?viewMode=story&id=examples-button--primary&args=&globals=");
+        link.GetAttribute("target").Is("_blank");
     }
 
     [Test]
