@@ -4,6 +4,7 @@ using BlazingStory.McpServer.Internals;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using ModelContextProtocol.AspNetCore;
 using ModelContextProtocol.Server;
 
 namespace BlazingStory.McpServer;
@@ -18,15 +19,29 @@ public static class McpServerExtensions
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add the server to.</param>
     /// <param name="configureMcpServerOptions">An optional action to configure the <see cref="McpServerOptions"/> for the MCP server.</param>
+    /// <param name="configureHttpServerTransportOptions">
+    /// An optional action to configure the <see cref="HttpServerTransportOptions"/> for the MCP server.
+    /// Blazing Story's tools are stateless request/response lookups, so the transport defaults to
+    /// <see cref="HttpServerSessionMode.Stateless"/>. Use this to opt into
+    /// <see cref="HttpServerSessionMode.StatefulForInitializeClients"/> if you need to serve MCP clients that
+    /// still require a session from the legacy "initialize" handshake.
+    /// </param>
     /// <returns>An <see cref="IMcpServerBuilder"/> that can be used to further configure the MCP server.</returns>
-    public static IMcpServerBuilder AddBlazingStoryMcpServer(this IServiceCollection services, Action<McpServerOptions>? configureMcpServerOptions = null)
+    public static IMcpServerBuilder AddBlazingStoryMcpServer(
+        this IServiceCollection services,
+        Action<McpServerOptions>? configureMcpServerOptions = null,
+        Action<HttpServerTransportOptions>? configureHttpServerTransportOptions = null)
     {
         services.AddScoped((_) => new StoriesStore());
         services.AddScoped((_) => new CustomPageStore());
         services.AddSingleton<CustomPageContentCache>();
         return services
             .AddMcpServer(options => configureMcpServerOptions?.Invoke(options))
-            .WithHttpTransport(options => { })
+            .WithHttpTransport(options =>
+            {
+                options.SessionMode = HttpServerSessionMode.Stateless;
+                configureHttpServerTransportOptions?.Invoke(options);
+            })
             .WithTools<StoriesTool>()
             .WithTools<CustomPagesTool>();
     }

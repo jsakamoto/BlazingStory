@@ -24,6 +24,7 @@
   <Folder Name="/Tests/">
     <Project Path="Tests/BlazingStory.Addons.BuiltIns.Test/BlazingStory.Addons.BuiltIns.Test.csproj" />
     <Project Path="Tests/BlazingStory.Build.Test/BlazingStory.Build.Test.csproj" />
+    <Project Path="Tests/BlazingStory.McpServer.Test/BlazingStory.McpServer.Test.csproj" />
     <Project Path="Tests/BlazingStory.Test.Shared/BlazingStory.Test.Shared.csproj" />
     <Project Path="Tests/BlazingStory.Test/BlazingStory.Test.csproj" />
   </Folder>
@@ -31,6 +32,7 @@
     <Project Path="Tests/Fixtures/BlazingStoryApp1/BlazingStoryApp1.csproj" />
     <Project Path="Tests/Fixtures/BlazingStoryApp2/BlazingStoryApp2.csproj" />
     <Project Path="Tests/Fixtures/BlazingStoryApp3/BlazingStoryApp3.csproj" />
+    <Project Path="Tests/Fixtures/BlazingStoryMcpApp1/BlazingStoryMcpApp1.csproj" />
     <Project Path="Tests/Fixtures/ComponentPack1/ComponentPack1.csproj" />
     <Project Path="Tests/Fixtures/EmptyBlazorServerApp1/EmptyBlazorServerApp1.csproj" />
     <Project Path="Tests/Fixtures/EmptyBlazorWasmApp1/EmptyBlazorWasmApp1.csproj" />

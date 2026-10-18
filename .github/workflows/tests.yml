@@ -37,3 +37,8 @@ jobs:
       - name: Invoke built-in addons tests
         working-directory: ./Tests/BlazingStory.Addons.BuiltIns.Test
         run: dotnet test --output detailed
+
+      # Invoke tests for the MCP server
+      - name: Invoke MCP server tests
+        working-directory: ./Tests/BlazingStory.McpServer.Test
+        run: dotnet test --output detailed

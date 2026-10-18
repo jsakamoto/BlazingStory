@@ -1,0 +1,37 @@
+﻿@attribute [Stories("Components/AlertBox")]
+
+<Stories TComponent="AlertBox">
+    <ArgType For="_ => _.Severity" Control="ControlType.Select" />
+
+    <Story Name="Info">
+        <Description>
+            The default, neutral alert. Use it for informational messages that do not require the user to act.
+        </Description>
+        <Arguments>
+            <Arg For="_ => _.Title" Value="@("Heads up")" />
+            <Arg For="_ => _.ChildContent" Value="_AlertContent" />
+        </Arguments>
+        <Template>
+            <AlertBox @attributes="context.Args" />
+        </Template>
+    </Story>
+
+    <Story Name="Warning">
+        <Description>
+            A warning alert. Use it when something needs the user's attention but is not yet a failure.
+        </Description>
+        <Arguments>
+            <Arg For="_ => _.Title" Value="@("Careful")" />
+            <Arg For="_ => _.Severity" Value="AlertSeverity.Warning" />
+            <Arg For="_ => _.ChildContent" Value="_AlertContent" />
+        </Arguments>
+        <Template>
+            <AlertBox @attributes="context.Args" />
+        </Template>
+    </Story>
+</Stories>
+
+@code
+{
+    private RenderFragment _AlertContent = @<text>Something happened.</text>;
+}
