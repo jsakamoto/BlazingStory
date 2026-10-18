@@ -1,0 +1,266 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Extensions.Validation</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Extensions.Validation.IValidatableInfoResolver">
+            <summary>
+            Provides an interface for resolving the validation information associated
+            with a given <seealso cref="T:System.Type"/> or <seealso cref="T:System.Reflection.ParameterInfo"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.Validation.IValidatableInfoResolver.TryGetValidatableTypeInfo(System.Type,Microsoft.Extensions.Validation.IValidatableTypeInfo@)">
+            <summary>
+            Gets validation information for the specified type.
+            </summary>
+            <param name="type">The type to get validation information for.</param>
+            <param name="validatableTypeInfo">
+            When this method returns, contains the validatable information if found.
+            </param>
+            <returns><see langword="true" /> if the validatable type information was found; otherwise, <see langword="false" />.</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.Validation.IValidatableInfoResolver.TryGetValidatableParameterInfo(System.Reflection.ParameterInfo,Microsoft.Extensions.Validation.IValidatableParameterInfo@)">
+            <summary>
+            Gets validation information for the specified parameter.
+            </summary>
+            <param name="parameterInfo">The parameter to get validation information for.</param>
+            <param name="validatableParameterInfo">When this method returns, contains the validatable information if found.</param>
+            <returns><see langword="true" /> if the validatable parameter information was found; otherwise, <see langword="false" />.</returns>
+        </member>
+        <member name="T:Microsoft.Extensions.Validation.IValidatableParameterInfo">
+            <summary>
+            Represents an interface for validating a value of a parameter.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.Validation.IValidatableParameterInfo.Validate(System.Object,Microsoft.Extensions.Validation.ValidateContext)">
+            <summary>
+            Validates the specified <paramref name="value"/>.
+            </summary>
+            <param name="value">The value to validate.</param>
+            <param name="context">The validation context.</param>
+        </member>
+        <member name="M:Microsoft.Extensions.Validation.IValidatableParameterInfo.ValidateAsync(System.Object,Microsoft.Extensions.Validation.ValidateContext,System.Threading.CancellationToken)">
+            <summary>
+            Validates the specified <paramref name="value"/>.
+            </summary>
+            <param name="value">The value to validate.</param>
+            <param name="context">The validation context.</param>
+            <param name="cancellationToken">A cancellation token to support cancellation of the validation.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+        </member>
+        <member name="T:Microsoft.Extensions.Validation.IValidatablePropertyInfo">
+            <summary>
+            Represents an interface for validating a property.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.Validation.IValidatablePropertyInfo.Validate(System.Object,Microsoft.Extensions.Validation.ValidateContext)">
+            <summary>
+            Validates the property on a given object.
+            </summary>
+            <param name="containingObject">The object that contains the property to validate.</param>
+            <param name="context">The validation context.</param>
+        </member>
+        <member name="M:Microsoft.Extensions.Validation.IValidatablePropertyInfo.ValidateAsync(System.Object,Microsoft.Extensions.Validation.ValidateContext,System.Threading.CancellationToken)">
+            <summary>
+            Validates the property on a given object.
+            </summary>
+            <param name="containingObject">The object that contains the property to validate.</param>
+            <param name="context">The validation context.</param>
+            <param name="cancellationToken">A cancellation token to support cancellation of the validation.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+        </member>
+        <member name="T:Microsoft.Extensions.Validation.IValidatableTypeInfo">
+            <summary>
+            Represents an interface for validating a value of a type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.Validation.IValidatableTypeInfo.Validate(System.Object,Microsoft.Extensions.Validation.ValidateContext)">
+            <summary>
+            Validates the specified <paramref name="value"/>.
+            </summary>
+            <param name="value">The value to validate.</param>
+            <param name="context">The validation context.</param>
+        </member>
+        <member name="M:Microsoft.Extensions.Validation.IValidatableTypeInfo.ValidateAsync(System.Object,Microsoft.Extensions.Validation.ValidateContext,System.Threading.CancellationToken)">
+            <summary>
+            Validates the specified <paramref name="value"/>.
+            </summary>
+            <param name="value">The value to validate.</param>
+            <param name="context">The validation context.</param>
+            <param name="cancellationToken">A cancellation token to support cancellation of the validation.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.Validation.IValidatableTypeInfo.TryFindProperty(System.String,Microsoft.Extensions.Validation.ValidationOptions,Microsoft.Extensions.Validation.IValidatablePropertyInfo@)">
+            <summary>
+            Retrieves the validatable property info for the specified property name.
+            </summary>
+            <param name="propertyName">The name of the property to find its validatable property info.</param>
+            <param name="validationOptions">The validation options.</param>
+            <param name="validatablePropertyInfo">The validatable property info, or null if not found.</param>
+            <returns>True if the property is found. Otherwise, false.</returns>
+        </member>
+        <member name="T:Microsoft.Extensions.Validation.SkipValidationAttribute">
+            <summary>
+            Indicates that a property, parameter, or type should not be validated.
+            </summary>
+            <remarks>
+            When applied to a property, validation is skipped for that property.
+            When applied to a parameter, validation is skipped for that parameter.
+            When applied to a type, validation is skipped for all properties and parameters of that type.
+            This includes skipping validation of nested properties for complex types.
+            </remarks>
+        </member>
+        <member name="T:Microsoft.Extensions.Validation.ValidatableTypeAttribute">
+            <summary>
+            Indicates that a type is validatable to support discovery by the
+            validations generator.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Extensions.Validation.ValidateContext">
+            <summary>
+            Represents the context for validating a validatable object.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.Validation.ValidateContext.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.Extensions.Validation.ValidateContext"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Extensions.Validation.ValidateContext.ServiceProvider">
+            <summary>
+            Gets or sets the service provider. This will also be made available on the <see cref="T:System.ComponentModel.DataAnnotations.ValidationContext"/> instances.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Extensions.Validation.ValidateContext.CurrentValidationPath">
+            <summary>
+            Gets or sets the prefix used to identify the current object being validated in a complex object graph.
+            </summary>
+            <remarks>
+            This prefix is used to build property paths in validation error messages (for example, "Customer.Address.Street").
+            </remarks>
+        </member>
+        <member name="P:Microsoft.Extensions.Validation.ValidateContext.ValidationOptions">
+            <summary>
+            Gets or sets the validation options that control validation behavior,
+            including validation depth limits and resolver registration.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Extensions.Validation.ValidateContext.ValidationErrors">
+            <summary>
+            Gets the dictionary of validation errors collected during validation.
+            </summary>
+            <remarks>
+            Keys are property names or paths, and values are the collection of validation errors reported for that path.
+            There are no guarantees whether or not this dictionary is lazy. Usages should treat null and empty dictionary the same.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.Extensions.Validation.ValidateContext.CurrentDepth">
+            <summary>
+            Gets or sets the current depth in the validation hierarchy.
+            </summary>
+            <remarks>
+            This value is used to prevent stack overflows from circular references.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.Extensions.Validation.ValidateContext.AddValidationError(Microsoft.Extensions.Validation.ValidationError)">
+            <summary>
+            Adds a validation error to <see cref="P:Microsoft.Extensions.Validation.ValidateContext.ValidationErrors"/>.
+            </summary>
+            <param name="validationError">The validation error to add.</param>
+        </member>
+        <member name="T:Microsoft.Extensions.Validation.ValidationError">
+            <summary>
+            Represents a validation error.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Extensions.Validation.ValidationError.Name">
+            <summary>
+            Gets the name of the property or parameter that caused the validation error.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Extensions.Validation.ValidationError.Path">
+            <summary>
+            Gets the full path from the root object to the property or parameter that caused the validation error.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Extensions.Validation.ValidationError.ErrorMessage">
+            <summary>
+            Gets the error message associated with the validation error.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Extensions.Validation.ValidationError.Container">
+            <summary>
+            Gets a reference to the container object of the validated property.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Extensions.Validation.ValidationOptions">
+            <summary>
+            Specifies configuration options for the validation system.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Extensions.Validation.ValidationOptions.Resolvers">
+            <summary>
+            Gets the list of resolvers that provide validation metadata for types and parameters.
+            Resolvers are processed in order, with the first resolver that provides a non-null result being used.
+            </summary>
+            <remarks>
+            Source-generated resolvers are typically inserted at the beginning of this list
+            to ensure they are checked before any runtime-based resolvers.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.Extensions.Validation.ValidationOptions.MaxDepth">
+            <summary>
+            Gets or sets the maximum depth for validation of nested objects.
+            </summary>
+            <value>
+            The default is 32.
+            </value>
+            <remarks>
+            A maximum depth prevents stack overflows from circular references or extremely deep object graphs.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.Extensions.Validation.ValidationOptions.LocalizerProvider">
+            <summary>
+            Gets or sets a delegate that resolves the <see cref="T:Microsoft.Extensions.Localization.IStringLocalizer"/> used to localize
+            validation display names and error messages for a given declaring type.
+            </summary>
+            <remarks>
+            The delegate receives the type used to resolve the localizer and the registered <see cref="T:Microsoft.Extensions.Localization.IStringLocalizerFactory"/>.
+            The default <see cref="T:Microsoft.Extensions.Validation.IValidatableInfoResolver"/> sets the type argument to the declaring type for a property,
+            the validated type itself for type-level validation, or the parameter's own type for a parameter.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.Extensions.Validation.ValidationOptions.TryGetValidatableTypeInfo(System.Type,Microsoft.Extensions.Validation.IValidatableTypeInfo@)">
+            <summary>
+            Attempts to get validation information for the specified type.
+            </summary>
+            <param name="type">The type to get validation information for.</param>
+            <param name="validatableTypeInfo">When this method returns, contains the validation information for the specified type,
+            if the type was found; otherwise, <see langword="null" />.</param>
+            <returns><see langword="true" /> if validation information was found for the specified type; otherwise, <see langword="false" />.</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.Validation.ValidationOptions.TryGetValidatableParameterInfo(System.Reflection.ParameterInfo,Microsoft.Extensions.Validation.IValidatableParameterInfo@)">
+            <summary>
+            Attempts to get validation information for the specified parameter.
+            </summary>
+            <param name="parameterInfo">The parameter to get validation information for.</param>
+            <param name="validatableInfo">When this method returns, contains the validation information for the specified parameter,
+            if validation information was found; otherwise, <see langword="null" />.</param>
+            <returns><see langword="true" /> if validation information was found for the specified parameter; otherwise, <see langword="false" />.</returns>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.ValidationServiceCollectionExtensions">
+            <summary>
+            Extension methods for adding validation services.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.ValidationServiceCollectionExtensions.AddValidation(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Microsoft.Extensions.Validation.ValidationOptions})">
+            <summary>
+            Adds the validation services to the specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+            </summary>
+            <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the services to.</param>
+            <param name="configureOptions">An optional action to configure the <see cref="T:Microsoft.Extensions.Validation.ValidationOptions"/>.</param>
+            <returns>The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> for chaining.</returns>
+        </member>
+    </members>
+</doc>
