@@ -23,5 +23,10 @@ public enum ControlType
     /// <summary>
     /// Uses a color picker control.
     /// </summary>
-    Color
+    Color,
+
+    /// <summary>
+    /// Uses no control. The parameter is still listed in the Controls panel, and its current value is shown as text, but it can not be edited.
+    /// </summary>
+    None
 }
