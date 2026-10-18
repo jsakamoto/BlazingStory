@@ -19,29 +19,16 @@ public static class McpServerExtensions
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add the server to.</param>
     /// <param name="configureMcpServerOptions">An optional action to configure the <see cref="McpServerOptions"/> for the MCP server.</param>
-    /// <param name="configureHttpServerTransportOptions">
-    /// An optional action to configure the <see cref="HttpServerTransportOptions"/> for the MCP server.
-    /// Blazing Story's tools are stateless request/response lookups, so the transport defaults to
-    /// <see cref="HttpServerSessionMode.Stateless"/>. Use this to opt into
-    /// <see cref="HttpServerSessionMode.StatefulForInitializeClients"/> if you need to serve MCP clients that
-    /// still require a session from the legacy "initialize" handshake.
-    /// </param>
     /// <returns>An <see cref="IMcpServerBuilder"/> that can be used to further configure the MCP server.</returns>
-    public static IMcpServerBuilder AddBlazingStoryMcpServer(
-        this IServiceCollection services,
-        Action<McpServerOptions>? configureMcpServerOptions = null,
-        Action<HttpServerTransportOptions>? configureHttpServerTransportOptions = null)
+    public static IMcpServerBuilder AddBlazingStoryMcpServer(this IServiceCollection services, Action<McpServerOptions>? configureMcpServerOptions = null)
     {
         services.AddScoped((_) => new StoriesStore());
         services.AddScoped((_) => new CustomPageStore());
         services.AddSingleton<CustomPageContentCache>();
         return services
             .AddMcpServer(options => configureMcpServerOptions?.Invoke(options))
-            .WithHttpTransport(options =>
-            {
-                options.SessionMode = HttpServerSessionMode.Stateless;
-                configureHttpServerTransportOptions?.Invoke(options);
-            })
+            // Set explicitly so that a future change of the SDK default does not affect it.
+            .WithHttpTransport(options => options.SessionMode = HttpServerSessionMode.Stateless)
             .WithTools<StoriesTool>()
             .WithTools<CustomPagesTool>();
     }

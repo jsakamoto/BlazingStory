@@ -44,17 +44,16 @@ app.MapBlazingStoryMcp();
 
 That's it — the MCP endpoint is now available at `/mcp/blazingstory`.
 
-### Session mode
+### Configuring the HTTP transport
 
-Every tool above is a read-only lookup against the catalog, so the server runs **stateless**:
-each request is answered on its own and no session is kept between calls. This is the default
-for the `2026-07-28` protocol revision, and clients that still perform the older `initialize`
-handshake are served without needing a session id.
+Every tool above is a read-only lookup against the catalog, so the server runs **stateless**. It answers each request on its own and keeps no session between calls. Clients that still use the older `initialize` handshake also work without a session id.
 
-If you need to support a client that requires a real session, opt into the hybrid mode:
+`AddBlazingStoryMcpServer()` returns an `IMcpServerBuilder`. Call `WithHttpTransport()` on it to change the HTTP transport options. For example, if a client needs a real session, turn on the hybrid session mode like this.
 
 ```csharp
-builder.Services.AddBlazingStoryMcpServer(
-    configureHttpServerTransportOptions: options =>
+using ModelContextProtocol.AspNetCore;
+
+builder.Services.AddBlazingStoryMcpServer()
+    .WithHttpTransport(options =>
         options.SessionMode = HttpServerSessionMode.StatefulForInitializeClients);
 ```

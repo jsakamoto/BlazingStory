@@ -28,8 +28,8 @@ public static class McpTestApp
         builder.WebHost.UseUrls("http://127.0.0.1:0");
 
         builder.Services.AddRazorComponents().AddInteractiveServerComponents();
-        builder.Services.AddBlazingStoryMcpServer(
-            configureHttpServerTransportOptions: configureHttpServerTransportOptions);
+        var mcpServerBuilder = builder.Services.AddBlazingStoryMcpServer();
+        if (configureHttpServerTransportOptions is not null) mcpServerBuilder.WithHttpTransport(configureHttpServerTransportOptions);
 
         var app = builder.Build();
 
