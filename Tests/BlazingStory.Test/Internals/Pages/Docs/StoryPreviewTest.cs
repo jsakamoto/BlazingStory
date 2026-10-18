@@ -45,6 +45,28 @@ internal class StoryPreviewTest
     }
 
     [Test]
+    public async Task Render_ArgsUpdated_OpenCanvasInNewTabButtonLinksToUpdatedArgs_Test()
+    {
+        // Given
+        using var ctx = CreateContext();
+        var story = TestHelper.CreateStory<Button>(title: "Examples/Button", name: "Primary");
+        var cut = ctx.Render<StoryPreview>(parameters => parameters
+            .Add(p => p.Story, story)
+            .Add(p => p.EnableZoom, true));
+
+        // When
+        await story.Context.AddOrUpdateArgumentAsync("Text", "Hello");
+        cut.Render(parameters => parameters
+            .Add(p => p.Story, story)
+            .Add(p => p.EnableZoom, true));
+
+        // Then
+        // The button reads the URL from the PreviewFrame through @ref, so it must not lag one render behind.
+        var link = cut.Find("a[title='Open canvas in new tab']");
+        link.GetAttribute("href").Is("./iframe.html?viewMode=story&id=examples-button--primary&args=Text:Hello&globals=");
+    }
+
+    [Test]
     public void Render_ToolbarDisabled_DoesNotShowOpenCanvasInNewTabButton_Test()
     {
         // Given
