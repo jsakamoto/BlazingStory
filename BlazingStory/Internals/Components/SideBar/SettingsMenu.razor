@@ -1,3 +1,5 @@
+@using BlazingStory.Addons.Internals
+
 <PopupMenu Class="settings-popup-menu">
     <Trigger>
         <IconButton Icon="SvgIconType.Gear" Title="Shortcuts" />
@@ -27,19 +29,15 @@
     protected override void OnInitialized()
     {
         var commandService = this.Services.GetRequiredService<CommandService>();
-        var topCommandsTypes = new[] {
-            CommandType.AboutYourBlazingStory,
-            CommandType.ReleaseNotes,
-            CommandType.KeyboardShortcuts,
-        };
-        var lastCommandsTypes = new[] {
-            CommandType.Documentation,
-        };
+        var settingsPageCommandKeys = this.Services.GetRequiredService<AddonManager>()
+            .GetSettingsPages()
+            .Select(page => page.CommandKey)
+            .ToHashSet();
         this._CommandSegments = commandService.Commands
-            .GroupBy(cmd => cmd.Type switch
+            .GroupBy(cmd => cmd.Key switch
             {
-                var t when topCommandsTypes.Contains(t) => 1,
-                var t when lastCommandsTypes.Contains(t) => 3,
+                var key when settingsPageCommandKeys.Contains(key) => 1,
+                nameof(CommandType.Documentation) => 3,
                 _ => 2
             },
             cmd => cmd.Command);
