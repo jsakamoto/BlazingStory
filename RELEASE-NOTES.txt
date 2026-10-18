@@ -1,3 +1,7 @@
+v.1.0.0-preview.96
+- Feature: Added an "Open canvas in new tab" button to the toolbar of the first story preview on Docs pages. (PR #147 contributed by @WimVdSElia)
+- Improve: The Documentation button on the About page now opens the documentation site instead of the GitHub repository.
+
 v.1.0.0-preview.95
 - Improve: Upgraded the MCP server to the Model Context Protocol C# SDK 2.x. As a result, the HTTP transport of the MCP server is now stateless by default. (PR #137 contributed by @buvinghausen)
 
