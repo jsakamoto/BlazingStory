@@ -40,12 +40,4 @@
     <ProjectReference Include="..\Fixtures\BlazingStoryMcpApp1\BlazingStoryMcpApp1.csproj" />
   </ItemGroup>
 
-  <!-- The MCP tools surface XML doc comments of components and their parameters, so the
-       fixture's documentation file has to travel with its assembly into the test output. -->
-  <Target Name="_ResolveCopyLocalNuGetPackageXmls" AfterTargets="ResolveReferences">
-    <ItemGroup>
-      <ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).xml')" Condition=" '%(ReferenceCopyLocalPaths.NuGetPackageId)' != '' AND Exists('%(RootDir)%(Directory)%(Filename).xml') AND !$([System.String]::Copy('%(Filename)').StartsWith('Microsoft.')) AND !$([System.String]::Copy('%(Filename)').StartsWith('System.')) " />
-    </ItemGroup>
-  </Target>
-
 </Project>
