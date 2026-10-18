@@ -1,3 +1,6 @@
+v.1.0.0-preview.95
+- Improve: Upgraded the MCP server to the Model Context Protocol C# SDK 2.x. As a result, the HTTP transport of the MCP server is now stateless by default. (PR #137 contributed by @buvinghausen)
+
 v.1.0.0-preview.94
 - Feature: Added support for .NET 11 (Release Candidate). The project templates can now create projects that target .NET 11.
 - Fix: Resolved an issue where publishing a Blazing Story app for Blazor WebAssembly failed with the .NET 11 SDK.
