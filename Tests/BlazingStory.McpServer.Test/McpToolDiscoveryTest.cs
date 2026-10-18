@@ -1,4 +1,5 @@
 using BlazingStory.McpServer.Test._Fixtures;
+using ModelContextProtocol.Client;
 
 namespace BlazingStory.McpServer.Test;
 
@@ -46,9 +47,17 @@ internal class McpToolDiscoveryTest
 
         var tools = (await client.ListToolsAsync()).ToDictionary(t => t.Name);
 
-        tools["getComponentParameters"].ProtocolTool.InputSchema.ToString().Contains("componentName").IsTrue();
-        tools["getComponentStories"].ProtocolTool.InputSchema.ToString().Contains("componentName").IsTrue();
-        tools["getCustomPageContent"].ProtocolTool.InputSchema.ToString().Contains("pageTitle").IsTrue();
-        tools["searchCustomPages"].ProtocolTool.InputSchema.ToString().Contains("query").IsTrue();
+        GetRequiredArguments(tools["getComponentParameters"]).Is("componentName");
+        GetRequiredArguments(tools["getComponentStories"]).Is("componentName");
+        GetRequiredArguments(tools["getCustomPageContent"]).Is("pageTitle");
+        GetRequiredArguments(tools["searchCustomPages"]).Is("query");
+    }
+
+    private static IEnumerable<string?> GetRequiredArguments(McpClientTool tool)
+    {
+        var inputSchema = tool.ProtocolTool.InputSchema;
+        return inputSchema.TryGetProperty("required", out var required)
+            ? required.EnumerateArray().Select(e => e.GetString())
+            : [];
     }
 }
