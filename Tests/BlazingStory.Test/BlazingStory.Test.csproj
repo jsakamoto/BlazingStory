@@ -5,6 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>$(WarningsAsErrors);nullable</WarningsAsErrors>
+    <!-- BL0016 reports the NSubstitute setups of IJSRuntime as unguarded JS interop calls. The tests make no real JS interop calls. -->
+    <NoWarn>$(NoWarn);BL0016</NoWarn>
     <IsPackable>false</IsPackable>
     <GenerateProgramFile>false</GenerateProgramFile>
     <EnableNUnitRunner>true</EnableNUnitRunner>
