@@ -8,6 +8,33 @@
   flex: 1;
   position: relative;
 }
+.a11y-panel .axe-impact-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 6px;
+}
+.a11y-panel .axe-impact-filter .impact {
+  color: var(--bs-axe-impact-color);
+  background: var(--bs-axe-impact-bg);
+  box-shadow: var(--bs-axe-impact-shadow);
+  border: none;
+  border-radius: 20px;
+  padding: 0 10px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 20px;
+  cursor: pointer;
+  transition: opacity linear 0.1s;
+}
+.a11y-panel .axe-impact-filter .impact.inactive {
+  opacity: 0.4;
+}
+.a11y-panel .axe-impact-filter .impact:focus-visible {
+  outline: 2px solid var(--bs-focused-color);
+  outline-offset: 2px;
+}
 
 .axe-results-view {
   position: absolute;
@@ -23,9 +50,19 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 100%;
   height: 40px;
   padding: 6px 15px;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
   cursor: pointer;
+}
+.axe-result-view .header:focus-visible {
+  outline: 2px solid var(--bs-focused-color);
+  outline-offset: -2px;
 }
 .axe-result-view .header .spacing {
   flex: 1;
@@ -98,43 +135,43 @@
   grid-template-rows: 1fr;
 }
 
-.preferes-color-scheme-light .axe-result-view .impact-critical {
+.preferes-color-scheme-light .axe-result-view .impact-critical, .preferes-color-scheme-light .axe-impact-filter .impact-critical {
   --bs-axe-impact-color: rgb(255, 255, 255);
   --bs-axe-impact-bg: rgb(209, 56, 0);
   --bs-axe-impact-shadow: rgba(255, 255, 255, 0) 0px 0px 0px 1px inset;
 }
-.preferes-color-scheme-light .axe-result-view .impact-serious {
+.preferes-color-scheme-light .axe-result-view .impact-serious, .preferes-color-scheme-light .axe-impact-filter .impact-serious {
   --bs-axe-impact-color: rgb(194, 52, 0);
   --bs-axe-impact-bg: rgb(255, 240, 235);
   --bs-axe-impact-shadow: rgb(255, 195, 173) 0px 0px 0px 1px inset;
 }
-.preferes-color-scheme-light .axe-result-view .impact-moderate {
+.preferes-color-scheme-light .axe-result-view .impact-moderate, .preferes-color-scheme-light .axe-impact-filter .impact-moderate {
   --bs-axe-impact-color: rgb(122, 65, 0);
   --bs-axe-impact-bg: rgb(255, 247, 235);
   --bs-axe-impact-shadow: rgb(255, 206, 133) 0px 0px 0px 1px inset;
 }
-.preferes-color-scheme-light .axe-result-view .impact-minor {
+.preferes-color-scheme-light .axe-result-view .impact-minor, .preferes-color-scheme-light .axe-impact-filter .impact-minor {
   --bs-axe-impact-color: rgb(92, 101, 112);
   --bs-axe-impact-bg: rgb(246, 249, 252);
   --bs-axe-impact-shadow: rgba(92, 101, 112, 0.2) 0px 0px 0px 1px inset;
 }
 
-.preferes-color-scheme-dark .axe-result-view .impact-critical {
+.preferes-color-scheme-dark .axe-result-view .impact-critical, .preferes-color-scheme-dark .axe-impact-filter .impact-critical {
   --bs-axe-impact-color: rgb(255, 105, 51);
   --bs-axe-impact-bg: rgba(255, 255, 255, 0);
   --bs-axe-impact-shadow: rgb(255, 105, 51) 0px 0px 0px 1px inset;
 }
-.preferes-color-scheme-dark .axe-result-view .impact-serious {
+.preferes-color-scheme-dark .axe-result-view .impact-serious, .preferes-color-scheme-dark .axe-impact-filter .impact-serious {
   --bs-axe-impact-color: rgb(255, 105, 51);
   --bs-axe-impact-bg: rgba(255, 255, 255, 0);
   --bs-axe-impact-shadow: rgba(255, 120, 71, 0.15) 0px 0px 0px 1px inset;
 }
-.preferes-color-scheme-dark .axe-result-view .impact-moderate {
+.preferes-color-scheme-dark .axe-result-view .impact-moderate, .preferes-color-scheme-dark .axe-impact-filter .impact-moderate {
   --bs-axe-impact-color: rgb(255, 173, 51);
   --bs-axe-impact-bg: rgba(255, 255, 255, 0);
   --bs-axe-impact-shadow: rgba(255, 182, 71, 0.15) 0px 0px 0px 1px inset;
 }
-.preferes-color-scheme-dark .axe-result-view .impact-minor {
+.preferes-color-scheme-dark .axe-result-view .impact-minor, .preferes-color-scheme-dark .axe-impact-filter .impact-minor {
   --bs-axe-impact-color: rgb(149, 153, 157);
   --bs-axe-impact-bg: rgb(34, 35, 37);
   --bs-axe-impact-shadow: rgba(149, 153, 157, 0.2) 0px 0px 0px 1px inset;
