@@ -17,7 +17,6 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: "11.0.x"
-          dotnet-quality: preview
       - name: Install .NET WebAssembly Tools
         run: dotnet workload install wasm-tools
 

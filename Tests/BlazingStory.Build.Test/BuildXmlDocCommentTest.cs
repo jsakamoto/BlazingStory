@@ -16,10 +16,10 @@ internal class BuildXmlDocCommentTest
         [ 8, 10, false],
         [ 9, 10, false],
         [10, 10, false],
-        [ 8, 11, true],
-        [ 9, 11, true],
-        [10, 11, true],
-        [11, 11, true],
+        [ 8, 11, false],
+        [ 9, 11, false],
+        [10, 11, false],
+        [11, 11, false],
     ];
 
     // "dotnet test" can leak these to the test process, which pins child builds to the parent's SDK regardless of global.json.

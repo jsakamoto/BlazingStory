@@ -53,7 +53,7 @@
         }
       ],
       "replaces": "net8.0",
-      "defaultValue": "net10.0"
+      "defaultValue": "net11.0"
     },
     "kestrelHttpPort": {
       "type": "parameter",
