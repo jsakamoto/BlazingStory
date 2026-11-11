@@ -31,10 +31,11 @@ These files are CRLF in the working tree. If you edit them with GNU `sed` on Win
 ## 3. Update the Blazor WebAssembly package references
 
 Check the latest stable versions of the following packages on NuGet for each major version
-(8.0, 9.0, and 10.0), and update them if newer versions exist.
+(8.0, 9.0, 10.0, and 11.0), and update them if newer versions exist.
 
 - `Microsoft.AspNetCore.Components.WebAssembly`
-- `Microsoft.AspNetCore.Components.WebAssembly.DevServer`
+- `Microsoft.AspNetCore.Components.WebAssembly.DevServer` (8.0 to 10.0 only)
+- `Microsoft.AspNetCore.Components.Gateway` (11.0 only, used instead of DevServer)
 - `Microsoft.AspNetCore.Components.WebAssembly.Server`
 
 The NuGet API returns the version list of a package.
