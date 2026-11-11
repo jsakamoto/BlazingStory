@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BlazingStory.Addons</name>
+    </assembly>
+    <members>
+        <member name="T:BlazingStory.Addons.GlobalArguments">
+            <summary>
+            A dictionary-like container for global arguments shared across addon toolbar components.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.GlobalArguments.Item(System.String)">
+            <summary>
+            Gets or sets the argument value associated with the given name, raising <see cref="E:BlazingStory.Addons.GlobalArguments.ArgumentsChanged"/> on change.
+            </summary>
+            <param name="name">The argument name.</param>
+        </member>
+        <member name="M:BlazingStory.Addons.GlobalArguments.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates over all argument name-value pairs.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Addons.IAddon">
+            <summary>
+            Represents an addon that can register toolbar content, panels, and preview decorators.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.IAddon.Initialize(BlazingStory.Addons.IAddonBuilder)">
+            <summary>
+            Registers the addon's components with the provided <see cref="T:BlazingStory.Addons.IAddonBuilder"/>.
+            </summary>
+            <param name="builder">The builder used to register addon components.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.IAddonBuilder">
+            <summary>
+            Provides methods for registering addon components such as toolbar content, panels, and preview decorators.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.IAddonBuilder.AddToolbarContent``1(System.Int32,System.Func{BlazingStory.Addons.ViewMode,System.Boolean})">
+            <summary>
+            Registers a toolbar content component shown when the current view mode matches.
+            </summary>
+            <param name="order">The display order of the toolbar content relative to others.</param>
+            <param name="match">A predicate that determines whether this content is shown for a given view mode.</param>
+        </member>
+        <member name="M:BlazingStory.Addons.IAddonBuilder.AddPanel``1(System.Int32,System.Func{BlazingStory.Addons.ViewMode,System.Boolean})">
+            <summary>
+            Registers a panel component shown in the addon panel area when the current view mode matches.
+            </summary>
+            <param name="order">The display order of the panel relative to others.</param>
+            <param name="match">A predicate that determines whether this panel is shown for a given view mode.</param>
+        </member>
+        <member name="M:BlazingStory.Addons.IAddonBuilder.AddPreviewDecorator``1">
+            <summary>
+            Registers a preview decorator component that wraps the story preview.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Addons.IAddonStore">
+            <summary>
+            Provides a registration point for <see cref="T:BlazingStory.Addons.IAddon"/> implementations.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.IAddonStore.Register``1">
+            <summary>
+            Registers an addon of type <typeparamref name="TAddon"/> with the store.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Addons.Internals.AddonManager">
+            <summary>
+            Manages the registration and retrieval of addon toolbar content, panels, and preview decorators.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.Internals.AddonManager.Initialize(BlazingStory.Addons.Internals.AddonStore)">
+            <summary>
+            Initializes all addons registered in the given <see cref="T:BlazingStory.Addons.Internals.AddonStore"/>.
+            </summary>
+            <param name="addonStore">The store containing the addons to initialize.</param>
+        </member>
+        <member name="M:BlazingStory.Addons.Internals.AddonManager.GetToolbarContents(BlazingStory.Addons.ViewMode)">
+            <summary>
+            Returns the toolbar content descriptors that match the given view mode, ordered by <c>Order</c>.
+            </summary>
+            <param name="viewMode">The current view mode to filter by.</param>
+        </member>
+        <member name="M:BlazingStory.Addons.Internals.AddonManager.GetPanels(BlazingStory.Addons.ViewMode)">
+            <summary>
+            Returns the panel descriptors that match the given view mode, ordered by <c>Order</c>.
+            </summary>
+            <param name="viewMode">The current view mode to filter by.</param>
+        </member>
+        <member name="M:BlazingStory.Addons.Internals.AddonManager.GetPreviewDecorators">
+            <summary>
+            Returns all registered preview decorator descriptors.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Addons.Internals.AddonStore">
+            <summary>
+            The default implementation of <see cref="T:BlazingStory.Addons.IAddonStore"/> that holds registered <see cref="T:BlazingStory.Addons.IAddon"/> instances.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.Internals.AddonStore.Register``1">
+            <summary>
+            Creates and stores a new instance of <typeparamref name="TAddon"/>.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Addons.Internals.PanelDescriptor">
+            <summary>
+            Describes a registered addon panel component, including its order, visibility predicate, and component type.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.Internals.PanelDescriptor.#ctor(System.Int32,System.Func{BlazingStory.Addons.ViewMode,System.Boolean},System.Type)">
+            <summary>
+            Initializes a new instance of <see cref="T:BlazingStory.Addons.Internals.PanelDescriptor"/>.
+            </summary>
+            <param name="order">The display order relative to other panels.</param>
+            <param name="match">A predicate that determines whether this panel is visible for a given view mode.</param>
+            <param name="panelComponentType">The Blazor component type used to render the panel.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.Internals.PreviewDecoratorDescriptor">
+            <summary>
+            Describes a registered preview decorator component that wraps the story canvas preview.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.Internals.PreviewDecoratorDescriptor.#ctor(System.Type)">
+            <summary>
+            Initializes a new instance of <see cref="T:BlazingStory.Addons.Internals.PreviewDecoratorDescriptor"/>.
+            </summary>
+            <param name="previewDecoratorComponentType">The Blazor component type used as the preview decorator.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.Internals.ToolbarContentDescriptor">
+            <summary>
+            Describes a registered toolbar content component, including its order, visibility predicate, component type, and global arguments.
+            </summary>
+        </member>
+        <member name="M:BlazingStory.Addons.Internals.ToolbarContentDescriptor.#ctor(System.Int32,System.Func{BlazingStory.Addons.ViewMode,System.Boolean},System.Type)">
+            <summary>
+            Initializes a new instance of <see cref="T:BlazingStory.Addons.Internals.ToolbarContentDescriptor"/>.
+            </summary>
+            <param name="order">The display order relative to other toolbar content.</param>
+            <param name="match">A predicate that determines whether this content is visible for a given view mode.</param>
+            <param name="toolbarButtonComponentType">The Blazor component type used to render the toolbar content.</param>
+        </member>
+        <member name="T:BlazingStory.Addons.PanelTitle">
+            <summary>
+            A Blazor component that projects its content into the section outlet used to render a panel's tab title.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.PanelTitle.PanelDescriptor">
+            <summary>
+            The descriptor of the panel whose title section this component targets.
+            </summary>
+        </member>
+        <member name="P:BlazingStory.Addons.PanelTitle.ChildContent">
+            <summary>
+            The content rendered as the panel tab title.
+            </summary>
+        </member>
+        <member name="T:BlazingStory.Addons.ViewMode">
+            <summary>
+            Specifies the current display mode of the BlazingStory canvas.
+            </summary>
+        </member>
+        <member name="F:BlazingStory.Addons.ViewMode.Docs">
+            <summary>The documentation page view.</summary>
+        </member>
+        <member name="F:BlazingStory.Addons.ViewMode.Story">
+            <summary>The individual story canvas view.</summary>
+        </member>
+        <member name="F:BlazingStory.Addons.ViewMode.CustomPage">
+            <summary>A custom page view defined by the user.</summary>
+        </member>
+    </members>
+</doc>

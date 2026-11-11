@@ -1,0 +1,34 @@
+.bs-basic-inputs-holder {
+    display: inline-block;
+    line-height: normal;
+    overflow: hidden;
+    position: relative;
+    vertical-align: top;
+    width: 100%;
+}
+
+.bs-basic-inputs {
+    appearance: none;
+    border: none;
+    outline: none;
+    margin: 0;
+    padding: 6px 10px;
+    width: 100%;
+    font-size: var(--bs-text-size);
+    background: var(--bs-inputs-background);
+    color: var(--bs-inputs-text-color);
+    box-shadow: var(--bs-inputs-box-shadow);
+    border-radius: 4px;
+    line-height: 20px;
+    text-align: left;
+    overflow: visible;
+    transition: inherit, box-shadow 200ms ease-out,opacity 200ms ease-out;
+
+    &:focus, &:focus-visible {
+        box-shadow: var(--bs-focused-color) 0 0 0 1px inset;
+    }
+
+    &:invalid {
+        box-shadow: #FF4400 0 0 0 1px inset !important;
+    }
+}
